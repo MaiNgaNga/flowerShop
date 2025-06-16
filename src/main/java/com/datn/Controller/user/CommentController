@@ -1,0 +1,38 @@
+package com.datn.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import poly.edu.Assignment.Service.CommentService;
+import poly.edu.Assignment.model.Comment;
+
+import java.util.List;
+
+@Controller
+@RequestMapping("/comments")
+public class CommentController {
+
+    @Autowired
+    private CommentService commentService;
+
+    // Lấy danh sách bình luận theo sản phẩm
+    @GetMapping("/{productId}")
+    public List<Comment> getCommentsByProduct(@PathVariable Long productId) {
+        return commentService.getCommentsByProduct(productId);
+    }
+
+    // Thêm bình luận mới
+    @PostMapping
+    public Comment addComment(@RequestParam String content, @RequestParam Long productId) {
+        return commentService.saveComment(content, productId);
+    }
+
+    // Xóa bình luận theo ID
+    @GetMapping("/delete/{id}")
+    public String deleteComment(@PathVariable Long id, @RequestParam(required = false) Long productId) {
+        System.out.println("Xóa comment ID: " + id);
+        commentService.deleteComment(id);
+        return "redirect:/product-detail?productId=" + productId;
+    }
+    
+}
