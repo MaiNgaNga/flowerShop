@@ -3,27 +3,17 @@ package com.datn.model;
 import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import jakarta.validation.constraints.NotBlank;
 
 @Data
 @Entity
 @Builder
-@Table(name="products")
+@Table(name = "products")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Product {
@@ -43,12 +33,11 @@ public class Product {
 
     @Positive(message = "Giá sản phẩm phải lớn hơn 0")
     private double price;
-    
+
     @Column
     @PositiveOrZero(message = "Số lượng không được âm")
     private Integer quantity;
 
-    
     @Column(columnDefinition = "NVARCHAR(255)")
     private String image_url;
 
@@ -78,12 +67,33 @@ public class Product {
     @Column
     private LocalDate discountEnd;
 
+    // Kiểm tra ngày bắt đầu giảm giá không được là quá khứ
+    @AssertTrue(message = "Ngày bắt đầu giảm giá phải là hôm nay hoặc tương lai")
+    public boolean isDiscountStartValid() {
+        return discountStart == null || discountStart.isEqual(LocalDate.now()) || discountStart.isAfter(LocalDate.now());
+    }
+
+    // Kiểm tra ngày kết thúc giảm giá không được là quá khứ
+    @AssertTrue(message = "Ngày kết thúc giảm giá phải là hôm nay hoặc tương lai") 
+    public boolean isDiscountEndValid(){
+        return discountEnd == null || discountEnd.isEqual(LocalDate.now()) || discountEnd.isAfter(LocalDate.now());
+    }
+
+    // Kiểm tra ngày bắt đầu giảm giá phải trước hoặc bằng ngày kết thúc
+    @AssertTrue(message = "Ngày bắt đầu giảm giá phải trước hoặc bằng ngày kết thúc")
+    public boolean isDiscountDateValid(){
+        if (discountPercent != null && discountPercent > 0) {
+            return discountStart != null && discountEnd != null && !discountStart.isAfter(discountEnd);
+        }
+        return true;
+    }
+
     // Tính giá sau giảm (nếu có giảm giá hợp lệ)
     public double getPriceAfterDiscount() {
         if (discountPercent != null && discountPercent > 0) {
             LocalDate now = LocalDate.now();
             if ((discountStart == null || !now.isBefore(discountStart)) &&
-                (discountEnd == null || !now.isAfter(discountEnd))) {
+                    (discountEnd == null || !now.isAfter(discountEnd))) {
                 return price * (1 - discountPercent / 100.0);
             }
         }

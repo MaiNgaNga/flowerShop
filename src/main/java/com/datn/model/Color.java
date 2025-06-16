@@ -1,4 +1,6 @@
-package poly.edu.Assignment.model;
+
+package com.datn.model;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,19 +16,16 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Builder
-@Table(name="colors")
+@Table(name = "colors")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Color {
 
-   @Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    
+
     @Column(columnDefinition = "NVARCHAR(50)")
     private String name;
 
-
 }
-
-
