@@ -9,17 +9,18 @@ import org.springframework.stereotype.Service;
 import com.datn.Service.CategoryService;
 import com.datn.dao.CategoryDAO;
 import com.datn.model.Category;
-
+import com.datn.dao.productDAO;
 
 @Service
-public class CategoryServiceImpl  implements CategoryService{
+public class CategoryServiceImpl implements CategoryService {
     @Autowired
     CategoryDAO dao;
     @Autowired
     productDAO productDAO;
+
     @Override
     public List<Category> findAll() {
-       return dao.findAll();
+        return dao.findAll();
     }
 
     @Override
@@ -30,7 +31,7 @@ public class CategoryServiceImpl  implements CategoryService{
 
     @Override
     public Category create(Category entity) {
-        if(dao.existsByName(entity.getName())){
+        if (dao.existsByName(entity.getName())) {
             throw new IllegalArgumentException("Tên loại hoa này đã tồn tại!");
         }
         return dao.save(entity);
@@ -50,21 +51,17 @@ public class CategoryServiceImpl  implements CategoryService{
             throw new IllegalArgumentException("Chưa chọn loại hoa để cập nhật!");
         }
     }
-    
-       
-       
-    
 
     @Override
     public void deleteById(int id) {
 
         if (dao.existsById(id)) {
-            if(!productDAO.findByCategory_Id(id).isEmpty()){
+            if (!productDAO.findByCategory_Id(id).isEmpty()) {
                 throw new IllegalArgumentException("Loại hoa này đã tồn tại sản phẩm hoa!");
 
             }
             dao.deleteById(id);
-        }else{
+        } else {
             throw new IllegalArgumentException("Không xác định được loại hoa cần xóa");
         }
     }
