@@ -14,19 +14,16 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Builder
-@Table(name="colors")
+@Table(name = "colors")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Color {
 
-   @Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    
+
     @Column(columnDefinition = "NVARCHAR(50)")
     private String name;
 
-
 }
-
-
