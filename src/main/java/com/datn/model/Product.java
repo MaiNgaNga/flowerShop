@@ -23,7 +23,7 @@ import jakarta.validation.constraints.NotBlank;
 @Data
 @Entity
 @Builder
-@Table(name="products")
+@Table(name = "products")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Product {
@@ -43,12 +43,11 @@ public class Product {
 
     @Positive(message = "Giá sản phẩm phải lớn hơn 0")
     private double price;
-    
+
     @Column
     @PositiveOrZero(message = "Số lượng không được âm")
     private Integer quantity;
 
-    
     @Column(columnDefinition = "NVARCHAR(255)")
     private String image_url;
 
@@ -83,7 +82,7 @@ public class Product {
         if (discountPercent != null && discountPercent > 0) {
             LocalDate now = LocalDate.now();
             if ((discountStart == null || !now.isBefore(discountStart)) &&
-                (discountEnd == null || !now.isAfter(discountEnd))) {
+                    (discountEnd == null || !now.isAfter(discountEnd))) {
                 return price * (1 - discountPercent / 100.0);
             }
         }
