@@ -1,8 +1,7 @@
-package poly.edu.Assignment.Service;
+package com.datn.Service;
 
 import java.util.List;
 
-import poly.edu.Assignment.model.Comment;
 
 public interface CommentService {
      List<Comment> getCommentsByProduct(Long productId);
