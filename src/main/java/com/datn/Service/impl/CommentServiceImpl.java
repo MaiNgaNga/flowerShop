@@ -1,15 +1,15 @@
-package com;
+package com.datn.Service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import poly.edu.Assignment.Service.CommentService;
-import poly.edu.Assignment.Service.ProductService;
-import poly.edu.Assignment.dao.CommentDAO;
-import poly.edu.Assignment.model.Comment;
-import poly.edu.Assignment.model.Product;
-import poly.edu.Assignment.model.User;
-import poly.edu.Assignment.utils.AuthService;
+import com.datn.Service.CommentService;
+import com.datn.Service.ProductService;
+import com.datn.dao.CommentDAO;
+import com.datn.model.Comment;
+import com.datn.model.Product;
+import com.datn.model.User;
+import com.datn.utils.AuthService;
 
 import java.time.LocalDateTime;
 import java.util.List;

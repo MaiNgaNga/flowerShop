@@ -3,22 +3,12 @@ package com.datn.model;
 import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import jakarta.validation.constraints.NotBlank;
 
 @Data
 @Entity
@@ -77,6 +67,27 @@ public class Product {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column
     private LocalDate discountEnd;
+
+    // Kiểm tra ngày bắt đầu giảm giá không được là quá khứ
+    @AssertTrue(message = "Ngày bắt đầu giảm giá phải là hôm nay hoặc tương lai")
+    public boolean isDiscountStartValid() {
+        return discountStart == null || discountStart.isEqual(LocalDate.now()) || discountStart.isAfter(LocalDate.now());
+    }
+
+    // Kiểm tra ngày kết thúc giảm giá không được là quá khứ
+    @AssertTrue(message = "Ngày kết thúc giảm giá phải là hôm nay hoặc tương lai") 
+    public boolean isDiscountEndValid(){
+        return discountEnd == null || discountEnd.isEqual(LocalDate.now()) || discountEnd.isAfter(LocalDate.now());
+    }
+
+    // Kiểm tra ngày bắt đầu giảm giá phải trước hoặc bằng ngày kết thúc
+    @AssertTrue(message = "Ngày bắt đầu giảm giá phải trước hoặc bằng ngày kết thúc")
+    public boolean isDiscountDateValid(){
+        if (discountPercent != null && discountPercent > 0) {
+            return discountStart != null && discountEnd != null && !discountStart.isAfter(discountEnd);
+        }
+        return true;
+    }
 
     // Tính giá sau giảm (nếu có giảm giá hợp lệ)
     public double getPriceAfterDiscount() {
