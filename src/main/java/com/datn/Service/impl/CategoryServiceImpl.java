@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.datn.Service.CategoryService;
 import com.datn.dao.CategoryDAO;
+import com.datn.dao.ProductDAO;
 import com.datn.model.Category;
 
 @Service
@@ -15,7 +16,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     CategoryDAO dao;
     @Autowired
-    productDAO productDAO;
+    ProductDAO productDAO;
 
     @Override
     public List<Category> findAll() {

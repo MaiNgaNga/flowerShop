@@ -70,18 +70,19 @@ public class Product {
     // Kiểm tra ngày bắt đầu giảm giá không được là quá khứ
     @AssertTrue(message = "Ngày bắt đầu giảm giá phải là hôm nay hoặc tương lai")
     public boolean isDiscountStartValid() {
-        return discountStart == null || discountStart.isEqual(LocalDate.now()) || discountStart.isAfter(LocalDate.now());
+        return discountStart == null || discountStart.isEqual(LocalDate.now())
+                || discountStart.isAfter(LocalDate.now());
     }
 
     // Kiểm tra ngày kết thúc giảm giá không được là quá khứ
-    @AssertTrue(message = "Ngày kết thúc giảm giá phải là hôm nay hoặc tương lai") 
-    public boolean isDiscountEndValid(){
+    @AssertTrue(message = "Ngày kết thúc giảm giá phải là hôm nay hoặc tương lai")
+    public boolean isDiscountEndValid() {
         return discountEnd == null || discountEnd.isEqual(LocalDate.now()) || discountEnd.isAfter(LocalDate.now());
     }
 
     // Kiểm tra ngày bắt đầu giảm giá phải trước hoặc bằng ngày kết thúc
     @AssertTrue(message = "Ngày bắt đầu giảm giá phải trước hoặc bằng ngày kết thúc")
-    public boolean isDiscountDateValid(){
+    public boolean isDiscountDateValid() {
         if (discountPercent != null && discountPercent > 0) {
             return discountStart != null && discountEnd != null && !discountStart.isAfter(discountEnd);
         }
