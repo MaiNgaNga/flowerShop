@@ -1,0 +1,486 @@
+<style>
+  .custom-pagination .page-item .page-link {
+    border-radius: 50%;
+    margin: 0 5px;
+    color: #f090b8;
+    border: 1px solid #f090b8;
+    background-color: #fff;
+    transition: all 0.2s ease-in-out;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .custom-pagination .page-item.active .page-link {
+    background-color: #f090b8;
+    color: #fff;
+    border-color: #f090b8;
+  }
+
+  .custom-pagination .page-item.disabled .page-link {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .custom-pagination .page-item .page-link:hover {
+    background-color: #fcd6e5;
+    color: #d63384;
+  }
+</style>
+<main class="container mt-3">
+  <h3>Quản Lý Sản Phẩm</h3>
+  <hr />
+  <div
+    class="alert alert-success"
+    th:if="${success}"
+    th:text="${success}"
+  ></div>
+
+  <!-- Tab Navigation -->
+  <ul class="nav nav-tabs" id="productTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link active"
+        id="edit-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#edit"
+        type="button"
+        role="tab"
+        aria-controls="edit"
+        aria-selected="true"
+      >
+        Chỉnh sửa
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link"
+        id="list-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#list"
+        type="button"
+        role="tab"
+        aria-controls="list"
+        aria-selected="false"
+      >
+        Danh sách
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content" id="productTabContent">
+    <i class="error" th:if="${error}" th:text="${error}"></i>
+
+    <!-- Tab: Chỉnh sửa -->
+    <div
+      class="tab-pane fade show active"
+      id="edit"
+      role="tabpanel"
+      aria-labelledby="edit-tab"
+    >
+      <form
+        action="/Product/index"
+        th:object="${product}"
+        method="post"
+        enctype="multipart/form-data"
+      >
+        <div class="row">
+          <div class="col-md-6">
+            <label for="id" class="form-label">ID</label>
+            <input
+              type="text"
+              id="id"
+              th:field="*{id}"
+              readonly
+              class="form-control form-control-sm"
+            />
+          </div>
+          <div class="col-md-6">
+            <label for="name" class="form-label">Tên Sản Phẩm</label>
+            <input
+              type="text"
+              id="name"
+              th:field="*{name}"
+              class="form-control form-control-sm"
+              placeholder="Tên sản phẩm"
+            />
+          </div>
+          <i class="error" th:errors="*{name}"></i>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="price" class="form-label">Giá</label>
+            <input
+              type="number"
+              id="price"
+              th:field="*{price}"
+              class="form-control form-control-sm"
+              placeholder="Giá"
+              step=""
+            />
+            <i class="error" th:errors="*{price}"></i>
+          </div>
+
+          <div class="col-md-6">
+            <label for="quantity" class="form-label">Số lượng</label>
+            <input
+              type="number"
+              id="quantity"
+              th:field="*{quantity}"
+              class="form-control form-control-sm"
+              placeholder="Số lượng"
+              step="1"
+            />
+            <i class="error" th:errors="*{quantity}"></i>
+          </div>
+        </div>
+
+        <!-- Thêm phần giảm giá ở đây -->
+        <div class="row mt-3">
+          <div class="col-12">
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="applyDiscount"
+                th:checked="${product.discountPercent != null or product.discountStart != null or product.discountEnd != null or #fields.hasErrors('discountPercent') or #fields.hasErrors('discountStart') or #fields.hasErrors('discountEnd')}"
+                onchange="toggleDiscountFields()"
+              />
+              <label class="form-check-label" for="applyDiscount">
+                Áp dụng giảm giá
+              </label>
+            </div>
+          </div>
+        </div>
+        <div id="discountFields">
+          <div class="row mt-2">
+            <div class="col-md-4">
+              <label for="discountPercent" class="form-label"
+                >Giảm giá (%)</label
+              >
+              <input
+                type="number"
+                id="discountPercent"
+                th:field="*{discountPercent}"
+                class="form-control form-control-sm"
+                placeholder="Từ 1 đến 100"
+              />
+              <i class="error" th:errors="*{discountPercent}"></i>
+            </div>
+
+            <div class="col-md-4">
+              <label for="discountStart" class="form-label">Ngày bắt đầu</label>
+              <input
+                type="date"
+                id="discountStart"
+                th:field="*{discountStart}"
+                class="form-control form-control-sm"
+              />
+              <i class="error" th:errors="*{discountStart}"></i>
+            </div>
+
+            <div class="col-md-4">
+              <label for="discountEnd" class="form-label">Ngày kết thúc</label>
+              <input
+                type="date"
+                id="discountEnd"
+                th:field="*{discountEnd}"
+                class="form-control form-control-sm"
+              />
+              <i class="error" th:errors="*{discountEnd}"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6">
+            <label for="category" class="form-label">Loại hoa</label>
+            <select
+              id="category"
+              th:field="*{category}"
+              class="form-control form-control-sm"
+            >
+              <option
+                th:each="cat : ${categories}"
+                th:value="${cat.id}"
+                th:text="${cat.name}"
+              ></option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label for="color" class="form-label">Màu Sắc</label>
+            <select
+              id="color"
+              th:field="*{color}"
+              class="form-control form-control-sm"
+            >
+              <option
+                th:each="col : ${colors}"
+                th:value="${col.id}"
+                th:text="${col.name}"
+              ></option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <label for="description" class="form-label">Mô tả</label>
+            <textarea
+              id="description"
+              th:field="*{description}"
+              class="form-control form-control-sm"
+              placeholder="Mô tả sản phẩm"
+            ></textarea>
+          </div>
+          <div class="col-6">
+            <label for="color" class="form-label">Danh mục:</label>
+            <select
+              id="color"
+              th:field="*{productCategory}"
+              class="form-control form-control-sm"
+            >
+              <option
+                th:each="col : ${productCategories}"
+                th:value="${col.id}"
+                th:text="${col.name}"
+              ></option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <label for="image" class="form-label">Hình Ảnh</label>
+
+          <div class="mt-2">
+            <input
+              type="hidden"
+              name="oldImage"
+              th:if="${product.image_url}"
+              th:value="${product.image_url}"
+            />
+            <img
+              th:if="${product.image_url}"
+              th:src="@{/images/{image}(image=${product.image_url})}"
+              alt="Hình sản phẩm"
+              class="img-thumbnail"
+              width="150"
+            />
+            <label for="image" class="btn btn-primary">Chọn ảnh</label>
+            <input
+              type="file"
+              id="image"
+              class="mt-2"
+              name="imageFile"
+              hidden
+            />
+          </div>
+        </div>
+
+        <div class="row mt-3 text-end">
+          <div class="col">
+            <button
+              th:if="${product.id ==0}"
+              type="submit"
+              class="btn btn-primary"
+              th:formaction="@{/Product/create}"
+            >
+              <i class="fa fa-plus"></i> Thêm
+            </button>
+            <button
+              th:if="${product.id != 0}"
+              type="submit"
+              class="btn btn-warning"
+              th:formaction="@{/Product/update}"
+            >
+              <i class="fa fa-edit"></i> Cập Nhật
+            </button>
+            <button
+              th:if="${product.id != 0}"
+              type="button"
+              class="btn btn-danger"
+              onclick="confirmDelete(this)"
+              th:data-url="@{/Product/delete/{id}(id=${product.id})}"
+            >
+              <i class="fa fa-trash"></i> Xóa
+            </button>
+            <a class="btn btn-success" th:href="@{/Product/index}">
+              <i class="fa fa-sync"></i>Làm Mới</a
+            >
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Tab: Danh sách -->
+    <div
+      class="tab-pane fade"
+      id="list"
+      role="tabpanel"
+      aria-labelledby="list-tab"
+    >
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th>ID</th>
+              <th>Tên sản phẩm</th>
+              <th>Giá sản phẩm</th>
+              <th>Số lượng</th>
+              <th>Giảm giá (%)</th>
+              <th>Ngày bắt đầu</th>
+              <th>Ngày kết thúc</th>
+              <th>Hình Ảnh</th>
+              <th>Loại Hoa</th>
+              <th>Màu Sắc</th>
+              <th>Danh mục</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="item : ${products}">
+              <td th:text="${item.id}"></td>
+              <td th:text="${item.name}"></td>
+              <td
+                th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'COMMA') + ' VNĐ'}"
+              ></td>
+              <td th:text="${item.quantity}"></td>
+              <td
+                th:text="${item.discountPercent != null ? item.discountPercent + '%' : 'Không'}"
+              ></td>
+              <td
+                th:text="${item.discountStart != null ? #temporals.format(item.discountStart, 'dd/MM/yyyy') : 'N/A'}"
+              ></td>
+              <td
+                th:text="${item.discountEnd != null ? #temporals.format(item.discountEnd, 'dd/MM/yyyy') : 'N/A'}"
+              ></td>
+              <td>
+                <img
+                  th:src="@{/images/{image}(image=${item.image_url})}"
+                  alt="Hình ảnh"
+                  class="img-thumbnail"
+                  width="50"
+                />
+              </td>
+              <td th:text="${item.category.name}"></td>
+              <td th:text="${item.color.name}"></td>
+              <td th:text="${item.productCategory.name}"></td>
+
+              <td>
+                <a
+                  class="btn btn-sm btn-info"
+                  th:href="@{/Product/edit/{id}(id=${item.id})}"
+                  >Sửa</a
+                >
+                <a
+                  href="#"
+                  class="btn btn-sm btn-danger"
+                  onclick="confirmDelete(this)"
+                  th:data-url="@{/Product/delete/{id}(id=${item.id})}"
+                  >Xóa</a
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Phân trang -->
+      <div class="d-flex justify-content-center mt-4">
+        <nav>
+          <ul class="pagination custom-pagination">
+            <li
+              class="page-item"
+              th:classappend="${currentPage == 0} ? 'disabled'"
+            >
+              <a class="page-link" th:href="@{|/Product/index?page=0|}">
+                <i class="fa fa-angle-double-left"></i>
+              </a>
+            </li>
+            <li
+              class="page-item"
+              th:classappend="${currentPage == 0} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{|/Product/index?page=${currentPage - 1}|}"
+              >
+                <i class="fa fa-angle-left"></i>
+              </a>
+            </li>
+            <li
+              class="page-item"
+              th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+              th:classappend="${currentPage == i} ? 'active'"
+            >
+              <a
+                class="page-link"
+                th:href="@{|/Product/index?page=${i}|}"
+                th:text="${i + 1}"
+              ></a>
+            </li>
+            <li
+              class="page-item"
+              th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{|/Product/index?page=${currentPage + 1}|}"
+              >
+                <i class="fa fa-angle-right"></i>
+              </a>
+            </li>
+            <li
+              class="page-item"
+              th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{|/Product/index?page=${totalPages - 1}|}"
+              >
+                <i class="fa fa-angle-double-right"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</main>
+<script>
+  function toggleDiscountFields() {
+    const checkbox = document.getElementById("applyDiscount");
+    const discountSection = document.getElementById("discountFields");
+
+    if (checkbox.checked) {
+      discountSection.classList.remove("d-none");
+      discountSection.style.display = "block";
+    } else {
+      discountSection.style.display = "none";
+
+      // Reset các trường giảm giá về rỗng
+      document.getElementById("discountPercent").value = "";
+      document.getElementById("discountStart").value = "";
+      document.getElementById("discountEnd").value = "";
+    }
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    const checkbox = document.getElementById("applyDiscount");
+
+    // Gọi toggle để ẩn/hiện ngay khi load
+    toggleDiscountFields();
+
+    // Nếu có lỗi validation, vẫn giữ hiển thị vùng giảm giá
+    const hasError =
+      document.querySelector(".error[th\\:errors='*{discountPercent}']") ||
+      document.querySelector(".error[th\\:errors='*{discountStart}']") ||
+      document.querySelector(".error[th\\:errors='*{discountEnd}']");
+
+    if (hasError) {
+      checkbox.checked = true;
+      toggleDiscountFields();
+    }
+  });
+</script>

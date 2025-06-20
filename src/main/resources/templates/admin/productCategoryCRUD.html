@@ -1,0 +1,175 @@
+<main class="container mt-3">
+  <h3>Quản Lý Danh Mục Sản Phẩm</h3>
+  <hr />
+  <div
+    class="success alert alert-success"
+    th:if="${success}"
+    th:text="${success}"
+  ></div>
+
+  <!-- Tab Navigation -->
+  <ul class="nav nav-tabs" id="productCategoryTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link active"
+        id="edit-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#edit"
+        type="button"
+        role="tab"
+        aria-controls="edit"
+        aria-selected="true"
+      >
+        Chỉnh sửa
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link"
+        id="list-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#list"
+        type="button"
+        role="tab"
+        aria-controls="list"
+        aria-selected="false"
+      >
+        Danh sách
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content" id="productCategoryTabContent">
+    <i class="error" th:if="${error}" th:text="${error}"></i>
+
+    <!-- Tab: Chỉnh sửa -->
+    <div
+      class="tab-pane fade show active"
+      id="edit"
+      role="tabpanel"
+      aria-labelledby="edit-tab"
+    >
+      <form
+        action="/ProductCategory/index"
+        th:object="${productCategory}"
+        method="post"
+      >
+        <div class="row">
+          <div class="col-6">
+            <div class="mb-1">
+              <label for="id" class="form-label">ID</label>
+              <input
+                type="text"
+                id="id"
+                th:field="*{id}"
+                readonly
+                class="form-control form-control-sm"
+              />
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-1">
+              <label for="name" class="form-label">Tên Danh Mục</label>
+              <input
+                type="text"
+                th:field="*{name}"
+                id="name"
+                class="form-control form-control-sm"
+                placeholder="Tên Danh Mục"
+              />
+              <i class="error" th:errors="*{name}"></i>
+            </div>
+          </div>
+          <div class="mb-1">
+            <label for="description" class="form-label">Mô tả</label>
+            <textarea
+              type="text"
+              th:field="*{description}"
+              id="description"
+              class="form-control form-control-sm"
+              placeholder="Mô tả"
+            ></textarea>
+          </div>
+        </div>
+        <div class="row mt-4 text-end">
+          <div class="col">
+            <button
+              th:if="${productCategory.id == 0}"
+              type="submit"
+              class="btn btn-primary"
+              th:formaction="@{/ProductCategory/create}"
+            >
+              <i class="fa fa-plus"></i> Thêm
+            </button>
+            <button
+              th:if="${productCategory.id != 0}"
+              type="submit"
+              class="btn btn-warning"
+              th:formaction="@{/ProductCategory/update}"
+            >
+              <i class="fa fa-edit"></i> Cập Nhật
+            </button>
+            <button
+              th:if="${productCategory.id != 0}"
+              type="button"
+              class="btn btn-danger"
+              onclick="confirmDelete(this)"
+              th:data-url="@{/ProductCategory/delete/{id}(id=${productCategory.id})}"
+            >
+              <i class="fa fa-trash"></i> Xóa
+            </button>
+            <a class="btn btn-success" th:href="@{/ProductCategory/index}">
+              <i class="fa fa-sync"></i> Làm Mới
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Tab: Danh sách -->
+    <div
+      class="tab-pane fade"
+      id="list"
+      role="tabpanel"
+      aria-labelledby="list-tab"
+    >
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th>ID</th>
+              <th>Tên Danh Mục</th>
+              <th>Mô Tả</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <th:block th:each="item : ${productCategories}">
+              <tr>
+                <td th:text="${item.id}"></td>
+                <td th:text="${item.name}"></td>
+                <td th:text="${item.description}"></td>
+                <td>
+                  <a
+                    class="btn btn-sm btn-info"
+                    th:href="@{/ProductCategory/edit/{id}(id=${item.id})}"
+                    >Sửa</a
+                  >
+                  <a
+                    href="#"
+                    class="btn btn-sm btn-danger"
+                    onclick="confirmDelete(this)"
+                    th:data-url="@{/ProductCategory/delete/{id}(id=${item.id})}"
+                  >
+                    Xóa
+                  </a>
+                </td>
+              </tr>
+            </th:block>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>

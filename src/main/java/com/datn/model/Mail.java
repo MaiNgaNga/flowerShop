@@ -12,4 +12,3 @@ import lombok.NoArgsConstructor;
 public class Mail {
     private String to, subject, content;
 }
-

@@ -1,0 +1,43 @@
+<div class="row">
+  <!-- Sidebar (Aside) -->
+  <aside class="col-md-2 pt-4 nenindex asidemana">
+    <img
+      th:src="@{/images/logo.png}"
+      alt="Trạm Hoa"
+      height="60"
+      style="text-align: center"
+    />
+    <nav class="nav flex-column pt-2">
+      <a href="/home" class="nav-link text-dark py-3 menu-item">
+        <i class="fa-solid fa-file-lines me-2"></i> Trang chủ
+      </a>
+      <!-- <a href="/dashboard" class="nav-link text-dark py-3 menu-item">
+        <i class="fa-solid fa-file-lines me-2"></i> Dashboard
+      </a> -->
+      <a href="/User/index" class="nav-link text-dark py-3 menu-item">
+        <i class="fa-solid fa-user"></i>
+        Người dùng
+      </a>
+      <a
+        href="/ProductCategory/index"
+        class="nav-link text-dark py-3 menu-item"
+      >
+        <i class="fa-solid fa-comments me-2"></i> Danh mục sản phẩm
+      </a>
+
+      <a href="/Product/index" class="nav-link text-dark py-3 menu-item">
+        <i class="fa-solid fa-heart me-2"></i> Sản phẩm
+      </a>
+      <a href="/Category/index" class="nav-link text-dark py-3 menu-item">
+        <i class="fa-solid fa-comments me-2"></i> Loại hoa
+      </a>
+      <!-- <a href="/orderAdmin" class="nav-link text-dark py-3 menu-item">
+        <i class="fa-solid fa-chart-bar me-2"></i> Đơn hàng
+      </a> -->
+    </nav>
+  </aside>
+  <article id="content" class="col-md-10 articlemana">
+    <main th:insert="~{${view}}"></main>
+    <footer th:insert="~{/admin/footer}"></footer>
+  </article>
+</div>
