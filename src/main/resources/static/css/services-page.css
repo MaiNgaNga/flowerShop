@@ -1,0 +1,495 @@
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #f8e9f2, #e8f3f1);
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+.navbar {
+  background: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-logo {
+  height: 40px;
+  width: 40px;
+  object-fit: contain;
+}
+
+.navbar-brand img {
+  transition: transform 0.4s ease;
+}
+
+.navbar-brand:hover img {
+  transform: rotate(10deg) scale(1.1);
+}
+
+.nav-link {
+  position: relative;
+  color: #4a4a4a !important;
+  font-weight: 400;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -5px;
+  left: 0;
+  background: linear-gradient(45deg, #d4a5e6, #b2e0e0);
+  transition: width 0.4s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.hero-section {
+  position: relative;
+  height: 100vh;
+  background: url("https://img.pikbest.com/backgrounds/20190228/wedding-fair-beautiful-drawing-floral-banner-background_1867131.jpg!bw700")
+    no-repeat center center;
+  background-size: cover;
+  background-attachment: fixed;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2));
+}
+
+.hero-content h1 {
+  font-family: "Playfair Display", serif;
+  font-size: 5rem;
+  font-weight: 700;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+  animation: fadeInDown 1.5s ease-out;
+}
+
+.hero-content p {
+  font-size: 1.6rem;
+  margin: 20px 0 30px;
+  animation: fadeInUp 1.8s ease-out;
+}
+
+.hero-content .btn {
+  padding: 15px 35px;
+  font-size: 1.3rem;
+  border-radius: 50px;
+  background: linear-gradient(45deg, #d4a5e6, #b2e0e0);
+  border: none;
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 2s ease-out;
+}
+
+.hero-content .btn::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.hero-content .btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.hero-content .btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(212, 165, 230, 0.5);
+}
+
+.flower-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.flower {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: url("https://via.placeholder.com/20?text=🌸") no-repeat center;
+  animation: fall 10s linear infinite;
+  opacity: 0.7;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.services-section {
+  padding: 80px 0;
+  background: #fff;
+}
+
+.services-section h2 {
+  font-family: "Playfair Display", serif;
+  font-size: 3.5rem;
+  color: #4a4a4a;
+  margin-bottom: 40px;
+  text-align: center;
+  position: relative;
+}
+
+.services-section h2::after {
+  content: "";
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(45deg, #d4a5e6, #b2e0e0);
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.service-block {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 60px;
+  gap: 0;
+}
+
+.service-text {
+  flex: 0 0 50%;
+  padding: 0 15px;
+  background: none;
+  box-shadow: none;
+  transition: transform 0.3s ease;
+  text-align: justify;
+}
+
+.service-text:hover {
+  transform: translateY(-5px);
+}
+
+.service-text h5 {
+  font-family: "Playfair Display", serif;
+  font-size: 1.2rem;
+  color: #6c757d;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.service-text h2 {
+  font-family: "Playfair Display", serif;
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.service-text p {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.service-text a {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 20px;
+  background-color: #d1e7dd;
+  border-radius: 20px;
+  display: inline-block;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+.service-text a:hover {
+  background-color: #b2e0e0;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.service-slideshow {
+  flex: 0 0 50%;
+  position: relative;
+  overflow: hidden;
+  padding: 0 15px;
+}
+
+.service-slideshow.first-block img {
+  height: 350px;
+  width: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.service-slideshow.second-block img {
+  height: 400px;
+  width: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.service-slideshow .carousel-inner {
+  border-radius: 0;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  width: 5%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.service-slideshow:hover .carousel-control-prev,
+.service-slideshow:hover .carousel-control-next {
+  opacity: 0.7;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+  opacity: 1;
+}
+
+.carousel-indicators {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  gap: 5px;
+}
+
+.carousel-indicators button {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #bbb;
+  border: none;
+  margin: 0;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.carousel-indicators .active {
+  background-color: #d4a5e6;
+  transform: scale(1.2);
+}
+
+.custom-circle-btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #d4a5e6;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.custom-circle-btn::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.custom-circle-btn:hover::before {
+  width: 100px;
+  height: 100px;
+}
+
+.custom-circle-btn:hover {
+  background-color: #b2e0e0;
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(178, 224, 224, 0.5);
+}
+
+.custom-circle-btn i {
+  color: white;
+  font-size: 1.2rem;
+}
+
+.contact-section {
+  padding: 80px 0;
+  background: linear-gradient(135deg, #e8f3f1, #f8e9f2);
+}
+
+.contact-section h2 {
+  font-family: "Playfair Display", serif;
+  font-size: 3.5rem;
+  color: #4a4a4a;
+  margin-bottom: 40px;
+  text-align: center;
+  position: relative;
+}
+
+.contact-section h2::after {
+  content: "";
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(45deg, #d4a5e6, #b2e0e0);
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.form-control,
+.form-select {
+  border: none;
+  border-bottom: 2px solid #d4a5e6;
+  border-radius: 0;
+  background: transparent;
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #b2e0e0;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: none;
+}
+
+.btn-submit {
+  background: linear-gradient(45deg, #d4a5e6, #b2e0e0);
+  border: none;
+  padding: 12px 35px;
+  border-radius: 50px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  animation: pulse 2s infinite;
+}
+
+.btn-submit::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.btn-submit:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-submit:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(212, 165, 230, 0.5);
+}
+
+.btn-submit.loading .spinner-border {
+  display: inline-block;
+}
+
+.spinner-border {
+  display: none;
+  width: 1.2rem;
+  height: 1.2rem;
+  vertical-align: middle;
+  margin-left: 10px;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+footer {
+  background: linear-gradient(135deg, #4a4a4a, #2c3e50);
+  color: white;
+  padding: 40px 0;
+}
+
+footer a {
+  color: #b2e0e0;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+footer a:hover {
+  color: #d4a5e6;
+}
+
+footer .social-icon {
+  font-size: 1.6rem;
+  margin: 0 12px;
+  transition: transform 0.4s ease;
+}
+
+footer .social-icon:hover {
+  transform: rotate(360deg);
+}
+
+.container {
+  max-width: 1200px;
+}
