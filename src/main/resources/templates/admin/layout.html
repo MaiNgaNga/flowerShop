@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Insert title here</title>
+    <link rel="stylesheet" href="/bootstrap-5.3.3-dist/css/bootstrap.min.css" />
+    <script src="/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+    <link
+      th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css}"
+      rel="stylesheet"
+    />
+    <script th:src="@{/js.js}"></script>
+    <style type="text/css">
+      @charset "UTF-8";
+
+      .menu-item:hover {
+        background-color: #f3ae4d;
+        color: #fff !important;
+        border-radius: 5px;
+        transition: all 0.3s ease-in-out;
+      }
+
+      .search-bar {
+        background-color: #f1f3f4;
+        border-radius: 50px;
+      }
+
+      .search-bar input {
+        border: none;
+        background-color: transparent;
+        outline: none;
+      }
+
+      input.form-control:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 8px rgba(13, 110, 253, 0.5);
+      }
+
+      textarea.form-control {
+        resize: none; /* Ngăn kéo giãn Textarea */
+        outline: none;
+        border: 1px solid #ddd;
+        transition: box-shadow 0.2s ease-in-out;
+      }
+
+      textarea.form-control:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 8px rgba(13, 110, 253, 0.5);
+      }
+
+      textarea {
+        width: 100%; /* Chiều rộng đầy đủ */
+        max-width: 100%; /* Đảm bảo không bị co */
+      }
+
+      label.btn {
+        cursor: pointer;
+        margin: 0;
+      }
+
+      .input-group {
+        background-color: #f8f9fa;
+        border-radius: 15px;
+        overflow: hidden;
+      }
+
+      .btn-hover {
+        color: #f3ae4d;
+      }
+
+      .btn-hover:hover {
+        background-color: #7cb1e9;
+      }
+
+      .btn-outline-secondary:hover {
+        background-color: #ff9800 !important;
+        border-color: #ff9800 !important;
+        color: #fff !important;
+      }
+
+      .input-group {
+        background-color: #f8f9fa;
+        border-radius: 15px;
+        overflow: hidden;
+      }
+
+      .form-floating .form-control {
+        border: none;
+        border-bottom: 2px solid #ff9800;
+        border-radius: 0;
+        outline: none;
+        box-shadow: none;
+      }
+
+      .form-floating .form-control:focus {
+        box-shadow: none !important;
+        border-bottom: 2px solid #ff4500;
+      }
+
+      .btn-outline-secondary:hover {
+        background-color: #ff9800 !important;
+        border-color: #ff9800 !important;
+        color: #fff !important;
+      }
+
+      input[type="file"] {
+        display: none;
+      }
+
+      .btn-file {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      html,
+      body {
+        height: 100%;
+        overflow: hidden; /* Ngăn thanh cuộn của toàn trang */
+      }
+
+      .asidemana {
+        height: 100%;
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 16.666%; /* Đảm bảo giữ nguyên kích thước */
+        background-color: #f8f9fa;
+        padding: 10px;
+        box-sizing: border-box;
+        overflow: hidden; /* Không cuộn */
+      }
+
+      .articlemana {
+        margin-left: 16.666%; /* Đẩy nội dung chính ra ngoài aside */
+        overflow-y: auto; /* Chỉ cuộn nội dung chính */
+        height: 100vh; /* Trừ phần header */
+        padding: 20px; /* Tránh dính sát mép */
+        background-color: #fff;
+      }
+
+      .nenindex {
+        bottom: 0;
+        left: 0;
+        width: 16.666%;
+        z-index: 500;
+        overflow-y: auto;
+        background: linear-gradient(to right, white, #caf0d4);
+      }
+
+      .error {
+        color: red;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="bodi">
+      <div class="container-fluid" th:insert="~{/admin/content}"></div>
+    </div>
+    <div
+      class="modal fade"
+      id="confirmDeleteModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Xác nhận xóa</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">Bạn có chắc chắn muốn xóa không?</div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Hủy
+            </button>
+            <a id="confirmDeleteBtn" class="btn btn-danger">Xóa</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
