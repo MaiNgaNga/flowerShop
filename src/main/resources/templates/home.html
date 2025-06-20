@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dịch Vụ - Cửa Hàng Hoa</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome for Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400&display=swap"
+      rel="stylesheet"
+    />
+    <!-- AOS for Scroll Animations -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #f8e9f2, #e8f3f1);
+        scroll-behavior: smooth;
+        overflow-x: hidden;
+      }
+
+      /* Navigation Bar */
+      .navbar {
+        background: rgba(255, 255, 255, 0.95) !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      .navbar-brand img {
+        transition: transform 0.4s ease;
+      }
+      .navbar-brand:hover img {
+        transform: rotate(10deg) scale(1.1);
+      }
+      .nav-link {
+        position: relative;
+        color: #4a4a4a !important;
+        font-weight: 400;
+      }
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -5px;
+        left: 0;
+        background: linear-gradient(45deg, #d4a5e6, #b2e0e0);
+        transition: width 0.4s ease;
+      }
+      .nav-link:hover::after {
+        width: 100%;
+      }
+
+      /* Hero Section */
+      .hero-section {
+        position: relative;
+        height: 100vh;
+        background: url("https://img.pikbest.com/backgrounds/20190228/wedding-fair-beautiful-drawing-floral-banner-background_1867131.jpg!bw700")
+          no-repeat center center;
+        background-size: cover;
+        background-attachment: fixed;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        overflow: hidden;
+      }
+      .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2));
+      }
+      .hero-content h1 {
+        font-family: "Playfair Display", serif;
+        font-size: 5rem;
+        font-weight: 700;
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+        animation: fadeInDown 1.5s ease-out;
+      }
+      .hero-content p {
+        font-size: 1.6rem;
+        margin: 20px 0 30px;
+        animation: fadeInUp 1.8s ease-out;
+      }
+      .hero-content .btn {
+        padding: 15px 35px;
+        font-size: 1.3rem;
+        border-radius: 50px;
+        background: linear-gradient(45deg, #d4a5e6, #b2e0e0);
+        border: none;
+        position: relative;
+        overflow: hidden;
+        animation: fadeInUp 2s ease-out;
+      }
+      .hero-content .btn::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.6s ease, height 0.6s ease;
+      }
+      .hero-content .btn:hover::before {
+        width: 300px;
+        height: 300px;
+      }
+      .hero-content .btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(212, 165, 230, 0.5);
+      }
+      .flower-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 220px);
+        grid-template-rows: repeat(2, 240px);
+        gap: 36px 36px;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+      }
+      .flower-box {
+        position: relative;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 16px rgba(61, 99, 50, 0.08);
+        overflow: hidden;
+        transition: box-shadow 0.3s, transform 0.3s;
+        width: 220px;
+        height: 240px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .flower-box:hover {
+        box-shadow: 0 8px 32px rgba(212, 165, 230, 0.18);
+        transform: translateY(-4px) scale(1.03);
+      }
+      .flower-img-square {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: none;
+        box-shadow: none;
+        transition: filter 0.3s;
+      }
+      .flower-box:hover .flower-img-square {
+        filter: brightness(1.08) saturate(1.1);
+      }
+      .price-tag {
+        width: 80px;
+        height: 30px;
+        position: absolute;
+        top: 8px;
+        right: -8px;
+        background: #e53935;
+        color: #fff;
+        font-size: 0.95rem;
+        font-weight: bold;
+        padding: 2px 12px;
+        border-radius: 50px;
+        z-index: 3;
+        box-shadow: 0 2px 8px rgba(212, 165, 230, 0.1);
+      }
+
+      /* Responsive */
+      @media (max-width: 900px) {
+        .flower-grid {
+          grid-template-columns: repeat(2, 1fr);
+          grid-template-rows: repeat(2, 180px);
+          gap: 20px 10px;
+        }
+        .flower-box {
+          width: 44vw;
+          min-width: 140px;
+          height: 180px;
+        }
+        .flower-img-square {
+          width: 90%;
+          height: 90%;
+        }
+      }
+      @media (max-width: 600px) {
+        .flower-grid {
+          grid-template-columns: 1fr;
+          grid-template-rows: none;
+        }
+        .flower-box {
+          width: 90vw;
+          height: 140px;
+        }
+        .flower-img-square {
+          width: 90px;
+          height: 90px;
+        }
+        .price-tag {
+          font-size: 0.95rem;
+          padding: 2px 10px;
+          right: -10px;
+          top: 10px;
+        }
+      }
+
+      /* Category Cards */
+      .category-cards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2.5rem;
+        justify-content: center;
+        margin-bottom: 3rem;
+      }
+      .card-flower {
+        position: relative;
+        width: 375px;
+        height: 460px;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 4px 24px rgba(212, 165, 230, 0.13);
+        background: #fff;
+        transition: box-shadow 0.3s;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+      }
+      .card-flower:hover {
+        box-shadow: 0 8px 32px rgba(212, 165, 230, 0.18);
+      }
+      .card-img {
+        object-fit: cover;
+        border-radius: 20px;
+        transition: filter 0.4s;
+        display: block;
+      }
+      .card-flower:hover .card-img {
+        filter: blur(2px) brightness(0.7);
+      }
+      .card-action-btns {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s;
+        z-index: 2;
+      }
+      .card-flower:hover .card-action-btns {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .btn-detail {
+        background: linear-gradient(45deg, #d4a5e6, #b2e0e0);
+        color: #fff;
+        border: none;
+        border-radius: 32px;
+        font-weight: 600;
+        font-size: 0.5rem;
+        padding: 18px 48px;
+        transition: background 0.3s, transform 0.3s;
+        box-shadow: 0 2px 8px rgba(212, 165, 230, 0.08);
+      }
+      .btn-detail:hover {
+        transform: scale(1.07);
+      }
+
+      /* New Flowers Section */
+      .new-flowers-section h2 {
+        font-family: "Playfair Display", serif;
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 2rem;
+      }
+      .new-flowers-section .d-flex {
+        gap: 2rem;
+      }
+      .flower-item {
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(178, 224, 224, 0.13);
+        padding: 18px 10px;
+        margin-bottom: 18px;
+        transition: transform 0.3s, box-shadow 0.3s;
+        width: 240px;
+        text-align: center;
+      }
+      .flower-img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid white;
+        transition: border-color 0.3s;
+        margin-bottom: 10px;
+      }
+      .flower-item:hover .flower-img {
+        border-color: #d4a5e6;
+      }
+      .flower-name {
+        font-family: "Playfair Display", serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-top: 10px;
+      }
+
+      /* Best Seller Section */
+      .best-seller-section h2 {
+        font-family: "Playfair Display", serif;
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 2rem;
+      }
+      .filter-btn {
+        font-family: "Playfair Display", serif;
+        background-color: white;
+        color: #111;
+        border: 1px solid #d4a5e6;
+        border-radius: 24px;
+        padding: 12px 32px;
+        font-size: 1.1rem;
+        margin: 0 8px;
+        font-weight: 500;
+        transition: background 0.3s, transform 0.3s;
+        box-shadow: 0 2px 8px rgba(212, 165, 230, 0.08);
+      }
+      .filter-btn.active,
+      .filter-btn:hover {
+        background: linear-gradient(45deg, #d4a5e6, #b2e0e0);
+        color: #fff;
+        transform: translateY(-2px) scale(1.05);
+      }
+      .bestseller-card {
+        width: 235px;
+        height: 320px;
+        perspective: 1000px;
+        margin: 0 8px 24px 8px;
+        display: inline-block;
+      }
+      .bestseller-card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        transform-style: preserve-3d;
+      }
+      .bestseller-card:hover .bestseller-card-inner {
+        transform: rotateY(180deg);
+      }
+      .bestseller-card-front,
+      .bestseller-card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 4px 24px rgba(212, 165, 230, 0.12);
+        padding: 8px 8px 8px 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .bestseller-card-back {
+        background: linear-gradient(135deg, #d4a5e6, #b2e0e0);
+        color: #fff;
+        transform: rotateY(180deg);
+        text-align: center;
+      }
+      .bestseller-img {
+        width: 95%;
+        height: 220px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-bottom: 10px;
+      }
+      .bestseller-name {
+        font-family: "Playfair Display", serif;
+        font-size: 1.1rem;
+      }
+      .bestseller-price {
+        font-size: 1rem;
+        margin-top: 6px;
+      }
+      .bestseller-desc {
+        font-size: 1rem;
+        margin-bottom: 16px;
+      }
+      .btn-detail {
+        background: linear-gradient(135deg, #d4a5e6, #b2e0e0);
+        color: #fff;
+        border: 1px solid #fff;
+        border-radius: 24px;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 10px 32px;
+        transition: background 0.3s, color 0.3s, transform 0.3s;
+        box-shadow: 0 2px 8px rgba(212, 165, 230, 0.08);
+      }
+      .btn-detail:hover {
+        background: linear-gradient(135deg, #d4a5e6, #b2e0e0);
+        color: #fff;
+        transform: scale(1.07);
+      }
+
+      /* Service Section */
+      .service-section .btn-view-all {
+        background: linear-gradient(45deg, #d4a5e6, #b2e0e0);
+        color: #fff;
+        border: none;
+        border-radius: 24px;
+        padding: 12px 36px;
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-bottom: 2rem;
+        transition: background 0.3s, transform 0.3s;
+        box-shadow: 0 2px 8px rgba(212, 165, 230, 0.08);
+      }
+      .service-section .btn-view-all:hover {
+        transform: translateY(-3px) scale(1.06);
+      }
+      .service-img {
+        width: 600px;
+        height: 400px;
+        border-radius: 16px;
+        background: #e8f3f1;
+        box-shadow: 0 2px 12px rgba(178, 224, 224, 0.13);
+      }
+      .service-desc {
+        max-width: 600px;
+        text-align: left;
+      }
+      .service-desc h2 {
+        font-family: "Playfair Display", serif;
+        font-size: 2.5rem;
+        font-weight: bold;
+      }
+      .service-desc p {
+        font-family: "Playfair Display", serif;
+        font-size: 1.1rem;
+        color: #333;
+      }
+
+      /* Post Section */
+      .post-section h2 {
+        font-family: "Playfair Display", serif;
+        font-size: 2.5rem;
+      }
+      .post-card {
+        width: 500px;
+        height: 350px;
+        background: #fafaf8;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(178, 224, 224, 0.13);
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .post-card img[alt="Ảnh bài viết"] {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        object-fit: cover;
+        border-radius: 12px;
+        opacity: 0.22;
+        z-index: 1;
+      }
+      .post-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+      }
+      .post-content img[alt="avatar"] {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin-bottom: 18px;
+      }
+      .post-text {
+        font-size: 0.5 rem;
+        font-weight: 400;
+        color: #111;
+        max-width: 90%;
+        margin: 0 auto;
+      }
+      .post-img {
+        width: 600px;
+        height: 350px;
+        background: #426441;
+        border-radius: 12px;
+      }
+
+      /* Accessory Section */
+      .accessory-section h2 {
+        font-family: "Playfair Display", serif;
+        font-size: 2.5rem;
+      }
+      .btn-more {
+        background: linear-gradient(45deg, #d4a5e6, #b2e0e0);
+        color: #fff;
+        border: none;
+        border-radius: 24px;
+        padding: 12px 36px;
+        font-size: 1.1rem;
+        font-weight: 500;
+        transition: background 0.3s, transform 0.3s;
+        box-shadow: 0 2px 8px rgba(212, 165, 230, 0.08);
+      }
+      .btn-more:hover {
+        transform: translateY(-3px) scale(1.06);
+      }
+
+      /* Responsive */
+      @media (max-width: 1200px) {
+        .card-flower,
+        .post-card,
+        .post-img {
+          width: 320px !important;
+          height: 320px !important;
+        }
+        .service-img {
+          width: 100% !important;
+          height: 220px !important;
+        }
+      }
+      @media (max-width: 992px) {
+        .category-cards,
+        .d-flex.justify-content-center.gap-5 {
+          flex-direction: column !important;
+          align-items: center !important;
+          gap: 2rem !important;
+        }
+        .service-section .d-flex {
+          flex-direction: column !important;
+          align-items: center !important;
+        }
+        .service-img,
+        .service-desc {
+          width: 100% !important;
+          max-width: 100% !important;
+        }
+        .post-card,
+        .post-img {
+          width: 100% !important;
+          height: 220px !important;
+        }
+      }
+      @media (max-width: 768px) {
+        .flower-item,
+        .bestseller-card {
+          width: 100% !important;
+          min-width: 160px;
+        }
+        .card-flower,
+        .post-card,
+        .post-img {
+          width: 100% !important;
+          height: 180px !important;
+        }
+        .service-img {
+          height: 180px !important;
+        }
+        .new-flowers-section .d-flex {
+          gap: 1rem;
+        }
+      }
+      @media (max-width: 600px) {
+        .flower-img,
+        .bestseller-img {
+          width: 60px;
+          height: 60px;
+        }
+        .flower-name,
+        .bestseller-name {
+          font-size: 1rem;
+        }
+        .category-cards,
+        .d-flex.justify-content-center.gap-5 {
+          gap: 1rem !important;
+        }
+        .btn-detail,
+        .btn-more,
+        .btn-view-all,
+        .filter-btn {
+          font-size: 1rem;
+          padding: 0.5rem 1.5rem;
+        }
+      }
+      /* Footer */
+      footer {
+        background: linear-gradient(135deg, #4a4a4a, #2c3e50);
+        color: white;
+        padding: 40px 0;
+      }
+      footer a {
+        color: #b2e0e0;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+      footer a:hover {
+        color: #d4a5e6;
+      }
+      footer .social-icon {
+        font-size: 1.6rem;
+        margin: 0 12px;
+        transition: transform 0.4s ease;
+      }
+      footer .social-icon:hover {
+        transform: rotate(360deg);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+      <div class="container">
+        <a class="navbar-brand" href="/">
+          <img
+            src="https://via.placeholder.com/50?text=🌷"
+            alt="Logo"
+            width="50"
+          />
+          Cửa Hàng Hoa
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/">Trang Chủ</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="/services">Dịch Vụ</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/products">Sản Phẩm</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/contact">Liên Hệ</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-overlay"></div>
+      <div class="flower-particles" id="flower-particles"></div>
+      <div class="hero-content">
+        <h1 data-aos="fade-down">Dịch Vụ Hoa Tươi Lãng Mạn</h1>
+        <p data-aos="fade-up" data-aos-delay="200">
+          Tạo nên những khoảnh khắc đáng nhớ với những thiết kế hoa tinh tế
+        </p>
+        <a
+          href="#services"
+          class="btn btn-primary"
+          data-aos="fade-up"
+          data-aos-delay="400"
+          >Khám Phá Ngay</a
+        >
+      </div>
+    </section>
+
+    <div class="d-flex px-5 py-5 justify-content-between bg-light">
+      <div class="px-lg-5 text-center">
+        <i class="fa-solid fa-check mau text-size2"></i>
+        <div class="mau2"><b>Hình hoa thật</b></div>
+      </div>
+      <div class="divider"></div>
+
+      <div class="px-3 text-center">
+        <i class="fa-solid fa-heart mau text-size2"></i>
+        <div class="mau2"><b>An toàn, đáng tin cậy</b></div>
+      </div>
+      <div class="divider"></div>
+
+      <div class="px-3 text-center">
+        <i class="fa-solid fa-car-side mau text-size2"></i>
+        <div class="mau2"><b>Giao hoa nhanh</b></div>
+      </div>
+      <div class="divider"></div>
+
+      <div class="px-3 text-center">
+        <i class="fa-solid fa-wallet mau text-size2"></i>
+        <div class="mau2"><b>Thanh toán dễ</b></div>
+      </div>
+      <div class="divider"></div>
+    </div>
+    <section class="new-flowers-section my-5 text-center">
+      <h2 class="mb-4">Mẫu hoa số lượng nhiều</h2>
+      <div
+        class="d-flex flex-wrap justify-content-center align-items-center gap-4"
+      >
+        <!-- Mẫu hoa 1 -->
+        <div class="flower-item text-center">
+          <img
+            src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=200&q=80"
+            alt="Hoa Hồng"
+            class="flower-img mb-2"
+          />
+          <div class="flower-name fw-semibold">Hoa Hồng</div>
+        </div>
+        <!-- Mẫu hoa 2 -->
+        <div class="flower-item text-center">
+          <img
+            src="https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=200&q=80"
+            alt="Hoa Cẩm Chướng"
+            class="flower-img mb-2"
+          />
+          <div class="flower-name fw-semibold">Hoa Cẩm Chướng</div>
+        </div>
+        <!-- Mẫu hoa 3 -->
+        <div class="flower-item text-center">
+          <img
+            src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=200&q=80"
+            alt="Hoa Cúc"
+            class="flower-img mb-2"
+          />
+          <div class="flower-name fw-semibold">Hoa Cúc</div>
+        </div>
+        <!-- Mẫu hoa 4 -->
+        <div class="flower-item text-center">
+          <img
+            src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=200&q=80"
+            alt="Hoa Ly"
+            class="flower-img mb-2"
+          />
+          <div class="flower-name fw-semibold">Hoa Ly</div>
+        </div>
+        <!-- Mẫu hoa 5 -->
+        <div class="flower-item text-center">
+          <img
+            src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=200&q=80"
+            alt="Hoa Ly"
+            class="flower-img mb-2"
+          />
+          <div class="flower-name fw-semibold">Hoa Hướng Dương</div>
+        </div>
+      </div>
+    </section>
+    <section class="row m-2 my-4 align-items-center">
+      <!-- Grid hoa -->
+      <div class="col-sm-6 d-flex justify-content-center">
+        <div class="flower-grid">
+          <th:block th:each="p, item : ${softByQuantitys}">
+            <div class="flower-box">
+              <a th:href="@{/detail(id=${p.id})}">
+                <img
+                  th:src="@{/images/{x}(x=${p.image_url})}"
+                  alt="Hoa tươi"
+                  class="flower-img-square"
+                />
+                <div class="price-tag">
+                  <span
+                    th:text="${#numbers.formatDecimal(p.price/1000, 0, 'COMMA', 0, 'POINT')+'k'}"
+                  ></span>
+                </div>
+              </a>
+            </div>
+          </th:block>
+          <th:block th:each="p, item : ${softByQuantitys}">
+            <div class="flower-box">
+              <a th:href="@{/detail(id=${p.id})}">
+                <img
+                  th:src="@{/images/{x}(x=${p.image_url})}"
+                  alt="Hoa tươi"
+                  class="flower-img-square"
+                />
+                <div class="price-tag">
+                  <span
+                    th:text="${#numbers.formatDecimal(p.price/1000, 0, 'COMMA', 0, 'POINT')+'k'}"
+                  ></span>
+                </div>
+              </a>
+            </div>
+          </th:block>
+          <th:block th:each="p, item : ${softByQuantitys}">
+            <div class="flower-box">
+              <a th:href="@{/detail(id=${p.id})}">
+                <img
+                  th:src="@{/images/{x}(x=${p.image_url})}"
+                  alt="Hoa tươi"
+                  class="flower-img-square"
+                />
+                <div class="price-tag">
+                  <span
+                    th:text="${#numbers.formatDecimal(p.price/1000, 0, 'COMMA', 0, 'POINT')+'k'}"
+                  ></span>
+                </div>
+              </a>
+            </div>
+          </th:block>
+          <th:block th:each="p, item : ${softByQuantitys}">
+            <div class="flower-box">
+              <a th:href="@{/detail(id=${p.id})}">
+                <img
+                  th:src="@{/images/{x}(x=${p.image_url})}"
+                  alt="Hoa tươi"
+                  class="flower-img-square"
+                />
+                <div class="price-tag">
+                  <span
+                    th:text="${#numbers.formatDecimal(p.price/1000, 0, 'COMMA', 0, 'POINT')+'k'}"
+                  ></span>
+                </div>
+              </a>
+            </div>
+          </th:block>
+        </div>
+      </div>
+      <!-- Ưu đãi -->
+      <div class="col-sm-6 p-5" style="font-family: 'Playfair Display', serif">
+        <h4
+          class="mb-3"
+          style="font-size: 2rem; font-weight: 600; color: #0b0b71"
+        >
+          Chọn hoa đẹp, tặng người thân yêu
+        </h4>
+        <h5 class="mb-3" style="color: #0b0b71; font-weight: 700">ƯU ĐÃI</h5>
+        <p class="mb-4" style="font-size: 1.1rem">
+          🌸 Hoa tươi nhà FO – Nơi gửi gắm yêu thương qua từng cánh hoa tươi
+          thắm, cam kết chất lượng, tươi lâu, giao nhanh, đa dạng mẫu mã cho mọi
+          dịp đặc biệt! 💐✨
+        </p>
+        <div class="row mb-4" style="color: #0b0b71">
+          <div class="col-lg-6">
+            <h6>Mua từ 2 sản phẩm giảm giá <b>10%</b></h6>
+            <h6>Free ship nội thành</h6>
+          </div>
+          <div class="col-lg-6">
+            <h6>Mua từ 5 sản phẩm giảm giá <b>20%</b></h6>
+          </div>
+        </div>
+        <button class="btn btn-detail px-4 py-2">Xem chi tiết</button>
+      </div>
+    </section>
+    <!-- Phần này có thể đặt trong file dichvu_luoi4.html -->
+    <section class="category-cards my-5 d-flex justify-content-center gap-5">
+      <!-- Phụ kiện -->
+      <div class="card-flower position-relative overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80"
+          class="card-img w-100 h-100 object-fit-cover"
+          alt="Phụ kiện"
+        />
+        <div class="card-action-btns">
+          <button class="btn btn-detail px-5 py-3">Phụ kiện</button>
+        </div>
+      </div>
+      <!-- Dịch vụ -->
+      <div class="card-flower position-relative overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&q=80"
+          class="card-img w-100 h-100 object-fit-cover"
+          alt="Dịch vụ"
+        />
+        <div class="card-action-btns">
+          <button class="btn btn-detail px-5 py-3">Dịch vụ</button>
+        </div>
+      </div>
+      <!-- Mẹo chăm sóc hoa -->
+      <div class="card-flower position-relative overflow-hidden">
+        <img
+          src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80"
+          class="card-img w-100 h-100 object-fit-cover"
+          alt="Mẹo chăm sóc hoa"
+        />
+        <div class="card-action-btns">
+          <button class="btn btn-detail px-2 py-3">Mẹo chăm sóc hoa</button>
+        </div>
+      </div>
+    </section>
+    <section class="new-flowers-section my-5 text-center">
+      <h2 class="mb-4">Mẫu hoa mới</h2>
+      <div
+        class="d-flex flex-wrap justify-content-center align-items-center gap-4"
+      >
+        <!-- Mẫu hoa 1 -->
+        <div class="flower-item text-center">
+          <img
+            src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=200&q=80"
+            alt="Hoa Hồng"
+            class="flower-img mb-2"
+          />
+          <div class="flower-name fw-semibold">Hoa Hồng</div>
+        </div>
+        <!-- Mẫu hoa 2 -->
+        <div class="flower-item text-center">
+          <img
+            src="https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=200&q=80"
+            alt="Hoa Cẩm Chướng"
+            class="flower-img mb-2"
+          />
+          <div class="flower-name fw-semibold">Hoa Cẩm Chướng</div>
+        </div>
+        <!-- Mẫu hoa 3 -->
+        <div class="flower-item text-center">
+          <img
+            src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=200&q=80"
+            alt="Hoa Cúc"
+            class="flower-img mb-2"
+          />
+          <div class="flower-name fw-semibold">Hoa Cúc</div>
+        </div>
+        <!-- Mẫu hoa 4 -->
+        <div class="flower-item text-center">
+          <img
+            src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=200&q=80"
+            alt="Hoa Ly"
+            class="flower-img mb-2"
+          />
+          <div class="flower-name fw-semibold">Hoa Ly</div>
+        </div>
+        <!-- Mẫu hoa 5 -->
+        <div class="flower-item text-center">
+          <img
+            src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=200&q=80"
+            alt="Hoa Ly"
+            class="flower-img mb-2"
+          />
+          <div class="flower-name fw-semibold">Hoa Hướng Dương</div>
+        </div>
+      </div>
+    </section>
+    <section class="best-seller-section my-5">
+      <h2 class="text-center fw-bold mb-4">Best Seller</h2>
+      <div class="d-flex justify-content-center gap-3 mb-5">
+        <button class="filter-btn active">Lẵng hoa đẹp</button>
+        <button class="filter-btn">Giỏ hoa đẹp</button>
+        <button class="filter-btn">Bó hoa đẹp</button>
+      </div>
+      <!-- Hàng 1 -->
+      <div class="d-flex justify-content-center gap-1 mb-4 flex-wrap">
+        <!-- Card 1 -->
+        <div class="bestseller-card">
+          <div class="bestseller-card-inner">
+            <div
+              class="bestseller-card-front d-flex flex-column align-items-center"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80"
+                alt="Bó hoa tươi 14"
+                class="bestseller-img mb-2"
+              />
+              <div class="bestseller-name fw-bold">Bó hoa tươi 14</div>
+              <div class="bestseller-price fw-bold">250.000 VND</div>
+            </div>
+            <div
+              class="bestseller-card-back d-flex flex-column justify-content-center align-items-center"
+            >
+              <div class="bestseller-desc mb-3">
+                Hoa tươi đẹp, phù hợp tặng sinh nhật, bạn bè, người thân.
+              </div>
+              <a href="#" class="btn btn-detail">Xem Chi Tiết</a>
+            </div>
+          </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="bestseller-card">
+          <div class="bestseller-card-inner">
+            <div
+              class="bestseller-card-front d-flex flex-column align-items-center"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&q=80"
+                alt="Bó hoa tươi 15"
+                class="bestseller-img mb-2"
+              />
+              <div class="bestseller-name fw-bold">Bó hoa tươi 15</div>
+              <div class="bestseller-price fw-bold">300.000 VND</div>
+            </div>
+            <div
+              class="bestseller-card-back d-flex flex-column justify-content-center align-items-center"
+            >
+              <div class="bestseller-desc mb-3">
+                Bó hoa sang trọng, thích hợp cho dịp đặc biệt.
+              </div>
+              <a href="#" class="btn btn-detail">Xem Chi Tiết</a>
+            </div>
+          </div>
+        </div>
+        <!-- Card 3 -->
+        <div class="bestseller-card">
+          <div class="bestseller-card-inner">
+            <div
+              class="bestseller-card-front d-flex flex-column align-items-center"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80"
+                alt="Bó hoa tươi 16"
+                class="bestseller-img mb-2"
+              />
+              <div class="bestseller-name fw-bold">Bó hoa tươi 16</div>
+              <div class="bestseller-price fw-bold">350.000 VND</div>
+            </div>
+            <div
+              class="bestseller-card-back d-flex flex-column justify-content-center align-items-center"
+            >
+              <div class="bestseller-desc mb-3">
+                Hoa tươi nhập khẩu, màu sắc nổi bật, giao nhanh.
+              </div>
+              <a href="#" class="btn btn-detail">Xem Chi Tiết</a>
+            </div>
+          </div>
+        </div>
+        <!-- Card 4 -->
+        <div class="bestseller-card">
+          <div class="bestseller-card-inner">
+            <div
+              class="bestseller-card-front d-flex flex-column align-items-center"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=400&q=80"
+                alt="Bó hoa tươi 17"
+                class="bestseller-img mb-2"
+              />
+              <div class="bestseller-name fw-bold">Bó hoa tươi 17</div>
+              <div class="bestseller-price fw-bold">400.000 VND</div>
+            </div>
+            <div
+              class="bestseller-card-back d-flex flex-column justify-content-center align-items-center"
+            >
+              <div class="bestseller-desc mb-3">
+                Bó hoa tươi phong cách hiện đại, phù hợp mọi dịp.
+              </div>
+              <a href="#" class="btn btn-detail">Xem Chi Tiết</a>
+            </div>
+          </div>
+        </div>
+        <!-- Card 5 -->
+        <div class="bestseller-card">
+          <div class="bestseller-card-inner">
+            <div
+              class="bestseller-card-front d-flex flex-column align-items-center"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80"
+                alt="Bó hoa tươi 18"
+                class="bestseller-img mb-2"
+              />
+              <div class="bestseller-name fw-bold">Bó hoa tươi 18</div>
+              <div class="bestseller-price fw-bold">420.000 VND</div>
+            </div>
+            <div
+              class="bestseller-card-back d-flex flex-column justify-content-center align-items-center"
+            >
+              <div class="bestseller-desc mb-3">
+                Bó hoa tươi tặng dịp khai trương, chúc mừng.
+              </div>
+              <a href="#" class="btn btn-detail">Xem Chi Tiết</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Hàng 2 -->
+      <div class="d-flex justify-content-center gap-1 flex-wrap">
+        <!-- Card 6 -->
+        <div class="bestseller-card">
+          <div class="bestseller-card-inner">
+            <div
+              class="bestseller-card-front d-flex flex-column align-items-center"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80"
+                alt="Bó hoa tươi 19"
+                class="bestseller-img mb-2"
+              />
+              <div class="bestseller-name fw-bold">Bó hoa tươi 19</div>
+              <div class="bestseller-price fw-bold">250.000 VND</div>
+            </div>
+            <div
+              class="bestseller-card-back d-flex flex-column justify-content-center align-items-center"
+            >
+              <div class="bestseller-desc mb-3">
+                Hoa tươi đẹp, phù hợp tặng sinh nhật, bạn bè, người thân.
+              </div>
+              <a href="#" class="btn btn-detail">Xem Chi Tiết</a>
+            </div>
+          </div>
+        </div>
+        <!-- Card 7 -->
+        <div class="bestseller-card">
+          <div class="bestseller-card-inner">
+            <div
+              class="bestseller-card-front d-flex flex-column align-items-center"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&q=80"
+                alt="Bó hoa tươi 20"
+                class="bestseller-img mb-2"
+              />
+              <div class="bestseller-name fw-bold">Bó hoa tươi 20</div>
+              <div class="bestseller-price fw-bold">300.000 VND</div>
+            </div>
+            <div
+              class="bestseller-card-back d-flex flex-column justify-content-center align-items-center"
+            >
+              <div class="bestseller-desc mb-3">
+                Bó hoa sang trọng, thích hợp cho dịp đặc biệt.
+              </div>
+              <a href="#" class="btn btn-detail">Xem Chi Tiết</a>
+            </div>
+          </div>
+        </div>
+        <!-- Card 8 -->
+        <div class="bestseller-card">
+          <div class="bestseller-card-inner">
+            <div
+              class="bestseller-card-front d-flex flex-column align-items-center"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80"
+                alt="Bó hoa tươi 21"
+                class="bestseller-img mb-2"
+              />
+              <div class="bestseller-name fw-bold">Bó hoa tươi 21</div>
+              <div class="bestseller-price fw-bold">350.000 VND</div>
+            </div>
+            <div
+              class="bestseller-card-back d-flex flex-column justify-content-center align-items-center"
+            >
+              <div class="bestseller-desc mb-3">
+                Hoa tươi nhập khẩu, màu sắc nổi bật, giao nhanh.
+              </div>
+              <a href="#" class="btn btn-detail">Xem Chi Tiết</a>
+            </div>
+          </div>
+        </div>
+        <!-- Card 9 -->
+        <div class="bestseller-card">
+          <div class="bestseller-card-inner">
+            <div
+              class="bestseller-card-front d-flex flex-column align-items-center"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=400&q=80"
+                alt="Bó hoa tươi 22"
+                class="bestseller-img mb-2"
+              />
+              <div class="bestseller-name fw-bold">Bó hoa tươi 22</div>
+              <div class="bestseller-price fw-bold">400.000 VND</div>
+            </div>
+            <div
+              class="bestseller-card-back d-flex flex-column justify-content-center align-items-center"
+            >
+              <div class="bestseller-desc mb-3">
+                Bó hoa tươi phong cách hiện đại, phù hợp mọi dịp.
+              </div>
+              <a href="#" class="btn btn-detail">Xem Chi Tiết</a>
+            </div>
+          </div>
+        </div>
+        <!-- Card 10 -->
+        <div class="bestseller-card">
+          <div class="bestseller-card-inner">
+            <div
+              class="bestseller-card-front d-flex flex-column align-items-center"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80"
+                alt="Bó hoa tươi 23"
+                class="bestseller-img mb-2"
+              />
+              <div class="bestseller-name fw-bold">Bó hoa tươi 23</div>
+              <div class="bestseller-price fw-bold">420.000 VND</div>
+            </div>
+            <div
+              class="bestseller-card-back d-flex flex-column justify-content-center align-items-center"
+            >
+              <div class="bestseller-desc mb-3">
+                Bó hoa tươi tặng dịp khai trương, chúc mừng.
+              </div>
+              <a href="#" class="btn btn-detail">Xem Chi Tiết</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="service-section my-5">
+      <div class="text-center mb-5">
+        <button class="btn-view-all">Xem toàn bộ sản phẩm</button>
+      </div>
+      <div
+        class="d-flex justify-content-center align-items-center flex-wrap gap-5"
+      >
+        <img
+          class="service-img bg-secondary"
+          src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&q=80"
+        />
+        <div class="service-desc">
+          <h2 class="fw-bold mb-3">Dịch vụ</h2>
+          <p>
+            <b>FO flower shop</b> là một trong những tiệm hoa tươi uy tín nhất
+            tại Đà Nẵng, Việt Nam. FO flower shop cung cấp dịch vụ đặt hoa
+            online giao tận nơi tại Đà nẵng và trên tất cả các tỉnh – thành phố
+            tại Việt Nam. Với hệ thống cửa hàng hoa tươi liên kết rộng khắp tất
+            cả các tỉnh – thành phố trên toàn quốc, FO flower shop có thể giúp
+            bạn gửi tặng hoa tươi cho người thân ở bất cứ nơi đâu tại Việt Nam.
+            FO flower shop cam kết mang đến cho bạn những sản phẩm hoa tươi chất
+            lượng cao, với mức giá tốt nhất và dịch chuyên nghiệp nhất khi sử
+            dụng dịch vụ đặt hoa tươi online giao tận nơi tại FO flower shop.
+          </p>
+          <div class="mt-5">
+            <button class="btn-detail">Xem chi tiết</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="post-section my-5">
+      <h2 class="text-center fw-bold mb-5">Bài viết</h2>
+      <div class="d-flex justify-content-center gap-5 flex-wrap">
+        <!-- Bên trái: bài viết -->
+        <div class="post-card position-relative">
+         
+          <div
+            class="post-content position-relative text-center"
+            style="z-index: 2"
+          >
+            <img
+              src="https://randomuser.me/api/portraits/women/44.jpg"
+              alt="avatar"
+              style="
+                width: 80px;
+                height: 80px;
+                object-fit: cover;
+                border-radius: 50%;
+                margin-bottom: 18px;
+              "
+            />
+            <div class="post-text">
+              FO flower shop cam kết mang đến cho bạn những sản phẩm hoa tươi
+              chất lượng cao, với mức giá tốt nhất và dịch chuyên nghiệp nhất
+              khi sử dụng dịch vụ đặt hoa tươi online giao tận nơi tại FO flower
+              shop.!!!!
+            </div>
+          </div>
+        </div>
+        <!-- Bên phải: ảnh -->
+        <img
+          class="post-img"
+          src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&q=80"
+          alt="Ảnh bài viết"
+        />
+      </div>
+    </section>
+    <section class="accessory-section my-5">
+      <h2 class="text-center fw-bold mb-5">Phụ kiện</h2>
+      <!-- Hàng 1 -->
+      <div class="d-flex justify-content-center gap-1 mb-4 flex-wrap">
+        <!-- Card 1 -->
+        <div class="bestseller-card">
+          <div class="bestseller-card-inner">
+            <div
+              class="bestseller-card-front d-flex flex-column align-items-center"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80"
+                alt="Bó hoa tươi 14"
+                class="bestseller-img mb-2"
+              />
+              <div class="bestseller-name fw-bold">Bó hoa tươi 14</div>
+              <div class="bestseller-price fw-bold">250.000 VND</div>
+            </div>
+            <div
+              class="bestseller-card-back d-flex flex-column justify-content-center align-items-center"
+            >
+              <div class="bestseller-desc mb-3">
+                Hoa tươi đẹp, phù hợp tặng sinh nhật, bạn bè, người thân.
+              </div>
+              <a href="#" class="btn btn-detail">Xem Chi Tiết</a>
+            </div>
+          </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="bestseller-card">
+          <div class="bestseller-card-inner">
+            <div
+              class="bestseller-card-front d-flex flex-column align-items-center"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=400&q=80"
+                alt="Bó hoa tươi 15"
+                class="bestseller-img mb-2"
+              />
+              <div class="bestseller-name fw-bold">Bó hoa tươi 15</div>
+              <div class="bestseller-price fw-bold">300.000 VND</div>
+            </div>
+            <div
+              class="bestseller-card-back d-flex flex-column justify-content-center align-items-center"
+            >
+              <div class="bestseller-desc mb-3">
+                Bó hoa sang trọng, thích hợp cho dịp đặc biệt.
+              </div>
+              <a href="#" class="btn btn-detail">Xem Chi Tiết</a>
+            </div>
+          </div>
+        </div>
+        <!-- Card 3 -->
+        <div class="bestseller-card">
+          <div class="bestseller-card-inner">
+            <div
+              class="bestseller-card-front d-flex flex-column align-items-center"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80"
+                alt="Bó hoa tươi 16"
+                class="bestseller-img mb-2"
+              />
+              <div class="bestseller-name fw-bold">Bó hoa tươi 16</div>
+              <div class="bestseller-price fw-bold">350.000 VND</div>
+            </div>
+            <div
+              class="bestseller-card-back d-flex flex-column justify-content-center align-items-center"
+            >
+              <div class="bestseller-desc mb-3">
+                Hoa tươi nhập khẩu, màu sắc nổi bật, giao nhanh.
+              </div>
+              <a href="#" class="btn btn-detail">Xem Chi Tiết</a>
+            </div>
+          </div>
+        </div>
+        <!-- Card 4 -->
+        <div class="bestseller-card">
+          <div class="bestseller-card-inner">
+            <div
+              class="bestseller-card-front d-flex flex-column align-items-center"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=400&q=80"
+                alt="Bó hoa tươi 17"
+                class="bestseller-img mb-2"
+              />
+              <div class="bestseller-name fw-bold">Bó hoa tươi 17</div>
+              <div class="bestseller-price fw-bold">400.000 VND</div>
+            </div>
+            <div
+              class="bestseller-card-back d-flex flex-column justify-content-center align-items-center"
+            >
+              <div class="bestseller-desc mb-3">
+                Bó hoa tươi phong cách hiện đại, phù hợp mọi dịp.
+              </div>
+              <a href="#" class="btn btn-detail">Xem Chi Tiết</a>
+            </div>
+          </div>
+        </div>
+        <!-- Card 5 -->
+        <div class="bestseller-card">
+          <div class="bestseller-card-inner">
+            <div
+              class="bestseller-card-front d-flex flex-column align-items-center"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80"
+                alt="Bó hoa tươi 18"
+                class="bestseller-img mb-2"
+              />
+              <div class="bestseller-name fw-bold">Bó hoa tươi 18</div>
+              <div class="bestseller-price fw-bold">420.000 VND</div>
+            </div>
+            <div
+              class="bestseller-card-back d-flex flex-column justify-content-center align-items-center"
+            >
+              <div class="bestseller-desc mb-3">
+                Bó hoa tươi tặng dịp khai trương, chúc mừng.
+              </div>
+              <a href="#" class="btn btn-detail">Xem Chi Tiết</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-5">
+        <button class="btn-more">Xem thêm</button>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer data-aos="fade-up">
+      <div class="container text-center">
+        <p>© 2025 Cửa Hàng Hoa. All Rights Reserved.</p>
+        <p>
+          <a href="mailto:info@flowerstore.com">info@flowerstore.com</a> |
+          <a href="tel:+84234567890">+84 234 567 890</a> |
+          <a href="/contact">Liên Hệ</a>
+        </p>
+        <div>
+          <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS JS -->
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script>
+      // Initialize AOS
+      AOS.init({
+        duration: 1000,
+        once: true,
+      });
+
+      // Flower Fall Animation
+      const particleContainer = document.getElementById("flower-particles");
+      function createFlower() {
+        const flower = document.createElement("div");
+        flower.classList.add("flower");
+        flower.style.left = Math.random() * 100 + "vw";
+        flower.style.animationDuration = Math.random() * 5 + 5 + "s";
+        flower.style.opacity = Math.random() * 0.5 + 0.3;
+        particleContainer.appendChild(flower);
+        setTimeout(() => flower.remove(), 10000);
+      }
+      setInterval(createFlower, 500);
+
+      // Smooth Scroll
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          document.querySelector(this.getAttribute("href")).scrollIntoView({
+            behavior: "smooth",
+          });
+        });
+      });
+
+      // Contact Form Submission
+      const form = document.getElementById("contact-form");
+      const submitBtn = form.querySelector(".btn-submit");
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (form.checkValidity()) {
+          submitBtn.classList.add("loading");
+          submitBtn.disabled = true;
+          // Simulate form submission
+          setTimeout(() => {
+            submitBtn.classList.remove("loading");
+            submitBtn.disabled = false;
+            form.reset();
+            alert("Yêu cầu của bạn đã được gửi!");
+          }, 2000);
+        } else {
+          form.reportValidity();
+        }
+      });
+    </script>
+  </body>
+</html>
