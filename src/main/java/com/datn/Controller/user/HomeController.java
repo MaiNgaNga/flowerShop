@@ -21,6 +21,7 @@ public class HomeController {
 
     @GetMapping("/home")
     public String home(Model model) {
+
         model.addAttribute("view", "home");
         return "layouts/layout";
     }
