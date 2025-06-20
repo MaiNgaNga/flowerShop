@@ -1,0 +1,82 @@
+
+  /* Tổng thể layout */
+.container1 {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #ffffff;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Tiêu đề bài viết */
+.container1 h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #111;
+}
+
+/* Phần mô tả ngắn */
+.container1 .excerpt {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+/* Nội dung chính */
+.container1 p {
+  margin-bottom: 16px;
+  text-align: justify;
+}
+
+/* Hình ảnh trong bài viết */
+.container1 img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 20px auto;
+  border-radius: 8px;
+}
+
+/* Danh sách trong bài viết */
+.container1 ul, .container ol {
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
+
+/* Blockquote */
+.container1 blockquote {
+  border-left: 4px solid #ccc;
+  padding-left: 15px;
+  color: #666;
+  font-style: italic;
+  margin: 20px 0;
+}
+
+/* Code block */
+.container1 pre {
+  background-color: #f4f4f4;
+  padding: 10px;
+  overflow-x: auto;
+  border-radius: 4px;
+}
+
+/* Liên kết */
+.container1 a {
+  color: #0077cc;
+  text-decoration: none;
+}
+.container1 a:hover {
+  text-decoration: underline;
+}
+
+/* Footer bài viết nếu có */
+.container1 .post-footer {
+  margin-top: 40px;
+  font-size: 0.9rem;
+  color: #999;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
