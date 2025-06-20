@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.datn.Service.ProductCategoryService;
 import com.datn.Service.ProductService;
 
-import com.datn.model.Product;
-
 @Controller
 public class HomeController {
     @Autowired
@@ -21,7 +19,6 @@ public class HomeController {
 
     @GetMapping("/home")
     public String home(Model model) {
-
         model.addAttribute("view", "home");
         return "layouts/layout";
     }
