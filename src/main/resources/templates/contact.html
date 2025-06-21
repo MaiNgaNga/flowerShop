@@ -18,27 +18,21 @@
     />
 
     <!-- AOS Animate On Scroll -->
-    <link
-      href="https://unpkg.com/aos@2.3.4/dist/aos.css"
-      rel="stylesheet"
-    />
-     <link rel="stylesheet" th:href="@{/css/contact-page.css}" />
-    <style>
-     
-    </style>
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/css/contact-page.css}" />
+    <style></style>
   </head>
 
   <body>
-    <div class="container contact-section">
+    <div class="container contact-section1 mt-1">
       <!-- Địa chỉ -->
       <div class="box mb-5 text-center" data-aos="fade-up">
-  <div class="contact-icon mx-auto"><i class="fas fa-map-marker-alt"></i></div>
-  <div class="contact-title">ĐỊA CHỈ</div>
-  <div class="contact-info">
-    479/38 Phan Văn Trị, P.5, Gò Vấp, HCM
-  </div>
-</div>
-
+        <div class="contact-icon mx-auto">
+          <i class="fas fa-map-marker-alt"></i>
+        </div>
+        <div class="contact-title">ĐỊA CHỈ</div>
+        <div class="contact-info">479/38 Phan Văn Trị, P.5, Gò Vấp, HCM</div>
+      </div>
 
       <!-- Fanpage, Hotline, Email -->
       <div class="row text-center mt-3">
@@ -69,7 +63,11 @@
 
       <!-- Logo + Tiêu đề -->
       <div class="text-center mt-4" data-aos="zoom-in">
-        <img src="/giaodienDATN/image/logo.png" alt="Logo" style="height: 80px" />
+        <img
+          th:src="@{/images/logo.png}"
+          alt="Logo"
+          style="height: 80px"
+        />
         <div class="logotext">
           <h1>Contact us</h1>
         </div>
@@ -79,9 +77,20 @@
       <form class="form mt-4" data-aos="fade-up" data-aos-delay="200">
         <input type="text" placeholder="Họ và tên" class="form-control mb-3" />
         <input type="email" placeholder="Email" class="form-control mb-3" />
-        <input type="text" placeholder="Số điện thoại" class="form-control mb-3" />
-        <textarea placeholder="Nội dung" class="form-control mb-3" rows="4"></textarea>
-        <button type="submit" class="btn btn-hover">Gửi liên hệ</button>
+        <input
+          type="text"
+          placeholder="Số điện thoại"
+          class="form-control mb-3"
+        />
+        <textarea
+          placeholder="Nội dung"
+          class="form-control mb-3"
+          rows="4"
+        ></textarea>
+      <div class="text-center">
+         <button type="submit" class="btn btn-hover1"><span>Gửi liên hệ</span></button>
+
+      </div>
       </form>
 
       <!-- Google Maps -->
@@ -104,7 +113,7 @@
     <script>
       AOS.init({
         duration: 800,
-        once: true
+        once: true,
       });
     </script>
   </body>
