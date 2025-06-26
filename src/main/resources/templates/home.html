@@ -10,16 +10,6 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
     />
-    <!-- Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400&display=swap"
-      rel="stylesheet"
-    />
-    <!-- AOS for Scroll Animations -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"
-      rel="stylesheet"
-    />
 
     <!-- Style css -->
     <link rel="stylesheet" th:href="@{/css/home.css}" />
@@ -31,6 +21,7 @@
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins&display=swap"
       rel="stylesheet"
     />
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   </head>
   <body>
     <!-- Hero Section -->
@@ -76,77 +67,51 @@
       </h2>
       <div class="new-flower-grid-wrapper">
         <div class="new-flower-grid">
+          <!-- Hiển thị dữ liệu sản phẩm mới từ database -->
           <div
+            th:each="product, iterStat : ${productQuantities}"
             class="new-flower-card"
             data-aos="zoom-in-up"
-            data-aos-delay="0"
+            th:data-aos-delay="${iterStat.index * 100}"
             data-aos-easing="ease-out-back"
           >
             <img
-              src="https://hoahanoi.net/wp-content/uploads/2022/03/bo-hoa-tuoi.jpg"
-              alt="Hoa Hồng"
+              th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
+              th:alt="${product.name}"
+              onerror="this.src='/images/logo.png'; this.onerror=null;"
+              style="width: 100%; height: 200px; object-fit: cover"
             />
-            <div class="new-flower-name">Hoa Hồng</div>
-          </div>
-          <div
-            class="new-flower-card"
-            data-aos="zoom-in-up"
-            data-aos-delay="100"
-            data-aos-easing="ease-out-back"
-          >
-            <img
-              src="https://hoahanoi.net/wp-content/uploads/2022/03/bo-hoa-tuoi.jpg"
-              alt="Hoa Cẩm Chướng"
-            />
-            <div class="new-flower-name">Hoa Cẩm Chướng</div>
-          </div>
-          <div
-            class="new-flower-card"
-            data-aos="zoom-in-up"
-            data-aos-delay="200"
-            data-aos-easing="ease-out-back"
-          >
-            <img
-              src="https://hoahanoi.net/wp-content/uploads/2022/03/bo-hoa-tuoi.jpg"
-              alt="Hoa Cúc"
-            />
-            <div class="new-flower-name">Hoa Cúc</div>
-          </div>
-          <div
-            class="new-flower-card"
-            data-aos="zoom-in-up"
-            data-aos-delay="300"
-            data-aos-easing="ease-out-back"
-          >
-            <img
-              src="https://hoahanoi.net/wp-content/uploads/2022/03/bo-hoa-tuoi.jpg"
-              alt="Hoa Ly"
-            />
-            <div class="new-flower-name">Hoa Ly</div>
-          </div>
-          <div
-            class="new-flower-card"
-            data-aos="zoom-in-up"
-            data-aos-delay="400"
-            data-aos-easing="ease-out-back"
-          >
-            <img
-              src="https://hoahanoi.net/wp-content/uploads/2022/03/bo-hoa-tuoi.jpg"
-              alt="Hoa Hướng Dương"
-            />
-            <div class="new-flower-name">Hoa Hướng Dương</div>
-          </div>
-          <div
-            class="new-flower-card"
-            data-aos="zoom-in-up"
-            data-aos-delay="500"
-            data-aos-easing="ease-out-back"
-          >
-            <img
-              src="https://hoahanoi.net/wp-content/uploads/2022/03/bo-hoa-tuoi.jpg"
-              alt="Hoa Bách Nhật"
-            />
-            <div class="new-flower-name">Hoa Bách Nhật</div>
+            <div class="new-flower-name" th:text="${product.name}">Tên hoa</div>
+            <div
+              class="new-flower-price"
+              th:if="${product.discountPercent != null && product.discountPercent > 0}"
+            >
+              <span
+                class="original-price"
+                th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+                >Giá gốc</span
+              >
+              <span
+                class="discount-price"
+                th:text="${#numbers.formatDecimal(product.priceAfterDiscount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+                >Giá khuyến mãi</span
+              >
+              <span
+                class="discount-percent"
+                th:text="'-' + ${product.discountPercent} + '%'"
+                >-10%</span
+              >
+            </div>
+            <div
+              class="new-flower-price"
+              th:unless="${product.discountPercent != null && product.discountPercent > 0}"
+            >
+              <span
+                class="current-price"
+                th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+                >Giá</span
+              >
+            </div>
           </div>
         </div>
       </div>
@@ -264,56 +229,55 @@
         </div>
       </div>
     </section>
-    <section class="new-flowers-section">
-      <h2 class="mb-4" data-aos="fade-up">Mẫu hoa mới</h2>
+    <section class="new-flowers-section my-5 text-center">
+      <h2 class="mb-4" data-aos="fade-up" data-aos-duration="800">Mẫu hoa mới</h2>
       <div class="new-flower-grid-wrapper">
         <div class="new-flower-grid">
-          <div class="new-flower-card" data-aos="zoom-in" data-aos-delay="0">
+          <!-- Hiển thị dữ liệu sản phẩm mới từ database -->
+          <div
+            th:each="product, iterStat : ${latestProducts}"
+            class="new-flower-card"
+            data-aos="zoom-in-up"
+            th:data-aos-delay="${iterStat.index * 100}"
+            data-aos-easing="ease-out-back"
+          >
             <img
-              src="https://hoahanoi.net/wp-content/uploads/2022/03/bo-hoa-tuoi.jpg"
-              alt="Hoa Hồng"
+              th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
+              th:alt="${product.name}"
+              onerror="this.src='/images/logo.png'; this.onerror=null;"
+              style="width: 100%; height: 200px; object-fit: cover"
             />
-            <div class="new-flower-name">Hoa Hồng</div>
-          </div>
-
-          <div class="new-flower-card" data-aos="zoom-in" data-aos-delay="100">
-            <img
-              src="https://hoahanoi.net/wp-content/uploads/2022/03/bo-hoa-tuoi.jpg"
-              alt="Hoa Cẩm Chướng"
-            />
-            <div class="new-flower-name">Hoa Cẩm Chướng</div>
-          </div>
-
-          <div class="new-flower-card" data-aos="zoom-in" data-aos-delay="200">
-            <img
-              src="https://hoahanoi.net/wp-content/uploads/2022/03/bo-hoa-tuoi.jpg"
-              alt="Hoa Cúc"
-            />
-            <div class="new-flower-name">Hoa Cúc</div>
-          </div>
-
-          <div class="new-flower-card" data-aos="zoom-in" data-aos-delay="300">
-            <img
-              src="https://hoahanoi.net/wp-content/uploads/2022/03/bo-hoa-tuoi.jpg"
-              alt="Hoa Ly"
-            />
-            <div class="new-flower-name">Hoa Ly</div>
-          </div>
-
-          <div class="new-flower-card" data-aos="zoom-in" data-aos-delay="400">
-            <img
-              src="https://hoahanoi.net/wp-content/uploads/2022/03/bo-hoa-tuoi.jpg"
-              alt="Hoa Hướng Dương"
-            />
-            <div class="new-flower-name">Hoa Hướng Dương</div>
-          </div>
-
-          <div class="new-flower-card" data-aos="zoom-in" data-aos-delay="500">
-            <img
-              src="https://hoahanoi.net/wp-content/uploads/2022/03/bo-hoa-tuoi.jpg"
-              alt="Hoa Bách Nhật"
-            />
-            <div class="new-flower-name">Hoa Bách Nhật</div>
+            <div class="new-flower-name" th:text="${product.name}">Tên hoa</div>
+            <div
+              class="new-flower-price"
+              th:if="${product.discountPercent != null && product.discountPercent > 0}"
+            >
+              <span
+                class="original-price"
+                th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+                >Giá gốc</span
+              >
+              <span
+                class="discount-price"
+                th:text="${#numbers.formatDecimal(product.priceAfterDiscount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+                >Giá khuyến mãi</span
+              >
+              <span
+                class="discount-percent"
+                th:text="'-' + ${product.discountPercent} + '%'"
+                >-10%</span
+              >
+            </div>
+            <div
+              class="new-flower-price"
+              th:unless="${product.discountPercent != null && product.discountPercent > 0}"
+            >
+              <span
+                class="current-price"
+                th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+                >Giá</span
+              >
+            </div>
           </div>
         </div>
       </div>
@@ -325,28 +289,38 @@
           class="filter-btn active"
           data-aos="fade-in"
           data-aos-delay="200"
+          data-type="lang"
         >
-          Lẵng hoa đẹp
+          Lãng hoa đẹp
         </button>
-        <button class="filter-btn" data-aos="fade-in" data-aos-delay="200">
+        <button class="filter-btn" data-aos="fade-in" data-aos-delay="200" data-type="gio">
           Giỏ hoa đẹp
         </button>
-        <button class="filter-btn" data-aos="fade-in" data-aos-delay="200">
+        <button class="filter-btn" data-aos="fade-in" data-aos-delay="200" data-type="bo">
           Bó hoa đẹp
         </button>
       </div>
 
-      <div class="product-grid" data-aos="fade-in" data-aos-delay="200">
-        <!-- Begin Card -->
-        <div class="product-card" data-aos="fade-in" data-aos-delay="300">
+      <div id="best-seller-grid" class="product-grid" data-aos="fade-in" data-aos-delay="200">
+        <!-- Dynamic products loaded from database -->
+        <div
+          th:each="product, iterStat : ${defaultBestSeller}"
+          class="product-card"
+          data-aos="fade-in"
+          th:data-aos-delay="${300 + iterStat.index * 100}"
+        >
           <div class="product-image">
             <img
-              src="https://th.bing.com/th/id/OIP.hL0olW_0qRVlrXhz8-RB4wHaI4?rs=1&pid=ImgDetMain"
+              th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
               class="default-img"
+              th:alt="${product.name}"
+              onerror="this.src='/images/logo.png'; this.onerror=null;"
             />
             <img
-              src="https://saigonreview.vn/wp-content/uploads/2023/09/1695615220-shop-hoa-tuoi-quan-11-750x737.jpg"
+              th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
               class="hover-img"
+              th:alt="${product.name}"
+              onerror="this.src='/images/logo.png'; this.onerror=null;"
             />
             <div class="cart-icon-wrapper">
               <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
@@ -354,217 +328,37 @@
             </div>
           </div>
           <div class="product-info">
-            <div class="product-name">Terrarium – Joy In Happy Garden 001</div>
-            <div class="product-price">360,000₫ – 450,000₫</div>
-            <div class="product-size">size L</div>
-            <div class="product-size">size M</div>
-          </div>
-        </div>
-        <!-- Begin Card -->
-        <div class="product-card" data-aos="fade-in" data-aos-delay="400">
-          <div class="product-image">
-            <img
-              src="https://th.bing.com/th/id/OIP.hL0olW_0qRVlrXhz8-RB4wHaI4?rs=1&pid=ImgDetMain"
-              class="default-img"
-            />
-            <img
-              src="https://saigonreview.vn/wp-content/uploads/2023/09/1695615220-shop-hoa-tuoi-quan-11-750x737.jpg"
-              class="hover-img"
-            />
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
+            <div class="product-name" th:text="${product.name}">
+              Tên sản phẩm
             </div>
-          </div>
-          <div class="product-info">
-            <div class="product-name">Terrarium – Joy In Happy Garden 001</div>
-            <div class="product-price">360,000₫ – 450,000₫</div>
-            <div class="product-size">size L</div>
-            <div class="product-size">size M</div>
-          </div>
-        </div>
-        <!-- Begin Card -->
-        <div class="product-card" data-aos="fade-in" data-aos-delay="500">
-          <div class="product-image">
-            <img
-              src="https://th.bing.com/th/id/OIP.hL0olW_0qRVlrXhz8-RB4wHaI4?rs=1&pid=ImgDetMain"
-              class="default-img"
-            />
-            <img
-              src="https://saigonreview.vn/wp-content/uploads/2023/09/1695615220-shop-hoa-tuoi-quan-11-750x737.jpg"
-              class="hover-img"
-            />
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
+            <div
+              class="product-price"
+              th:if="${product.discountPercent != null && product.discountPercent > 0}"
+            >
+              <span
+                th:text="${#numbers.formatDecimal(product.priceAfterDiscount, 0, 'COMMA', 0, 'POINT')} + '₫'"
+              ></span>
+              <span
+                style="text-decoration: line-through; color: #999"
+                th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'"
+              ></span>
             </div>
-          </div>
-          <div class="product-info">
-            <div class="product-name">Terrarium – Joy In Happy Garden 001</div>
-            <div class="product-price">360,000₫ – 450,000₫</div>
-            <div class="product-size">size L</div>
-            <div class="product-size">size M</div>
-          </div>
-        </div>
-        <!-- Begin Card -->
-        <div class="product-card" data-aos="fade-in" data-aos-delay="600">
-          <div class="product-image">
-            <img
-              src="https://th.bing.com/th/id/OIP.hL0olW_0qRVlrXhz8-RB4wHaI4?rs=1&pid=ImgDetMain"
-              class="default-img"
-            />
-            <img
-              src="https://saigonreview.vn/wp-content/uploads/2023/09/1695615220-shop-hoa-tuoi-quan-11-750x737.jpg"
-              class="hover-img"
-            />
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
+            <div
+              class="product-price"
+              th:unless="${product.discountPercent != null && product.discountPercent > 0}"
+              th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'"
+            >
+              Giá sản phẩm
             </div>
-          </div>
-          <div class="product-info">
-            <div class="product-name">Terrarium – Joy In Happy Garden 001</div>
-            <div class="product-price">360,000₫ – 450,000₫</div>
-            <div class="product-size">size L</div>
-            <div class="product-size">size M</div>
-          </div>
-        </div>
-        <!-- Begin Card -->
-        <div class="product-card" data-aos="fade-in" data-aos-delay="700">
-          <div class="product-image">
-            <img
-              src="https://th.bing.com/th/id/OIP.hL0olW_0qRVlrXhz8-RB4wHaI4?rs=1&pid=ImgDetMain"
-              class="default-img"
-            />
-            <img
-              src="https://saigonreview.vn/wp-content/uploads/2023/09/1695615220-shop-hoa-tuoi-quan-11-750x737.jpg"
-              class="hover-img"
-            />
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
+            <div class="product-size">
+              Số lượng: <span th:text="${product.quantity}">0</span>
             </div>
-          </div>
-          <div class="product-info">
-            <div class="product-name">Terrarium – Joy In Happy Garden 001</div>
-            <div class="product-price">360,000₫ – 450,000₫</div>
-            <div class="product-size">size L</div>
-            <div class="product-size">size M</div>
-          </div>
-        </div>
-        <!-- Begin Card -->
-        <div class="product-card" data-aos="fade-in" data-aos-delay="800">
-          <div class="product-image">
-            <img
-              src="https://th.bing.com/th/id/OIP.hL0olW_0qRVlrXhz8-RB4wHaI4?rs=1&pid=ImgDetMain"
-              class="default-img"
-            />
-            <img
-              src="https://saigonreview.vn/wp-content/uploads/2023/09/1695615220-shop-hoa-tuoi-quan-11-750x737.jpg"
-              class="hover-img"
-            />
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
+            <div
+              class="product-size"
+              th:text="${product.color != null ? product.color.name : 'N/A'}"
+            >
+              Màu sắc
             </div>
-          </div>
-          <div class="product-info">
-            <div class="product-name">Terrarium – Joy In Happy Garden 001</div>
-            <div class="product-price">360,000₫ – 450,000₫</div>
-            <div class="product-size">size L</div>
-            <div class="product-size">size M</div>
-          </div>
-        </div>
-        <!-- Begin Card -->
-        <div class="product-card" data-aos="fade-in" data-aos-delay="900">
-          <div class="product-image">
-            <img
-              src="https://th.bing.com/th/id/OIP.hL0olW_0qRVlrXhz8-RB4wHaI4?rs=1&pid=ImgDetMain"
-              class="default-img"
-            />
-            <img
-              src="https://saigonreview.vn/wp-content/uploads/2023/09/1695615220-shop-hoa-tuoi-quan-11-750x737.jpg"
-              class="hover-img"
-            />
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
-            </div>
-          </div>
-          <div class="product-info">
-            <div class="product-name">Terrarium – Joy In Happy Garden 001</div>
-            <div class="product-price">360,000₫ – 450,000₫</div>
-            <div class="product-size">size L</div>
-            <div class="product-size">size M</div>
-          </div>
-        </div>
-        <!-- Begin Card -->
-        <div class="product-card" data-aos="fade-in" data-aos-delay="1000">
-          <div class="product-image">
-            <img
-              src="https://th.bing.com/th/id/OIP.hL0olW_0qRVlrXhz8-RB4wHaI4?rs=1&pid=ImgDetMain"
-              class="default-img"
-            />
-            <img
-              src="https://saigonreview.vn/wp-content/uploads/2023/09/1695615220-shop-hoa-tuoi-quan-11-750x737.jpg"
-              class="hover-img"
-            />
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
-            </div>
-          </div>
-          <div class="product-info">
-            <div class="product-name">Terrarium – Joy In Happy Garden 001</div>
-            <div class="product-price">360,000₫ – 450,000₫</div>
-            <div class="product-size">size L</div>
-            <div class="product-size">size M</div>
-          </div>
-        </div>
-        <!-- Begin Card -->
-        <div class="product-card" data-aos="fade-in" data-aos-delay="1100">
-          <div class="product-image">
-            <img
-              src="https://th.bing.com/th/id/OIP.hL0olW_0qRVlrXhz8-RB4wHaI4?rs=1&pid=ImgDetMain"
-              class="default-img"
-            />
-            <img
-              src="https://saigonreview.vn/wp-content/uploads/2023/09/1695615220-shop-hoa-tuoi-quan-11-750x737.jpg"
-              class="hover-img"
-            />
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
-            </div>
-          </div>
-          <div class="product-info">
-            <div class="product-name">Terrarium – Joy In Happy Garden 001</div>
-            <div class="product-price">360,000₫ – 450,000₫</div>
-            <div class="product-size">size L</div>
-            <div class="product-size">size M</div>
-          </div>
-        </div>
-        <!-- Begin Card -->
-        <div class="product-card" data-aos="fade-in" data-aos-delay="1200">
-          <div class="product-image">
-            <img
-              src="https://th.bing.com/th/id/OIP.hL0olW_0qRVlrXhz8-RB4wHaI4?rs=1&pid=ImgDetMain"
-              class="default-img"
-            />
-            <img
-              src="https://saigonreview.vn/wp-content/uploads/2023/09/1695615220-shop-hoa-tuoi-quan-11-750x737.jpg"
-              class="hover-img"
-            />
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
-            </div>
-          </div>
-          <div class="product-info">
-            <div class="product-name">Terrarium – Joy In Happy Garden 001</div>
-            <div class="product-price">360,000₫ – 450,000₫</div>
-            <div class="product-size">size L</div>
-            <div class="product-size">size M</div>
           </div>
         </div>
       </div>
@@ -738,213 +532,7 @@
             <div class="product-size">size M</div>
           </div>
         </div>
-        <!-- Begin Card -->
-        <div class="product-card" data-aos="fade-in" data-aos-delay="400">
-          <div class="product-image">
-            <img
-              src="https://th.bing.com/th/id/OIP.hL0olW_0qRVlrXhz8-RB4wHaI4?rs=1&pid=ImgDetMain"
-              class="default-img"
-            />
-            <img
-              src="https://saigonreview.vn/wp-content/uploads/2023/09/1695615220-shop-hoa-tuoi-quan-11-750x737.jpg"
-              class="hover-img"
-            />
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
-            </div>
-          </div>
-          <div class="product-info">
-            <div class="product-name">Terrarium – Joy In Happy Garden 001</div>
-            <div class="product-price">360,000₫ – 450,000₫</div>
-            <div class="product-size">size L</div>
-            <div class="product-size">size M</div>
-          </div>
-        </div>
-        <!-- Begin Card -->
-        <div class="product-card" data-aos="fade-in" data-aos-delay="500">
-          <div class="product-image">
-            <img
-              src="https://th.bing.com/th/id/OIP.hL0olW_0qRVlrXhz8-RB4wHaI4?rs=1&pid=ImgDetMain"
-              class="default-img"
-            />
-            <img
-              src="https://saigonreview.vn/wp-content/uploads/2023/09/1695615220-shop-hoa-tuoi-quan-11-750x737.jpg"
-              class="hover-img"
-            />
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
-            </div>
-          </div>
-          <div class="product-info">
-            <div class="product-name">Terrarium – Joy In Happy Garden 001</div>
-            <div class="product-price">360,000₫ – 450,000₫</div>
-            <div class="product-size">size L</div>
-            <div class="product-size">size M</div>
-          </div>
-        </div>
-        <!-- Begin Card -->
-        <div class="product-card" data-aos="fade-in" data-aos-delay="600">
-          <div class="product-image">
-            <img
-              src="https://th.bing.com/th/id/OIP.hL0olW_0qRVlrXhz8-RB4wHaI4?rs=1&pid=ImgDetMain"
-              class="default-img"
-            />
-            <img
-              src="https://saigonreview.vn/wp-content/uploads/2023/09/1695615220-shop-hoa-tuoi-quan-11-750x737.jpg"
-              class="hover-img"
-            />
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
-            </div>
-          </div>
-          <div class="product-info">
-            <div class="product-name">Terrarium – Joy In Happy Garden 001</div>
-            <div class="product-price">360,000₫ – 450,000₫</div>
-            <div class="product-size">size L</div>
-            <div class="product-size">size M</div>
-          </div>
-        </div>
-        <!-- Begin Card -->
-        <div class="product-card" data-aos="fade-in" data-aos-delay="700">
-          <div class="product-image">
-            <img
-              src="https://th.bing.com/th/id/OIP.hL0olW_0qRVlrXhz8-RB4wHaI4?rs=1&pid=ImgDetMain"
-              class="default-img"
-            />
-            <img
-              src="https://saigonreview.vn/wp-content/uploads/2023/09/1695615220-shop-hoa-tuoi-quan-11-750x737.jpg"
-              class="hover-img"
-            />
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
-            </div>
-          </div>
-          <div class="product-info">
-            <div class="product-name">Terrarium – Joy In Happy Garden 001</div>
-            <div class="product-price">360,000₫ – 450,000₫</div>
-            <div class="product-size">size L</div>
-            <div class="product-size">size M</div>
-          </div>
-        </div>
-        <!-- Begin Card -->
-        <div class="product-card" data-aos="fade-in" data-aos-delay="800">
-          <div class="product-image">
-            <img
-              src="https://th.bing.com/th/id/OIP.hL0olW_0qRVlrXhz8-RB4wHaI4?rs=1&pid=ImgDetMain"
-              class="default-img"
-            />
-            <img
-              src="https://saigonreview.vn/wp-content/uploads/2023/09/1695615220-shop-hoa-tuoi-quan-11-750x737.jpg"
-              class="hover-img"
-            />
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
-            </div>
-          </div>
-          <div class="product-info">
-            <div class="product-name">Terrarium – Joy In Happy Garden 001</div>
-            <div class="product-price">360,000₫ – 450,000₫</div>
-            <div class="product-size">size L</div>
-            <div class="product-size">size M</div>
-          </div>
-        </div>
-        <!-- Begin Card -->
-        <div class="product-card" data-aos="fade-in" data-aos-delay="900">
-          <div class="product-image">
-            <img
-              src="https://th.bing.com/th/id/OIP.hL0olW_0qRVlrXhz8-RB4wHaI4?rs=1&pid=ImgDetMain"
-              class="default-img"
-            />
-            <img
-              src="https://saigonreview.vn/wp-content/uploads/2023/09/1695615220-shop-hoa-tuoi-quan-11-750x737.jpg"
-              class="hover-img"
-            />
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
-            </div>
-          </div>
-          <div class="product-info">
-            <div class="product-name">Terrarium – Joy In Happy Garden 001</div>
-            <div class="product-price">360,000₫ – 450,000₫</div>
-            <div class="product-size">size L</div>
-            <div class="product-size">size M</div>
-          </div>
-        </div>
-        <!-- Begin Card -->
-        <div class="product-card" data-aos="fade-in" data-aos-delay="1000">
-          <div class="product-image">
-            <img
-              src="https://th.bing.com/th/id/OIP.hL0olW_0qRVlrXhz8-RB4wHaI4?rs=1&pid=ImgDetMain"
-              class="default-img"
-            />
-            <img
-              src="https://saigonreview.vn/wp-content/uploads/2023/09/1695615220-shop-hoa-tuoi-quan-11-750x737.jpg"
-              class="hover-img"
-            />
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
-            </div>
-          </div>
-          <div class="product-info">
-            <div class="product-name">Terrarium – Joy In Happy Garden 001</div>
-            <div class="product-price">360,000₫ – 450,000₫</div>
-            <div class="product-size">size L</div>
-            <div class="product-size">size M</div>
-          </div>
-        </div>
-        <!-- Begin Card -->
-        <div class="product-card" data-aos="fade-in" data-aos-delay="1100">
-          <div class="product-image">
-            <img
-              src="https://th.bing.com/th/id/OIP.hL0olW_0qRVlrXhz8-RB4wHaI4?rs=1&pid=ImgDetMain"
-              class="default-img"
-            />
-            <img
-              src="https://saigonreview.vn/wp-content/uploads/2023/09/1695615220-shop-hoa-tuoi-quan-11-750x737.jpg"
-              class="hover-img"
-            />
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
-            </div>
-          </div>
-          <div class="product-info">
-            <div class="product-name">Terrarium – Joy In Happy Garden 001</div>
-            <div class="product-price">360,000₫ – 450,000₫</div>
-            <div class="product-size">size L</div>
-            <div class="product-size">size M</div>
-          </div>
-        </div>
-        <!-- Begin Card -->
-        <div class="product-card" data-aos="fade-in" data-aos-delay="1200">
-          <div class="product-image">
-            <img
-              src="https://th.bing.com/th/id/OIP.hL0olW_0qRVlrXhz8-RB4wHaI4?rs=1&pid=ImgDetMain"
-              class="default-img"
-            />
-            <img
-              src="https://saigonreview.vn/wp-content/uploads/2023/09/1695615220-shop-hoa-tuoi-quan-11-750x737.jpg"
-              class="hover-img"
-            />
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
-            </div>
-          </div>
-          <div class="product-info">
-            <div class="product-name">Terrarium – Joy In Happy Garden 001</div>
-            <div class="product-price">360,000₫ – 450,000₫</div>
-            <div class="product-size">size L</div>
-            <div class="product-size">size M</div>
-          </div>
-        </div>
+        
       </div>
     </section>
 
@@ -1001,10 +589,8 @@
       </div>
     </section>
 
-    <!-- AOS JS -->
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-
     <script th:src="@{/js/home-page.js}"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
   </body>
 </html>
