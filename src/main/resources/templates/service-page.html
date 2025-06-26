@@ -4,31 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dịch Vụ - Cửa Hàng Hoa</title>
-
     <!-- Bootstrap CSS -->
-    <link
-      rel="stylesheet"
-      th:href="@{/bootstrap-5.3.3-dist/css/bootstrap.min.css}"
-    />
-
-    <!-- Font Awesome for Icons -->
-    <link
-      th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css}"
-      rel="stylesheet"
-    />
-
-    <!-- Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400&display=swap"
-      rel="stylesheet"
-    />
-
-    <!-- AOS for Scroll Animations -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"
-      rel="stylesheet"
-    />
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Style css -->
     <link rel="stylesheet" th:href="@{/css/services-page.css}" />
   </head>
@@ -311,6 +290,7 @@
                 class="form-control"
                 id="name"
                 name="name"
+                placeholder="Nhập họ và tên của bạn"
                 required
               />
             </div>
@@ -321,12 +301,14 @@
                 class="form-control"
                 id="email"
                 name="email"
+                placeholder="example@email.com"
                 required
               />
             </div>
             <div class="col-12 mb-4" data-aos="fade-up" data-aos-delay="100">
               <label for="service" class="form-label">Chọn Dịch Vụ</label>
               <select class="form-select" id="service" name="service" required>
+                <option value="">-- Chọn dịch vụ --</option>
                 <option value="bo-hoa">Bó Hoa Tươi</option>
                 <option value="hoa-cuoi">Hoa Cưới</option>
                 <option value="trang-tri">Trang Trí Sự Kiện</option>
@@ -341,6 +323,7 @@
                 id="message"
                 name="message"
                 rows="5"
+                placeholder="Mô tả chi tiết yêu cầu của bạn về dịch vụ..."
                 required
               ></textarea>
             </div>
@@ -362,11 +345,10 @@
         </form>
       </div>
     </section>
-
-    <!-- Bootstrap JS and Popper.js -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- AOS JS -->
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/services-page.js}"></script>
   </body>
 </html>
