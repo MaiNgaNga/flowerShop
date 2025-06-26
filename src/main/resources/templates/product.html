@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <style>
+      .product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 16px;
+  }
+
+  .product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .card-img-box {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    perspective: 1000px;
+  }
+
+  .card-img-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s ease;
+    border-radius: 12px;
+  }
+
+  .product-card:hover .card-img-inner {
+    transform: rotateY(180deg);
+  }
+
+  .card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    backface-visibility: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 12px;
+  }
+
+  .card-img-back {
+    transform: rotateY(180deg);
+  }
+
+  .product-title {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+      .card-img-box {
+        position: relative;
+        width: 100%;
+        height: 250px;
+        perspective: 1000px;
+      }
+
+      .card-img-inner {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.6s ease;
+      }
+
+      .card:hover .card-img-inner {
+        transform: rotateY(180deg);
+      }
+
+      .card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        backface-visibility: hidden;
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-radius: 8px;
+      }
+
+      .card-img-back {
+        transform: rotateY(180deg);
+      }
+
+      /* Fade-in khi vào trang */
+      .card {
+        opacity: 0;
+        transform: translateY(40px);
+        animation: fadeInUp 0.6s ease forwards;
+      }
+
+      .card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .card:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .card:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .card:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+      .card:nth-child(5) {
+        animation-delay: 0.5s;
+      }
+      .card:nth-child(6) {
+        animation-delay: 0.6s;
+      }
+
+      @keyframes fadeInUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      form {
+  padding: 20px;
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', sans-serif;
+  max-width: 300px;
+}
+
+h3 {
+  font-size: 22px;
+  margin-bottom: 16px;
+  color: #d63384;
+  font-weight: bold;
+}
+
+.filter-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  border-left: 4px solid #d63384;
+  padding-left: 10px;
+  margin-bottom: 12px;
+}
+
+.filter-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.filter-item {
+  margin-bottom: 10px;
+}
+
+.filter-item a {
+  text-decoration: none;
+  display: block;
+  color: #333;
+  padding: 8px 12px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background-color: #fdfdfd;
+}
+
+.filter-item a:hover {
+  background-color: #ffe6f0;
+  color: #d63384;
+  border-color: #d63384;
+}
+
+.color-link {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  transition: border 0.3s;
+}
+
+.color-link:hover {
+  border: 2px solid #d63384;
+  transform: scale(1.1);
+}
+
+.color-circle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: block;
+}
+
+.term-label {
+  padding: 8px 12px;
+  display: block;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  color: #333;
+  background-color: #fafafa;
+  transition: all 0.3s ease;
+}
+
+.term-label:hover {
+  background-color: #ffe6f0;
+  color: #d63384;
+  border-color: #d63384;
+}
+ .product-card {
+        background: #fff;
+        border-radius: 14px;
+        overflow: hidden;
+        margin-bottom: 30px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        transition: all 0.4s ease;
+        position: relative;
+      }
+
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .product-img-container {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .product-img {
+        width: 100%;
+        transition: transform 0, 6s ease, opacity 0, 6s ease;
+      }
+
+      .product-card:hover .product-img {
+        transform: scale(1.05);
+      }
+
+      .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+      }
+
+      .product-card:hover .overlay {
+        opacity: 1;
+      }
+
+      .add-to-cart-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .add-to-cart-text {
+        font-size: 14px;
+        font-weight: bold;
+        color: #f5f1f1;
+        margin-bottom: 5px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .add-to-cart {
+        background-color: #bb99ad;
+        border: none;
+        border-radius: 50%;
+        padding: 14px;
+        font-size: 18px;
+        color: #ffffff;
+        cursor: pointer;
+        transform: translateY(-100px);
+        opacity: 0;
+        transition: transform 0.5s ease, opacity 0.5s ease;
+      }
+
+      .product-card:hover .add-to-cart {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      .add-to-cart:hover + .add-to-cart-text {
+        opacity: 1;
+      }
+
+      .product-info {
+        padding: 16px 12px;
+        text-align: center;
+        border-top: 1px solid #eee;
+        background-color: #fafafa;
+      }
+
+      .product-info h4 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2c2c2c;
+        margin-bottom: 8px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .product-info p {
+        font-size: 16px;
+        font-weight: 500;
+        color: #d35400;
+        margin-bottom: 12px;
+      }
+
+      .sizes {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .size-btn {
+        padding: 12px 20px;
+        background: linear-gradient(to right, #e17055, #fd79a8);
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+      }
+
+      .size-btn:hover {
+        transform: scale(1.03);
+      }
+      .size-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -75%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(
+          to right,
+          rgba(255, 255, 255, 0.4),
+          transparent
+        );
+        transform: skewX(-20deg);
+        transition: left 0.5s ease;
+        z-index: 0;
+      }
+      .size-btn:hover::before {
+        left: 125%;
+      }
+      .flip-box {
+        position: relative;
+        width: 100%;
+        height: 300px;
+        perspective: 1000px;
+      }
+
+      .front-img,
+      .back-img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        transition: transform 0.8s ease;
+        object-fit: cover;
+      }
+
+      .front-img {
+        z-index: 2;
+        transform: rotateY(0deg);
+      }
+
+      .back-img {
+        transform: rotateY(180deg);
+        z-index: 1;
+      }
+
+      .product-card:hover .front-img {
+        transform: rotateY(180deg);
+      }
+
+      .product-card:hover .back-img {
+        transform: rotateY(0deg);
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="container mt-4">
+      <div class="d-flex justify-content-between align-items-center flex-wrap">
+        <div>
+          <th:block th:if="${pro_ca != null}">
+            <h2 class="flowers" th:text="${pro_ca.name}"></h2>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                  <a href="/home" class="text-decoration-none text-secondary"
+                    >Trang chủ</a
+                  >
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                  <span class="flowers" th:text="${pro_ca.name}"></span>
+                </li>
+              </ol>
+            </nav>
+          </th:block>
+        </div>
+      </div>
+      <div class="col row align-items-start">
+        <th:block th:if="${pro_ca != null}">
+          <aside class="card col-3 bg-light p-3 border-0">
+            <form>
+              <h3>Lọc sản phẩm</h3>
+              <!-- Mức gía -->
+              <div>
+                <h4 class="filter-title">Mức Giá</h4>
+                <div class="filter-content">
+                  <ul class="filter-items">
+                    <li class="filter-item">
+                      <a
+                        th:href="@{/ProductUser(id=${pro_ca.id},min=0,max=200000,filter=price)}"
+                        rel="nofollow"
+                        role="button"
+                        class="price-range"
+                      >
+                        <span>0 - 200.000 VND</span>
+                      </a>
+                    </li>
+                    <li class="filter-item">
+                      <a
+                        th:href="@{/ProductUser(id=${pro_ca.id},min=200000,max=500000,filter=price)}"
+                        rel="nofollow"
+                        role="button"
+                        class="price-range"
+                      >
+                        <span>200.000 VND - 500.000 VND</span>
+                      </a>
+                    </li>
+                    <li class="filter-item">
+                      <a
+                        th:href="@{/ProductUser(id=${pro_ca.id},min=500000,max=10000000,filter=price)}"
+                        rel="nofollow"
+                        role="button"
+                        class="price-range"
+                      >
+                        <span>>=500.000 VND</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <!-- Màu sắc -->
+              <div>
+                <h4 class="filter-title mt-4 mb-4">Màu sắc</h4>
+                <div class="d-flex gap-3 flex-wrap">
+                  <a
+                    th:href="@{/ProductUser(id=${pro_ca.id},color=Đỏ,filter=color)}"
+                    class="color-link"
+                    role="button"
+                    rel="nofollow"
+                  >
+                    <span
+                      class="color-circle"
+                      style="background-color: #ff6961"
+                    ></span>
+                  </a>
+                  <a
+                    th:href="@{/ProductUser(id=${pro_ca.id},color=Hồng,filter=color)}"
+                    class="color-link"
+                    role="button"
+                    rel="nofollow"
+                  >
+                    <span
+                      class="color-circle"
+                      style="background-color: #ffb6c1"
+                    ></span>
+                  </a>
+                  <a
+                    th:href="@{/ProductUser(id=${pro_ca.id},color=Vàng,filter=color)}"
+                    class="color-link"
+                    role="button"
+                    rel="nofollow"
+                  >
+                    <span
+                      class="color-circle"
+                      style="background-color: #ffeb3b"
+                    ></span>
+                  </a>
+                  <a
+                    th:href="@{/ProductUser(id=${pro_ca.id},color=Xanh+dương,filter=color)}"
+                    class="color-link"
+                    role="button"
+                    rel="nofollow"
+                  >
+                    <span
+                      class="color-circle"
+                      style="background-color: #64b5f6"
+                    ></span>
+                  </a>
+                  <a
+                    th:href="@{/ProductUser(id=${pro_ca.id},color=Xanh,filter=color)}"
+                    class="color-link"
+                    role="button"
+                    rel="nofollow"
+                  >
+                    <span
+                      class="color-circle"
+                      style="background-color: #35e67f"
+                    ></span>
+                  </a>
+                  <a
+                    th:href="@{/ProductUser(id=${pro_ca.id},color=Trắng,filter=color)}"
+                    class="color-link"
+                    role="button"
+                    rel="nofollow"
+                  >
+                    <span
+                      class="color-circle"
+                      style="background-color: #ffffff; border: 1px solid #ddd"
+                    ></span>
+                  </a>
+                  <a
+                    th:href="@{/ProductUser(id=${pro_ca.id},color=Tím,filter=color)}"
+                    class="color-link"
+                    role="button"
+                    rel="nofollow"
+                  >
+                    <span
+                      class="color-circle"
+                      style="background-color: #c084fc"
+                    ></span>
+                  </a>
+                  <a
+                    th:href="@{/ProductUser(id=${pro_ca.id},color=Cam,filter=color)}"
+                    class="color-link"
+                    role="button"
+                    rel="nofollow"
+                  >
+                    <span
+                      class="color-circle"
+                      style="background-color: #f4a261"
+                    ></span>
+                  </a>
+                </div>
+              </div>
+              <!-- Loại hoa -->
+              <div>
+                <h4 class="filter-title mt-4 mb-4">Loại hoa</h4>
+                <div class="filter-content">
+                  <ul class="filter-items">
+                    <th:block th:each="item:${categogies}">
+                      <li class="filter-item filter-text mt-2 mb-2">
+                        <a
+                          th:href="@{/ProductUser(id=${pro_ca.id},categoryId=${item.id},filter=ca_id)}"
+                          rel="nofollow"
+                          role="button"
+                          class="term-label"
+                          th:text="${item.name}"
+                        ></a>
+                      </li>
+                    </th:block>
+                  </ul>
+                </div>
+              </div>
+            </form>
+          </aside>
+        </th:block>
+        <article th:class="${pro_ca != null} ? 'col-9' : 'col-12'">
+          <div class="row">
+            <th:block th:each="item:${page.content}">
+              <div class="col-md-3 mb-4">
+                <div
+                  class="card product-card border-0 shadow-sm rounded-4 overflow-hidden text-center"
+                >
+                  <a
+                    th:href="@{/detail(id=${item.id})}"
+                    class="text-decoration-none"
+                  >
+                    <div class="card-img-box">
+                      <div class="card-img-inner">
+                        <img
+                          th:src="@{/images/{image}(image=${item.image_url})}"
+                          alt="front"
+                          class="card-img card-img-front"
+                        />
+                        <img
+                          th:src="@{/images/{image}(image=${item.image_url})}"
+                          alt="back"
+                          class="card-img card-img-back"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="card-body p-3">
+                      <span
+                        class="text-muted small d-block mb-1"
+                        th:text="${item.id}"
+                      ></span>
+                      <h6
+                        class="fw-semibold text-dark mb-2"
+                        th:text="${item.name}"
+                      ></h6>
+
+                      <!-- Có giảm giá -->
+                      <th:block
+                        th:if="${item.discountPercent != null && item.discountPercent > 0}"
+                      >
+                        <span
+                          class="fw-bold text-danger d-block"
+                          th:text="${#numbers.formatDecimal(item.getPriceAfterDiscount(), 0, 'COMMA', 0, 'POINT')} + ' VND'"
+                        ></span>
+                        <span
+                          class="text-muted text-decoration-line-through small"
+                          th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+                        ></span>
+                      </th:block>
+
+                      <!-- Không có giảm giá -->
+                      <th:block
+                        th:if="${item.discountPercent == null || item.discountPercent == 0}"
+                      >
+                        <span
+                          class="fw-bold text-muted d-block"
+                          th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+                        ></span>
+                      </th:block>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </th:block>
+          </div>
+          <th:block th:if="${pro_ca != null}">
+            <div class="container">
+              <nav aria-label="Phân trang sản phẩm">
+                <ul class="page-numbers nav-pagination links text-center">
+                  <li>
+                    <a
+                      class="btn"
+                      th:href="@{/ProductUser(id=${pro_ca.id}, p=0, min=${min}, max=${max}, filter=${filter})}"
+                      th:classappend="${page.number == 0} ? 'disabled' : ''"
+                      >First</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="btn"
+                      th:href="@{/ProductUser(id=${pro_ca.id}, p=${page.number - 1}, min=${min}, max=${max}, filter=${filter})}"
+                      th:classappend="${page.number == 0} ? 'disabled' : ''"
+                      ><i class="fas fa-angle-left"></i
+                    ></a>
+                  </li>
+                  <li
+                    th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                  >
+                    <a
+                      class="btn"
+                      th:href="@{/ProductUser(id=${pro_ca.id}, p=${i}, min=${min}, max=${max}, filter=${filter})}"
+                      th:classappend="${i == page.number} ? 'active' : ''"
+                      th:text="${i + 1}"
+                    ></a>
+                  </li>
+                  <li>
+                    <a
+                      class="btn"
+                      th:href="@{/ProductUser(id=${pro_ca.id}, p=${page.number + 1}, min=${min}, max=${max}, filter=${filter})}"
+                      th:classappend="${page.number == page.totalPages - 1} ? 'disabled' : ''"
+                      ><i class="fas fa-angle-right"></i
+                    ></a>
+                  </li>
+                  <li>
+                    <a
+                      class="btn"
+                      th:href="@{/ProductUser(id=${pro_ca.id}, p=${page.totalPages - 1}, min=${min}, max=${max}, filter=${filter})}"
+                      th:classappend="${page.number == page.totalPages - 1} ? 'disabled' : ''"
+                      >Last</a
+                    >
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </th:block>
+          <th:block th:if="${pro_ca == null}">
+            <div class="container">
+              <nav aria-label="Phân trang tìm kiếm">
+                <ul class="page-numbers nav-pagination links text-center">
+                  <li>
+                    <a
+                      class="btn"
+                      th:href="@{/search(keyword=${searchKeyword}, p=0)}"
+                      th:classappend="${page.number == 0} ? 'disabled' : ''"
+                      >First</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="btn"
+                      th:href="@{/search(keyword=${searchKeyword}, p=${page.number - 1})}"
+                      th:classappend="${page.number == 0} ? 'disabled' : ''"
+                      ><i class="fas fa-angle-left"></i
+                    ></a>
+                  </li>
+                  <li
+                    th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                  >
+                    <a
+                      class="btn"
+                      th:href="@{/search(keyword=${searchKeyword}, p=${i})}"
+                      th:classappend="${i == page.number} ? 'active' : ''"
+                      th:text="${i + 1}"
+                    ></a>
+                  </li>
+                  <li>
+                    <a
+                      class="btn"
+                      th:href="@{/search(keyword=${searchKeyword}, p=${page.number + 1})}"
+                      th:classappend="${page.number == page.totalPages - 1} ? 'disabled' : ''"
+                      ><i class="fas fa-angle-right"></i
+                    ></a>
+                  </li>
+                  <li>
+                    <a
+                      class="btn"
+                      th:href="@{/search(keyword=${searchKeyword}, p=${page.totalPages - 1})}"
+                      th:classappend="${page.number == page.totalPages - 1} ? 'disabled' : ''"
+                      >Last</a
+                    >
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </th:block>
+        </article>
+      </div>
+      <div class="container">
+      <div class="text">Sản phẩm tương tự</div>
+      <div class="row">
+        <!-- Card 1 -->
+        <div class="col-lg-3 col-md-6">
+          <div class="product-card">
+            <div class="product-img-container">
+              <div class="flip-box">
+                <img
+                  src="/giaodienDATN/image/tot_nghiep.webp"
+                  class="product-img front-img"
+                />
+                <img
+                  src="/giaodienDATN/image/Bo-Hoa-Tuoi-TH-B107-everything-450x563.webp"
+                  class="product-img back-img"
+                />
+              </div>
+
+              <div class="overlay">
+                <div class="add-to-cart-container">
+                  <button class="add-to-cart">
+                    <i class="fa fa-shopping-cart"></i>
+                  </button>
+                  <div class="add-to-cart-text">Add to cart</div>
+                </div>
+              </div>
+            </div>
+            <div class="product-info">
+              <h4>Bó hoa cưới</h4>
+              <p>360,000₫</p>
+              <div class="sizes">
+                <button class="size-btn">Mua ngay</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 2 -->
+        <div class="col-lg-3 col-md-6">
+          <div class="product-card">
+            <div class="product-img-container">
+              <div class="flip-box">
+                <img
+                  src="/giaodienDATN/image/tot_nghiep.webp"
+                  class="product-img front-img"
+                />
+                <img
+                  src="/giaodienDATN/image/Bo-Hoa-Tuoi-TH-B107-everything-450x563.webp"
+                  class="product-img back-img"
+                />
+              </div>
+
+              <div class="overlay">
+                <div class="add-to-cart-container">
+                  <button class="add-to-cart">
+                    <i class="fa fa-shopping-cart"></i>
+                  </button>
+                  <div class="add-to-cart-text">Add to cart</div>
+                </div>
+              </div>
+            </div>
+            <div class="product-info">
+              <h4>Bó hoa cưới</h4>
+              <p>360,000₫</p>
+              <div class="sizes">
+                <button class="size-btn">Mua ngay</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 3 -->
+        <div class="col-lg-3 col-md-6">
+          <div class="product-card">
+            <div class="product-img-container">
+              <div class="flip-box">
+                <img
+                  src="/giaodienDATN/image/tot_nghiep.webp"
+                  class="product-img front-img"
+                />
+                <img
+                  src="/giaodienDATN/image/Bo-Hoa-Tuoi-TH-B107-everything-450x563.webp"
+                  class="product-img back-img"
+                />
+              </div>
+
+              <div class="overlay">
+                <div class="add-to-cart-container">
+                  <button class="add-to-cart">
+                    <i class="fa fa-shopping-cart"></i>
+                  </button>
+                  <div class="add-to-cart-text">Add to cart</div>
+                </div>
+              </div>
+            </div>
+            <div class="product-info">
+              <h4>Bó hoa cưới</h4>
+              <p>360,000₫</p>
+              <div class="sizes">
+                <button class="size-btn">Mua ngay</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Bạn có thể thêm các Card khác tương tự -->
+<div class="col-lg-3 col-md-6">
+          <div class="product-card">
+            <div class="product-img-container">
+              <div class="flip-box">
+                <img
+                  src="/giaodienDATN/image/tot_nghiep.webp"
+                  class="product-img front-img"
+                />
+                <img
+                  src="/giaodienDATN/image/Bo-Hoa-Tuoi-TH-B107-everything-450x563.webp"
+                  class="product-img back-img"
+                />
+              </div>
+
+              <div class="overlay">
+                <div class="add-to-cart-container">
+                  <button class="add-to-cart">
+                    <i class="fa fa-shopping-cart"></i>
+                  </button>
+                  <div class="add-to-cart-text">Add to cart</div>
+                </div>
+              </div>
+            </div>
+            <div class="product-info">
+              <h4>Bó hoa cưới</h4>
+              <p>360,000₫</p>
+              <div class="sizes">
+                <button class="size-btn">Mua ngay</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    </div>
+  </body>
+</html>

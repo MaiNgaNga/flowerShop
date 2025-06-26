@@ -71,4 +71,8 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
     @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     Page<Product> searchByName(@Param("keyword") String keyword, Pageable pageable);
 
+    // san pham tuong tu theo category
+    @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId ")
+    List<Product> findProductByCategory(Integer categoryId);
+
 }
