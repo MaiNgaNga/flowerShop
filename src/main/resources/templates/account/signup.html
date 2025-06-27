@@ -1,0 +1,64 @@
+<div
+  class="success alert alert-success"
+  th:if="${success}"
+  th:text="${success}"
+></div>
+<form
+  th:action="@{/signup}"
+  class="rounded mt-4 mb-2 mx-auto w-50"
+  th:object="${User}"
+  method="post"
+>
+  <h4
+    style="font-family: Georgia, 'Times New Roman', Times, serif"
+    class="text-center"
+  >
+    Đăng kí
+  </h4>
+  <i class="error text-danger" th:if="${error}" th:text="${error}"></i>
+  <input
+    type="text"
+    id="id"
+    th:field="*{id}"
+    hidden
+    class="form-control form-control-sm"
+  />
+  <div class="py-2">
+    <label for="" class="form-label">Họ và tên</label>
+    <input
+      type="text"
+      th:field="*{name}"
+      id="name"
+      class="form-control form-control-sm"
+      placeholder="Nhập tên người dùng"
+    />
+    <i class="error" th:errors="*{name}"></i>
+  </div>
+  <div class="py-2">
+    <label for="" class="form-label">Email</label>
+    <input
+      type="email"
+      th:field="*{email}"
+      id="email"
+      class="form-control form-control-sm"
+      placeholder="Nhập email"
+    />
+    <i class="error" th:errors="*{email}"></i>
+  </div>
+
+  <div class="py-2">
+    <label for="" class="form-label">Mật khẩu</label>
+    <input
+      type="password"
+      name="password"
+      th:field="*{password}"
+      class="form-control"
+      placeholder="Password"
+    />
+    <i class="error" th:errors="*{password}"></i>
+  </div>
+  <input th:field="*{role}" hidden value="false" id="roleUser" />
+  <div class="pt-2 pb-4">
+    <button type="submit" class="btn-dark btn">Đăng kí</button>
+  </div>
+</form>
