@@ -31,6 +31,11 @@ public class DetailController {
         // model.addAttribute("comments", commentService.getCommentsByProduct(id));
         model.addAttribute("product", productService.findByID(id));
         model.addAttribute("productCategories", pro_ca_service.findAll());
+        model.addAttribute("productSimilar", productService.findProductByCategory(productService.findByID(id).getCategory().getId()));
+        if (productService.findByID(id) == null) {
+            redirectAttributes.addFlashAttribute("error", "Sản phẩm không tồn tại.");
+            return "redirect:/ProductUser?id=1";
+        }
         model.addAttribute("view", "detail");
         return "layouts/layout";
     }

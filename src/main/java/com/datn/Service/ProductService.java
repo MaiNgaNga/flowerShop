@@ -8,54 +8,64 @@ import org.springframework.web.multipart.MultipartFile;
 import com.datn.model.Product;
 
 public interface ProductService {
-    List<Product> findAll();
+        List<Product> findAll();
 
-    Product findByID(long id);
+        Product findByID(long id);
 
-    Product create(Product entity, MultipartFile imageFile);
+        Product create(Product entity, MultipartFile imageFile);
 
-    void update(Product entity, MultipartFile imageFile, String oldImage);
+        void update(Product entity, MultipartFile imageFile, String oldImage);
 
-    void deleteById(long id);
+        void deleteById(long id);
 
-    boolean existsById(long id);
+        boolean existsById(long id);
 
-    List<Product> findBestSellingProductPerCategory();
+        List<Product> findBestSellingProductPerCategory();
 
-    List<Product> findByProductOrderByQuantityDesc();
+        List<Product> findByProductOrderByQuantityDesc();
 
-    List<Product> findLatestProductsPerCategory();
+        List<Product> findTop6ByOrderByQuantityDesc();
 
-    List<Product> findProductByNameProductCategory(String name);
+        List<Product> findLatestProductsPerCategory();
 
-    List<Product> findByCategory_Id(int id);
+        List<Product> findProductByNameProductCategory(String name);
 
-    List<Product> findByProductCategoryId(int id);
+        List<Product> findByCategory_Id(int id);
 
-    Page<Product> findByPriceRange(
-            Integer productCategoryId,
-            Double minPrice,
-            Double maxPrice,
-            Pageable pageable);
+        List<Product> findByProductCategoryId(int id);
 
-    Page<Product> findByProductCategoryIdPage(
-            Integer productCategoryId,
-            Pageable pageable);
+        Page<Product> findByPriceRange(
+                        Integer productCategoryId,
+                        Double minPrice,
+                        Double maxPrice,
+                        Pageable pageable);
 
-    Page<Product> findByColor(
-            Integer productCategoryId,
-            String color,
-            Pageable pageable);
+        Page<Product> findByProductCategoryIdPage(
+                        Integer productCategoryId,
+                        Pageable pageable);
 
-    Page<Product> findByCaId(
-            Integer productCategoryId,
-            int categoryId,
-            Pageable pageable);
+        Page<Product> findByColor(
+                        Integer productCategoryId,
+                        String color,
+                        Pageable pageable);
 
-    // Page<Product> findBestSellingProductsByCategory( Integer
-    // productCatelogyId,Pageable pageable);
-    Page<Product> findByAllProduct(Pageable pageable);
+        Page<Product> findByCaId(
+                        Integer productCategoryId,
+                        int categoryId,
+                        Pageable pageable);
 
-    Page<Product> searchByName(String name, Pageable pageable);
+        // Page<Product> findBestSellingProductsByCategory( Integer
+        // productCatelogyId,Pageable pageable);
+        Page<Product> findByAllProduct(Pageable pageable);
 
+        Page<Product> searchByName(String name, Pageable pageable);
+
+        // Method để tìm best seller theo category name
+        List<Product> findBestSellerByCategory(String categoryName);
+
+        List<Product> findProductByCategory(Integer categoryId);
+
+      
+    
 }
+

@@ -1,14 +1,47 @@
 /* --- CSS RESET & BASE --- */
 :root {
+  /* Colors */
   --primary-gradient: linear-gradient(135deg, #d4a5e6, #b2e0e0);
   --primary-color: #d4a5e6;
   --secondary-color: #b2e0e0;
   --text-color: #222;
+  --text-secondary: #333;
+  --text-muted: #444;
+  --text-light: #111;
+  --bg-white: #fff;
+  --bg-light: #f7f7f7;
+  --border-color: #ccc;
+  
+  /* Typography */
   --heading-font: "Playfair Display", serif;
   --body-font: "Poppins", sans-serif;
+  --font-weight-normal: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* Layout */
   --border-radius: 20px;
-  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --border-radius-small: 4px;
+  --border-radius-medium: 10px;
+  --border-radius-large: 25px;
   --max-width: 1265px;
+  
+  /* Transitions */
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 0.3s ease;
+  --transition-slow: 0.4s ease;
+  --transition-very-slow: 0.5s ease;
+  
+  /* Z-index management */
+  --z-overlay: 1;
+  --z-dropdown: 2;
+  --z-modal: 10;
+  --z-tooltip: 20;
+  
+  /* Shadows */
+  --shadow-light: 0 2px 8px rgba(212, 165, 230, 0.08);
+  --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-heavy: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 *,
@@ -52,7 +85,7 @@ h5,
 h6 {
   font-family: var(--heading-font);
   color: var(--text-color);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   line-height: 1.2;
 }
 
@@ -75,7 +108,7 @@ textarea {
 button {
   cursor: pointer;
   transition: background var(--transition), color var(--transition),
-    box-shadow var(--transition);
+    box-shadow var(--transition), transform var(--transition);
 }
 
 /* --- Responsive Typography & Layout --- */
@@ -170,7 +203,7 @@ button {
 .hero-content h1 {
   font-family: var(--heading-font);
   font-size: 5rem;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
   animation: fadeInDown 1.5s ease-out;
 }
@@ -234,12 +267,12 @@ button {
   font-size: 36px;
   color: #045d56;
   margin-bottom: 12px;
-  transition: transform 0.3s ease;
+  transition: transform var(--transition-fast);
 }
 
 .feature-item p {
   font-size: 16px;
-  font-weight: 500;
+  font-weight: var(--font-weight-normal);
   color: #1c92d2;
   margin-top: 8px;
 }
@@ -268,7 +301,7 @@ button {
   height: 250px;
   border-radius: var(--border-radius);
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-medium);
 }
 
 .promo-card img {
@@ -276,7 +309,7 @@ button {
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.3s ease;
+  transition: transform var(--transition-fast);
 }
 
 .promo-card:hover img {
@@ -288,24 +321,24 @@ button {
   top: 10px;
   right: 10px;
   background: var(--primary-gradient);
-  color: white;
+  color: var(--bg-white);
   padding: 4px 10px;
-  border-radius: 20px;
+  border-radius: var(--border-radius-large);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  z-index: 1;
+  z-index: var(--z-overlay);
 }
 
 .promo-text {
   max-width: 600px;
-  color: #111;
+  color: var(--text-light);
 }
 
 .promo-text h2 {
   font-size: 2.4rem;
   color: #13006d;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   margin-bottom: 10px;
 }
 
@@ -330,15 +363,15 @@ button {
 .promo-text a {
   display: inline-block;
   margin-top: 25px;
-  font-weight: 500;
+  font-weight: var(--font-weight-normal);
   font-size: 16px;
-  color: white;
+  color: var(--bg-white);
   background: var(--primary-gradient);
   padding: 10px 25px;
-  border-radius: 25px;
+  border-radius: var(--border-radius-large);
   text-decoration: none;
   box-shadow: 0 4px 12px rgba(212, 165, 230, 0.3);
-  transition: all 0.3s ease;
+  transition: all var(--transition-fast);
   position: relative;
   overflow: hidden;
 }
@@ -353,7 +386,7 @@ button {
   height: 300%;
   background: rgba(255, 255, 255, 0.25);
   border-radius: 50%;
-  transition: transform 0.5s ease;
+  transition: transform var(--transition-very-slow);
   z-index: 0;
 }
 
@@ -368,7 +401,7 @@ button {
 
 .promo-text a span {
   position: relative;
-  z-index: 1;
+  z-index: var(--z-overlay);
 }
 
 /* New flower */
@@ -380,7 +413,7 @@ button {
 .new-flowers-section h2 {
   font-family: var(--heading-font);
   font-size: 2rem;
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   text-align: center;
   margin-bottom: 30px;
 }
@@ -402,7 +435,7 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  transition: transform var(--transition-slow), box-shadow var(--transition-slow);
   cursor: pointer;
 }
 
@@ -417,14 +450,14 @@ button {
   border-radius: 50%;
   border: none;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
 }
 
 .new-flower-name {
   margin-top: 12px;
   font-size: 15px;
-  font-weight: 500;
-  color: #333;
+  font-weight: var(--font-weight-normal);
+  color: var(--text-secondary);
 }
 
 .new-flower-card:hover img {
@@ -446,8 +479,8 @@ button {
   border-radius: var(--border-radius);
   height: 400px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  box-shadow: var(--shadow-medium);
+  transition: transform var(--transition-fast);
 }
 
 .image-card:hover {
@@ -467,8 +500,8 @@ button {
   inset: 0;
   background: rgba(255, 255, 255, 0.4);
   opacity: 0;
-  transition: opacity 0.4s ease;
-  z-index: 1;
+  transition: opacity var(--transition-slow);
+  z-index: var(--z-overlay);
 }
 
 .image-card:hover .image-overlay {
@@ -482,13 +515,13 @@ button {
   transform: translate(-50%, -50%);
   background: var(--primary-gradient);
   padding: 12px 30px;
-  color: #222;
-  font-weight: 500;
+  color: var(--text-color);
+  font-weight: var(--font-weight-normal);
   font-size: 16px;
-  border-radius: 10px;
+  border-radius: var(--border-radius-medium);
   opacity: 0;
-  transition: all 0.4s ease;
-  z-index: 2;
+  transition: all var(--transition-slow);
+  z-index: var(--z-dropdown);
 }
 
 .image-card:hover .image-overlay-button {
@@ -505,7 +538,7 @@ button {
 .best-seller-section h2 {
   font-family: var(--heading-font);
   font-size: 2rem;
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   margin-bottom: 2rem;
   text-align: center;
 }
@@ -517,22 +550,22 @@ button {
 
 .filter-btn {
   font-family: var(--heading-font);
-  background-color: white;
-  color: #111;
+  background-color: var(--bg-white);
+  color: var(--text-light);
   border: 1px solid var(--primary-color);
   border-radius: 24px;
   padding: 12px 32px;
   font-size: 1.1rem;
   margin: 0 8px;
-  font-weight: 500;
-  transition: background 0.3s, transform 0.3s;
-  box-shadow: 0 2px 8px rgba(212, 165, 230, 0.08);
+  font-weight: var(--font-weight-normal);
+  transition: background var(--transition-fast), transform var(--transition-fast);
+  box-shadow: var(--shadow-light);
 }
 
 .filter-btn.active,
 .filter-btn:hover {
   background: var(--primary-gradient);
-  color: #fff;
+  color: var(--bg-white);
   transform: translateY(-2px) scale(1.05);
 }
 
@@ -548,19 +581,19 @@ button {
 }
 
 .product-card {
-  background: white;
+  background: var(--bg-white);
   border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-medium);
   overflow: hidden;
   width: 100%;
   max-width: 220px;
   text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .product-card:hover {
   transform: scale(1.03);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-heavy);
 }
 
 .product-image {
@@ -577,12 +610,12 @@ button {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: opacity 0.3s ease, transform 0.4s ease;
+  transition: opacity var(--transition-fast), transform var(--transition-slow);
 }
 
 .hover-img {
   opacity: 0;
-  z-index: 1;
+  z-index: var(--z-overlay);
 }
 
 .product-card:hover .hover-img {
@@ -601,8 +634,8 @@ button {
   transform: translate(-50%, -200%);
   text-align: center;
   opacity: 0;
-  transition: transform 0.5s ease, opacity 0.5s ease;
-  z-index: 2;
+  transition: transform var(--transition-very-slow), opacity var(--transition-very-slow);
+  z-index: var(--z-dropdown);
 }
 
 .product-card:hover .cart-icon-wrapper {
@@ -612,7 +645,7 @@ button {
 
 .cart-icon {
   background: var(--primary-gradient);
-  color: white;
+  color: var(--bg-white);
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -626,14 +659,14 @@ button {
 
 .add-to-cart-text {
   background: var(--primary-gradient);
-  color: white;
+  color: var(--bg-white);
   padding: 4px 10px;
-  border-radius: 4px;
+  border-radius: var(--border-radius-small);
   font-size: 13px;
   margin-bottom: 8px;
   opacity: 0;
   transform: translateY(10px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
 
 .cart-icon:hover + .add-to-cart-text {
@@ -647,21 +680,21 @@ button {
 
 .product-name {
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   margin-bottom: 5px;
 }
 
 .product-price {
   font-size: 1.1rem;
-  color: #333;
+  color: var(--text-secondary);
   margin-bottom: 10px;
 }
 
 .product-size {
-  background: #f7f7f7;
-  border: 1px solid #ccc;
+  background: var(--bg-light);
+  border: 1px solid var(--border-color);
   padding: 5px 10px;
-  border-radius: 4px;
+  border-radius: var(--border-radius-small);
   font-size: 14px;
   display: inline-block;
   margin: 2px;
@@ -703,7 +736,7 @@ button {
 
 .carousel-images img.active {
   opacity: 1;
-  z-index: 1;
+  z-index: var(--z-overlay);
 }
 
 .service-content {
@@ -714,14 +747,14 @@ button {
 
 .service-content h2 {
   font-size: 2rem;
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   margin-bottom: 20px;
-  color: #222;
+  color: var(--text-color);
 }
 
 .service-content p {
   font-size: 17px;
-  color: #444;
+  color: var(--text-muted);
   line-height: 1.7;
   margin-bottom: 30px;
 }
@@ -730,15 +763,15 @@ button {
 .service-button {
   display: inline-block;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: var(--font-weight-normal);
   padding: 12px 30px;
-  border-radius: 25px;
+  border-radius: var(--border-radius-large);
   background: var(--primary-gradient);
-  color: white;
+  color: var(--bg-white);
   text-decoration: none;
   position: relative;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .service-button::before {
@@ -766,7 +799,7 @@ button {
 
 .service-button span {
   position: relative;
-  z-index: 1;
+  z-index: var(--z-overlay);
 }
 .post-slider-section {
   max-width: 1000px;
@@ -778,9 +811,9 @@ button {
 .section-title {
   font-family: var(--heading-font);
   font-size: 2rem;
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   margin-bottom: 40px;
-  color: #222;
+  color: var(--text-color);
 }
 
 .swiper {
@@ -788,10 +821,10 @@ button {
 }
 
 .swiper-slide {
-  background: white;
+  background: var(--bg-white);
   border-radius: var(--border-radius);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-  transition: all 0.4s ease;
+  transition: all var(--transition-slow);
   opacity: 0.4;
   filter: grayscale(20%);
   padding: 30px 20px;
@@ -802,7 +835,7 @@ button {
 .swiper-slide.swiper-slide-active {
   opacity: 1 !important;
   filter: none !important;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-heavy);
 }
 
 .avatar-img {
@@ -811,13 +844,13 @@ button {
   border-radius: 50%;
   object-fit: cover;
   margin: 0 auto 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  box-shadow: var(--shadow-medium);
+  transition: transform var(--transition-fast);
 }
 
 .post-content {
   font-size: 16px;
-  color: #444;
+  color: var(--text-muted);
   padding: 0 10px;
 }
 
@@ -826,11 +859,11 @@ button {
   margin-top: 15px;
   padding: 8px 20px;
   background: var(--primary-gradient);
-  color: white;
-  border-radius: 25px;
+  color: var(--bg-white);
+  border-radius: var(--border-radius-large);
   text-decoration: none;
-  font-weight: 500;
-  transition: all 0.3s ease;
+  font-weight: var(--font-weight-normal);
+  transition: all var(--transition-fast);
 }
 
 .read-more-btn:hover {
@@ -841,10 +874,10 @@ button {
 .accessory-section h2 {
   font-family: var(--heading-font);
   font-size: 2rem;
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   text-align: center;
   margin-bottom: 20px;
-  color: #222;
+  color: var(--text-color);
 }
 
 /* Ẩn mũi tên điều hướng */

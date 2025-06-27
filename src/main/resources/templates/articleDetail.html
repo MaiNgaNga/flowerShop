@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chi Tiết Bài Viết - Cửa Hàng Hoa</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Roboto:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <!-- AOS Animation -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <!-- Tilt.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tilt.js/1.2.1/tilt.jquery.min.js"></script>
+       <link rel="stylesheet" th:href="@{/css/articleDetail.css}" />
+    
+  </head>
+  <body>
+    <!-- Particle Background -->
+    <canvas id="particles"></canvas>
+
+  
+   
+
+    <!-- Hero Section -->
+    <section class="hero-section" data-aos="fade">
+      <img
+        src="https://images.pexels.com/photos/196664/pexels-photo-196664.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=800"
+        alt="Flower Hero"
+      />
+      <div class="hero-overlay">
+        <h1 data-aos="fade-up">Hoa Hồng Đỏ - Tình Yêu Vĩnh Cửu</h1>
+      </div>
+    </section>
+
+    <!-- Content Section -->
+    <section class="content-section">
+      <h2 data-aos="fade-up">Hành Trình Của Hoa Hồng Đỏ Qua Các Thời Đại</h2>
+      <p data-aos="fade-up" data-aos-delay="100">
+        Hoa hồng đỏ, biểu tượng bất diệt của tình yêu và đam mê, đã ghi dấu ấn
+        sâu đậm trong lịch sử nhân loại. Từ những khu vườn cổ xưa ở Ba Tư đến
+        các cung điện lộng lẫy của châu Âu thời Trung Cổ, hoa hồng đỏ luôn là
+        tâm điểm của sự ngưỡng mộ và cảm hứng. Trong bài viết này, chúng ta sẽ
+        cùng khám phá nguồn gốc, ý nghĩa văn hóa, và những câu chuyện đầy mê
+        hoặc đằng sau loài hoa quyến rũ này.
+      </p>
+      <img
+        src="https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+        alt="Red Rose"
+        data-tilt
+        data-tilt-max="8"
+        data-tilt-glare="true"
+        data-tilt-max-glare="0.4"
+        data-aos="zoom-in"
+      />
+      <p data-aos="fade-up" data-aos-delay="200">
+        Theo thần thoại Hy Lạp, hoa hồng đỏ được tạo ra từ giọt máu của Adonis,
+        người yêu của nữ thần Aphrodite. Màu đỏ rực rỡ tượng trưng cho tình yêu
+        mãnh liệt, sự hy sinh và lòng chung thủy. Trong thời Trung Cổ, các hiệp
+        sĩ tặng hoa hồng đỏ như lời thề nguyện mãi mãi. Ngày nay, hoa hồng đỏ
+        vẫn là món quà không thể thiếu trong các dịp như Valentine, kỷ niệm, hay
+        cầu hôn.
+      </p>
+      <p data-aos="fade-up" data-aos-delay="300">
+        Hoa hồng đỏ không chỉ mang ý nghĩa tình yêu mà còn xuất hiện trong nhiều
+        nghi lễ văn hóa. Ở Ấn Độ, chúng được sử dụng trong lễ cưới để cầu chúc
+        hạnh phúc. Ở Thổ Nhĩ Kỳ, hoa hồng đỏ tượng trưng cho may mắn và niềm
+        vui. Sự đa dạng này cho thấy sức hút vượt thời gian và không gian của
+        loài hoa này.
+      </p>
+      <div class="quote-block" data-aos="fade-up" data-aos-delay="400">
+        “Hoa hồng đỏ là lời thì thầm của trái tim, mang theo những cảm xúc chân
+        thành nhất.” – Khuyết danh
+      </div>
+      <p data-aos="fade-up" data-aos-delay="500">
+        Để giữ hoa hồng đỏ tươi lâu, chăm sóc đúng cách là rất quan trọng. Cắt
+        cành nghiêng 45 độ dưới vòi nước, thay nước hàng ngày, và thêm chút
+        đường hoặc chất bảo quản hoa. Tránh ánh nắng trực tiếp và trái cây vì
+        khí ethylene làm hoa tàn nhanh. Một bó hoa được chăm sóc tốt có thể tươi
+        đến 2-3 tuần.
+      </p>
+      <img
+        src="https://images.pexels.com/photos/931162/pexels-photo-931162.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=1000"
+        alt="Red Rose Garden"
+        data-tilt
+        data-tilt-max="8"
+        data-tilt-glare="true"
+        data-tilt-max-glare="0.4"
+        data-aos="zoom-in"
+      />
+      <p data-aos="fade-up" data-aos-delay="600">
+        Hoa hồng đỏ trở nên lộng lẫy khi kết hợp với hoa baby trắng, cẩm chướng
+        tím, hoặc lá bạc. Sắp xếp theo phong cách xoắn ốc tạo vẻ tự nhiên. Thêm
+        dây ruy băng lụa hoặc cành olive để tăng sự tinh tế. Một bó hoa được
+        thiết kế khéo léo sẽ làm nổi bật bất kỳ không gian nào.
+      </p>
+      <p data-aos="fade-up" data-aos-delay="700">
+        Hoa hồng đỏ là yếu tố quan trọng trong trang trí sự kiện, từ tiệc cưới
+        đến lễ hội hoa. Sử dụng chúng để tạo backdrop chụp ảnh, vòng hoa treo,
+        hoặc bó hoa cô dâu. Kết hợp với ánh sáng nến sẽ tạo không gian lãng mạn,
+        ấm áp, khiến mọi khoảnh khắc trở nên đáng nhớ.
+      </p>
+      <div class="image-gallery" data-aos="flip-left" data-aos-delay="800">
+        <img
+          src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+          alt="Flower 1"
+          data-tilt
+          data-tilt-max="8"
+          data-tilt-glare="true"
+          data-tilt-max-glare="0.4"
+        />
+        <img
+          src="https://images.unsplash.com/photo-1518895949257-7621c3c786d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+          alt="Flower 2"
+          data-tilt
+          data-tilt-max="8"
+          data-tilt-glare="true"
+          data-tilt-max-glare="0.4"
+        />
+        <img
+          src="https://images.pexels.com/photos/931176/pexels-photo-931176.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=1000"
+          alt="Flower 3"
+          data-tilt
+          data-tilt-max="8"
+          data-tilt-glare="true"
+          data-tilt-max-glare="0.4"
+        />
+      </div>
+      <p data-aos="fade-up" data-aos-delay="900">
+        Tự tay tạo bó hoa hồng đỏ cần chọn bông tươi, màu rực rỡ, không héo. Cắt
+        tỉa bằng kéo sắc, sắp xếp xoắn ốc từ tâm ra ngoài. Thêm thiệp viết tay
+        để tăng ý nghĩa. Ép khô một cánh hoa hồng có thể lưu giữ kỷ niệm mãi
+        mãi.
+      </p>
+      <img
+        src="https://images.unsplash.com/photo-1508615039620-3a9e520a532f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+        alt="Flower Arrangement"
+        data-tilt
+        data-tilt-max="8"
+        data-tilt-glare="true"
+        data-tilt-max-glare="0.4"
+        data-aos="zoom-in"
+      />
+      <p data-aos="fade-up" data-aos-delay="1000">
+        Hoa hồng đỏ là nguồn cảm hứng bất tận cho nghệ thuật và thời trang.
+        Nhiều nhà thiết kế lấy hình ảnh hoa hồng để tạo váy cưới, trang sức,
+        hoặc nước hoa. Hương hoa hồng đỏ ngọt ngào, ấm áp, rất hợp với những ai
+        yêu sự lãng mạn.
+      </p>
+      <p data-aos="fade-up" data-aos-delay="1100">
+        Trong văn học, hoa hồng đỏ là biểu tượng của tình yêu và nỗi đau. Bài
+        thơ “The Rose” của William Blake miêu tả hoa hồng vừa là niềm vui vừa là
+        sự mong manh. Những câu chuyện này làm hoa hồng đỏ trở thành biểu tượng
+        văn hóa sâu sắc.
+      </p>
+      <p data-aos="fade-up" data-aos-delay="1200">
+        Hãy để hoa hồng đỏ hiện diện trong cuộc sống bạn. Một bình hoa nhỏ trên
+        bàn, một bó hoa tặng người thân, hay một cánh hoa ép khô đều mang lại
+        niềm vui. Trồng một bụi hồng đỏ trong vườn để tận hưởng vẻ đẹp mỗi ngày.
+      </p>
+      <p data-aos="fade-up" data-aos-delay="1300">
+        Hoa hồng đỏ không chỉ là món quà, mà còn là cầu nối cảm xúc. Dù để bày
+        tỏ tình yêu, trang trí, hay tự thưởng, hoa hồng đỏ luôn mang lại sự kỳ
+        diệu. Hãy để sắc hoa thắp sáng cuộc sống của bạn!
+      </p>
+      <p data-aos="fade-up" data-aos-delay="1400">
+        Cuối cùng, hãy thử sáng tạo với hoa hồng đỏ. Tạo một lọ hoa độc đáo, làm
+        vòng hoa handmade, hoặc dùng cánh hoa để trang trí bánh ngọt. Mỗi ý
+        tưởng đều là cách để bạn mang vẻ đẹp của hoa hồng vào đời sống.
+      </p>
+      <a
+        href="#"
+        class="btn btn-custom"
+        data-aos="fade-up"
+        data-aos-delay="1500"
+        >Khám Phá Thêm</a
+      >
+    </section>
+
+    <!-- Parallax Section -->
+    <section class="parallax-section" data-aos="fade">
+      <h3 data-aos="zoom-in">Sắc Hương Nâng Tâm Hồn</h3>
+    </section>
+
+    <!-- Related Articles -->
+    <section class="related-articles container my-5">
+      <h2 class="text-center mb-5" data-aos="fade-up">Bài Viết Liên Quan</h2>
+      <div class="row">
+        <div class="col-md-4 mb-4" data-aos="zoom-in" data-aos-delay="100">
+          <div class="card">
+            <img
+              src="https://images.unsplash.com/photo-1518895949257-7621c3c786d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+              alt="Related Article 1"
+              data-tilt
+              data-tilt-max="8"
+              data-tilt-glare="true"
+              data-tilt-max-glare="0.4"
+            />
+            <div class="card-body">
+              <h5 class="card-title">Bí Quyết Chọn Hoa Cưới</h5>
+              <p class="card-text">
+                Khám phá cách chọn hoa cưới phù hợp với phong cách của bạn.
+              </p>
+              <a href="#" class="btn btn-custom">Xem Thêm</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4" data-aos="zoom-in" data-aos-delay="200">
+          <div class="card">
+            <img
+              src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+              alt="Related Article 2"
+              data-tilt
+              data-tilt-max="8"
+              data-tilt-glare="true"
+              data-tilt-max-glare="0.4"
+            />
+            <div class="card-body">
+              <h5 class="card-title">Mẹo Giữ Hoa Tươi Lâu</h5>
+              <p class="card-text">
+                Những cách đơn giản để giữ hoa tươi trong thời gian dài hơn.
+              </p>
+              <a href="#" class="btn btn-custom">Xem Thêm</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4" data-aos="zoom-in" data-aos-delay="300">
+          <div class="card">
+            <img
+              src="https://images.pexels.com/photos/931176/pexels-photo-931176.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=1000"
+              alt="Related Article 3"
+              data-tilt
+              data-tilt-max="8"
+              data-tilt-glare="true"
+              data-tilt-max-glare="0.4"
+            />
+            <div class="card-body">
+              <h5 class="card-title">Ý Nghĩa Hoa Cẩm Chướng</h5>
+              <p class="card-text">
+                Tìm hiểu ý nghĩa độc đáo của hoa cẩm chướng trong văn hóa.
+              </p>
+              <a href="#" class="btn btn-custom">Xem Thêm</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+   
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+      // Initialize AOS
+      AOS.init({
+        duration: 1200,
+        easing: "cubic-bezier(0.68, -0.55, 0.265, 1.55)",
+        once: true,
+        margin: 100,
+      });
+
+      // Initialize Particles.js
+      particlesJS("particles", {
+        particles: {
+          number: { value: 80, density: { enable: true, value_area: 800 } },
+          color: { value: ["#f8bbd0", "#e0b7e6"] },
+          shape: { type: "circle" },
+          opacity: { value: 0.6, random: true },
+          size: { value: 4, random: true },
+          line_linked: { enable: false },
+          move: {
+            enable: true,
+            speed: 1.5,
+            direction: "none",
+            random: true,
+            out_mode: "out",
+          },
+        },
+        interactivity: {
+          detect_on: "canvas",
+          events: {
+            onhover: { enable: true, mode: "repulse" },
+            onclick: { enable: true, mode: "push" },
+          },
+          modes: {
+            repulse: { distance: 150, duration: 0.4 },
+            push: { particles_nb: 4 },
+          },
+        },
+      });
+
+      // Smooth Scroll for Navigation Links
+      document.querySelectorAll(".nav-link").forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          if (this.getAttribute("href").startsWith("#")) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute("href"));
+            target.scrollIntoView({ behavior: "smooth" });
+          }
+        });
+      });
+
+      // Navbar Hide on Scroll Down, Show on Scroll Up
+      let lastScrollTop = 0;
+      const navbar = document.querySelector(".navbar");
+      window.addEventListener("scroll", () => {
+        let scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        if (scrollTop > lastScrollTop) {
+          navbar.classList.add("scrolled");
+        } else {
+          navbar.classList.remove("scrolled");
+        }
+        lastScrollTop = scrollTop;
+      });
+
+      // Intersection Observer for Paragraph Animations
+      const paragraphs = document.querySelectorAll(".content-section p");
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("in-view");
+            }
+          });
+        },
+        { threshold: 0.2 }
+      );
+
+      paragraphs.forEach((p) => observer.observe(p));
+
+      // Lightbox for Images with Close Button and Swipe Support
+      const images = document.querySelectorAll(
+        ".content-section img, .image-gallery img"
+      );
+      images.forEach((img) => {
+        img.addEventListener("click", () => {
+          const lightbox = document.createElement("div");
+          lightbox.className = "lightbox";
+          const lightboxImg = document.createElement("img");
+          lightboxImg.src = img.src;
+          const closeBtn = document.createElement("i");
+          closeBtn.className = "fas fa-times lightbox-close";
+          lightbox.appendChild(lightboxImg);
+          lightbox.appendChild(closeBtn);
+          document.body.appendChild(lightbox);
+
+          setTimeout(() => {
+            lightbox.classList.add("active");
+          }, 10);
+
+          const closeLightbox = () => {
+            lightbox.classList.remove("active");
+            setTimeout(() => lightbox.remove(), 500);
+          };
+
+          closeBtn.addEventListener("click", closeLightbox);
+          lightbox.addEventListener("click", (e) => {
+            if (e.target === lightbox) closeLightbox();
+          });
+
+          // Swipe Support for Mobile
+          let touchStartX = 0;
+          lightbox.addEventListener("touchstart", (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+          });
+          lightbox.addEventListener("touchend", (e) => {
+            const touchEndX = e.changedTouches[0].screenX;
+            if (Math.abs(touchEndX - touchStartX) > 100) closeLightbox();
+          });
+        });
+      });
+
+      // Parallax Scroll Effect
+      window.addEventListener("scroll", () => {
+        const parallax = document.querySelector(".parallax-section");
+        const scrollPosition = window.pageYOffset;
+        parallax.style.backgroundPositionY = `${scrollPosition * 0.8}px`;
+      });
+
+      // Tilt.js Mobile Optimization
+      if (/Mobi|Android/i.test(navigator.userAgent)) {
+        $("[data-tilt]").tilt({
+          maxTilt: 5,
+          glare: false,
+        });
+      }
+    </script>
+  </body>
+</html>

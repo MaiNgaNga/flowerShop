@@ -1,5 +1,6 @@
 package  com.datn.Controller.user;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+
+ 
 
     @Autowired
     private CategoryService ca_Service;
@@ -56,6 +59,7 @@ public class ProductController {
         model.addAttribute("productCategories", pro_ca_service.findAll());
         model.addAttribute("categogies", ca_Service.findAll());
         model.addAttribute("view", "product");
+      
 
         return "layouts/layout";
 

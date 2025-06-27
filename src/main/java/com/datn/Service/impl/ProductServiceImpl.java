@@ -142,4 +142,47 @@ public class ProductServiceImpl implements ProductService {
     public Page<Product> searchByName(String name, Pageable pageable) {
         return dao.searchByName(name, pageable);
     }
+
+    @Override
+    public List<Product> findTop6ByOrderByQuantityDesc() {
+        return dao.findTop6ByOrderByQuantityDesc();
+    }
+
+    // TODO: Implement các phương thức cho Best Seller theo loại sản phẩm
+    // (Cần thêm vào ProductService interface và ProductDAO trước)
+    /*
+     * @Override
+     * public List<Product> findBestSellerLangHoa() {
+     * return dao.findBestSellerLangHoa();
+     * }
+     * 
+     * @Override
+     * public List<Product> findBestSellerGioHoa() {
+     * return dao.findBestSellerGioHoa();
+     * }
+     * 
+     * @Override
+     * public List<Product> findBestSellerBoHoa() {
+     * return dao.findBestSellerBoHoa();
+     * }
+     * 
+     * @Override
+     * public List<Product> findBestSellerByCategory(Integer categoryId) {
+     * return dao.findBestSellerByCategory(categoryId);
+     * }
+     */
+
+    @Override
+    public List<Product> findBestSellerByCategory(String categoryName) {
+        return dao.findBestSellerByCategory(categoryName);
+    }
+
+    @Override
+    public List<Product> findProductByCategory(Integer categoryId) {
+        // TODO Auto-generated method stub
+        return dao.findProductByCategory(categoryId);
+    }
+
+  
+    
 }
