@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      padding-top: 90px;
+    }
+  </style>
+</head>
+<body>
+  <div
+  class="success alert alert-success"
+  th:if="${success}"
+  th:text="${success}"
+></div>
+<form
+  action="/editProfile"
+  th:object="${user}"
+  class="rounded mt-4 mb-2 mx-auto w-50"
+  method="post"
+>
+  <h4
+    style="font-family: Georgia, 'Times New Roman', Times, serif"
+    class="text-center"
+  >
+    Cập nhật thông tin cá nhân
+  </h4>
+  <i class="error text-danger" th:if="${error}" th:text="${error}"></i>
+
+  <input type="text" th:field="*{id}" class="form-control" hidden />
+
+  <div class="py-2">
+    <label for="" class="form-label">Họ và tên</label>
+    <input
+      type="text"
+      th:field="*{name}"
+      class="form-control"
+      placeholder="FullName"
+    />
+    <i class="error" th:errors="*{name}"></i>
+  </div>
+  <div class="py-2">
+    <label for="" class="form-label">Email</label>
+    <input
+      type="text"
+      th:field="*{email}"
+      class="form-control"
+      placeholder="Email"
+    />
+    <i class="error" th:errors="*{email}"></i>
+  </div>
+
+  <input th:field="*{password}" type="hidden" />
+  <input th:field="*{role}" type="hidden" id="roleUser" />
+
+  <div class="pt-2 pb-4">
+    <button type="submit" class="btn-dark btn">Chỉnh sửa</button>
+  </div>
+</form>
+
+</body>
+</html>
