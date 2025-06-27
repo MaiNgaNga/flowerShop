@@ -18,6 +18,8 @@ import com.datn.model.ProductCategory;
 
 @Controller
 public class HomeController {
+     @Autowired
+    ProductCategoryService pro_ca_Service;
     @Autowired
     CategoryService categoryService;
     @Autowired
@@ -31,7 +33,7 @@ public class HomeController {
         List<Product> productQuantities = productService.findTop6ByOrderByQuantityDesc();
         List<Product> latestProducts = productService.findLatestProductsPerCategory();
         List<Product> bestSellingProducts = productService.findBestSellingProductPerCategory();
-
+        model.addAttribute("productCategories", pro_ca_Service.findAll());
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("productQuantities", productQuantities);
         model.addAttribute("latestProducts", latestProducts);
