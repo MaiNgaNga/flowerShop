@@ -1,3 +1,6 @@
+<head>
+  <link rel="stylesheet" th:href="@{/css/nav.css}" />
+</head>
 <header class="nav-header">
   <div class="nav-container">
     <!-- Logo -->
@@ -9,12 +12,23 @@
         style="text-align: center"
       />
     </a>
-
     <!-- Navigation links -->
     <nav class="nav-links">
       <a href="/home" class="active">Trang Chủ</a>
       <a href="/services">Dịch Vụ</a>
-      <a href="/products">Sản Phẩm</a>
+      <div class="dropdown">
+        <a href="/products" class="dropdown-toggle">Danh mục</a>
+        <ul class="dropdown-menu">
+          <li><a th:href="@{/products}">Tất cả sản phẩm</a></li>
+          <li th:each="category : ${categories}">
+            <a
+              th:href="@{/products/category/{id}(id=${category.id})}"
+              th:text="${category.name}"
+              >Tên danh mục</a
+            >
+          </li>
+        </ul>
+      </div>
       <a href="/contact">Liên Hệ</a>
       <a href="/article">Bài viết</a>
     </nav>

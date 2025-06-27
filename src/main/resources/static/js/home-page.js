@@ -55,4 +55,92 @@ document.addEventListener("DOMContentLoaded", function () {
       },
     },
   });
+
+  // Handle best seller filter buttons
+  const filterBtns = document.querySelectorAll(".filter-btn");
+  const productGrid = document.querySelector("#best-seller-grid");
+
+  filterBtns.forEach((btn) => {
+    btn.addEventListener("click", async function () {
+      // Remove active class from all buttons
+      filterBtns.forEach((button) => button.classList.remove("active"));
+      // Add active class to clicked button
+      this.classList.add("active");
+
+      const type = this.dataset.type || "default";
+
+      try {
+        // Call API to get products by type
+        const response = await fetch(`/api/best-seller?type=${type}`);
+        const products = await response.json();
+
+        // Update product grid
+        updateProductGrid(products);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    });
+  });
+
+  function updateProductGrid(products) {
+    if (!productGrid) return;
+
+    productGrid.innerHTML = "";
+
+    products.forEach((product, index) => {
+      const productCard = createProductCard(product, index);
+      productGrid.appendChild(productCard);
+    });
+  }
+
+  function createProductCard(product, index) {
+    const productCard = document.createElement("div");
+    productCard.className = "product-card";
+    productCard.setAttribute("data-aos", "fade-in");
+    productCard.setAttribute("data-aos-delay", 300 + index * 100);
+
+    const imageUrl =
+      product.image_url && product.image_url !== ""
+        ? `/images/${product.image_url}`
+        : "/images/logo.png";
+
+    const priceHTML =
+      product.discountPercent && product.discountPercent > 0
+        ? `<div class="product-price">
+           <span>${formatPrice(product.priceAfterDiscount)}₫</span>
+           <span style="text-decoration: line-through; color: #999">${formatPrice(
+             product.price
+           )}₫</span>
+         </div>`
+        : `<div class="product-price">${formatPrice(product.price)}₫</div>`;
+
+    productCard.innerHTML = `
+      <div class="product-image">
+        <img src="${imageUrl}" class="default-img" alt="${
+      product.name
+    }" onerror="this.src='/images/logo.png'"/>
+        <img src="${imageUrl}" class="hover-img" alt="${
+      product.name
+    }" onerror="this.src='/images/logo.png'"/>
+        <div class="cart-icon-wrapper">
+          <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
+          <div class="add-to-cart-text">Add To Cart</div>
+        </div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">${product.name}</div>
+        ${priceHTML}
+        <div class="product-size">Số lượng: ${product.quantity}</div>
+        <div class="product-size">${
+          product.color ? product.color.name : "N/A"
+        }</div>
+      </div>
+    `;
+
+    return productCard;
+  }
+
+  function formatPrice(price) {
+    return new Intl.NumberFormat("vi-VN").format(price);
+  }
 });

@@ -1,14 +1,14 @@
-package com.datn.controller;
+package com.datn.Controller.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import poly.edu.Assignment.Service.CommentService;
-import poly.edu.Assignment.model.Comment;
+import com.datn.Service.CommentService;
+import com.datn.model.Comment;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/comments")
 public class CommentController {
 
@@ -28,11 +28,8 @@ public class CommentController {
     }
 
     // Xóa bình luận theo ID
-    @GetMapping("/delete/{id}")
-    public String deleteComment(@PathVariable Long id, @RequestParam(required = false) Long productId) {
-        System.out.println("Xóa comment ID: " + id);
+    @DeleteMapping("/{id}")
+    public void deleteComment(@PathVariable Long id) {
         commentService.deleteComment(id);
-        return "redirect:/product-detail?productId=" + productId;
     }
-    
 }

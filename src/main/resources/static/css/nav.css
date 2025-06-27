@@ -3,9 +3,10 @@
   background: #fff;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   padding: 12px 24px;
-  position:  fixed;
+  position: fixed;
   top: 0;
   z-index: 1000;
+  font-family: "Poppins", sans-serif;
 }
 
 .nav-container {
@@ -30,6 +31,61 @@
 .nav-links {
   display: flex;
   gap: 5px;
+  align-items: center;
+}
+
+.dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-toggle {
+  cursor: pointer;
+}
+
+.dropdown .dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  margin-top: 6px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  min-width: 200px;
+  z-index: 10;
+  padding: 8px 0;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown .dropdown-menu li {
+  padding: 0;
+}
+
+.dropdown .dropdown-menu li a {
+  display: block;
+  padding: 10px 16px;
+  text-decoration: none;
+  color: #333;
+  transition: background 0.3s;
+  border-bottom: none;
+  position: relative;
+}
+
+.dropdown .dropdown-menu li a::after {
+  display: none;
+}
+
+.dropdown .dropdown-menu li a:hover {
+  background: #f3e8ff;
+  color: #7b2cbf;
 }
 
 .nav-links a {
