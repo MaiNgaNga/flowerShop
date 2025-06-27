@@ -79,4 +79,11 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
         @Query(value = "SELECT TOP 10 p.* FROM products p INNER JOIN product_categories pc ON p.product_Category_Id = pc.id WHERE pc.name = :categoryName ORDER BY p.quantity DESC", nativeQuery = true)
         List<Product> findBestSellerByCategory(@Param("categoryName") String categoryName);
 
+    // san pham tuong tu theo category
+    @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId")
+    List<Product> findProductByCategory(Integer categoryId);
+
+
+
+// Gọi: productRepository.findHotProductsFromOtherCategories(id, PageRequest.of(0, limit));
 }

@@ -63,4 +63,9 @@ public interface ProductService {
         // Method để tìm best seller theo category name
         List<Product> findBestSellerByCategory(String categoryName);
 
+        List<Product> findProductByCategory(Integer categoryId);
+
+      
+    
 }
+

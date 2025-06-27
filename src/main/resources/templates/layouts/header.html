@@ -4,8 +4,9 @@
 <header class="nav-header">
   <div class="nav-container">
     <!-- Logo -->
-    <a href="/" class="logo">
+    <a href="/home" class="logo">
       <img
+
         th:src="@{/images/2.png}"
         alt="Trạm Hoa"
         height="100"
@@ -22,13 +23,14 @@
           <li><a th:href="@{/products}">Tất cả sản phẩm</a></li>
           <li th:each="category : ${categories}">
             <a
-              th:href="@{/products/category/{id}(id=${category.id})}"
+              th:href="@{/ProductUser(id=${category.id})}"
               th:text="${category.name}"
               >Tên danh mục</a
             >
           </li>
         </ul>
       </div>
+
       <a href="/contact">Liên Hệ</a>
       <a href="/article">Bài viết</a>
     </nav>

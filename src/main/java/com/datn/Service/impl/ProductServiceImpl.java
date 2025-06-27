@@ -176,4 +176,13 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> findBestSellerByCategory(String categoryName) {
         return dao.findBestSellerByCategory(categoryName);
     }
+
+    @Override
+    public List<Product> findProductByCategory(Integer categoryId) {
+        // TODO Auto-generated method stub
+        return dao.findProductByCategory(categoryId);
+    }
+
+  
+    
 }
