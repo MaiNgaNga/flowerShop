@@ -12,9 +12,10 @@ public interface ProductService {
 
         Product findByID(long id);
 
-        Product create(Product entity, MultipartFile imageFile);
+        Product create(Product entity, MultipartFile image1, MultipartFile image2, MultipartFile image3);
 
-        void update(Product entity, MultipartFile imageFile, String oldImage);
+        void update(Product entity, MultipartFile image1, MultipartFile image2, MultipartFile image3,
+                        String[] oldImages);
 
         void deleteById(long id);
 
@@ -65,7 +66,4 @@ public interface ProductService {
 
         List<Product> findProductByCategory(Integer categoryId);
 
-      
-    
 }
-

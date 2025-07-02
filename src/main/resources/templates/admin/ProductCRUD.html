@@ -28,6 +28,39 @@
     background-color: #fcd6e5;
     color: #d63384;
   }
+
+  .image-upload-box {
+    max-width: 130px;
+  }
+
+  .image-upload-box img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 5px;
+  }
+
+  .image-upload-box label.image-title {
+    font-weight: normal;
+    display: block;
+    margin-bottom: 4px;
+    cursor: default;
+  }
+
+  .image-upload-box input[type="file"] {
+    display: none;
+  }
+
+  .image-upload-box .custom-btn {
+    font-size: 13px;
+    padding: 4px 8px;
+    font-weight: bold;
+  }
+
+  .image-upload-row {
+    display: flex;
+    gap: 30px;
+    justify-content: flex-start;
+  }
 </style>
 <main class="container mt-3">
   <h3>Quản Lý Sản Phẩm</h3>
@@ -251,31 +284,71 @@
           </div>
         </div>
 
-        <div class="mb-2">
-          <label for="image" class="form-label">Hình Ảnh</label>
+        <div class="image-upload-row mt-3 mb-3">
+          <!-- Ảnh 1 -->
+          <div class="image-upload-box">
+            <label class="image-title">Hình Ảnh 1</label>
+            <div th:if="${product.image_url}">
+              <input
+                type="hidden"
+                name="oldImages"
+                th:value="${product.image_url}"
+              />
+              <img
+                th:src="@{/images/{img}(img=${product.image_url})}"
+                class="img-thumbnail"
+              />
+            </div>
+            <label
+              for="image1"
+              class="btn btn-sm btn-outline-primary custom-btn mt-1"
+              >Chọn ảnh</label
+            >
+            <input type="file" id="image1" name="image1" />
+          </div>
 
-          <div class="mt-2">
-            <input
-              type="hidden"
-              name="oldImage"
-              th:if="${product.image_url}"
-              th:value="${product.image_url}"
-            />
-            <img
-              th:if="${product.image_url}"
-              th:src="@{/images/{image}(image=${product.image_url})}"
-              alt="Hình sản phẩm"
-              class="img-thumbnail"
-              width="150"
-            />
-            <label for="image" class="btn btn-primary">Chọn ảnh</label>
-            <input
-              type="file"
-              id="image"
-              class="mt-2"
-              name="imageFile"
-              hidden
-            />
+          <!-- Ảnh 2 -->
+          <div class="image-upload-box">
+            <label class="image-title">Hình Ảnh 2</label>
+            <div th:if="${product.image_url2}">
+              <input
+                type="hidden"
+                name="oldImages"
+                th:value="${product.image_url2}"
+              />
+              <img
+                th:src="@{/images/{img}(img=${product.image_url2})}"
+                class="img-thumbnail"
+              />
+            </div>
+            <label
+              for="image2"
+              class="btn btn-sm btn-outline-primary custom-btn mt-1"
+              >Chọn ảnh</label
+            >
+            <input type="file" id="image2" name="image2" />
+          </div>
+
+          <!-- Ảnh 3 -->
+          <div class="image-upload-box">
+            <label class="image-title">Hình Ảnh 3</label>
+            <div th:if="${product.image_url3}">
+              <input
+                type="hidden"
+                name="oldImages"
+                th:value="${product.image_url3}"
+              />
+              <img
+                th:src="@{/images/{img}(img=${product.image_url3})}"
+                class="img-thumbnail"
+              />
+            </div>
+            <label
+              for="image3"
+              class="btn btn-sm btn-outline-primary custom-btn mt-1"
+              >Chọn ảnh</label
+            >
+            <input type="file" id="image3" name="image3" />
           </div>
         </div>
 

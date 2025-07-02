@@ -83,14 +83,16 @@ public class ProductCRUDController {
     @PostMapping("/create")
     public String create(Model model,
             @Valid @ModelAttribute("product") Product product, Errors errors,
-            @RequestParam("imageFile") MultipartFile imageFile,
+            @RequestParam("image1") MultipartFile image1,
+            @RequestParam("image2") MultipartFile image2,
+            @RequestParam("image3") MultipartFile image3,
             RedirectAttributes redirectAttributes) {
         if (errors.hasErrors()) {
             model.addAttribute("view", "admin/ProductCRUD");
             return "admin/layout";
         }
         try {
-            productService.create(product, imageFile);
+            productService.create(product, image1, image2, image3);
             redirectAttributes.addFlashAttribute("success", "Thêm sản phẩm thành công!");
             return "redirect:/Product/index";
         } catch (IllegalArgumentException e) {
@@ -120,8 +122,10 @@ public class ProductCRUDController {
 
     @PostMapping("/update")
     public String update(Model model, @Valid @ModelAttribute("product") Product product, Errors errors,
-            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
-            @RequestParam(value = "oldImage", required = false) String oldImage,
+            @RequestParam(value = "image1", required = false) MultipartFile image1,
+            @RequestParam(value = "image2", required = false) MultipartFile image2,
+            @RequestParam(value = "image3", required = false) MultipartFile image3,
+            @RequestParam(value = "oldImages", required = false) String[] oldImages,
             RedirectAttributes redirectAttributes) {
         if (errors.hasErrors()) {
             model.addAttribute("view", "admin/ProductCRUD");
@@ -136,7 +140,7 @@ public class ProductCRUDController {
                 product.setDiscountStart(null);
                 product.setDiscountEnd(null);
             }
-            productService.update(product, imageFile, oldImage);
+            productService.update(product, image1, image2, image3, oldImages);
             redirectAttributes.addFlashAttribute("success", "Cập nhật sản phẩm thành công!");
             return "redirect:/Product/edit/" + product.getId();
 
