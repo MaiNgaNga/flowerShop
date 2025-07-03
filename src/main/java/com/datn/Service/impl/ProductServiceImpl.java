@@ -34,30 +34,51 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product create(Product entity, MultipartFile imageFile) {
+    public Product create(Product entity, MultipartFile image1, MultipartFile image2, MultipartFile image3) {
         if (dao.existsById(entity.getId())) {
             throw new IllegalArgumentException("ID sản phẩm này đã tồn tại!");
         }
 
-        if (!imageFile.isEmpty()) {
-            entity.setImage_url(
-                    param.save(imageFile,
-                            "D:\\Vs_Java5\\Assignment\\src\\main\\resources\\static\\images").getName());
+        if (image1 != null && !image1.isEmpty()) {
+            entity.setImage_url(param.save(image1,
+                    "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
         }
-
+        if (image2 != null && !image2.isEmpty()) {
+            entity.setImage_url2(param.save(image2,
+                    "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
+        }
+        if (image3 != null && !image3.isEmpty()) {
+            entity.setImage_url3(param.save(image3,
+                    "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
+        }
         return dao.save(entity);
     }
 
     @Override
-    public void update(Product entity, MultipartFile imageFile, String oldImage) {
+    public void update(Product entity, MultipartFile image1, MultipartFile image2, MultipartFile image3,
+            String[] oldImages) {
         if (dao.existsById(entity.getId())) {
-            if (!imageFile.isEmpty()) {
-                entity.setImage_url(param
-                        .save(imageFile,
-                                "D:\\Vs_Java5\\Assignment\\src\\main\\resources\\static\\images")
-                        .getName());
+            if (image1 != null && !image1.isEmpty()) {
+                entity.setImage_url(param.save(image1,
+                        "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
             } else {
-                entity.setImage_url(oldImage);
+                entity.setImage_url(oldImages.length > 0 ? oldImages[0] : null);
+            }
+
+            // Ảnh 2
+            if (image2 != null && !image2.isEmpty()) {
+                entity.setImage_url2(param.save(image2,
+                        "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
+            } else {
+                entity.setImage_url2(oldImages.length > 1 ? oldImages[1] : null);
+            }
+
+            // Ảnh 3
+            if (image3 != null && !image3.isEmpty()) {
+                entity.setImage_url3(param.save(image3,
+                        "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
+            } else {
+                entity.setImage_url3(oldImages.length > 2 ? oldImages[2] : null);
             }
             dao.save(entity);
         } else {
@@ -183,6 +204,9 @@ public class ProductServiceImpl implements ProductService {
         return dao.findProductByCategory(categoryId);
     }
 
-  
-    
+    @Override
+    public Page<Product> findByProductCategoryName(String name, Pageable pageable) {
+        return dao.findByProductCategoryName(name, pageable);
+    }
+
 }

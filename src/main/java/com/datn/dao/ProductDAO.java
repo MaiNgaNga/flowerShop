@@ -46,10 +46,6 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
                         @Param("maxPrice") Double maxPrice,
                         Pageable pageable);
 
-        Page<Product> findByProductCategoryId(
-                        @Param("productCategoryId") Integer productCategoryId,
-                        Pageable pageable);
-
         @Query("SELECT p FROM Product p WHERE p.productCategory.id = :productCategoryId " +
                         "AND p.color.name LIKE %:color%")
 
@@ -72,18 +68,28 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
         // Page<Product> findBestSellingProductsByCategory(@Param("productCategoryId")
         // Integer productCategoryId,Pageable pageable);
 
-        @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-        Page<Product> searchByName(@Param("keyword") String keyword, Pageable pageable);
-
         // Method để tìm best seller theo product category name (giới hạn 10 sản phẩm)
         @Query(value = "SELECT TOP 10 p.* FROM products p INNER JOIN product_categories pc ON p.product_Category_Id = pc.id WHERE pc.name = :categoryName ORDER BY p.quantity DESC", nativeQuery = true)
         List<Product> findBestSellerByCategory(@Param("categoryName") String categoryName);
 
-    // san pham tuong tu theo category
-    @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId")
-    List<Product> findProductByCategory(Integer categoryId);
+        // san pham tuong tu theo category
+        @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId")
+        List<Product> findProductByCategory(Integer categoryId);
 
+        // Gọi: productRepository.findHotProductsFromOtherCategories(id,
+        // PageRequest.of(0, limit));
 
+        // Lọc dịch vụ
+        @Query("SELECT p FROM Product p WHERE p.productCategory.name LIKE %:name% ORDER BY p.id DESC")
+        Page<Product> findByProductCategoryName(@Param("name") String name, Pageable pageable);
 
-// Gọi: productRepository.findHotProductsFromOtherCategories(id, PageRequest.of(0, limit));
+        // Lọc theo danh mục
+        Page<Product> findByProductCategoryId(
+                        @Param("productCategoryId") Integer productCategoryId,
+                        Pageable pageable);
+
+        // Tìm kiếm
+        @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+        Page<Product> searchByName(@Param("keyword") String keyword, Pageable pageable);
+
 }

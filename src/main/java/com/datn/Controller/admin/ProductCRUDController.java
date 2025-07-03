@@ -66,15 +66,48 @@ public class ProductCRUDController {
     @RequestMapping("/index")
     public String index(Model model,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size) {
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "productCategoryId", required = false) String productCategoryIdStr,
+            @RequestParam(value = "keyword", required = false) String keyword) {
 
-        Pageable pageable = PageRequest.of(page, size); // Tạo Pageable từ tham số page và size
-        Page<Product> productPage = productService.findByAllProduct(pageable);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Product> productPage;
 
-        model.addAttribute("products", productPage.getContent()); // Thêm dữ liệu phân trang vào model
-        model.addAttribute("currentPage", page); // Lưu trang hiện tại
-        model.addAttribute("totalPages", productPage.getTotalPages()); // Lưu tổng số trang
+        // Nếu có từ khóa tìm kiếm
+        if (keyword != null && !keyword.isEmpty()) {
+            productPage = productService.searchByName(keyword, pageable);
+            model.addAttribute("keyword", keyword);
+        }
+        // Nếu có chọn danh mục cụ thể
+        else if (productCategoryIdStr != null && !productCategoryIdStr.isEmpty()) {
+            Integer productCategoryId = Integer.parseInt(productCategoryIdStr);
+            productPage = productService.findByProductCategoryIdPage(productCategoryId, pageable);
+            model.addAttribute("productCategoryId", productCategoryId);
+        }
+        // Nếu không chọn gì → mặc định lọc theo danh mục mới nhất
+        else {
+            List<ProductCategory> categories = productCategoryService.findAll();
+            if (!categories.isEmpty()) {
+                // Lấy danh mục có ID lớn nhất (mới nhất)
+                ProductCategory newestCategory = categories.stream()
+                        .max((a, b) -> Integer.compare(a.getId(), b.getId()))
+                        .orElse(null);
 
+                if (newestCategory != null) {
+                    int newestId = newestCategory.getId();
+                    productPage = productService.findByProductCategoryIdPage(newestId, pageable);
+                    model.addAttribute("productCategoryId", newestId);
+                } else {
+                    productPage = productService.findByAllProduct(pageable);
+                }
+            } else {
+                productPage = productService.findByAllProduct(pageable);
+            }
+        }
+
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
         model.addAttribute("product", new Product());
         model.addAttribute("view", "admin/ProductCRUD");
         return "admin/layout";
@@ -83,14 +116,16 @@ public class ProductCRUDController {
     @PostMapping("/create")
     public String create(Model model,
             @Valid @ModelAttribute("product") Product product, Errors errors,
-            @RequestParam("imageFile") MultipartFile imageFile,
+            @RequestParam("image1") MultipartFile image1,
+            @RequestParam("image2") MultipartFile image2,
+            @RequestParam("image3") MultipartFile image3,
             RedirectAttributes redirectAttributes) {
         if (errors.hasErrors()) {
             model.addAttribute("view", "admin/ProductCRUD");
             return "admin/layout";
         }
         try {
-            productService.create(product, imageFile);
+            productService.create(product, image1, image2, image3);
             redirectAttributes.addFlashAttribute("success", "Thêm sản phẩm thành công!");
             return "redirect:/Product/index";
         } catch (IllegalArgumentException e) {
@@ -120,8 +155,10 @@ public class ProductCRUDController {
 
     @PostMapping("/update")
     public String update(Model model, @Valid @ModelAttribute("product") Product product, Errors errors,
-            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
-            @RequestParam(value = "oldImage", required = false) String oldImage,
+            @RequestParam(value = "image1", required = false) MultipartFile image1,
+            @RequestParam(value = "image2", required = false) MultipartFile image2,
+            @RequestParam(value = "image3", required = false) MultipartFile image3,
+            @RequestParam(value = "oldImages", required = false) String[] oldImages,
             RedirectAttributes redirectAttributes) {
         if (errors.hasErrors()) {
             model.addAttribute("view", "admin/ProductCRUD");
@@ -136,9 +173,9 @@ public class ProductCRUDController {
                 product.setDiscountStart(null);
                 product.setDiscountEnd(null);
             }
-            productService.update(product, imageFile, oldImage);
+            productService.update(product, image1, image2, image3, oldImages);
             redirectAttributes.addFlashAttribute("success", "Cập nhật sản phẩm thành công!");
-            return "redirect:/Product/edit/" + product.getId();
+            return "redirect:/Product/index";
 
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());

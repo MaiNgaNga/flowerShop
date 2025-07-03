@@ -39,6 +39,12 @@ public class Product {
     @Column(columnDefinition = "NVARCHAR(255)")
     private String image_url;
 
+    @Column(columnDefinition = "NVARCHAR(255)")
+    private String image_url2;
+
+    @Column(columnDefinition = "NVARCHAR(255)")
+    private String image_url3;
+
     @ManyToOne
     @JoinColumn(name = "Category_Id", referencedColumnName = "id")
     private Category category;
