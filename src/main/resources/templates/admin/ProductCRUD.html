@@ -596,6 +596,7 @@
             th:value="${keyword}"
             class="form-control form-control-sm"
             placeholder="Tìm kiếm sản phẩm..."
+            oninput="this.form.submit()"
           />
         </div>
 
@@ -688,27 +689,33 @@
       <div class="d-flex justify-content-center mt-3" th:if="${totalPages > 0}">
         <nav>
           <ul class="pagination custom-pagination">
-            <li
-              class="page-item"
-              th:classappend="${currentPage == 0} ? 'disabled'"
-            >
-              <a class="page-link" th:href="@{|/Product/index?page=0|}">
-                <i class="fa fa-angle-double-left"></i>
-              </a>
-            </li>
-
+            <!-- First Page -->
             <li
               class="page-item"
               th:classappend="${currentPage == 0} ? 'disabled'"
             >
               <a
                 class="page-link"
-                th:href="@{|/Product/index?page=${currentPage - 1}|}"
+                th:href="@{/Product/index(page=0, size=10, productCategoryId=${productCategoryId}, keyword=${keyword})}"
+              >
+                <i class="fa fa-angle-double-left"></i>
+              </a>
+            </li>
+
+            <!-- Previous Page -->
+            <li
+              class="page-item"
+              th:classappend="${currentPage == 0} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/Product/index(page=${currentPage - 1}, size=10, productCategoryId=${productCategoryId}, keyword=${keyword})}"
               >
                 <i class="fa fa-angle-left"></i>
               </a>
             </li>
 
+            <!-- Page Numbers -->
             <li
               class="page-item"
               th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
@@ -716,30 +723,32 @@
             >
               <a
                 class="page-link"
-                th:href="@{|/Product/index?page=${i}|}"
+                th:href="@{/Product/index(page=${i}, size=10, productCategoryId=${productCategoryId}, keyword=${keyword})}"
                 th:text="${i + 1}"
               ></a>
             </li>
 
+            <!-- Next Page -->
             <li
               class="page-item"
               th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
             >
               <a
                 class="page-link"
-                th:href="@{|/Product/index?page=${currentPage + 1}|}"
+                th:href="@{/Product/index(page=${currentPage + 1}, size=10, productCategoryId=${productCategoryId}, keyword=${keyword})}"
               >
                 <i class="fa fa-angle-right"></i>
               </a>
             </li>
 
+            <!-- Last Page -->
             <li
               class="page-item"
               th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
             >
               <a
                 class="page-link"
-                th:href="@{|/Product/index?page=${totalPages - 1}|}"
+                th:href="@{/Product/index(page=${totalPages - 1}, size=10, productCategoryId=${productCategoryId}, keyword=${keyword})}"
               >
                 <i class="fa fa-angle-double-right"></i>
               </a>

@@ -175,7 +175,7 @@ public class ProductCRUDController {
             }
             productService.update(product, image1, image2, image3, oldImages);
             redirectAttributes.addFlashAttribute("success", "Cập nhật sản phẩm thành công!");
-            return "redirect:/Product/edit/" + product.getId();
+            return "redirect:/Product/index";
 
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
