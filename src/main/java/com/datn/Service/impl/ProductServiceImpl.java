@@ -204,4 +204,9 @@ public class ProductServiceImpl implements ProductService {
         return dao.findProductByCategory(categoryId);
     }
 
+    @Override
+    public Page<Product> findByProductCategoryName(String name, Pageable pageable) {
+        return dao.findByProductCategoryName(name, pageable);
+    }
+
 }

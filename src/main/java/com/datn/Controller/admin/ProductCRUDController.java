@@ -66,15 +66,48 @@ public class ProductCRUDController {
     @RequestMapping("/index")
     public String index(Model model,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size) {
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "productCategoryId", required = false) String productCategoryIdStr,
+            @RequestParam(value = "keyword", required = false) String keyword) {
 
-        Pageable pageable = PageRequest.of(page, size); // Tạo Pageable từ tham số page và size
-        Page<Product> productPage = productService.findByAllProduct(pageable);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Product> productPage;
 
-        model.addAttribute("products", productPage.getContent()); // Thêm dữ liệu phân trang vào model
-        model.addAttribute("currentPage", page); // Lưu trang hiện tại
-        model.addAttribute("totalPages", productPage.getTotalPages()); // Lưu tổng số trang
+        // Nếu có từ khóa tìm kiếm
+        if (keyword != null && !keyword.isEmpty()) {
+            productPage = productService.searchByName(keyword, pageable);
+            model.addAttribute("keyword", keyword);
+        }
+        // Nếu có chọn danh mục cụ thể
+        else if (productCategoryIdStr != null && !productCategoryIdStr.isEmpty()) {
+            Integer productCategoryId = Integer.parseInt(productCategoryIdStr);
+            productPage = productService.findByProductCategoryIdPage(productCategoryId, pageable);
+            model.addAttribute("productCategoryId", productCategoryId);
+        }
+        // Nếu không chọn gì → mặc định lọc theo danh mục mới nhất
+        else {
+            List<ProductCategory> categories = productCategoryService.findAll();
+            if (!categories.isEmpty()) {
+                // Lấy danh mục có ID lớn nhất (mới nhất)
+                ProductCategory newestCategory = categories.stream()
+                        .max((a, b) -> Integer.compare(a.getId(), b.getId()))
+                        .orElse(null);
 
+                if (newestCategory != null) {
+                    int newestId = newestCategory.getId();
+                    productPage = productService.findByProductCategoryIdPage(newestId, pageable);
+                    model.addAttribute("productCategoryId", newestId);
+                } else {
+                    productPage = productService.findByAllProduct(pageable);
+                }
+            } else {
+                productPage = productService.findByAllProduct(pageable);
+            }
+        }
+
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
         model.addAttribute("product", new Product());
         model.addAttribute("view", "admin/ProductCRUD");
         return "admin/layout";

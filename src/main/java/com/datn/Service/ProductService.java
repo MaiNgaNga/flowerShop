@@ -59,11 +59,14 @@ public interface ProductService {
         // productCatelogyId,Pageable pageable);
         Page<Product> findByAllProduct(Pageable pageable);
 
+        // Tìm kiếm theo tên
         Page<Product> searchByName(String name, Pageable pageable);
 
         // Method để tìm best seller theo category name
         List<Product> findBestSellerByCategory(String categoryName);
 
         List<Product> findProductByCategory(Integer categoryId);
+
+        Page<Product> findByProductCategoryName(String name, Pageable pageable);
 
 }
