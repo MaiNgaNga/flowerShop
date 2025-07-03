@@ -50,6 +50,7 @@ public class AuthServiceImpl implements AuthService {
             session.set("user", user);
             // thêm dòng sau:
             session.set("roles", List.of(String.valueOf(user.getRole()))); // giả sử role là Integer
+            session.set("userId", user.getId());
             return true;
         }
         return false;
