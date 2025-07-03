@@ -19,6 +19,8 @@ import com.datn.model.ProductCategory;
 @Controller
 public class HomeController {
     @Autowired
+    ProductCategoryService pro_ca_Service;
+    @Autowired
     CategoryService categoryService;
     @Autowired
     ProductService productService;
@@ -32,7 +34,8 @@ public class HomeController {
         List<Product> latestProducts = productService.findLatestProductsPerCategory();
         List<Product> bestSellingProducts = productService.findBestSellingProductPerCategory();
 
-        model.addAttribute("productCategories", productCategoryService.findAll());
+        model.addAttribute("productCategories", pro_ca_Service.findAll());
+
         model.addAttribute("productQuantities", productQuantities);
         model.addAttribute("latestProducts", latestProducts);
         model.addAttribute("bestSellingProducts", bestSellingProducts);
@@ -49,7 +52,8 @@ public class HomeController {
     public List<Product> getBestSellerByType(@RequestParam String type) {
         switch (type.toLowerCase()) {
             case "lang":
-                return productService.findBestSellerByCategory("Giỏ hoa tươi"); // Use Giỏ hoa tươi as substitute for Lãng hoa
+                return productService.findBestSellerByCategory("Giỏ hoa tươi"); // Use Giỏ hoa tươi as substitute for
+                                                                                // Lãng hoa
             case "gio":
                 return productService.findBestSellerByCategory("Giỏ hoa tươi");
             case "bo":
@@ -77,9 +81,10 @@ public class HomeController {
     public List<Product> getProductsWithCategories() {
         List<Product> products = productService.findAll();
         for (Product product : products) {
-            System.out.println("Product: " + product.getName() + 
-                ", Category: " + (product.getCategory() != null ? product.getCategory().getName() : "NULL") +
-                ", ProductCategory: " + (product.getProductCategory() != null ? product.getProductCategory().getName() : "NULL"));
+            System.out.println("Product: " + product.getName() +
+                    ", Category: " + (product.getCategory() != null ? product.getCategory().getName() : "NULL") +
+                    ", ProductCategory: "
+                    + (product.getProductCategory() != null ? product.getProductCategory().getName() : "NULL"));
         }
         return products;
     }
