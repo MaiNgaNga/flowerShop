@@ -32,7 +32,7 @@ public class HomeController {
         List<Product> latestProducts = productService.findLatestProductsPerCategory();
         List<Product> bestSellingProducts = productService.findBestSellingProductPerCategory();
 
-        model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("productCategories", productCategoryService.findAll());
         model.addAttribute("productQuantities", productQuantities);
         model.addAttribute("latestProducts", latestProducts);
         model.addAttribute("bestSellingProducts", bestSellingProducts);

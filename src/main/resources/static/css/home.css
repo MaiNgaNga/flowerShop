@@ -11,33 +11,33 @@
   --bg-white: #fff;
   --bg-light: #f7f7f7;
   --border-color: #ccc;
-  
+
   /* Typography */
   --heading-font: "Playfair Display", serif;
   --body-font: "Poppins", sans-serif;
   --font-weight-normal: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
-  
+
   /* Layout */
   --border-radius: 20px;
   --border-radius-small: 4px;
   --border-radius-medium: 10px;
   --border-radius-large: 25px;
   --max-width: 1265px;
-  
+
   /* Transitions */
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-fast: 0.3s ease;
   --transition-slow: 0.4s ease;
   --transition-very-slow: 0.5s ease;
-  
+
   /* Z-index management */
   --z-overlay: 1;
   --z-dropdown: 2;
   --z-modal: 10;
   --z-tooltip: 20;
-  
+
   /* Shadows */
   --shadow-light: 0 2px 8px rgba(212, 165, 230, 0.08);
   --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -419,14 +419,15 @@ button {
 }
 
 .new-flower-grid-wrapper {
-  overflow-x: auto;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 .new-flower-grid {
   display: grid;
-  grid-template-columns: repeat(6, 185px);
+  grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
   gap: 30px;
-  min-width: 1100px;
+  min-width: 0;
   justify-content: center;
   padding: 10px;
 }
@@ -435,7 +436,8 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: transform var(--transition-slow), box-shadow var(--transition-slow);
+  transition: transform var(--transition-slow),
+    box-shadow var(--transition-slow);
   cursor: pointer;
 }
 
@@ -450,20 +452,27 @@ button {
   border-radius: 50%;
   border: none;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+  transition: box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+  aspect-ratio: 1/1;
+  display: block;
+  margin-bottom: 15px;
 }
 
-.new-flower-name {
-  margin-top: 12px;
-  font-size: 15px;
-  font-weight: var(--font-weight-normal);
-  color: var(--text-secondary);
-}
-
+/* Hiệu ứng khi hover vào ảnh hoa mới */
 .new-flower-card:hover img {
-  border: 3px solid transparent;
+  border: 3px solid linear-gradient(135deg, #d4a5e6, #b2e0e0);
+  box-shadow: 0 8px 24px rgba(123, 44, 191, 0.18);
   background: var(--primary-gradient);
   padding: 3px;
+  transform: scale(1.02);
+  transition: box-shadow 0.3s, border 0.3s, transform 0.3s, background 0.3s,
+    padding 0.3s;
+}
+
+.new-flower-card:hover .new-flower-name {
+  font-weight: bold;
+  transition: color 0.3s, font-weight 0.3s, letter-spacing 0.3s;
 }
 
 /* Services Section */
@@ -558,7 +567,8 @@ button {
   font-size: 1.1rem;
   margin: 0 8px;
   font-weight: var(--font-weight-normal);
-  transition: background var(--transition-fast), transform var(--transition-fast);
+  transition: background var(--transition-fast),
+    transform var(--transition-fast);
   box-shadow: var(--shadow-light);
 }
 
@@ -588,7 +598,8 @@ button {
   width: 100%;
   max-width: 220px;
   text-align: center;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .product-card:hover {
@@ -634,7 +645,8 @@ button {
   transform: translate(-50%, -200%);
   text-align: center;
   opacity: 0;
-  transition: transform var(--transition-very-slow), opacity var(--transition-very-slow);
+  transition: transform var(--transition-very-slow),
+    opacity var(--transition-very-slow);
   z-index: var(--z-dropdown);
 }
 
@@ -771,7 +783,8 @@ button {
   text-decoration: none;
   position: relative;
   overflow: hidden;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .service-button::before {

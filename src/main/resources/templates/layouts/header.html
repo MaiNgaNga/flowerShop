@@ -6,7 +6,6 @@
     <!-- Logo -->
     <a href="/home" class="logo">
       <img
-
         th:src="@{/images/2.png}"
         alt="Trạm Hoa"
         height="100"
@@ -20,19 +19,22 @@
       <div class="dropdown">
         <a href="/products" class="dropdown-toggle">Danh mục</a>
         <ul class="dropdown-menu">
-          <li><a th:href="@{/products}">Tất cả sản phẩm</a></li>
-          <li th:each="category : ${categories}">
-            <a
-              th:href="@{/ProductUser(id=${category.id})}"
-              th:text="${category.name}"
-              >Tên danh mục</a
-            >
-          </li>
+          <div class="dropdown-columns">
+            <li><a th:href="@{/products}">Tất cả sản phẩm</a></li>
+            <li th:each="proCategory : ${productCategories}">
+              <a
+                th:href="@{/ProductUser(id=${proCategory.id})}"
+                th:text="${proCategory.name}"
+                >Tên danh mục</a
+              >
+            </li>
+          </div>
         </ul>
       </div>
 
       <a href="/contact">Liên Hệ</a>
       <a href="/article">Bài viết</a>
+      <a href="/order-instore.html" class="btn-pos-nav">Bán tại cửa hàng</a>
     </nav>
 
     <!-- Search bar -->

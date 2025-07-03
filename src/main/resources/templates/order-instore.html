@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bán hàng tại cửa hàng</title>
+    <link rel="stylesheet" href="/css/home.css" />
+    <link rel="stylesheet" href="/css/order-instore.css" />
+    <!-- Đã tách style POS sang file order-instore.css -->
+  </head>
+  <body>
+    <h1 style="text-align: center; margin-top: 30px; color: #7c3aed">
+      Bán hàng tại cửa hàng
+    </h1>
+    <div class="pos-container">
+      <div class="pos-products" id="product-list">
+        <!-- Sản phẩm sẽ được render ở đây bằng JS -->
+      </div>
+      <div class="pos-cart">
+        <div class="pos-cart-title">Giỏ hàng</div>
+        <div class="pos-cart-list" id="cart-list">
+          <!-- Sản phẩm trong giỏ -->
+        </div>
+        <div class="pos-cart-total">Tổng: <span id="cart-total">0₫</span></div>
+        <button class="pos-checkout-btn" onclick="checkout()">
+          Thanh toán
+        </button>
+      </div>
+    </div>
+    <script>
+      // Dữ liệu mẫu sản phẩm
+      const products = [
+        {
+          id: 1,
+          name: "Hoa Hồng Đỏ",
+          price: 120000,
+          img: "https://hoaonline247.com/uploads/hoa-tuoi/hoa-hong-do.jpg",
+        },
+        {
+          id: 2,
+          name: "Hoa Cẩm Chướng",
+          price: 95000,
+          img: "https://hoatuoihoangnga.com/wp-content/uploads/2020/10/hoa-cam-chuong.jpg",
+        },
+        {
+          id: 3,
+          name: "Hoa Ly",
+          price: 150000,
+          img: "https://hoatuoidep.vn/wp-content/uploads/2020/07/hoa-ly.jpg",
+        },
+        {
+          id: 4,
+          name: "Hoa Lan Hồ Điệp",
+          price: 250000,
+          img: "https://hoatuoithanhphat.com/wp-content/uploads/2020/11/lan-ho-diep.jpg",
+        },
+        {
+          id: 5,
+          name: "Hoa Baby",
+          price: 80000,
+          img: "https://hoatuoidep.vn/wp-content/uploads/2020/07/hoa-baby.jpg",
+        },
+        {
+          id: 6,
+          name: "Hoa Cúc Trắng",
+          price: 70000,
+          img: "https://hoatuoihoangnga.com/wp-content/uploads/2020/10/hoa-cuc-trang.jpg",
+        },
+      ];
+      let cart = [];
+
+      function renderProducts() {
+        const list = document.getElementById("product-list");
+        list.innerHTML = products
+          .map(
+            (p) => `
+        <div class="pos-product-card">
+          <img src="${p.img}" alt="${p.name}">
+          <div class="pos-product-name">${p.name}</div>
+          <div class="pos-product-price">${p.price.toLocaleString()}₫</div>
+          <button class="pos-add-btn" onclick="addToCart(${
+            p.id
+          })">Thêm vào giỏ</button>
+        </div>
+      `
+          )
+          .join("");
+      }
+
+      function renderCart() {
+        const list = document.getElementById("cart-list");
+        if (cart.length === 0) {
+          list.innerHTML =
+            '<div style="text-align:center;color:#aaa;">Chưa có sản phẩm</div>';
+          document.getElementById("cart-total").textContent = "0₫";
+          return;
+        }
+        let total = 0;
+        list.innerHTML = cart
+          .map((item) => {
+            const product = products.find((p) => p.id === item.id);
+            total += product.price * item.qty;
+            return `
+          <div class="pos-cart-item">
+            <div class="pos-cart-item-name">${product.name}</div>
+            <div class="pos-cart-item-qty">
+              <button onclick="changeQty(${item.id}, -1)">-</button>
+              <span>${item.qty}</span>
+              <button onclick="changeQty(${item.id}, 1)">+</button>
+            </div>
+            <div class="pos-cart-item-price">${(
+              product.price * item.qty
+            ).toLocaleString()}₫</div>
+          </div>
+        `;
+          })
+          .join("");
+        document.getElementById("cart-total").textContent =
+          total.toLocaleString() + "₫";
+      }
+
+      function addToCart(id) {
+        const idx = cart.findIndex((item) => item.id === id);
+        if (idx > -1) {
+          cart[idx].qty++;
+        } else {
+          cart.push({ id, qty: 1 });
+        }
+        renderCart();
+      }
+
+      function changeQty(id, delta) {
+        const idx = cart.findIndex((item) => item.id === id);
+        if (idx > -1) {
+          cart[idx].qty += delta;
+          if (cart[idx].qty <= 0) cart.splice(idx, 1);
+          renderCart();
+        }
+      }
+
+      function checkout() {
+        if (cart.length === 0) {
+          alert("Vui lòng chọn sản phẩm trước khi thanh toán!");
+          return;
+        }
+        alert("Thanh toán thành công!");
+        cart = [];
+        renderCart();
+      }
+
+      renderProducts();
+      renderCart();
+    </script>
+  </body>
+</html>
