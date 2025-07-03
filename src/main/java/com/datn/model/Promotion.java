@@ -58,8 +58,8 @@ public class Promotion {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedDate;
 
-   @Column(name = "notes", columnDefinition = "NVARCHAR(500)")
-   private String notes;
+   @Column(name = "use_count")
+   private Integer useCount;
 
     // @OneToMany(mappedBy = "promotion")
     // private List<Order> orders;
