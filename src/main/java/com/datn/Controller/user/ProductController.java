@@ -1,4 +1,4 @@
-package  com.datn.Controller.user;
+package com.datn.Controller.user;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,21 +25,18 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
- 
-
     @Autowired
     private CategoryService ca_Service;
 
     @RequestMapping("/ProductUser")
     public String index(Model model,
-        @RequestParam("id") Integer pro_categoryId, 
-        @RequestParam(name = "categoryId", required = false) Integer ca_Id,
-        @RequestParam(name = "color", required = false) String color,
-        @RequestParam(name = "min", required = false) Double minPrice,
-        @RequestParam(name = "max", required = false) Double maxPrice,
-        @RequestParam("p") Optional<Integer> p,
-        @RequestParam(name = "filter", required = false) String filterType 
-    ) { 
+            @RequestParam("id") int pro_categoryId,
+            @RequestParam(name = "categoryId", required = false) Integer ca_Id,
+            @RequestParam(name = "color", required = false) String color,
+            @RequestParam(name = "min", required = false) Double minPrice,
+            @RequestParam(name = "max", required = false) Double maxPrice,
+            @RequestParam("p") Optional<Integer> p,
+            @RequestParam(name = "filter", required = false) String filterType) {
         Pageable pageable = PageRequest.of(p.orElse(0), 12);
         Page<Product> products = null;
 
@@ -59,7 +56,6 @@ public class ProductController {
         model.addAttribute("productCategories", pro_ca_service.findAll());
         model.addAttribute("categogies", ca_Service.findAll());
         model.addAttribute("view", "product");
-      
 
         return "layouts/layout";
 

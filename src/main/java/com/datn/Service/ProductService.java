@@ -34,25 +34,13 @@ public interface ProductService {
 
         List<Product> findByProductCategoryId(int id);
 
-        Page<Product> findByPriceRange(
-                        Integer productCategoryId,
-                        Double minPrice,
-                        Double maxPrice,
-                        Pageable pageable);
+        Page<Product> findByPriceRange(Integer productCategoryId, Double minPrice, Double maxPrice, Pageable pageable);
 
-        Page<Product> findByProductCategoryIdPage(
-                        Integer productCategoryId,
-                        Pageable pageable);
+        Page<Product> findByProductCategoryIdPage(Integer productCategoryId, Pageable pageable);
 
-        Page<Product> findByColor(
-                        Integer productCategoryId,
-                        String color,
-                        Pageable pageable);
+        Page<Product> findByColor(Integer productCategoryId, String color, Pageable pageable);
 
-        Page<Product> findByCaId(
-                        Integer productCategoryId,
-                        int categoryId,
-                        Pageable pageable);
+        Page<Product> findByCaId(Integer productCategoryId, int categoryId, Pageable pageable);
 
         // Page<Product> findBestSellingProductsByCategory( Integer
         // productCatelogyId,Pageable pageable);
@@ -65,7 +53,4 @@ public interface ProductService {
 
         List<Product> findProductByCategory(Integer categoryId);
 
-      
-    
 }
-

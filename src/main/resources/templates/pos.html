@@ -1,0 +1,302 @@
+<div class="pos-center">
+  <div class="pos-flex">
+    <div class="pos-left">
+      <div class="pos-category">
+        <h3>Lọc sản phẩm</h3>
+        <input
+          type="text"
+          id="productFilter"
+          name="keyword"
+          class="form-control"
+          placeholder="Tìm kiếm sản phẩm..."
+          th:value="${keyword}"
+        />
+        <div class="pos-filter-group">
+          <span class="pos-filter-label">Mức Giá</span>
+          <div class="pos-filter-price">
+            <button type="button" onclick="setPriceFilter(0,200000)">
+              0 - 200.000 VND
+            </button>
+            <button type="button" onclick="setPriceFilter(200000,500000)">
+              200.000 VND - 500.000 VND
+            </button>
+            <button type="button" onclick="setPriceFilter(500000,99999999)">
+              &gt;=500.000 VND
+            </button>
+          </div>
+        </div>
+        <div class="pos-filter-group">
+          <span class="pos-filter-label">Màu sắc</span>
+          <div class="pos-filter-color">
+            <div
+              th:each="color : ${colors}"
+              class="pos-filter-color-btn"
+              th:style="'background: ' + ${color.name}"
+              th:attr="data-color=${color.name}"
+              th:classappend="${color.name == color} ? ' active' : ''"
+              onclick="setColorFilter(this.getAttribute('data-color'))"
+            ></div>
+          </div>
+        </div>
+        <div class="pos-filter-group">
+          <span class="pos-filter-label">Loại hoa</span>
+          <div class="pos-filter-type">
+            <button
+              type="button"
+              onclick="setTypeFilter('')"
+              th:classappend="${type == null or type == ''} ? 'active' : ''"
+            >
+              Tất cả
+            </button>
+            <button
+              type="button"
+              th:each="cat : ${categories}"
+              th:text="${cat.name}"
+              th:attr="data-type=${cat.name}"
+              onclick="setTypeFilter(this.getAttribute('data-type'))"
+              th:classappend="${type == cat.name} ? 'active' : ''"
+            >
+              <!-- Tên loại hoa -->
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="pos-product-list">
+        <div class="pos-product-grid">
+          <div th:each="product : ${products}" class="pos-card">
+            <img
+              th:if="${product.image_url != null and !#strings.isEmpty(product.image_url)}"
+              th:src="@{'/images/' + ${product.image_url}}"
+              th:alt="${product.name}"
+              class="pos-card-img"
+            />
+            <img
+              th:unless="${product.image_url != null and !#strings.isEmpty(product.image_url)}"
+              th:src="@{'/images/no-image.png'}"
+              th:alt="No image"
+              class="pos-card-img"
+            />
+            <div class="pos-card-title" th:text="${product.name}"></div>
+            <div
+              class="pos-card-price"
+              th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+            ></div>
+            <button
+              class="pos-card-btn"
+              type="button"
+              th:attr="data-id=${product.id}"
+              onclick="addToCart(this)"
+            >
+              Chọn
+            </button>
+          </div>
+        </div>
+        <div
+          class="pagination"
+          style="
+            margin-top: 16px;
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+          "
+        >
+          <a
+            th:if="${currentPage > 0}"
+            th:href="@{/pos(page=${currentPage - 1}, color=${color}, type=${type}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
+            class="btn btn-light btn-sm"
+            >&lt;</a
+          >
+          <span th:each="i : ${#numbers.sequence(0, totalPages-1)}">
+            <a
+              th:href="@{/pos(page=${i}, color=${color}, type=${type}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
+              th:text="${i+1}"
+              th:classappend="${i == currentPage} ? ' active btn-primary' : ' btn-light'"
+              class="btn btn-sm mx-1"
+            ></a>
+          </span>
+          <a
+            th:if="${currentPage < totalPages-1}"
+            th:href="@{/pos(page=${currentPage + 1}, color=${color}, type=${type}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
+            class="btn btn-light btn-sm"
+            >&gt;</a
+          >
+        </div>
+      </div>
+    </div>
+    <div class="pos-right">
+      <h2 class="mb-3">Đơn hàng</h2>
+      <form id="posForm" th:action="@{/pos/checkout}" method="post">
+        <div class="mb-3">
+          <label class="form-label">Tên khách hàng (tùy chọn)</label>
+          <input type="text" name="customerName" class="form-control" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Sản phẩm đã chọn</label>
+          <table class="table table-bordered pos-cart-table" id="cartTable">
+            <thead>
+              <tr>
+                <th>Sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Thành tiền</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="cartRows">
+              <!-- Sản phẩm đã chọn sẽ render ở đây -->
+            </tbody>
+          </table>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Tổng tiền:</label>
+          <span id="totalAmount">0</span> VND
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Phương thức thanh toán</label>
+          <select name="paymentMethod" class="form-control">
+            <option value="cash">Tiền mặt</option>
+            <option value="card">Thẻ</option>
+          </select>
+        </div>
+        <input type="hidden" name="orderType" value="offline" />
+        <button type="submit" class="btn btn-success w-100">
+          Xác nhận bán hàng
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+<form method="get" th:action="@{/pos}" id="filterForm">
+  <input type="hidden" name="color" id="colorInput" th:value="${color}" />
+  <input type="hidden" name="type" id="typeInput" th:value="${type}" />
+  <input
+    type="hidden"
+    name="minPrice"
+    id="minPriceInput"
+    th:value="${minPrice}"
+  />
+  <input
+    type="hidden"
+    name="maxPrice"
+    id="maxPriceInput"
+    th:value="${maxPrice}"
+  />
+</form>
+<script src="/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  function setColorFilter(color) {
+    document.getElementById("colorInput").value = color;
+    document.getElementById("filterForm").submit();
+  }
+  function setTypeFilter(type) {
+    document.getElementById("typeInput").value = type;
+    document.getElementById("filterForm").submit();
+  }
+  function setPriceFilter(min, max) {
+    document.getElementById("minPriceInput").value = min;
+    document.getElementById("maxPriceInput").value = max;
+    document.getElementById("filterForm").submit();
+  }
+  function addToCart(btn) {
+    const productId = btn.getAttribute("data-id");
+    fetch("/pos/cart/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: "productId=" + productId,
+    })
+      .then((res) => {
+        if (!res.ok) {
+          return res.text().then((text) => {
+            throw new Error(text);
+          });
+        }
+        return res.json();
+      })
+      .then((cart) => {
+        if (Array.isArray(cart)) {
+          renderCart(cart);
+        } else {
+          alert("Có lỗi khi thêm vào giỏ hàng!");
+          console.error(cart);
+        }
+      })
+      .catch((err) => {
+        alert("Có lỗi khi thêm vào giỏ hàng: " + err.message);
+        console.error(err);
+      });
+  }
+
+  function renderCart(cart) {
+    const cartRows = document.getElementById("cartRows");
+    cartRows.innerHTML = "";
+    let total = 0;
+    if (Array.isArray(cart)) {
+      cart.forEach((item) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.name}</td>
+          <td>${item.quantity}</td>
+          <td>${(item.price * item.quantity).toLocaleString()} VND</td>
+          <td><button onclick="removeFromCart(${
+            item.productId
+          })" class="btn btn-link p-0" title="Xóa" style="text-decoration: none;"><span style="color: red; font-size: 18px; text-decoration: none;">&#10006;</span></button></td>
+        `;
+        cartRows.appendChild(row);
+        total += item.price * item.quantity;
+      });
+    } else {
+      console.error("cart không phải là mảng:", cart);
+    }
+    document.getElementById("totalAmount").innerText = total.toLocaleString();
+  }
+
+  function removeFromCart(productId) {
+    fetch("/pos/cart/remove", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: "productId=" + productId,
+    })
+      .then((res) => {
+        if (!res.ok) {
+          return res.text().then((text) => {
+            throw new Error(text);
+          });
+        }
+        return res.json();
+      })
+      .then((cart) => {
+        if (Array.isArray(cart)) {
+          renderCart(cart);
+        } else {
+          alert("Có lỗi khi xóa sản phẩm!");
+          console.error(cart);
+        }
+      })
+      .catch((err) => {
+        alert("Có lỗi khi xóa sản phẩm: " + err.message);
+        console.error(err);
+      });
+  }
+
+  window.onload = function () {
+    fetch("/pos/cart")
+      .then((res) => {
+        if (!res.ok) {
+          return res.text().then((text) => {
+            throw new Error(text);
+          });
+        }
+        return res.json();
+      })
+      .then((cart) => {
+        if (Array.isArray(cart)) {
+          renderCart(cart);
+        } else {
+          console.error("cart không phải là mảng:", cart);
+        }
+      })
+      .catch((err) => {
+        console.error("Lỗi khi lấy giỏ hàng:", err);
+      });
+  };
+</script>

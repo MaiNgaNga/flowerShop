@@ -34,7 +34,12 @@
 
       <a href="/contact">Liên Hệ</a>
       <a href="/article">Bài viết</a>
-      <a href="/order-instore.html" class="btn-pos-nav">Bán tại cửa hàng</a>
+      <a
+        href="/pos"
+        class="btn"
+        th:if="${session.user != null and session.user.role == 1}"
+        >Bán hàng tại quầy (POS)</a
+      >
     </nav>
 
     <!-- Search bar -->

@@ -425,8 +425,8 @@ button {
 
 .new-flower-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+  gap: 20px;
   min-width: 0;
   justify-content: center;
   padding: 10px;
