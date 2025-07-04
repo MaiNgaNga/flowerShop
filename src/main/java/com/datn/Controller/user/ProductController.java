@@ -37,13 +37,14 @@ public class ProductController {
 
     @RequestMapping("/ProductUser")
     public String index(Model model,
-            @RequestParam("id") int pro_categoryId,
-            @RequestParam(name = "categoryId", required = false) Integer ca_Id,
-            @RequestParam(name = "color", required = false) String color,
-            @RequestParam(name = "min", required = false) Double minPrice,
-            @RequestParam(name = "max", required = false) Double maxPrice,
-            @RequestParam("p") Optional<Integer> p,
-            @RequestParam(name = "filter", required = false) String filterType) {
+        @RequestParam("id") Integer pro_categoryId, 
+        @RequestParam(name = "categoryId", required = false) Integer ca_Id,
+        @RequestParam(name = "color", required = false) String color,
+        @RequestParam(name = "min", required = false) Double minPrice,
+        @RequestParam(name = "max", required = false) Double maxPrice,
+        @RequestParam("p") Optional<Integer> p,
+        @RequestParam(name = "filter", required = false) String filterType 
+    ) { 
         Pageable pageable = PageRequest.of(p.orElse(0), 12);
         Page<Product> products = null;
 

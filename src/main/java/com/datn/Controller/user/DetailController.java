@@ -28,11 +28,6 @@ public class DetailController {
     // @Autowired
     // CommentService commentService;
 
-    // Tự động load productCategories cho tất cả các trang
-    @ModelAttribute("productCategories")
-    public List<ProductCategory> getAllProductCategories() {
-        return pro_ca_service.findAll();
-    }
 
     @RequestMapping("/detail")
     public String index(Model model, @RequestParam(value = "id", required = false) Long id,
@@ -40,9 +35,8 @@ public class DetailController {
 
         // model.addAttribute("comments", commentService.getCommentsByProduct(id));
         model.addAttribute("product", productService.findByID(id));
-
-        model.addAttribute("productSimilar",
-                productService.findProductByCategory(productService.findByID(id).getCategory().getId()));
+        model.addAttribute("productCategories", pro_ca_service.findAll());
+        model.addAttribute("productSimilar", productService.findProductByCategory(productService.findByID(id).getCategory().getId()));
         if (productService.findByID(id) == null) {
             redirectAttributes.addFlashAttribute("error", "Sản phẩm không tồn tại.");
             return "redirect:/ProductUser?id=1";
