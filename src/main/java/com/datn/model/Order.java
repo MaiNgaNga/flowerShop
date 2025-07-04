@@ -33,6 +33,9 @@ public class Order {
     @Column
     private Double totalAmount;
 
+    @Column(name = "order_type", columnDefinition = "NVARCHAR(50)")
+    private String orderType;
+
     @Column(name = "status", columnDefinition = "NVARCHAR(255)")
     private String status;
 
