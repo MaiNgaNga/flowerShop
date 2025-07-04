@@ -31,21 +31,43 @@
           </div>
         </ul>
       </div>
-
       <a href="/contact">Liên Hệ</a>
       <a href="/article">Bài viết</a>
-      <a
-        href="/pos"
-        class="btn"
-        th:if="${session.user != null and session.user.role == 1}"
+      <a href="/pos" th:if="${session.user != null and session.user.role == 1}"
         >Bán hàng tại quầy (POS)</a
       >
     </nav>
 
     <!-- Search bar -->
     <div class="search-box">
-      <input type="text" placeholder="Tìm kiếm..." />
-      <button><i class="fa-solid fa-magnifying-glass"></i></button>
+      <form th:action="@{/search}" method="get" class="search-form">
+        <input
+          type="text"
+          name="keyword"
+          placeholder="Tìm kiếm sản phẩm..."
+          th:value="${searchKeyword}"
+          required
+          autocomplete="off"
+          id="searchInput"
+        />
+        <button type="submit" id="searchBtn">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </form>
+      <!-- Search suggestions dropdown -->
+      <div
+        class="search-suggestions"
+        id="searchSuggestions"
+        style="display: none"
+      >
+        <div class="suggestion-header">
+          <i class="fas fa-lightbulb me-2"></i>
+          <span>Gợi ý tìm kiếm</span>
+        </div>
+        <div class="suggestion-list" id="suggestionList">
+          <!-- Suggestions will be populated by JavaScript -->
+        </div>
+      </div>
     </div>
 
     <!-- Icons group: Cart + User -->
@@ -86,3 +108,122 @@
     </div>
   </div>
 </header>
+
+<!-- Search JavaScript -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("searchInput");
+    const searchSuggestions = document.getElementById("searchSuggestions");
+    const suggestionList = document.getElementById("suggestionList");
+    const searchBtn = document.getElementById("searchBtn");
+
+    // Common search suggestions
+    const commonSuggestions = [
+      "Bó hoa tươi",
+      "Giỏ hoa tươi",
+      "Lãng hoa",
+      "Hoa cưới",
+      "Hoa sinh nhật",
+      "Hoa khai trương",
+      "Hoa chia buồn",
+      "Hoa hồng",
+      "Hoa lan",
+      "Hoa cúc",
+    ];
+
+    let searchTimeout;
+
+    // Show suggestions when input is focused
+    searchInput.addEventListener("focus", function () {
+      if (this.value.trim() === "") {
+        showSuggestions(commonSuggestions);
+      }
+    });
+
+    // Handle input changes
+    searchInput.addEventListener("input", function () {
+      clearTimeout(searchTimeout);
+      const query = this.value.trim();
+
+      if (query.length === 0) {
+        showSuggestions(commonSuggestions);
+        return;
+      }
+
+      if (query.length < 2) {
+        hideSuggestions();
+        return;
+      }
+
+      // Debounce search suggestions
+      searchTimeout = setTimeout(() => {
+        // Filter common suggestions based on input
+        const filteredSuggestions = commonSuggestions.filter((suggestion) =>
+          suggestion.toLowerCase().includes(query.toLowerCase())
+        );
+
+        if (filteredSuggestions.length > 0) {
+          showSuggestions(filteredSuggestions);
+        } else {
+          hideSuggestions();
+        }
+      }, 300);
+    });
+
+    // Handle suggestion clicks
+    suggestionList.addEventListener("click", function (e) {
+      if (e.target.classList.contains("suggestion-item")) {
+        searchInput.value = e.target.textContent;
+        hideSuggestions();
+        searchInput.focus();
+      }
+    });
+
+    // Hide suggestions when clicking outside
+    document.addEventListener("click", function (e) {
+      if (
+        !searchInput.contains(e.target) &&
+        !searchSuggestions.contains(e.target)
+      ) {
+        hideSuggestions();
+      }
+    });
+
+    // Handle Enter key
+    searchInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        if (this.value.trim() !== "") {
+          this.closest("form").submit();
+        }
+      }
+    });
+
+    // Show suggestions
+    function showSuggestions(suggestions) {
+      suggestionList.innerHTML = "";
+      suggestions.forEach((suggestion) => {
+        const item = document.createElement("div");
+        item.className = "suggestion-item";
+        item.textContent = suggestion;
+        suggestionList.appendChild(item);
+      });
+      searchSuggestions.style.display = "block";
+    }
+
+    // Hide suggestions
+    function hideSuggestions() {
+      searchSuggestions.style.display = "none";
+    }
+
+    // Add loading state to search button
+    searchBtn.addEventListener("click", function () {
+      if (searchInput.value.trim() !== "") {
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        setTimeout(() => {
+          this.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
+        }, 1000);
+      }
+    });
+  });
+</script>

@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Builder
-@Table(name="Categories")
+@Table(name = "Categories")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Category {
@@ -30,6 +30,5 @@ public class Category {
 
     @Column(columnDefinition = "NVARCHAR(255)")
     private String description;
-
 
 }

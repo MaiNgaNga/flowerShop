@@ -7,6 +7,9 @@
   top: 0;
   z-index: 1000;
   font-family: "Poppins", sans-serif;
+  min-height: 80px; /* Use min-height instead of fixed height */
+  display: flex;
+  align-items: center;
 }
 
 .nav-container {
@@ -17,11 +20,13 @@
   justify-content: space-between;
   margin: auto;
   flex-wrap: wrap;
+  min-height: 56px; /* Minimum height for container */
 }
 
 .logo img {
   height: 48px;
   transition: transform 0.3s ease;
+  max-height: 48px; /* Ensure consistent logo size */
 }
 
 .logo img:hover {
@@ -30,8 +35,14 @@
 
 .nav-links {
   display: flex;
-  gap: 5px;
   align-items: center;
+  gap: 18px;
+  flex-wrap: nowrap;
+}
+
+.nav-links > * {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 .dropdown {
@@ -145,6 +156,12 @@
   transition: box-shadow 0.3s ease;
 }
 
+.search-form {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
 .search-box input {
   border: none;
   padding: 8px 14px;
@@ -152,6 +169,7 @@
   background: transparent;
   width: 360px;
   font-size: 14px;
+  flex: 1;
 }
 
 .search-box button {
@@ -161,11 +179,108 @@
   padding: 8px 14px;
   cursor: pointer;
   transition: background 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .search-box button:hover {
-  background: linear-gradient(135deg, #d4a5e6, #b2e0e0);
+  background: linear-gradient(135deg, #c495d6, #a2d0d0);
   color: black;
+}
+
+/* Search suggestions styles */
+.search-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 25px 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.suggestion-header {
+  padding: 10px 15px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #eee;
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+}
+
+.suggestion-list {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.suggestion-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #f5f5f5;
+  font-size: 14px;
+  color: #333;
+}
+
+.suggestion-item:hover {
+  background-color: #f3e8ff;
+  color: #7b2cbf;
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+/* Search box positioning for suggestions */
+.search-box {
+  position: relative;
+}
+
+/* Ensure body content doesn't get hidden behind fixed header */
+/* Only apply padding-top to pages that use the main layout */
+body {
+  /* Remove global padding-top to avoid conflicts */
+}
+
+/* Override any conflicting styles */
+.nav-header * {
+  box-sizing: border-box;
+}
+
+.nav-container * {
+  box-sizing: border-box;
+}
+
+/* Add padding to main content to avoid header overlap */
+main {
+  padding-top: 80px; /* Match nav-header height */
+  min-height: calc(100vh - 80px);
+}
+
+/* Ensure consistent navigation across all pages */
+.nav-header {
+  box-sizing: border-box;
+}
+
+.nav-container {
+  box-sizing: border-box;
+}
+
+/* Override any Bootstrap conflicts */
+.nav-header.navbar {
+  padding: 12px 24px;
+  min-height: 80px;
+}
+
+.nav-container.container {
+  max-width: 1300px;
+  min-height: 56px;
 }
 
 .icons {
@@ -326,10 +441,21 @@ a,
 }
 
 @media (max-width: 768px) {
+  .nav-header {
+    height: auto;
+    min-height: 80px;
+    padding: 8px 16px;
+  }
+
+  main {
+    padding-top: 120px; /* Adjust for mobile header height */
+  }
+
   .nav-container {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
+    height: auto;
   }
 
   .nav-links {
@@ -345,5 +471,30 @@ a,
 
   .search-box input {
     width: 140px;
+    max-width: 300px;
   }
+
+  .logo img {
+    height: 40px;
+    max-height: 40px;
+  }
+}
+
+.nav-links .btn.pos-btn {
+  background: linear-gradient(135deg, #d4a5e6, #b2e0e0);
+  color: #fff;
+  border-radius: 25px;
+  padding: 8px 20px;
+  margin-left: 12px;
+  font-weight: 600;
+  transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(212, 165, 230, 0.08);
+  border: none;
+  outline: none;
+  display: inline-block;
+  vertical-align: middle;
+}
+.nav-links .btn.pos-btn:hover {
+  background: linear-gradient(135deg, #b2e0e0, #d4a5e6);
+  color: #7b2cbf;
 }

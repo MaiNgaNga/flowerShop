@@ -9,7 +9,7 @@ import com.datn.Service.CartItemService;
 import com.datn.Service.ProductCategoryService;
 import com.datn.model.CartItem;
 import com.datn.model.User;
-import com.datn.utils.AuthService; 
+import com.datn.utils.AuthService;
 
 import java.util.List;
 
@@ -24,38 +24,42 @@ public class CartController {
     @Autowired
     private AuthService authService;
 
+    // Tự động load productCategories cho tất cả các trang
+    @ModelAttribute("productCategories")
+    public List<com.datn.model.ProductCategory> getAllProductCategories() {
+        return pro_ca_Service.findAll();
+    }
 
     @GetMapping
     public String viewCart(Model model) {
-        User user = authService.getUser()  ;                   
-        if (user == null) 
-        return "redirect:/login";
+        User user = authService.getUser();
+        if (user == null)
+            return "redirect:/login";
 
-        Integer userId=user.getId();
+        Integer userId = user.getId();
         List<CartItem> cartItems = cartItemService.getCartItemsByUserId(userId);
-        
+
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("totalAmount", cartItemService.getTotalAmount(userId));
-        model.addAttribute("productCategories", pro_ca_Service.findAll());
 
         model.addAttribute("view", "cart");
         return "layouts/layout";
     }
 
     @PostMapping("/add")
-    public String addToCart(@RequestParam("productId") Long productId, 
-                            @RequestParam("quantity") int quantity){
-       User user = authService.getUser()  ;                   
-        if (user == null) 
-        return "redirect:/login";
-        Integer userId=user.getId();
+    public String addToCart(@RequestParam("productId") Long productId,
+            @RequestParam("quantity") int quantity) {
+        User user = authService.getUser();
+        if (user == null)
+            return "redirect:/login";
+        Integer userId = user.getId();
         cartItemService.addCartItem(userId, productId, quantity);
         return "redirect:/cart";
     }
 
     @PostMapping("/update")
-    public String UpdateToCart(@RequestParam("id") Integer cartItemId, 
-                            @RequestParam("quantity") int quantity){
+    public String UpdateToCart(@RequestParam("id") Integer cartItemId,
+            @RequestParam("quantity") int quantity) {
         cartItemService.updateCartItemQuantity(cartItemId, quantity);
         return "redirect:/cart";
     }

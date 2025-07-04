@@ -1,4 +1,4 @@
-package com.datn.Controller;
+package com.datn.Controller.user;
 
 import com.datn.Service.PosService;
 import com.datn.model.Product;

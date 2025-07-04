@@ -1,6 +1,5 @@
 package com.datn.Controller.user;
 
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,9 +26,6 @@ import com.datn.model.User;
 import com.datn.utils.AuthService;
 import org.springframework.web.bind.annotation.PostMapping;
 
-
-
-
 @Controller
 @RequestMapping("/order")
 
@@ -46,62 +42,68 @@ public class OrderController {
     @Autowired
     private CartItemService cartItemService;
 
+    @ModelAttribute("productCategories")
+    public List<com.datn.model.ProductCategory> getAllProductCategories() {
+        return pro_ca_service.findAll();
+    }
+
     @GetMapping("/index")
-        public String index(Model model ) {
-        OrderRequest orderRequest=new OrderRequest();
+    public String index(Model model) {
+        OrderRequest orderRequest = new OrderRequest();
         model.addAttribute("orderRequest", orderRequest);
         return showForm(model);
     }
 
-   @PostMapping("/checkout")
-    public String checkout(@Valid @ModelAttribute("orderRequest") OrderRequest orderRequest, BindingResult result, Model model) {
-    if (result.hasErrors()) {
+    @PostMapping("/checkout")
+    public String checkout(@Valid @ModelAttribute("orderRequest") OrderRequest orderRequest, BindingResult result,
+            Model model) {
+        if (result.hasErrors()) {
+            return showForm(model);
+        }
+        User user = authService.getUser();
+        List<CartItem> cartItems = cartItemService.getCartItemsByUserId(user.getId());
+        if (cartItems.isEmpty()) {
+            model.addAttribute("message", "Giỏ hàng trống, không thể đặt hàng.");
+            return showForm(model);
+        }
+
+        Order order = new Order();
+        order.setUser(user);
+        order.setCreateDate(new Date());
+        order.setSdt(orderRequest.getSdt());
+        order.setAddress(orderRequest.getAddress());
+        order.setStatus("Chưa xác nhận");
+        order.setTotalAmount(cartItemService.getTotalAmount(user.getId()));
+        List<OrderDetail> orderDetails = new ArrayList<>();
+
+        Order savedOrder = orderService.saveOrder(order, orderDetails);
+
+        for (CartItem cartItem : cartItems) {
+            OrderDetail detail = new OrderDetail();
+            detail.setOrder(savedOrder);
+            detail.setProduct(cartItem.getProduct());
+            detail.setQuantity(cartItem.getQuantity());
+            detail.setPrice(cartItem.getProduct().getPrice());
+            orderDetails.add(detail);
+        }
+
+        orderService.saveOrder(savedOrder, orderDetails);
+
+        cartItemService.clearCartByUserId(user.getId());
+        model.addAttribute("success", "Đặt hàng thành công");
         return showForm(model);
     }
-    User user= authService.getUser();
-    List<CartItem> cartItems = cartItemService.getCartItemsByUserId(user.getId());
-    if (cartItems.isEmpty()) {
-        model.addAttribute("message", "Giỏ hàng trống, không thể đặt hàng.");
-        return showForm(model);
-    }
 
-    Order order = new Order();
-    order.setUser(user);
-    order.setCreateDate(new Date());
-    order.setSdt(orderRequest.getSdt());
-    order.setAddress(orderRequest.getAddress());
-    order.setStatus("Chưa xác nhận");
-    order.setTotalAmount(cartItemService.getTotalAmount(user.getId()));
-    List<OrderDetail> orderDetails = new ArrayList<>();
+    public String showForm(Model model) {
+        User user = authService.getUser();
+        model.addAttribute("user", user);
 
-    Order savedOrder = orderService.saveOrder(order, orderDetails);
-
-    for (CartItem cartItem : cartItems) {
-        OrderDetail detail = new OrderDetail();
-        detail.setOrder(savedOrder);
-        detail.setProduct(cartItem.getProduct());
-        detail.setQuantity(cartItem.getQuantity());
-        detail.setPrice(cartItem.getProduct().getPrice());
-        orderDetails.add(detail);
-    }
-
-    orderService.saveOrder(savedOrder, orderDetails);
-
-    cartItemService.clearCartByUserId(user.getId());
-    model.addAttribute("success", "Đặt hàng thành công");
-    return showForm(model);
-}
-
-    public String showForm(Model model ) {
-        User user= authService.getUser();
-        model.addAttribute("user",user);
-
-        List<CartItem>  cartItems= cartItemService.getCartItemsByUserId(user.getId());
+        List<CartItem> cartItems = cartItemService.getCartItemsByUserId(user.getId());
         model.addAttribute("cartItems", cartItems);
-        model.addAttribute("totalAmount",cartItemService.getTotalAmount(user.getId()));
-        model.addAttribute("productCategories", pro_ca_service.findAll());
+        model.addAttribute("totalAmount", cartItemService.getTotalAmount(user.getId()));
+
         model.addAttribute("view", "order");
         return "layouts/layout";
     }
-    
+
 }

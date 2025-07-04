@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -27,14 +28,18 @@ public class HomeController {
     @Autowired
     ProductCategoryService productCategoryService;
 
+    // Tự động load productCategories cho tất cả các trang
+    @ModelAttribute("productCategories")
+    public List<ProductCategory> getAllProductCategories() {
+        return pro_ca_Service.findAll();
+    }
+
     @GetMapping("/home")
     public String home(Model model) {
         // Load data và kiểm tra
         List<Product> productQuantities = productService.findTop6ByOrderByQuantityDesc();
         List<Product> latestProducts = productService.findLatestProductsPerCategory();
         List<Product> bestSellingProducts = productService.findBestSellingProductPerCategory();
-
-        model.addAttribute("productCategories", pro_ca_Service.findAll());
 
         model.addAttribute("productQuantities", productQuantities);
         model.addAttribute("latestProducts", latestProducts);
@@ -76,22 +81,9 @@ public class HomeController {
         return productService.findAll();
     }
 
-    @GetMapping("/api/debug/products-with-categories")
-    @ResponseBody
-    public List<Product> getProductsWithCategories() {
-        List<Product> products = productService.findAll();
-        for (Product product : products) {
-            System.out.println("Product: " + product.getName() +
-                    ", Category: " + (product.getCategory() != null ? product.getCategory().getName() : "NULL") +
-                    ", ProductCategory: "
-                    + (product.getProductCategory() != null ? product.getProductCategory().getName() : "NULL"));
-        }
-        return products;
-    }
-
     @GetMapping("/api/debug/product-categories")
     @ResponseBody
-    public List<ProductCategory> getAllProductCategories() {
+    public List<ProductCategory> getDebugProductCategories() {
         return productCategoryService.findAll();
     }
 }

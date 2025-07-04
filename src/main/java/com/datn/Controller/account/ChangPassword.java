@@ -1,32 +1,40 @@
 package com.datn.Controller.account;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.datn.Service.ProductCategoryService;
 import com.datn.Service.UserService;
+import com.datn.model.ProductCategory;
 import com.datn.utils.AuthService;
-
-
-
 
 @Controller
 
 public class ChangPassword {
-    @Autowired 
+    @Autowired
     private AuthService authService;
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private ProductCategoryService pro_ca_Service;
 
-    private static final String PASSWORD_PATTERN = ".{4,}"; 
-    boolean status=true ;
+    // Tự động load productCategories cho tất cả các trang
+    @ModelAttribute("productCategories")
+    public List<ProductCategory> getAllProductCategories() {
+        return pro_ca_Service.findAll();
+    }
+
+    private static final String PASSWORD_PATTERN = ".{4,}";
+    boolean status = true;
+
     @GetMapping("/changPassword")
     public String change(Model model) {
         return showChangPassForm(model);
@@ -34,12 +42,12 @@ public class ChangPassword {
 
     @PostMapping("/changPassword")
     public String change(
-            Model model, 
-            @RequestParam String currentPassword, 
-            @RequestParam String newPassword, 
+            Model model,
+            @RequestParam String currentPassword,
+            @RequestParam String newPassword,
             @RequestParam String confirmNewPassword) {
-        
-        if ( currentPassword.isEmpty() || newPassword.isEmpty() || confirmNewPassword.isEmpty()) {
+
+        if (currentPassword.isEmpty() || newPassword.isEmpty() || confirmNewPassword.isEmpty()) {
             model.addAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
             return showChangPassForm(model);
         }
@@ -74,11 +82,10 @@ public class ChangPassword {
         return showChangPassForm(model);
     }
 
-public String showChangPassForm(Model model){
-    model.addAttribute("productCategories", pro_ca_Service.findAll());
+    public String showChangPassForm(Model model) {
 
-    model.addAttribute("status", status);
-    model.addAttribute("view", "account/changPassword");
-    return "layouts/layout";
-}
+        model.addAttribute("status", status);
+        model.addAttribute("view", "account/changPassword");
+        return "layouts/layout";
+    }
 }

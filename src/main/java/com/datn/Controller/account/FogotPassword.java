@@ -1,15 +1,20 @@
 package com.datn.Controller.account;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.datn.Service.ProductCategoryService;
 import com.datn.Service.UserService;
 import com.datn.model.Mail;
 import com.datn.model.User;
+import com.datn.model.ProductCategory;
 import com.datn.utils.impl.SendMailService;
 
 
@@ -21,6 +26,15 @@ public class FogotPassword {
 
     @Autowired
     private SendMailService sendMailService;
+
+    @Autowired
+    private ProductCategoryService pro_ca_Service;
+
+    // Tự động load productCategories cho tất cả các trang
+    @ModelAttribute("productCategories")
+    public List<ProductCategory> getAllProductCategories() {
+        return pro_ca_Service.findAll();
+    }
 
     @GetMapping("/forgotPassword")
     public String forgot(Model model){
