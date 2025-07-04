@@ -97,16 +97,16 @@ a {
             border-radius: 8px;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
             text-align: center;
-            max-width: 800px !important;
-            width: 100%;    
+            max-width: 800px;
+            width: 100%;
             z-index: 10;
         }
 
         .banner-title {
-           font-family: "Playfair Display", serif !important;
+           font-family: "Playfair Display", serif;
 
-            font-size: 39px !important;
-            font-weight: 500 !important;
+            font-size: 39px;
+            font-weight: 700;
             color: #333;
             margin-top: 0;
             margin-bottom: 30px;
@@ -179,7 +179,11 @@ a {
             text-transform: uppercase;
         }
 
-    
+        .post-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
 
         .post-card {
             background-color: #fff;
