@@ -25,8 +25,8 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     @Override
     public ProductCategory findByID(int id) {
-        Optional<ProductCategory> ProductCategory = dao.findById(id);
-        return ProductCategory.orElse(null);
+        Optional<ProductCategory> productCategory = dao.findById((long) id);
+        return productCategory.orElse(null);
     }
 
     @Override
@@ -39,11 +39,12 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     @Override
     public void update(ProductCategory entity) {
-        if (dao.existsById(entity.getId())) {
-            if (dao.existsByNameAndIdNot(entity.getName(), entity.getId())) {
+        int id = entity.getId();
+        if (dao.existsById((long) id)) {
+            if (dao.existsByNameAndIdNot(entity.getName(), id)) {
                 throw new IllegalArgumentException("Danh mục này đã tồn tại!");
             }
-            if (entity.getName().isEmpty()) {
+            if (entity.getName() == null || entity.getName().isEmpty()) {
                 throw new IllegalArgumentException("Tên danh mục không được để trống!");
             }
             dao.save(entity);
@@ -54,13 +55,11 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     @Override
     public void deleteById(int id) {
-
-        if (dao.existsById(id)) {
+        if (dao.existsById((long) id)) {
             if (!productDAO.findByProductCategoryId(id).isEmpty()) {
                 throw new IllegalArgumentException("Danh mục này đã tồn tại sản phẩm!");
-
             }
-            dao.deleteById(id);
+            dao.deleteById((long) id);
         } else {
             throw new IllegalArgumentException("Không xác định được Danh mục cần xóa");
         }
@@ -68,6 +67,6 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     @Override
     public boolean existsById(int id) {
-        return dao.existsById(id);
+        return dao.existsById((long) id);
     }
 }

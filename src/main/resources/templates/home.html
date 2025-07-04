@@ -21,15 +21,14 @@
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins&display=swap"
       rel="stylesheet"
     />
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
   </head>
   <body>
-    <!-- Hero Section -->
     <section class="hero-section">
       <div class="hero-overlay"></div>
       <div class="flower-particles" id="flower-particles"></div>
       <div class="hero-content">
-        <h1 data-aos="fade-down"> Karina Hana</h1>
+        <h1 data-aos="fade-down">Karina Hana</h1>
         <p data-aos="fade-up" data-aos-delay="200">
           Tạo nên những khoảnh khắc đáng nhớ với những thiết kế hoa tinh tế
         </p>
@@ -75,14 +74,16 @@
             th:data-aos-delay="${iterStat.index * 100}"
             data-aos-easing="ease-out-back"
           >
-            <a th:href="@{/detail(id=${product.id})}"
-                    class="text-decoration-none">
+            <a
+              th:href="@{/detail(id=${product.id})}"
+              class="text-decoration-none"
+            >
               <img
-              th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
-              th:alt="${product.name}"
-              onerror="this.src='/images/logo.png'; this.onerror=null;"
-              style="width: 100%; height: 200px; object-fit: cover"
-            />
+                th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
+                th:alt="${product.name}"
+                onerror="this.src='/images/logo.png'; this.onerror=null;"
+                style="width: 100%; height: 200px; object-fit: cover"
+              />
             </a>
             <div class="new-flower-name" th:text="${product.name}">Tên hoa</div>
             <div
@@ -187,6 +188,7 @@
     </section>
 
     <!-- Phần này có thể đặt trong file dichvu_luoi4.html -->
+    <h2 class="text-center fw-bold">Dịch vụ</h2>
     <section class="category-cards my-5 d-flex justify-content-center gap-5">
       <div class="image-grid">
         <div
@@ -200,7 +202,7 @@
             alt="Ảnh 1"
           />
           <div class="image-overlay"></div>
-          <div class="image-overlay-button">Phụ kiện</div>
+          <div class="image-overlay-button">Xem thêm</div>
         </div>
 
         <div
@@ -214,7 +216,7 @@
             alt="Ảnh 2"
           />
           <div class="image-overlay"></div>
-          <div class="image-overlay-button">Khám phá</div>
+          <div class="image-overlay-button">Xem thêm</div>
         </div>
 
         <div
@@ -228,12 +230,14 @@
             alt="Ảnh 3"
           />
           <div class="image-overlay"></div>
-          <div class="image-overlay-button">Mua ngay</div>
+          <div class="image-overlay-button">Xem thêm</div>
         </div>
       </div>
     </section>
     <section class="new-flowers-section my-5 text-center">
-      <h2 class="mb-4" data-aos="fade-up" data-aos-duration="800">Mẫu hoa mới</h2>
+      <h2 class="mb-4" data-aos="fade-up" data-aos-duration="800">
+        Mẫu hoa mới
+      </h2>
       <div class="new-flower-grid-wrapper">
         <div class="new-flower-grid">
           <!-- Hiển thị dữ liệu sản phẩm mới từ database -->
@@ -244,14 +248,16 @@
             th:data-aos-delay="${iterStat.index * 100}"
             data-aos-easing="ease-out-back"
           >
-            <a th:href="@{/detail(id=${product.id})}"
-                    class="text-decoration-none">
+            <a
+              th:href="@{/detail(id=${product.id})}"
+              class="text-decoration-none"
+            >
               <img
-              th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
-              th:alt="${product.name}"
-              onerror="this.src='/images/logo.png'; this.onerror=null;"
-              style="width: 100%; height: 200px; object-fit: cover"
-            />
+                th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
+                th:alt="${product.name}"
+                onerror="this.src='/images/logo.png'; this.onerror=null;"
+                style="width: 100%; height: 200px; object-fit: cover"
+              />
             </a>
             <div class="new-flower-name" th:text="${product.name}">Tên hoa</div>
             <div
@@ -297,17 +303,32 @@
           data-aos-delay="200"
           data-type="lang"
         >
-          Lãng hoa 
+          Lãng hoa
         </button>
-        <button class="filter-btn" data-aos="fade-in" data-aos-delay="200" data-type="gio">
-          Giỏ hoa 
+        <button
+          class="filter-btn"
+          data-aos="fade-in"
+          data-aos-delay="200"
+          data-type="gio"
+        >
+          Giỏ hoa
         </button>
-        <button class="filter-btn" data-aos="fade-in" data-aos-delay="200" data-type="bo">
-          Bó hoa 
+        <button
+          class="filter-btn"
+          data-aos="fade-in"
+          data-aos-delay="200"
+          data-type="bo"
+        >
+          Bó hoa
         </button>
       </div>
 
-      <div id="best-seller-grid" class="product-grid" data-aos="fade-in" data-aos-delay="200">
+      <div
+        id="best-seller-grid"
+        class="product-grid"
+        data-aos="fade-in"
+        data-aos-delay="200"
+      >
         <!-- Dynamic products loaded from database -->
         <div
           th:each="product, iterStat : ${defaultBestSeller}"
@@ -316,20 +337,22 @@
           th:data-aos-delay="${300 + iterStat.index * 100}"
         >
           <div class="product-image">
-            <a th:href="@{/detail(id=${product.id})}"
-                    class="text-decoration-none">
+            <a
+              th:href="@{/detail(id=${product.id})}"
+              class="text-decoration-none"
+            >
               <img
-              th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
-              class="default-img"
-              th:alt="${product.name}"
-              onerror="this.src='/images/logo.png'; this.onerror=null;"
-            />
-            <img
-              th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
-              class="hover-img"
-              th:alt="${product.name}"
-              onerror="this.src='/images/logo.png'; this.onerror=null;"
-            />
+                th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
+                class="default-img"
+                th:alt="${product.name}"
+                onerror="this.src='/images/logo.png'; this.onerror=null;"
+              />
+              <img
+                th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
+                class="hover-img"
+                th:alt="${product.name}"
+                onerror="this.src='/images/logo.png'; this.onerror=null;"
+              />
             </a>
             <div class="cart-icon-wrapper">
               <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
@@ -541,7 +564,6 @@
             <div class="product-size">size M</div>
           </div>
         </div>
-        
       </div>
     </section>
 

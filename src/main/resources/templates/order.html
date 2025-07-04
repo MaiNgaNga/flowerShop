@@ -1,0 +1,259 @@
+<div class="container mt-4 pt-md-5">
+  <div
+    class="success alert alert-success"
+    th:if="${success}"
+    th:text="${success}"
+  ></div>
+  <div
+    class="success alert alert-danger"
+    th:if="${message}"
+    th:text="${message}"
+  ></div>
+  <form th:action="@{/order/checkout}" method="post">
+    <div class="row">
+      <!-- Cột Thông tin Đặt hàng -->
+      <div class="col-md-7">
+        <div class="card p-4 mb-4">
+          <h5 class="mb-3 mau">Thông Tin Người Đặt Hàng</h5>
+
+          <div class="mb-3">
+            <label class="form-label">Họ và tên </label>
+            <input
+              type="text"
+              th:value="${user.name}"
+              class="form-control"
+              readonly
+            />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email </label>
+            <input
+              type="email"
+              readonly
+              th:value="${user.email}"
+              class="form-control"
+            />
+          </div>
+          <th:block th:object="${orderRequest}">
+            <div class="mb-3">
+              <label class="form-label">Số điện thoại *</label>
+              <input
+                type="text"
+                th:field="*{sdt}"
+                class="form-control"
+                placeholder="Nhập số điện thoại"
+              />
+              <i class="error" th:errors="*{sdt}"></i>
+            </div>
+
+            <!-- Thêm phần chọn địa chỉ -->
+            <div class="mb-3">
+              <label class="form-label">Tỉnh/TP *</label>
+              <select
+                id="province"
+                class="form-control"
+                onchange="loadDistricts()"
+              >
+                <option value="">Chọn tỉnh/thành phố</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Huyện/Quận *</label>
+              <select id="district" class="form-control" onchange="loadWards()">
+                <option value="">Chọn huyện/quận</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Xã/Phường *</label>
+              <select id="ward" class="form-control">
+                <option value="">Chọn xã/phường</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Địa chỉ cụ thể *</label>
+              <input
+                type="text"
+                id="specific"
+                class="form-control"
+                placeholder="Nhập địa chỉ cụ thể"
+              />
+              <input
+                type="text"
+                th:field="*{address}"
+                class="form-control"
+                hidden
+              />
+              <i class="error" th:errors="*{address}"></i>
+            </div>
+          </th:block>
+        </div>
+      </div>
+
+      <!-- Cột Đơn hàng -->
+      <div class="col-md-5">
+        <div class="card p-4 mb-4">
+          <h5 class="mb-3 mau">Đơn Hàng Của Bạn</h5>
+          <th:block th:each="item : ${cartItems}">
+            <div class="d-flex justify-content-between">
+              <p th:text="${item.product.name} + ' x ' + ${item.quantity}"></p>
+              <span
+                th:text="${#numbers.formatDecimal(item.getTotal(), 0, 'COMMA', 0, 'POINT')} + ' VND'"
+              ></span>
+            </div>
+            <input type="hidden" name="cartItemIds" th:value="${item.id}" />
+            <hr />
+          </th:block>
+
+          <p>
+            <strong>Tổng cộng:</strong>
+            <span
+              class="float-end"
+              th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+            ></span>
+          </p>
+        </div>
+
+        <!-- Nút Đặt Hàng gửi form -->
+        <button type="submit" class="btn btn-success w-100 mt-3">
+          ĐẶT HÀNG
+        </button>
+        <button
+          type="button"
+          class="btn w-100 mt-3"
+          onclick="handleZaloPayPayment()"
+        >
+          THANH TOÁN QUA ZALOPAY
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+<script>
+  // Lấy danh sách tỉnh/thành phố
+  fetch("https://provinces.open-api.vn/api/p/")
+    .then((response) => response.json())
+    .then((data) => {
+      const provinceSelect = document.getElementById("province");
+      data.forEach((province) => {
+        const option = document.createElement("option");
+        option.value = province.code;
+        option.textContent = province.name;
+        provinceSelect.appendChild(option);
+      });
+    });
+
+  // Lấy danh sách quận/huyện
+  function loadDistricts() {
+    const provinceCode = document.getElementById("province").value;
+    const districtSelect = document.getElementById("district");
+    districtSelect.innerHTML = '<option value="">Chọn huyện/quận</option>'; // Reset district select
+
+    if (provinceCode) {
+      fetch(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`)
+        .then((response) => response.json())
+        .then((data) => {
+          districtSelect.dataset.provinceName = data.name; // Lưu tên tỉnh/thành phố
+          data.districts.forEach((district) => {
+            const option = document.createElement("option");
+            option.value = district.code;
+            option.textContent = district.name;
+            districtSelect.appendChild(option);
+          });
+        });
+    }
+  }
+
+  // Lấy danh sách phường/xã
+  function loadWards() {
+    const districtCode = document.getElementById("district").value;
+    const wardSelect = document.getElementById("ward");
+    wardSelect.innerHTML = '<option value="">Chọn xã/phường</option>'; // Reset ward select
+
+    if (districtCode) {
+      fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`)
+        .then((response) => response.json())
+        .then((data) => {
+          wardSelect.dataset.districtName = data.name; // Lưu tên huyện/quận
+          data.wards.forEach((ward) => {
+            const option = document.createElement("option");
+            option.value = ward.code;
+            option.textContent = ward.name;
+            wardSelect.appendChild(option);
+          });
+        });
+    }
+  }
+
+  // Ghép địa chỉ trước khi gửi form
+  document.querySelector("form").addEventListener("submit", function (event) {
+    const province =
+      document.getElementById("province").selectedOptions[0].text;
+    const district =
+      document.getElementById("district").selectedOptions[0].text;
+    const ward = document.getElementById("ward").selectedOptions[0].text;
+    const specificAddress = document.getElementById("specific").value;
+
+    if (!province || !district || !ward || !specificAddress) {
+      alert("Vui lòng nhập đầy đủ thông tin địa chỉ!");
+      event.preventDefault(); // Ngăn chặn gửi form nếu thiếu dữ liệu
+      return;
+    }
+
+    // Cập nhật địa chỉ đầy đủ vào input hidden
+    document.querySelector(
+      "[name='address']"
+    ).value = `${specificAddress}, ${ward}, ${district}, ${province}`;
+  });
+
+
+  async function handleZaloPayPayment() {
+    // Validate địa chỉ
+    const province = document.getElementById("province").selectedOptions[0]?.text;
+    const district = document.getElementById("district").selectedOptions[0]?.text;
+    const ward = document.getElementById("ward").selectedOptions[0]?.text;
+    const specificAddress = document.getElementById("specific").value;
+
+    if (!province || !district || !ward || !specificAddress) {
+      alert("Vui lòng nhập đầy đủ thông tin địa chỉ!");
+      return;
+    }
+
+    // Ghép địa chỉ đầy đủ
+    const fullAddress = `${specificAddress}, ${ward}, ${district}, ${province}`;
+
+    // Chuẩn bị dữ liệu order gửi qua Zalopay
+    const orderData = {
+      appUser: "[[${user.email}]]", // bạn có thể dùng email hoặc ID
+      amount: [[${totalAmount}]], // hoặc bạn có thể render thành JS từ server
+      description: "Thanh toán đơn hàng tại cửa hàng ABC",
+      address: fullAddress
+    };
+
+    try {
+      const response = await fetch("/api/zalopay", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(orderData)
+      });
+
+      const result = await response.text(); // Có thể trả về JSON nếu backend trả JSON
+      const json = JSON.parse(result); // parse nếu backend trả dạng chuỗi JSON
+
+      if (json.order_url) {
+        window.location.href = json.order_url; // Redirect tới ZaloPay
+      } else {
+        alert("Không thể tạo đơn hàng ZaloPay.");
+        console.error(json);
+      }
+    } catch (error) {
+      console.error("Lỗi khi tạo thanh toán ZaloPay:", error);
+      alert("Đã xảy ra lỗi khi thanh toán ZaloPay.");
+    }
+  }
+</script>
+

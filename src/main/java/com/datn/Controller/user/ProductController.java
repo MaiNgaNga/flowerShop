@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -28,15 +29,22 @@ public class ProductController {
     @Autowired
     private CategoryService ca_Service;
 
+    // Tự động load productCategories cho tất cả các trang
+    @ModelAttribute("productCategories")
+    public List<com.datn.model.ProductCategory> getAllProductCategories() {
+        return pro_ca_service.findAll();
+    }
+
     @RequestMapping("/ProductUser")
     public String index(Model model,
-            @RequestParam("id") Integer pro_categoryId,
-            @RequestParam(name = "categoryId", required = false) Integer ca_Id,
-            @RequestParam(name = "color", required = false) String color,
-            @RequestParam(name = "min", required = false) Double minPrice,
-            @RequestParam(name = "max", required = false) Double maxPrice,
-            @RequestParam("p") Optional<Integer> p,
-            @RequestParam(name = "filter", required = false) String filterType) {
+        @RequestParam("id") Integer pro_categoryId, 
+        @RequestParam(name = "categoryId", required = false) Integer ca_Id,
+        @RequestParam(name = "color", required = false) String color,
+        @RequestParam(name = "min", required = false) Double minPrice,
+        @RequestParam(name = "max", required = false) Double maxPrice,
+        @RequestParam("p") Optional<Integer> p,
+        @RequestParam(name = "filter", required = false) String filterType 
+    ) { 
         Pageable pageable = PageRequest.of(p.orElse(0), 12);
         Page<Product> products = null;
 
@@ -53,7 +61,6 @@ public class ProductController {
 
         model.addAttribute("page", products);
         model.addAttribute("pro_ca", pro_ca_service.findByID(pro_categoryId));
-        model.addAttribute("productCategories", pro_ca_service.findAll());
         model.addAttribute("categogies", ca_Service.findAll());
         model.addAttribute("view", "product");
 
@@ -70,23 +77,32 @@ public class ProductController {
             Page<Product> result;
 
             if (keyword == null || keyword.trim().isEmpty()) {
-                // Nếu không nhập từ khóa, trả về danh sách rỗng (hoặc tất cả tùy ý)
-                result = Page.empty();
+                // Nếu không nhập từ khóa, chuyển hướng về trang sản phẩm
+                return "redirect:/products";
             } else {
                 result = productService.searchByName(keyword.trim(), pageable);
             }
 
             model.addAttribute("page", result);
-            model.addAttribute("productCategories", pro_ca_service.findAll());
             model.addAttribute("categogies", ca_Service.findAll());
             model.addAttribute("searchKeyword", keyword);
             model.addAttribute("pro_ca", null);
             model.addAttribute("view", "product");
 
+            // Thêm thông báo kết quả tìm kiếm
+            if (result.getTotalElements() == 0) {
+                model.addAttribute("searchMessage",
+                        "Không tìm thấy sản phẩm nào phù hợp với từ khóa: '" + keyword + "'");
+            } else {
+                model.addAttribute("searchMessage",
+                        "Tìm thấy " + result.getTotalElements() + " sản phẩm cho từ khóa: '" + keyword + "'");
+            }
+
             return "layouts/layout";
         } catch (Exception e) {
             e.printStackTrace();
-            return "error";
+            model.addAttribute("error", "Có lỗi xảy ra khi tìm kiếm. Vui lòng thử lại.");
+            return "layouts/layout";
         }
     }
 }
