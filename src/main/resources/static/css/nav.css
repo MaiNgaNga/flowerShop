@@ -36,7 +36,7 @@
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 5px;
   flex-wrap: nowrap;
 }
 
@@ -458,11 +458,7 @@ a,
     height: auto;
   }
 
-  .nav-links {
-    flex-wrap: wrap;
-    gap: 12px;
-    margin: 10px 0;
-  }
+ 
 
   .search-box,
   .icons {
@@ -480,21 +476,3 @@ a,
   }
 }
 
-.nav-links .btn.pos-btn {
-  background: linear-gradient(135deg, #d4a5e6, #b2e0e0);
-  color: #fff;
-  border-radius: 25px;
-  padding: 8px 20px;
-  margin-left: 12px;
-  font-weight: 600;
-  transition: background 0.2s;
-  box-shadow: 0 2px 8px rgba(212, 165, 230, 0.08);
-  border: none;
-  outline: none;
-  display: inline-block;
-  vertical-align: middle;
-}
-.nav-links .btn.pos-btn:hover {
-  background: linear-gradient(135deg, #b2e0e0, #d4a5e6);
-  color: #7b2cbf;
-}

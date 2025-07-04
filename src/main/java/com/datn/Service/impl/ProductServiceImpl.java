@@ -149,9 +149,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<Product> findByProductCategoryIdPage(Integer productCategoryId,
-            Pageable pageable) {
-        return dao.findByProductCategoryIdPage(productCategoryId, pageable);
+    public Page<Product> findByProductCategoryIdPage(Integer productCategoryId, Pageable pageable) {
+        return dao.findByProductCategoryId(productCategoryId, pageable);
     }
 
     @Override
@@ -194,13 +193,17 @@ public class ProductServiceImpl implements ProductService {
      */
 
     @Override
+    public Page<Product> findByProductCategoryName(String name, Pageable pageable) {
+        return dao.findByProductCategoryName(name, pageable);
+    }
+
+    @Override
     public List<Product> findBestSellerByCategory(String categoryName) {
         return dao.findBestSellerByCategory(categoryName);
     }
 
     @Override
     public List<Product> findProductByCategory(Integer categoryId) {
-        // TODO Auto-generated method stub
         return dao.findProductByCategory(categoryId);
     }
 

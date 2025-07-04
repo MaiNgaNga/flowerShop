@@ -54,10 +54,5 @@ public interface ProductService {
         List<Product> findBestSellerByCategory(String categoryName);
 
         List<Product> findProductByCategory(Integer categoryId);
-
-<<<<<<< HEAD
-=======
         Page<Product> findByProductCategoryName(String name, Pageable pageable);
-
->>>>>>> a68d5872ecf0f172b65642469c1051624dfff1d6
 }
