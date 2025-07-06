@@ -22,8 +22,8 @@
   <div class="banner-content container text-center">
     <h1 class="banner-title mb-3">Karina Hana - Bài viết</h1>
     <div class="banner-main-image mb-3">
-      <img src="https://9xgarden.com/wp-content/uploads/2021/03/green-living-song-xanh-9x-garden-1.jpg"
-           alt="Green Living" class="img-fluid rounded shadow" />
+      <img th:src="@{images/4.png}"
+           alt="" class="img-fluid rounded shadow" />
     </div>
 
     <!-- Thanh tìm kiếm -->
@@ -68,7 +68,7 @@
 <a href="#top" id="backToTopBtn" title="Về đầu trang"
    class="position-fixed bottom-0 end-0 m-3 btn btn-success d-flex align-items-center gap-1"
    style="display:none; z-index:1000">
-  <i class="fa fa-arrow-up"></i> <span>Đầu trang</span>
+  <i class="fa fa-arrow-up"></i> <span></span>
 </a>
 
 <!-- ============================ Scripts ============================ -->
@@ -79,7 +79,7 @@
   /* Back‑to‑top */
   const backBtn = document.getElementById('backToTopBtn');
   window.addEventListener('scroll', () => {
-    backBtn.style.display = window.scrollY > 200 ? 'flex' : 'none';
+    backBtn.style.display = window.scrollY > 800 ? 'flex' : 'none';
   });
   backBtn.addEventListener('click', e => {
     e.preventDefault();
