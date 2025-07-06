@@ -28,7 +28,7 @@ public class PostController {
         Pageable pageable = PageRequest.of(page, 12);
         Page<Post> posts = postService.findAllPageable(pageable); // nếu bạn vẫn muốn phân trang
 
-        // Thêm danh sách 12 bài viết mới nhất (không phân trang)
+        // Thêm danh sách 12 bài viết mới nhất
         List<Post> newestPosts = postService.findTop12Newest();
 
         model.addAttribute("page", posts);

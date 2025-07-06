@@ -69,8 +69,8 @@ public class PostCRUDController {
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         Post post = new Post();
-        post.setPostDate(LocalDate.now()); // ✅ Gán ngày hiện tại ở đây
-
+        post.setPostDate(LocalDate.now());
+        post.setStatus(true);
         model.addAttribute("post", post);
         model.addAttribute("users", userService.findAll());
         model.addAttribute("view", "admin/PostCRUD"); // hoặc path đúng tới form của bạn
