@@ -1,8 +1,9 @@
 <style>
+  /* CSS cho phân trang */
   .custom-pagination .page-item .page-link {
     margin: 0 4px;
-    color: #6c757d;
-    border: 1px solid #6c757d;
+    color: #333;
+    border: 1px solid #d4a5e6;
     background-color: #fff;
     border-radius: 50%;
     transition: all 0.2s ease-in-out;
@@ -16,9 +17,9 @@
   }
 
   .custom-pagination .page-item.active .page-link {
-    background-color: #6c757d;
+    background-color: #d4a5e6;
     color: #fff;
-    border-color: #6c757d;
+    border-color: #d4a5e6;
   }
 
   .custom-pagination .page-item.disabled .page-link {
@@ -27,11 +28,14 @@
   }
 
   .custom-pagination .page-item .page-link:hover {
-    background-color: #e9ecef;
-    color: #343a40;
-    transform: scale(1.05);
+    background: #e0f7f7;
+    color: #333;
+    border-color: #d4a5e6;
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(212, 165, 230, 0.3);
   }
 
+  /* CSS cho khu vực upload hình ảnh */
   .image-upload-box {
     max-width: 110px;
   }
@@ -40,14 +44,14 @@
     width: 100%;
     height: auto;
     margin-bottom: 5px;
-    border: 1px solid #dee2e6;
+    border: 1px solid #e2e8f0;
   }
 
   .image-upload-box label.image-title {
     font-weight: 500;
     display: block;
     margin-bottom: 5px;
-    color: #343a40;
+    color: #2d3748;
   }
 
   .image-upload-box input[type="file"] {
@@ -59,14 +63,15 @@
     padding: 5px 10px;
     font-weight: 500;
     border-radius: 5px;
-    border: 1px solid #6c757d;
-    color: #6c757d;
-    background-color: #fff;
-    transition: transform 0.2s ease-in-out;
+    border: 1px solid #a0aec0;
+    color: #2d3748;
+    background-color: #edf2f7;
+    transition: all 0.2s ease-in-out;
   }
 
   .image-upload-box .custom-btn:hover {
     transform: translateY(-1px);
+    background-color: #e2e8f0;
   }
 
   .image-upload-row {
@@ -75,44 +80,10 @@
     justify-content: flex-start;
   }
 
-  /* Giao diện chung */
-  main.container {
-    background: #f8f9fa;
-    padding: 15px;
-  }
-
-  h3 {
-    color: #343a40;
-    font-weight: 600;
-    margin-bottom: 12px;
-  }
-
-  .nav-tabs {
-    border-bottom: 2px solid #6c757d;
-  }
-
-  .nav-tabs .nav-link {
-    color: #495057;
-    font-weight: 500;
-    padding: 8px 16px;
-    border-radius: 5px 5px 0 0;
-    transition: all 0.3s ease;
-  }
-
-  .nav-tabs .nav-link.active {
-    background-color: #6c757d;
-    color: #fff;
-    border-color: #6c757d;
-  }
-
-  .nav-tabs .nav-link:hover {
-    background-color: #e9ecef;
-    color: #343a40;
-  }
-
+  /* CSS cho các input và select */
   .form-control-sm,
   .form-select-sm {
-    border: 1px solid #ced4da;
+    border: 1px solid #e2e8f0;
     border-radius: 5px;
     padding: 5px 8px;
     transition: all 0.2s ease-in-out;
@@ -120,10 +91,11 @@
 
   .form-control-sm:focus,
   .form-select-sm:focus {
-    border-color: #6c757d;
-    box-shadow: 0 0 3px rgba(108, 117, 125, 0.3);
+    border-color: #a0aec0;
+    box-shadow: 0 0 3px rgba(160, 174, 192, 0.3);
   }
 
+  /* CSS cho các nút Thêm, Cập Nhật, Xóa, Làm Mới */
   .btn-primary,
   .btn-warning,
   .btn-danger,
@@ -162,29 +134,21 @@
     transform: translateY(-1px);
   }
 
-  .table {
-    background-color: #fff;
-  }
-
-  .table thead th {
-    background-color: #6c757d;
-    color: #fff;
-    font-weight: 500;
-    padding: 8px;
-  }
-
-  .table tbody tr:hover {
-    background-color: #f1f3f5;
-  }
-
-  /* CSS cho ô tìm kiếm và lọc */
+  /* CSS cho khu vực tìm kiếm, lọc và số lượng sản phẩm */
   .search-filter-row {
     display: flex;
-    gap: 10px;
+    gap: 15px;
     align-items: center;
     margin: 12px 0;
-    padding: 6px;
+    padding: 10px;
     background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+  }
+
+  .search-filter-row:hover {
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.15);
   }
 
   .search-box {
@@ -194,44 +158,85 @@
   }
 
   .search-box input {
-    padding: 5px 5px 5px 32px;
-    border: 1px solid #ced4da;
-    border-radius: 5px;
-    height: 32px;
-    transition: all 0.2s ease-in-out;
+    padding: 8px 48px 8px 12px;
+    border: 2px solid #90cdf4; /* Xanh lam nhẹ nhàng */
+    border-radius: 8px;
+    height: 40px;
+    font-size: 15px;
+    transition: all 0.3s ease;
     background-color: #fff;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
   }
 
   .search-box input:focus {
-    border-color: #6c757d;
-    box-shadow: 0 0 3px rgba(108, 117, 125, 0.3);
+    border-color: #4299e1; /* Xanh lam trung bình khi focus */
+    box-shadow: 0 0 8px rgba(66, 153, 225, 0.4);
+    outline: none;
+  }
+
+  .search-box input:hover {
+    border-color: #63b3ed;
   }
 
   .search-box i {
     position: absolute;
-    left: 10px;
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
-    color: #6c757d;
-    font-size: 14px;
+    color: #4299e1;
+    font-size: 18px;
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.3s ease;
+  }
+
+  .search-box i:hover {
+    color: #2b6cb0; /* Xanh đậm nhẹ khi hover */
+    transform: translateY(-50%) scale(1.15);
   }
 
   .filter-box select {
-    height: 32px;
-    border: 1px solid #ced4da;
-    border-radius: 5px;
-    padding: 5px 8px;
-    transition: all 0.2s ease-in-out;
+    height: 40px;
+    border: 2px solid #90cdf4; /* Đồng bộ màu với ô tìm kiếm */
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 15px;
+    transition: all 0.3s ease;
     background-color: #fff;
     min-width: 200px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
   }
 
   .filter-box select:focus {
-    border-color: #6c757d;
-    box-shadow: 0 0 3px rgba(108, 117, 125, 0.3);
+    border-color: #4299e1;
+    box-shadow: 0 0 8px rgba(66, 153, 225, 0.4);
+    outline: none;
   }
 
-  /* CSS cho icon sửa/xóa */
+  .filter-box select:hover {
+    border-color: #63b3ed;
+  }
+
+  .count-box {
+    margin-left: auto; /* Đẩy ô số lượng sát lề phải */
+    height: 40px;
+    line-height: 40px;
+    padding: 0 16px;
+    border: 2px solid #90cdf4;
+    border-radius: 8px;
+    background-color: #f9fafb; /* Nền xám nhạt tinh tế */
+    font-size: 15px;
+    color: #2d3748;
+    font-weight: 500;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+
+  .count-box:hover {
+    background-color: #edf2f7;
+    box-shadow: 0 0 8px rgba(66, 153, 225, 0.3);
+  }
+
+  /* CSS cho icon hành động (sửa/xóa) */
   .action-icons a {
     font-size: 15px;
     margin: 0 6px;
@@ -239,16 +244,28 @@
   }
 
   .action-icons .edit-icon {
-    color: #6c757d;
+    color: #2b6cb0;
   }
 
   .action-icons .delete-icon {
-    color: #dc3545;
+    color: #e53e3e;
   }
 
   .action-icons a:hover {
     transform: scale(1.1);
     opacity: 0.8;
+  }
+
+  /* CSS cho bảng danh sách */
+  .table thead.table-dark {
+    background-color: #343a40;
+    color: #fff;
+  }
+
+  .table th,
+  .table td {
+    text-align: center;
+    vertical-align: middle;
   }
 </style>
 
@@ -330,8 +347,8 @@
               class="form-control form-control-sm"
               placeholder="Tên sản phẩm"
             />
+            <i class="error" th:errors="*{name}"></i>
           </div>
-          <i class="error" th:errors="*{name}"></i>
         </div>
         <div class="row">
           <div class="col-md-6">
@@ -360,7 +377,6 @@
           </div>
         </div>
 
-        <!-- Thêm phần giảm giá -->
         <div class="row mt-3">
           <div class="col-12">
             <div class="form-check">
@@ -472,7 +488,6 @@
         </div>
 
         <div class="image-upload-row mt-3 mb-3">
-          <!-- Ảnh 1 -->
           <div class="image-upload-box">
             <label class="image-title">Hình Ảnh 1</label>
             <div th:if="${product.image_url}">
@@ -493,8 +508,6 @@
             >
             <input type="file" id="image1" name="image1" />
           </div>
-
-          <!-- Ảnh 2 -->
           <div class="image-upload-box">
             <label class="image-title">Hình Ảnh 2</label>
             <div th:if="${product.image_url2}">
@@ -515,8 +528,6 @@
             >
             <input type="file" id="image2" name="image2" />
           </div>
-
-          <!-- Ảnh 3 -->
           <div class="image-upload-box">
             <label class="image-title">Hình Ảnh 3</label>
             <div th:if="${product.image_url3}">
@@ -567,8 +578,8 @@
               <i class="fa fa-trash"></i> Xóa
             </button>
             <a class="btn btn-success" th:href="@{/Product/index}">
-              <i class="fa fa-sync"></i> Làm Mới</a
-            >
+              <i class="fa fa-sync"></i> Làm Mới
+            </a>
           </div>
         </div>
       </form>
@@ -581,25 +592,19 @@
       role="tabpanel"
       aria-labelledby="list-tab"
     >
-      <!-- Ô tìm kiếm và lọc -->
-      <form
-        action="/Product/index"
-        method="get"
-        class="search-filter-row"
-        style="gap: 10px; align-items: center"
-      >
+      <form action="/Product/index" method="get" class="search-filter-row">
         <div class="search-box">
-          <i class="fa fa-search"></i>
           <input
             type="text"
+            id="searchInput"
             name="keyword"
             th:value="${keyword}"
             class="form-control form-control-sm"
             placeholder="Tìm kiếm sản phẩm..."
             oninput="this.form.submit()"
           />
+          <i class="fa fa-search" onclick="this.closest('form').submit()"></i>
         </div>
-
         <div class="filter-box">
           <select
             name="productCategoryId"
@@ -615,6 +620,9 @@
             ></option>
           </select>
         </div>
+        <div class="count-box">
+          Tổng: <span th:text="${products.size()} + ' sản phẩm'"></span>
+        </div>
       </form>
 
       <div class="table-responsive">
@@ -623,15 +631,11 @@
             <tr>
               <th>ID</th>
               <th>Tên sản phẩm</th>
-              <th>Giá sản phẩm</th>
+              <th>Loại hoa</th>
+              <th>Hình ảnh</th>
               <th>Số lượng</th>
+              <th>Giá sản phẩm</th>
               <th>Giảm giá (%)</th>
-              <th>Ngày bắt đầu</th>
-              <th>Ngày kết thúc</th>
-              <th>Hình Ảnh</th>
-              <th>Loại Hoa</th>
-              <th>Màu Sắc</th>
-              <th>Danh mục</th>
               <th>Hành động</th>
             </tr>
           </thead>
@@ -639,19 +643,7 @@
             <tr th:each="item : ${products}">
               <td th:text="${item.id}"></td>
               <td th:text="${item.name}"></td>
-              <td
-                th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'COMMA') + ' VNĐ'}"
-              ></td>
-              <td th:text="${item.quantity}"></td>
-              <td
-                th:text="${item.discountPercent != null ? item.discountPercent + '%' : 'Không'}"
-              ></td>
-              <td
-                th:text="${item.discountStart != null ? #temporals.format(item.discountStart, 'dd/MM/yyyy') : 'N/A'}"
-              ></td>
-              <td
-                th:text="${item.discountEnd != null ? #temporals.format(item.discountEnd, 'dd/MM/yyyy') : 'N/A'}"
-              ></td>
+              <td th:text="${item.category.name}"></td>
               <td>
                 <img
                   th:src="@{/images/{image}(image=${item.image_url})}"
@@ -660,9 +652,13 @@
                   width="50"
                 />
               </td>
-              <td th:text="${item.category.name}"></td>
-              <td th:text="${item.color.name}"></td>
-              <td th:text="${item.productCategory.name}"></td>
+              <td th:text="${item.quantity}"></td>
+              <td
+                th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'COMMA') + ' VNĐ'}"
+              ></td>
+              <td
+                th:text="${item.discountPercent != null ? item.discountPercent + '%' : 'Không'}"
+              ></td>
               <td class="action-icons">
                 <a
                   th:href="@{/Product/edit/{id}(id=${item.id})}"
@@ -685,11 +681,10 @@
           </tbody>
         </table>
       </div>
-      <!-- Phân trang -->
+
       <div class="d-flex justify-content-center mt-3" th:if="${totalPages > 0}">
         <nav>
           <ul class="pagination custom-pagination">
-            <!-- First Page -->
             <li
               class="page-item"
               th:classappend="${currentPage == 0} ? 'disabled'"
@@ -701,8 +696,6 @@
                 <i class="fa fa-angle-double-left"></i>
               </a>
             </li>
-
-            <!-- Previous Page -->
             <li
               class="page-item"
               th:classappend="${currentPage == 0} ? 'disabled'"
@@ -714,8 +707,6 @@
                 <i class="fa fa-angle-left"></i>
               </a>
             </li>
-
-            <!-- Page Numbers -->
             <li
               class="page-item"
               th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
@@ -727,8 +718,6 @@
                 th:text="${i + 1}"
               ></a>
             </li>
-
-            <!-- Next Page -->
             <li
               class="page-item"
               th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
@@ -740,8 +729,6 @@
                 <i class="fa fa-angle-right"></i>
               </a>
             </li>
-
-            <!-- Last Page -->
             <li
               class="page-item"
               th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
