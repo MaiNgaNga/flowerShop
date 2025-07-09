@@ -28,5 +28,6 @@ public interface PostService {
     List<Post> findRelatedPosts(Long excludePostId);
 
     List<Post> findTop12Newest();
+    
 
 }
