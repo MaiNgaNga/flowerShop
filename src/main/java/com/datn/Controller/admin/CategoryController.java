@@ -3,6 +3,9 @@ package com.datn.Controller.admin;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.datn.Service.CategoryService;
@@ -31,7 +35,22 @@ public class CategoryController {
     }
 
     @RequestMapping("/index")
-    public String index(Model model) {
+    public String index(Model model, 
+        @RequestParam(value = "page", defaultValue = "0") int page,
+        @RequestParam(value = "size", defaultValue = "10") int size, 
+        @RequestParam(value = "keyword", required = false) String keyword) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Category> categoryPage;
+
+        if (keyword != null && !keyword.isEmpty()) {
+            categoryPage = categoryService.searchByName(keyword, pageable);
+        } else {
+            categoryPage = categoryService.findAllPaginated(pageable); 
+        }
+
+          model.addAttribute("categorys", categoryPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", categoryPage.getTotalPages());
         model.addAttribute("category", new Category());
         model.addAttribute("view", "admin/categoryCRUD");
         return "admin/layout";
