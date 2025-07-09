@@ -68,7 +68,8 @@ public class ProductCRUDController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             @RequestParam(value = "productCategoryId", required = false) String productCategoryIdStr,
-            @RequestParam(value = "keyword", required = false) String keyword) {
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "tab", defaultValue = "list") String tab) {
 
         Pageable pageable = PageRequest.of(page, size);
         Page<Product> productPage;
@@ -110,6 +111,7 @@ public class ProductCRUDController {
         model.addAttribute("totalPages", productPage.getTotalPages());
         model.addAttribute("product", new Product());
         model.addAttribute("view", "admin/ProductCRUD");
+        model.addAttribute("activeTab", tab);
         return "admin/layout";
     }
 
@@ -119,6 +121,7 @@ public class ProductCRUDController {
             @RequestParam("image1") MultipartFile image1,
             @RequestParam("image2") MultipartFile image2,
             @RequestParam("image3") MultipartFile image3,
+            @RequestParam(value = "tab", defaultValue = "edit") String tab,
             RedirectAttributes redirectAttributes) {
         if (errors.hasErrors()) {
             model.addAttribute("view", "admin/ProductCRUD");
@@ -127,10 +130,11 @@ public class ProductCRUDController {
         try {
             productService.create(product, image1, image2, image3);
             redirectAttributes.addFlashAttribute("success", "Thêm sản phẩm thành công!");
-            return "redirect:/Product/index";
+            return "redirect:/Product/index?tab=" + tab;
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("view", "admin/ProductCRUD");
+            model.addAttribute("activeTab", tab);
             return "admin/layout";
         }
     }
@@ -138,7 +142,8 @@ public class ProductCRUDController {
     @GetMapping("/edit/{id}")
     public String edit(Model model, @PathVariable("id") long id,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size) {
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "tab", defaultValue = "edit") String tab) {
         Product product = productService.findByID(id);
 
         Pageable pageable = PageRequest.of(page, size);
@@ -150,6 +155,7 @@ public class ProductCRUDController {
 
         model.addAttribute("product", product);
         model.addAttribute("view", "admin/ProductCRUD");
+        model.addAttribute("activeTab", tab);
         return "admin/layout";
     }
 
@@ -159,6 +165,7 @@ public class ProductCRUDController {
             @RequestParam(value = "image2", required = false) MultipartFile image2,
             @RequestParam(value = "image3", required = false) MultipartFile image3,
             @RequestParam(value = "oldImages", required = false) String[] oldImages,
+            @RequestParam(value = "tab", defaultValue = "edit") String tab,
             RedirectAttributes redirectAttributes) {
         if (errors.hasErrors()) {
             model.addAttribute("view", "admin/ProductCRUD");
@@ -175,11 +182,12 @@ public class ProductCRUDController {
             }
             productService.update(product, image1, image2, image3, oldImages);
             redirectAttributes.addFlashAttribute("success", "Cập nhật sản phẩm thành công!");
-            return "redirect:/Product/index";
+            return "redirect:/Product/index?tab=" + tab;
 
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("view", "admin/ProductCRUD");
+            model.addAttribute("activeTab", tab);
             return "admin/layout";
         }
     }
@@ -187,16 +195,17 @@ public class ProductCRUDController {
     @RequestMapping("/delete/{id}")
     public String delete(Model model,
             @ModelAttribute("product") Product product, Errors errors,
-            @PathVariable("id") long id, RedirectAttributes redirectAttributes) {
+            @PathVariable("id") long id,
+            @RequestParam(value = "tab", defaultValue = "edit") String tab,
+            RedirectAttributes redirectAttributes) {
         try {
             productService.deleteById(id);
             redirectAttributes.addFlashAttribute("success", "Đã xóa sản phẩm!");
-            return "redirect:/Product/index";
+            return "redirect:/Product/index?tab=" + tab;
 
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/Product/edit/" + product.getId();
-
+            return "redirect:/Product/edit/" + product.getId() + "?tab=" + tab;
         }
     }
 }
