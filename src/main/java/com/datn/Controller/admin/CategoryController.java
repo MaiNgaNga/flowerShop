@@ -44,6 +44,8 @@ public class CategoryController {
 
         if (keyword != null && !keyword.isEmpty()) {
             categoryPage = categoryService.searchByName(keyword, pageable);
+            model.addAttribute("keyword", keyword);
+
         } else {
             categoryPage = categoryService.findAllPaginated(pageable); 
         }
