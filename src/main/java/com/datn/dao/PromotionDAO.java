@@ -11,8 +11,8 @@ import org.springframework.data.repository.query.Param;
 
 import com.datn.model.Promotion;
 
-public interface PromotionDAO extends JpaRepository<Promotion, String> {
-    boolean existsByTitleAndIdNot(String title, String id);
+public interface PromotionDAO extends JpaRepository<Promotion, Long> {
+    boolean existsByTitleAndIdNot(String title, Long id);
 
     @Query("SELECT p FROM Promotion p WHERE  p.startDate >= :fromDate AND p.endDate <= :toDate")
     List<Promotion> findPromotionsByDateRange(@Param("fromDate") LocalDate fromDate, @Param("toDate") LocalDate toDate);
