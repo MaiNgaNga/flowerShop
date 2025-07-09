@@ -2,16 +2,13 @@ package com.datn.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,45 +21,55 @@ import lombok.NoArgsConstructor;
 public class Promotion {
 
     @Id
-    @Column(name = "id", unique = true, nullable = false, columnDefinition = "VARCHAR(20)")
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", unique = true, nullable = false, columnDefinition = "BIGINT")
+    private Long id;
 
     @Column(name = "title", columnDefinition = "NVARCHAR(255)")
+    @NotBlank(message = "Tiêu đề không được để trống")
     private String title;
 
     @Column(name = "description", columnDefinition = "NVARCHAR(500)")
+    @NotBlank(message = "Mô tả không được để trống")
     private String description;
 
-    @Column(name = "discount_type") // e.g., "percent" or "amount"
-    private String discountType;
+    @Column(name = "discount_type")
+    @NotBlank(message = "Loại giảm giá không được để trống")
+    private String discountType; // "percent" hoặc "amount" - bạn nên kiểm tra thêm ở tầng controller/service
 
     @Column(name = "discount_value")
+    @NotNull(message = "Giá trị giảm giá không được để trống")
+    @Positive(message = "Giá trị giảm giá phải lớn hơn 0")
     private Double discountValue;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "start_date")
+    @NotNull(message = "Ngày bắt đầu không được để trống")
+    @FutureOrPresent(message = "Ngày bắt đầu phải là hôm nay hoặc tương lai")
     private LocalDate startDate;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "end_date")
+    @NotNull(message = "Ngày kết thúc không được để trống")
+    @FutureOrPresent(message = "Ngày kết thúc phải là hôm nay hoặc tương lai")
     private LocalDate endDate;
 
+    @Column(name = "status")
+    private Boolean status; // true = đang hoạt động, false = không hoạt động
 
-    private Boolean status; // true = active, false = inactive
-
-    @Column(name = "created_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "created_date")
     private LocalDateTime createdDate;
 
-    @Column(name = "updated_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "updated_date")
     private LocalDateTime updatedDate;
 
-   @Column(name = "use_count")
-   private Integer useCount;
-
-    // @OneToMany(mappedBy = "promotion")
-    // private List<Order> orders;
+    @Column(name = "use_count", nullable = false)
+    @Min(value = 0, message = "Số lượt sử dụng phải >= 0")
+    private Integer useCount = 0;
 
     
+    @OneToMany(mappedBy = "promotion")
+    private List<Order> orders;
 }

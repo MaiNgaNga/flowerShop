@@ -87,7 +87,7 @@ public class PromotionCRUDController {
        
     }
     @GetMapping("/edit/{id}")
-    public String edit(@PathVariable("id") String id,
+    public String edit(@PathVariable("id") Long id,
                    @RequestParam(value = "page", defaultValue = "0") int page,
                    Model model
                    ) {
@@ -134,7 +134,7 @@ public String update(Model model,
 
     @RequestMapping("/delete/{id}")
     public String delete(Model model, @ModelAttribute("promotion") Promotion promotion,
-    Errors errors, @PathVariable("id") String id, RedirectAttributes redirectAttributes) {
+    Errors errors, @PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         try {
             promotionService.deleteById(id);
             redirectAttributes.addFlashAttribute("success", "Xóa khuyến mãi thành công!");
