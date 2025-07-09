@@ -312,6 +312,15 @@ body {
   background-color: #fff;
   min-width: 200px;
 }
+.filter-box select:focus {
+  border-color: #4299e1;
+  box-shadow: 0 0 8px rgba(66, 153, 225, 0.4);
+  outline: none;
+}
+
+.filter-box select:hover {
+  border-color: #63b3ed;
+}
 .count-box {
   margin-left: auto;
   height: 40px;
