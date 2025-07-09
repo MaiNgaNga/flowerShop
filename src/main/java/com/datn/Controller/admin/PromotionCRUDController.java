@@ -43,32 +43,30 @@ public class PromotionCRUDController {
 
     @GetMapping("/index")
     public String index(Model model,
-     @RequestParam(value = "page", defaultValue = "0") int page,
-     @RequestParam(value = "size", defaultValue = "10") int size) {
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
         Page<Promotion> promotionPage = promotionService.findByAllPromotion(pageable);
-        
+
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", promotionPage.getTotalPages());
         model.addAttribute("promotions", promotionPage.getContent());
 
         Promotion promotion = new Promotion();
-    // Nếu là thêm mới, set ngày hiện tại
-    promotion.setCreatedDate(LocalDateTime.now());
-    promotion.setUpdatedDate(LocalDateTime.now());
-    // ... các dòng khác ...
-    model.addAttribute("promotion", promotion);
-    
+        // Nếu là thêm mới, set ngày hiện tại
+        promotion.setCreatedDate(LocalDateTime.now());
+        promotion.setUpdatedDate(LocalDateTime.now());
+        // ... các dòng khác ...
+        model.addAttribute("promotion", promotion);
 
-       
         model.addAttribute("view", "admin/promotionCRUD");
         return "admin/layout";
     }
 
     @PostMapping("/create")
-    public String create(Model model, @Valid @ModelAttribute("promotion") Promotion promotion
-    ,Errors errors, RedirectAttributes redirectAttributes) {
+    public String create(Model model, @Valid @ModelAttribute("promotion") Promotion promotion, Errors errors,
+            RedirectAttributes redirectAttributes) {
         if (errors.hasErrors()) {
             model.addAttribute("view", "admin/promotionCRUD");
             return "admin/layout";
@@ -80,13 +78,15 @@ public class PromotionCRUDController {
             redirectAttributes.addFlashAttribute("success", "Thêm khuyến mãi thành công!");
             return "redirect:/Promotion/index";
         } catch (IllegalArgumentException e) {
-           model.addAttribute("error", e.getMessage());
-           model.addAttribute("view", "admin/promotionCRUD");
-           return "admin/layout";
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("view", "admin/promotionCRUD");
+            return "admin/layout";
         }
-       
+
     }
+
     @GetMapping("/edit/{id}")
+
     public String edit(@PathVariable("id") Long id,
                    @RequestParam(value = "page", defaultValue = "0") int page,
                    Model model
@@ -102,69 +102,100 @@ public class PromotionCRUDController {
     return "admin/layout";
   }
 
+
     @PostMapping("/update")
-public String update(Model model,
-                     @Valid @ModelAttribute("promotion") Promotion promotion,
-                     Errors errors,
-                     RedirectAttributes redirectAttributes) {
-    try {
-        // Lấy bản ghi cũ từ DB
-        Promotion existing = promotionService.findByID(promotion.getId());
-        if (existing == null) {
-            throw new IllegalArgumentException("Không tìm thấy khuyến mãi để cập nhật");
+    public String update(Model model,
+            @Valid @ModelAttribute("promotion") Promotion promotion,
+            Errors errors,
+            RedirectAttributes redirectAttributes) {
+        try {
+            // Lấy bản ghi cũ từ DB
+            Promotion existing = promotionService.findByID(promotion.getId());
+            if (existing == null) {
+                throw new IllegalArgumentException("Không tìm thấy khuyến mãi để cập nhật");
+            }
+
+            // Giữ lại ngày tạo gốc
+            promotion.setCreatedDate(existing.getCreatedDate());
+
+            // Cập nhật ngày hiện tại cho updatedDate
+            promotion.setUpdatedDate(LocalDateTime.now());
+
+            promotionService.update(promotion);
+
+            redirectAttributes.addFlashAttribute("success", "Cập nhật khuyến mãi thành công!");
+            return "redirect:/Promotion/edit/" + promotion.getId();
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("view", "admin/promotionCRUD");
+            return "admin/layout";
         }
-
-        // Giữ lại ngày tạo gốc
-        promotion.setCreatedDate(existing.getCreatedDate());
-
-        // Cập nhật ngày hiện tại cho updatedDate
-        promotion.setUpdatedDate(LocalDateTime.now());
-
-        promotionService.update(promotion);
-
-        redirectAttributes.addFlashAttribute("success", "Cập nhật khuyến mãi thành công!");
-        return "redirect:/Promotion/edit/" + promotion.getId();
-    } catch (IllegalArgumentException e) {
-        model.addAttribute("error", e.getMessage());
-        model.addAttribute("view", "admin/promotionCRUD");
-        return "admin/layout";
     }
-}
-
 
     @RequestMapping("/delete/{id}")
     public String delete(Model model, @ModelAttribute("promotion") Promotion promotion,
+
     Errors errors, @PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+
         try {
             promotionService.deleteById(id);
             redirectAttributes.addFlashAttribute("success", "Xóa khuyến mãi thành công!");
             return "redirect:/Promotion/index";
         } catch (IllegalArgumentException e) {
-           redirectAttributes.addFlashAttribute("error",e.getMessage());
-           return "redirect:/Promotion/edit/"+ promotion.getId();
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/Promotion/edit/" + promotion.getId();
         }
     }
+
     @GetMapping("/search")
-public String search(
-        @RequestParam(value = "fromDate", required = false)
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-        LocalDate fromDate,
+    public String search(
+            @RequestParam(value = "fromDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
 
-        @RequestParam(value = "toDate", required = false)
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-        LocalDate toDate,
+            @RequestParam(value = "toDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
 
-        @RequestParam(value = "page", defaultValue = "0") int page,
-        Model model) {
-    
-    // Nếu thiếu ngày => thông báo lỗi + quay lại trang hiện tại
-    if (fromDate == null || toDate == null) {
-        model.addAttribute("error", "Vui lòng chọn đầy đủ ngày bắt đầu và ngày kết thúc!");
-        
-        // Load danh sách khuyến mãi như mặc định
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            Model model) {
+
+        // Nếu thiếu ngày => thông báo lỗi + quay lại trang hiện tại
+        if (fromDate == null || toDate == null) {
+            model.addAttribute("error", "Vui lòng chọn đầy đủ ngày bắt đầu và ngày kết thúc!");
+
+            // Load danh sách khuyến mãi như mặc định
+            Pageable pageable = PageRequest.of(page, 10);
+            Page<Promotion> result = promotionService.findByAllPromotion(pageable);
+
+            model.addAttribute("promotions", result.getContent());
+            model.addAttribute("currentPage", result.getNumber());
+            model.addAttribute("totalPages", result.getTotalPages());
+            model.addAttribute("promotion", new Promotion());
+            model.addAttribute("view", "admin/promotionCRUD");
+            return "admin/layout";
+        }
+
+        // Nếu đã chọn đủ ngày => thực hiện lọc
         Pageable pageable = PageRequest.of(page, 10);
-        Page<Promotion> result = promotionService.findByAllPromotion(pageable);
-        
+        Page<Promotion> result = promotionService.searchByDate(fromDate, toDate, pageable);
+
+        model.addAttribute("promotions", result.getContent());
+        model.addAttribute("currentPage", result.getNumber());
+        model.addAttribute("totalPages", result.getTotalPages());
+        model.addAttribute("promotion", new Promotion());
+        model.addAttribute("fromDate", fromDate);
+        model.addAttribute("toDate", toDate);
+        model.addAttribute("view", "admin/promotionCRUD");
+        return "admin/layout";
+    }
+
+    @GetMapping("/searchByTitle")
+    public String searchByTitle(
+            @RequestParam("title") String title,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            Model model) {
+
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Promotion> result = promotionService.searchByName(title, pageable);
+
+        model.addAttribute("title", title);
         model.addAttribute("promotions", result.getContent());
         model.addAttribute("currentPage", result.getNumber());
         model.addAttribute("totalPages", result.getTotalPages());
@@ -172,36 +203,4 @@ public String search(
         model.addAttribute("view", "admin/promotionCRUD");
         return "admin/layout";
     }
-
-    // Nếu đã chọn đủ ngày => thực hiện lọc
-    Pageable pageable = PageRequest.of(page, 10);
-    Page<Promotion> result = promotionService.searchByDate(fromDate, toDate, pageable);
-    
-    model.addAttribute("promotions", result.getContent());
-    model.addAttribute("currentPage", result.getNumber());
-    model.addAttribute("totalPages", result.getTotalPages());
-    model.addAttribute("promotion", new Promotion());
-    model.addAttribute("fromDate", fromDate);
-    model.addAttribute("toDate", toDate);
-    model.addAttribute("view", "admin/promotionCRUD");
-    return "admin/layout";
-}
-
-    @GetMapping("/searchByTitle")
-public String searchByTitle(
-        @RequestParam("title") String title,
-        @RequestParam(value = "page", defaultValue = "0") int page,
-        Model model) {
-
-    Pageable pageable = PageRequest.of(page, 10);
-    Page<Promotion> result = promotionService.searchByName(title, pageable);
-
-    model.addAttribute("title", title);
-    model.addAttribute("promotions", result.getContent());
-    model.addAttribute("currentPage", result.getNumber());
-    model.addAttribute("totalPages", result.getTotalPages());
-    model.addAttribute("promotion", new Promotion());
-    model.addAttribute("view", "admin/promotionCRUD");
-    return "admin/layout";
-}
 }

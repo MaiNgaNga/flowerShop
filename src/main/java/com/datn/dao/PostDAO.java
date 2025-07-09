@@ -37,4 +37,6 @@ public interface PostDAO extends JpaRepository<Post, Long> {
 
     List<Post> findTop12ByStatusTrueOrderByPostDateDesc();
 
+    Page<Post> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
+
 }
