@@ -41,4 +41,7 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetail> orderDetails;
+    @ManyToOne
+    @JoinColumn(name = "promotion_id", referencedColumnName = "id")
+    private Promotion promotion;
 }

@@ -12,11 +12,11 @@ import com.datn.model.Promotion;
 public interface PromotionService {
 
     List<Promotion> findAll();
-    Promotion findByID(String id);
+    Promotion findByID(Long id);
     Promotion create(Promotion entity);
     void update(Promotion entity);
-    void deleteById(String id);
-    boolean existsById(String id);
+    void deleteById(Long id);
+    boolean existsById(Long id);
     List<Promotion> getPromotionsInCurrentMonth();
     Page<Promotion> findByAllPromotion(Pageable pageable);
     Page<Promotion> searchByDate(LocalDate fromDate, LocalDate toDate, Pageable pageable);

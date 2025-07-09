@@ -193,11 +193,7 @@
       role="tabpanel"
       aria-labelledby="edit-tab"
     >
-      <form
-        th:action="@{/Promotion/index}"
-        th:object="${promotion}"
-        method="post"
-      >
+      <form th:object="${promotion}" method="post">
         <div class="row">
           <!-- ID -->
           <div class="col-6">
@@ -236,6 +232,7 @@
               class="form-control form-control-sm"
               placeholder="Mô tả"
             ></textarea>
+            <i class="error" th:errors="*{description}"></i>
           </div>
 
           <!-- Discount Type -->
@@ -251,6 +248,7 @@
                 <option value="percent">Phần trăm (%)</option>
                 <option value="amount">Số tiền (VNĐ)</option>
               </select>
+              <i class="error" th:errors="*{discountType}"></i>
             </div>
           </div>
 
@@ -266,6 +264,7 @@
                 class="form-control form-control-sm"
                 placeholder="VD: 10 hoặc 100000"
               />
+              <i class="error" th:errors="*{discountValue}"></i>
             </div>
           </div>
 
@@ -279,6 +278,7 @@
                 th:field="*{startDate}"
                 class="form-control form-control-sm"
               />
+              <i class="error" th:errors="*{startDate}"></i>
             </div>
           </div>
 
@@ -292,6 +292,7 @@
                 th:field="*{endDate}"
                 class="form-control form-control-sm"
               />
+              <i class="error" th:errors="*{endDate}"></i>
             </div>
           </div>
 
@@ -303,6 +304,7 @@
                 <option value="true">Đang hoạt động</option>
                 <option value="false">Ngưng hoạt động</option>
               </select>
+              <i class="error" th:errors="*{status}"></i>
             </div>
           </div>
 
@@ -316,7 +318,8 @@
                 th:field="*{useCount}"
                 class="form-control form-control-sm"
                 placeholder="Nhập số lượng sử dụng của voucher"
-              ></input>
+              />
+              <i class="error" th:errors="*{useCount}"></i>
             </div>
           </div>
           <!-- Ngày tạo -->
@@ -329,7 +332,7 @@
             <button
               type="submit"
               class="btn btn-primary"
-              th:if="*{title} == null"
+              th:if="*{id} == null"
               th:formaction="@{/Promotion/create}"
             >
               <i class="fa fa-plus"></i> Thêm
@@ -339,7 +342,7 @@
             <button
               type="submit"
               class="btn btn-warning"
-              th:if="*{title} != null"
+              th:if="*{id} != null"
               th:formaction="@{/Promotion/update}"
             >
               <i class="fa fa-edit"></i> Cập Nhật
@@ -349,7 +352,7 @@
             <button
               type="submit"
               class="btn btn-danger"
-              th:if="*{title} != null"
+              th:if="*{id} != null"
               onclick="return confirm('Bạn có chắc chắn muốn xóa khuyến mãi này?')"
               th:formaction="@{/Promotion/delete/{id}(id=*{id})}"
             >
@@ -457,8 +460,7 @@
             <tr>
               <th>ID</th>
               <th>Tên KM</th>
-              <th>Mô Tả</th>
-              <th>Loại giảm</th>
+              <th>Số lượng</th>
               <th>Giá trị</th>
               <th>Ngày bắt đầu</th>
               <th>Ngày kết thúc</th>
@@ -472,14 +474,12 @@
               <tr th:each="item : ${promotions}">
                 <td th:text="${item.id}"></td>
                 <td th:text="${item.title}"></td>
-                <td th:text="${item.description}"></td>
-                <td
-                  th:text="${item.discountType == 'percent' ? 'Phần trăm' : 'Số tiền'}"
-                ></td>
+                <td th:text="${item.useCount}"></td>
+
                 <td
                   th:text="${item.discountType == 'percent' 
           ? item.discountValue + '%'
-          : #numbers.formatDecimal(item.discountValue,0,'COMMA',0,'POINT') }"
+          : #numbers.formatDecimal(item.discountValue,0,'COMMA',0,'POINT') + ' VNĐ'}"
                 ></td>
                 <td th:text="${item.startDate}"></td>
                 <td th:text="${item.endDate}"></td>
@@ -496,14 +496,14 @@
                   <a
                     class="btn btn-sm btn-info"
                     th:href="@{/Promotion/edit/{id}(id=${item.id})}"
-                    >Sửa</a
-                  >
+                    ><i class="fa-solid fa-pen-to-square"></i
+                  ></a>
                   <a
                     class="btn btn-sm btn-danger"
                     onclick="return confirm('Bạn có chắc chắn muốn xóa khuyến mãi này?')"
                     th:href="@{/Promotion/delete/{id}(id=${item.id})}"
                   >
-                    Xóa
+                    <i class="fa-solid fa-trash"></i>
                   </a>
                 </td>
               </tr>
@@ -514,15 +514,31 @@
             <th:block th:if="${promotions == null or promotions.isEmpty()}">
               <tr>
                 <td colspan="9" class="text-center text-muted py-3">
+                  <!-- Nếu có lọc theo tên -->
                   <span th:if="${title != null and title != ''}">
                     Không có khuyến mãi nào được tìm thấy theo từ khóa "<b
                       th:text="${title}"
                     ></b
                     >".
                   </span>
-                  <span th:if="${title == null or title == ''}">
+
+                  <!-- Nếu có lọc theo ngày -->
+                  <span
+                    th:if="${(title == null or title == '') 
+                    and fromDate != null and fromDate != '' 
+                    and toDate != null and toDate != ''}"
+                  >
                     Không có khuyến mãi nào được tìm thấy trong khoảng ngày đã
                     chọn.
+                  </span>
+
+                  <!-- Nếu không lọc gì hết -->
+                  <span
+                    th:if="${(title == null or title == '') 
+                    and (fromDate == null or fromDate == '') 
+                    and (toDate == null or toDate == '')}"
+                  >
+                    Hiện chưa có mã khuyến mãi nào.
                   </span>
                 </td>
               </tr>
@@ -531,7 +547,10 @@
         </table>
       </div>
       <!-- phan trang -->
-      <div class="d-flex justify-content-center mt-4">
+      <div
+        class="d-flex justify-content-center mt-4"
+        th:if="${totalPages >= 1}"
+      >
         <nav>
           <ul class="pagination custom-pagination">
             <li
