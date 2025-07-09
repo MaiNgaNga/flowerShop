@@ -159,7 +159,7 @@
 
   .search-box input {
     padding: 8px 48px 8px 12px;
-    border: 2px solid #90cdf4; /* Xanh lam nhẹ nhàng */
+    border: 2px solid #90cdf4;
     border-radius: 8px;
     height: 40px;
     font-size: 15px;
@@ -169,7 +169,7 @@
   }
 
   .search-box input:focus {
-    border-color: #4299e1; /* Xanh lam trung bình khi focus */
+    border-color: #4299e1;
     box-shadow: 0 0 8px rgba(66, 153, 225, 0.4);
     outline: none;
   }
@@ -190,13 +190,13 @@
   }
 
   .search-box i:hover {
-    color: #2b6cb0; /* Xanh đậm nhẹ khi hover */
+    color: #2b6cb0;
     transform: translateY(-50%) scale(1.15);
   }
 
   .filter-box select {
     height: 40px;
-    border: 2px solid #90cdf4; /* Đồng bộ màu với ô tìm kiếm */
+    border: 2px solid #90cdf4;
     border-radius: 8px;
     padding: 8px 12px;
     font-size: 15px;
@@ -217,13 +217,13 @@
   }
 
   .count-box {
-    margin-left: auto; /* Đẩy ô số lượng sát lề phải */
+    margin-left: auto;
     height: 40px;
     line-height: 40px;
     padding: 0 16px;
     border: 2px solid #90cdf4;
     border-radius: 8px;
-    background-color: #f9fafb; /* Nền xám nhạt tinh tế */
+    background-color: #f9fafb;
     font-size: 15px;
     color: #2d3748;
     font-weight: 500;
@@ -556,7 +556,7 @@
               th:if="${product.id == 0}"
               type="submit"
               class="btn btn-primary"
-              th:formaction="@{/Product/create}"
+              th:formaction="@{'/Product/create?tab=edit'}"
             >
               <i class="fa fa-plus"></i> Thêm
             </button>
@@ -564,7 +564,7 @@
               th:if="${product.id != 0}"
               type="submit"
               class="btn btn-warning"
-              th:formaction="@{/Product/update}"
+              th:formaction="@{'/Product/update?tab=edit'}"
             >
               <i class="fa fa-edit"></i> Cập Nhật
             </button>
@@ -573,11 +573,11 @@
               type="button"
               class="btn btn-danger"
               onclick="confirmDelete(this)"
-              th:data-url="@{/Product/delete/{id}(id=${product.id})}"
+              th:data-url="@{'/Product/delete/' + ${product.id} + '?tab=edit'}"
             >
               <i class="fa fa-trash"></i> Xóa
             </button>
-            <a class="btn btn-success" th:href="@{/Product/index}">
+            <a class="btn btn-success" th:href="@{/Product/index(tab='edit')}">
               <i class="fa fa-sync"></i> Làm Mới
             </a>
           </div>
@@ -592,7 +592,13 @@
       role="tabpanel"
       aria-labelledby="list-tab"
     >
-      <form action="/Product/index" method="get" class="search-filter-row">
+      <form
+        th:action="@{/Product/index}"
+        method="get"
+        class="search-filter-row"
+      >
+        <!-- Luôn giữ lại tab=list -->
+        <input type="hidden" name="tab" value="list" />
         <div class="search-box">
           <input
             type="text"
@@ -601,7 +607,6 @@
             th:value="${keyword}"
             class="form-control form-control-sm"
             placeholder="Tìm kiếm sản phẩm..."
-            oninput="this.form.submit()"
           />
           <i class="fa fa-search" onclick="this.closest('form').submit()"></i>
         </div>
@@ -640,6 +645,12 @@
             </tr>
           </thead>
           <tbody>
+            <!-- Hiển thị nếu không có sản phẩm -->
+            <tr th:if="${#lists.isEmpty(products)}">
+              <td colspan="8" class="text-center text-muted">
+                Không có sản phẩm nào.
+              </td>
+            </tr>
             <tr th:each="item : ${products}">
               <td th:text="${item.id}"></td>
               <td th:text="${item.name}"></td>
@@ -657,11 +668,11 @@
                 th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'COMMA') + ' VNĐ'}"
               ></td>
               <td
-                th:text="${item.discountPercent != null ? item.discountPercent + '%' : 'Không'}"
+                th:text="${item.discountPercent != null ? item.discountPercent + '%' : ''}"
               ></td>
               <td class="action-icons">
                 <a
-                  th:href="@{/Product/edit/{id}(id=${item.id})}"
+                  th:href="@{'/Product/edit/' + ${item.id} + '?tab=edit'}"
                   class="edit-icon"
                   title="Sửa sản phẩm"
                 >
@@ -671,7 +682,7 @@
                   href="#"
                   class="delete-icon"
                   onclick="confirmDelete(this)"
-                  th:data-url="@{/Product/delete/{id}(id=${item.id})}"
+                  th:data-url="@{'/Product/delete/' + ${item.id} + '?tab=edit'}"
                   title="Xóa sản phẩm"
                 >
                   <i class="fa fa-trash"></i>
@@ -691,7 +702,7 @@
             >
               <a
                 class="page-link"
-                th:href="@{/Product/index(page=0, size=10, productCategoryId=${productCategoryId}, keyword=${keyword})}"
+                th:href="@{/Product/index(page=0, size=10, productCategoryId=${productCategoryId}, keyword=${keyword}, tab='list')}"
               >
                 <i class="fa fa-angle-double-left"></i>
               </a>
@@ -702,7 +713,7 @@
             >
               <a
                 class="page-link"
-                th:href="@{/Product/index(page=${currentPage - 1}, size=10, productCategoryId=${productCategoryId}, keyword=${keyword})}"
+                th:href="@{/Product/index(page=${currentPage - 1}, size=10, productCategoryId=${productCategoryId}, keyword=${keyword}, tab='list')}"
               >
                 <i class="fa fa-angle-left"></i>
               </a>
@@ -714,7 +725,7 @@
             >
               <a
                 class="page-link"
-                th:href="@{/Product/index(page=${i}, size=10, productCategoryId=${productCategoryId}, keyword=${keyword})}"
+                th:href="@{/Product/index(page=${i}, size=10, productCategoryId=${productCategoryId}, keyword=${keyword}, tab='list')}"
                 th:text="${i + 1}"
               ></a>
             </li>
@@ -724,7 +735,7 @@
             >
               <a
                 class="page-link"
-                th:href="@{/Product/index(page=${currentPage + 1}, size=10, productCategoryId=${productCategoryId}, keyword=${keyword})}"
+                th:href="@{/Product/index(page=${currentPage + 1}, size=10, productCategoryId=${productCategoryId}, keyword=${keyword}, tab='list')}"
               >
                 <i class="fa fa-angle-right"></i>
               </a>
@@ -735,7 +746,7 @@
             >
               <a
                 class="page-link"
-                th:href="@{/Product/index(page=${totalPages - 1}, size=10, productCategoryId=${productCategoryId}, keyword=${keyword})}"
+                th:href="@{/Product/index(page=${totalPages - 1}, size=10, productCategoryId=${productCategoryId}, keyword=${keyword}, tab='list')}"
               >
                 <i class="fa fa-angle-double-right"></i>
               </a>
@@ -777,4 +788,14 @@
       toggleDiscountFields();
     }
   });
+
+  // Tự động chuyển sang tab tương ứng
+  const params = new URLSearchParams(window.location.search);
+  const activeTab = params.get("tab");
+  if (activeTab) {
+    const triggerEl = document.querySelector(`#${activeTab}-tab`);
+    if (triggerEl) {
+      new bootstrap.Tab(triggerEl).show();
+    }
+  }
 </script>
