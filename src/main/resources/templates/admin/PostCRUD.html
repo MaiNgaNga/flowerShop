@@ -35,6 +35,19 @@
       background-color: #fcd6e5;
       color: #d63384;
     }
+  .table-rounded {
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1); /* tùy chọn để đẹp hơn */
+}
+ .input-group-sm .form-control {
+    border-radius: 20px 0 0 20px;
+  }
+
+  .input-group-sm .btn {
+    border-radius: 0 20px 20px 0;
+  }
+
   </style>
 </head>
 <!-- Place the first <script> tag in your HTML's <head> -->
@@ -64,8 +77,22 @@
 
 <body>
 <main class="container mt-3">
+  
   <h3>Quản Lý Bài Viết</h3>
-  <hr />
+  
+  
+<form th:action="@{/Post/index}" method="get" class="mb-3">
+  <div class="input-group">
+    <input type="text" name="keyword" class="form-control" placeholder="Tìm theo tiêu đề..."
+           th:value="${keyword}">
+    <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+    <a class="btn btn-outline-secondary" th:href="@{/Post/index} + '#list'">Làm mới</a>
+  </div>
+</form>
+
+
+
+<hr />
 
   <div class="alert alert-success" th:if="${success}" th:text="${success}"></div>
 
@@ -161,9 +188,12 @@
 
     <!-- Tab: Danh sách -->
     <div class="tab-pane fade" id="list" role="tabpanel">
+      
       <div class="table-responsive">
-        <table class="table table-striped table-hover">
-          <thead class="table-dark">
+ <table class="table table-striped table-hover table-rounded">
+
+         <thead class="table-dark" >
+
             <tr>
               <th>ID</th>
               <th>Tiêu đề</th>
@@ -189,8 +219,14 @@
                 <span th:text="${item.status ? 'Hiển thị' : 'Ẩn'}" class="badge bg-secondary"></span>
               </td>
               <td>
-                <a class="btn btn-sm btn-info" th:href="@{/Post/edit/{id}(id=${item.id})}">Sửa</a>
-                <a class="btn btn-sm btn-danger" href="#" onclick="confirmDelete(this)" th:data-url="@{/Post/delete/{id}(id=${item.id})}">Xóa</a>
+              <a class="btn btn-sm btn-info" th:href="@{/Post/edit/{id}(id=${item.id})}">
+    <i class="fa fa-edit"></i> Sửa
+</a>
+<a class="btn btn-sm btn-danger" href="#" onclick="confirmDelete(this)" 
+   th:data-url="@{/Post/delete/{id}(id=${item.id})}">
+    <i class="fa fa-trash"></i> Xóa
+</a>
+
               </td>
             </tr>
           </tbody>
@@ -233,19 +269,12 @@
 </script>
 </body>
 </html>
-<script>
-  window.addEventListener('DOMContentLoaded', () => {
-    const dateInput = document.querySelector('input[name="postDate"]');
-    if (dateInput && !dateInput.value) {
-      const today = new Date().toISOString().split('T')[0];
-      dateInput.value = today;
-    }
-  });
-
-  // tab danh sách
-    // Khi load trang, nếu có #list thì mở tab "Danh sách"
+<script th:inline="javascript">
   window.addEventListener('DOMContentLoaded', function () {
-    if (window.location.hash === '#list') {
+    const urlParams = new URLSearchParams(window.location.search);
+    const keyword = /*[[${keyword != null}]]*/ false;
+
+    if (window.location.hash === '#list' || keyword) {
       const listTab = document.querySelector('#list-tab');
       if (listTab) {
         new bootstrap.Tab(listTab).show();
@@ -253,3 +282,4 @@
     }
   });
 </script>
+

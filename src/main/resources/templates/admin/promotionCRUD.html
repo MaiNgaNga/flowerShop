@@ -265,6 +265,7 @@
                 placeholder="VD: 10 hoặc 100000"
               />
               <i class="error" th:errors="*{discountValue}"></i>
+              <i class="error" th:text="${errorDiscount}"></i>
             </div>
           </div>
 
@@ -293,6 +294,7 @@
                 class="form-control form-control-sm"
               />
               <i class="error" th:errors="*{endDate}"></i>
+              <i class="error" th:text="${errorEndDate}"></i>
             </div>
           </div>
 
