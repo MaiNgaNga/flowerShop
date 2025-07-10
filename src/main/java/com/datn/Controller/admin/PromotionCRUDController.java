@@ -186,6 +186,36 @@ public class PromotionCRUDController {
                         model.addAttribute("view", "admin/promotionCRUD");
                         return "admin/layout";
                     }
+
+
+    @PostMapping("/update")
+    public String update(Model model,
+            @Valid @ModelAttribute("promotion") Promotion promotion,
+            Errors errors,
+            RedirectAttributes redirectAttributes) {
+        try {
+            // Lấy bản ghi cũ từ DB
+            Promotion existing = promotionService.findByID(promotion.getId());
+            if (existing == null) {
+                throw new IllegalArgumentException("Không tìm thấy khuyến mãi để cập nhật");
+            }
+
+            // Giữ lại ngày tạo gốc
+            promotion.setCreatedDate(existing.getCreatedDate());
+
+            // Cập nhật ngày hiện tại cho updatedDate
+            promotion.setUpdatedDate(LocalDateTime.now());
+
+            promotionService.update(promotion);
+
+            redirectAttributes.addFlashAttribute("success", "Cập nhật khuyến mãi thành công!");
+            return "redirect:/Promotion/edit/" + promotion.getId();
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("view", "admin/promotionCRUD");
+            return "admin/layout";
+        }
+
     }
 
     @RequestMapping("/delete/{id}")
