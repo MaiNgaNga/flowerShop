@@ -17,7 +17,6 @@ public interface PromotionService {
     void update(Promotion entity);
     void deleteById(Long id);
     boolean existsById(Long id);
-    List<Promotion> getPromotionsInCurrentMonth();
     Page<Promotion> findByAllPromotion(Pageable pageable);
     Page<Promotion> searchByDate(LocalDate fromDate, LocalDate toDate, Pageable pageable);
     Page<Promotion> searchByName(String name, Pageable pageable);

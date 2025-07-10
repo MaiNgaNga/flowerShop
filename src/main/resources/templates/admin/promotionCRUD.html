@@ -265,6 +265,7 @@
                 placeholder="VD: 10 hoặc 100000"
               />
               <i class="error" th:errors="*{discountValue}"></i>
+              <i class="error" th:text="${errorDiscount}"></i>
             </div>
           </div>
 
@@ -293,6 +294,7 @@
                 class="form-control form-control-sm"
               />
               <i class="error" th:errors="*{endDate}"></i>
+              <i class="error" th:text="${errorEndDate}"></i>
             </div>
           </div>
 
@@ -350,11 +352,11 @@
 
             <!-- NÚT XÓA -->
             <button
-              type="submit"
+               th:if="*{id} != null"
+              type="button"
               class="btn btn-danger"
-              th:if="*{id} != null"
-              onclick="return confirm('Bạn có chắc chắn muốn xóa khuyến mãi này?')"
-              th:formaction="@{/Promotion/delete/{id}(id=*{id})}"
+              onclick="confirmDelete(this)"
+              th:data-url="@{/Promotion/delete/{id}(id=*{id})}"
             >
               <i class="fa fa-trash"></i> Xóa
             </button>
@@ -403,6 +405,7 @@
                   id="toDate"
                   name="toDate"
                   th:value="${toDate}"
+
                   class="form-control"
                 />
               </div>
@@ -448,9 +451,9 @@
           th:if="${(title == null or title == '') and fromDate != null and fromDate != '' and toDate != null and toDate != ''}"
         >
           Các khuyến mãi từ ngày:
-          <b th:text="${fromDate}"></b>
+          <b th:text="${#temporals.format(fromDate, 'dd-MM-YYYY')}"></b>
           đến
-          <b th:text="${toDate}"></b>
+          <b th:text="${#temporals.format(toDate, 'dd-MM-YYYY')}"></b>
         </span>
       </div>
 
@@ -481,11 +484,11 @@
           ? item.discountValue + '%'
           : #numbers.formatDecimal(item.discountValue,0,'COMMA',0,'POINT') + ' VNĐ'}"
                 ></td>
-                <td th:text="${item.startDate}"></td>
-                <td th:text="${item.endDate}"></td>
+                <td  th:text="${#temporals.format(item.startDate, 'dd-MM-YYYY ')}"></td>
+                <td th:text="${#temporals.format(item.endDate, 'dd-MM-YYYY ')}"></td>
                 <td>
                   <span
-                    th:text="${#temporals.format(item.createdDate, 'yyyy-MM-dd HH:mm:ss')}"
+                    th:text="${#temporals.format(item.createdDate, 'dd-MM-YYYY HH:mm:ss')}"
                   ></span>
                 </td>
                 <td
@@ -499,12 +502,14 @@
                     ><i class="fa-solid fa-pen-to-square"></i
                   ></a>
                   <a
-                    class="btn btn-sm btn-danger"
-                    onclick="return confirm('Bạn có chắc chắn muốn xóa khuyến mãi này?')"
-                    th:href="@{/Promotion/delete/{id}(id=${item.id})}"
-                  >
-                    <i class="fa-solid fa-trash"></i>
-                  </a>
+                  href="#"
+                  class="delete-icon"
+                  onclick="confirmDelete(this)"
+                  th:data-url="@{/Promotion/delete/{id}(id=${item.id})}"
+                  title="Xóa sản phẩm"
+                >
+                  <i class="fa fa-trash"></i>
+                </a>
                 </td>
               </tr>
             </th:block>
