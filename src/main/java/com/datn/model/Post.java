@@ -26,7 +26,7 @@ public class Post {
     private String title;
 
     @Lob
-    @Column(columnDefinition = "LONGTEXT", nullable = false)
+    @Column(columnDefinition = "NVARCHAR(MAX)", nullable = false)
     @NotBlank(message = "Nội dung bài viết không được để trống")
     private String content;
 

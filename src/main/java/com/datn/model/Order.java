@@ -2,10 +2,12 @@ package com.datn.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import java.util.Date;
 import java.util.List;
 
 @Data
+@ToString(exclude = { "orderDetails" }) // Exclude to prevent circular reference
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -39,6 +41,17 @@ public class Order {
     @Column(name = "status", columnDefinition = "NVARCHAR(255)")
     private String status;
 
+    @Column(name = "customer_name", columnDefinition = "NVARCHAR(255)")
+    private String customerName;
+
+    @Column(name = "order_code", columnDefinition = "NVARCHAR(50)")
+    private String orderCode;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetail> orderDetails;
+
+    // Helper method for order status
+    public String getOrderStatus() {
+        return this.status;
+    }
 }

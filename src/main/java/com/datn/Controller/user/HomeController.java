@@ -18,8 +18,6 @@ import com.datn.model.ProductCategory;
 
 @Controller
 public class HomeController {
-     @Autowired
-    ProductCategoryService pro_ca_Service;
     @Autowired
     CategoryService categoryService;
     @Autowired
@@ -30,11 +28,22 @@ public class HomeController {
     @GetMapping("/home")
     public String home(Model model) {
         // Load data và kiểm tra
+        List<ProductCategory> productCategories = productCategoryService.findAll();
+        List<Category> categories = categoryService.findAll();
         List<Product> productQuantities = productService.findTop6ByOrderByQuantityDesc();
         List<Product> latestProducts = productService.findLatestProductsPerCategory();
         List<Product> bestSellingProducts = productService.findBestSellingProductPerCategory();
-        model.addAttribute("productCategories", pro_ca_Service.findAll());
-        model.addAttribute("categories", categoryService.findAll());
+
+        // Debug log
+        System.out.println("=== DEBUG HOME CONTROLLER ===");
+        System.out.println("ProductCategories count: " + productCategories.size());
+        System.out.println("Categories count: " + categories.size());
+        for (ProductCategory pc : productCategories) {
+            System.out.println("ProductCategory: " + pc.getName());
+        }
+
+        model.addAttribute("productCategories", productCategories);
+        model.addAttribute("categories", categories);
         model.addAttribute("productQuantities", productQuantities);
         model.addAttribute("latestProducts", latestProducts);
         model.addAttribute("bestSellingProducts", bestSellingProducts);
@@ -51,7 +60,8 @@ public class HomeController {
     public List<Product> getBestSellerByType(@RequestParam String type) {
         switch (type.toLowerCase()) {
             case "lang":
-                return productService.findBestSellerByCategory("Giỏ hoa tươi"); // Use Giỏ hoa tươi as substitute for Lãng hoa
+                return productService.findBestSellerByCategory("Giỏ hoa tươi"); // Use Giỏ hoa tươi as substitute for
+                                                                                // Lãng hoa
             case "gio":
                 return productService.findBestSellerByCategory("Giỏ hoa tươi");
             case "bo":
@@ -79,9 +89,10 @@ public class HomeController {
     public List<Product> getProductsWithCategories() {
         List<Product> products = productService.findAll();
         for (Product product : products) {
-            System.out.println("Product: " + product.getName() + 
-                ", Category: " + (product.getCategory() != null ? product.getCategory().getName() : "NULL") +
-                ", ProductCategory: " + (product.getProductCategory() != null ? product.getProductCategory().getName() : "NULL"));
+            System.out.println("Product: " + product.getName() +
+                    ", Category: " + (product.getCategory() != null ? product.getCategory().getName() : "NULL") +
+                    ", ProductCategory: "
+                    + (product.getProductCategory() != null ? product.getProductCategory().getName() : "NULL"));
         }
         return products;
     }
@@ -90,5 +101,19 @@ public class HomeController {
     @ResponseBody
     public List<ProductCategory> getAllProductCategories() {
         return productCategoryService.findAll();
+    }
+
+    // Test endpoint for ProductCategory data
+    @GetMapping("/test-product-categories")
+    @ResponseBody
+    public String testProductCategories() {
+        List<ProductCategory> productCategories = productCategoryService.findAll();
+        StringBuilder result = new StringBuilder();
+        result.append("ProductCategories count: ").append(productCategories.size()).append("<br>");
+        for (ProductCategory pc : productCategories) {
+            result.append("ID: ").append(pc.getId())
+                    .append(", Name: ").append(pc.getName()).append("<br>");
+        }
+        return result.toString();
     }
 }

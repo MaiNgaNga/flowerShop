@@ -5,7 +5,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 // import com.datn.Service.CommentService;
@@ -16,7 +15,7 @@ import com.datn.Service.ProductService;
 public class DetailController {
 
     @Autowired
-    ProductCategoryService pro_ca_service;
+    ProductCategoryService pro_ca_Service;
 
     @Autowired
     ProductService productService;
@@ -30,7 +29,7 @@ public class DetailController {
 
         // model.addAttribute("comments", commentService.getCommentsByProduct(id));
         model.addAttribute("product", productService.findByID(id));
-        model.addAttribute("productCategories", pro_ca_service.findAll());
+        model.addAttribute("productCategories", pro_ca_Service.findAll());
         model.addAttribute("productSimilar",
                 productService.findProductByCategory(productService.findByID(id).getCategory().getId()));
         if (productService.findByID(id) == null) {

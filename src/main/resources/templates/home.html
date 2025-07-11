@@ -233,10 +233,10 @@
       </div>
     </section>
     <section class="new-flowers-section my-5 text-center">
-      <h2 class="mb-4" data-aos="fade-up" data-aos-duration="800">Mẫu hoa mới</h2>
+      <h2 class="mb-4" data-aos="fade-up" data-aos-duration="800">Sản phẩm mới theo từng danh mục</h2>
       <div class="new-flower-grid-wrapper">
         <div class="new-flower-grid">
-          <!-- Hiển thị dữ liệu sản phẩm mới từ database -->
+          <!-- Hiển thị sản phẩm mới nhất từ mỗi danh mục sản phẩm -->
           <div
             th:each="product, iterStat : ${latestProducts}"
             class="new-flower-card"
@@ -253,37 +253,13 @@
               style="width: 100%; height: 200px; object-fit: cover"
             />
             </a>
-            <div class="new-flower-name" th:text="${product.name}">Tên hoa</div>
-            <div
-              class="new-flower-price"
-              th:if="${product.discountPercent != null && product.discountPercent > 0}"
-            >
-              <span
-                class="original-price"
-                th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
-                >Giá gốc</span
-              >
-              <span
-                class="discount-price"
-                th:text="${#numbers.formatDecimal(product.priceAfterDiscount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
-                >Giá khuyến mãi</span
-              >
-              <span
-                class="discount-percent"
-                th:text="'-' + ${product.discountPercent} + '%'"
-                >-10%</span
-              >
+            <!-- Hiển thị tên danh mục sản phẩm -->
+            <div class="product-category-name" 
+                 th:text="${product.productCategory != null ? product.productCategory.name : 'Không có danh mục'}"
+                 style="font-size: 0.9em; color: #666; margin-bottom: 5px; font-weight: 500;">
+              Danh mục
             </div>
-            <div
-              class="new-flower-price"
-              th:unless="${product.discountPercent != null && product.discountPercent > 0}"
-            >
-              <span
-                class="current-price"
-                th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
-                >Giá</span
-              >
-            </div>
+
           </div>
         </div>
       </div>
