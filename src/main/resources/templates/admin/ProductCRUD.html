@@ -1,4 +1,4 @@
-<main class="container mt-3">
+<main class="container mt-4">
   <h3>Quản Lý Sản Phẩm</h3>
   <hr />
   <div
@@ -55,8 +55,10 @@
         th:object="${product}"
         method="post"
         enctype="multipart/form-data"
+        class="edit-form"
       >
-        <div class="row">
+        <!-- Nhóm 1: ID và Tên sản phẩm -->
+        <div class="row form-group">
           <div class="col-md-6">
             <label for="id" class="form-label">ID</label>
             <input
@@ -79,8 +81,10 @@
             <i class="error" th:errors="*{name}"></i>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-6">
+
+        <!-- Nhóm 2: Giá, Số lượng bán ra, Trạng thái -->
+        <div class="row form-group">
+          <div class="col-md-4">
             <label for="price" class="form-label">Giá</label>
             <input
               type="number"
@@ -92,21 +96,34 @@
             />
             <i class="error" th:errors="*{price}"></i>
           </div>
-          <div class="col-md-6">
-            <label for="quantity" class="form-label">Số lượng</label>
+          <div class="col-md-4">
+            <label for="quantity" class="form-label">Số lượng bán ra</label>
             <input
               type="number"
               id="quantity"
               th:field="*{quantity}"
-              class="form-control form-control-sm"
-              placeholder="Số lượng"
+              readonly
+              class="form-control form-control-sm readonly-quantity"
               step="1"
             />
             <i class="error" th:errors="*{quantity}"></i>
           </div>
+          <div class="col-md-4">
+            <label for="available" class="form-label">Trạng thái</label>
+            <select
+              id="available"
+              th:field="*{available}"
+              class="form-control form-control-sm"
+            >
+              <option value="true">Còn hàng</option>
+              <option value="false">Hết hàng</option>
+            </select>
+            <i class="error" th:errors="*{available}"></i>
+          </div>
         </div>
 
-        <div class="row mt-3">
+        <!-- Nhóm 3: Giảm giá -->
+        <div class="row form-group">
           <div class="col-12">
             <div class="form-check">
               <input
@@ -122,8 +139,8 @@
             </div>
           </div>
         </div>
-        <div id="discountFields">
-          <div class="row mt-2">
+        <div id="discountFields" class="form-group">
+          <div class="row">
             <div class="col-md-4">
               <label for="discountPercent" class="form-label"
                 >Giảm giá (%)</label
@@ -160,8 +177,9 @@
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-6">
+        <!-- Nhóm 4: Loại hoa, Màu sắc, Danh mục -->
+        <div class="row form-group">
+          <div class="col-md-4">
             <label for="category" class="form-label">Loại hoa</label>
             <select
               id="category"
@@ -175,7 +193,7 @@
               ></option>
             </select>
           </div>
-          <div class="col-6">
+          <div class="col-md-4">
             <label for="color" class="form-label">Màu Sắc</label>
             <select
               id="color"
@@ -189,18 +207,7 @@
               ></option>
             </select>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-6">
-            <label for="description" class="form-label">Mô tả</label>
-            <textarea
-              id="description"
-              th:field="*{description}"
-              class="form-control form-control-sm"
-              placeholder="Mô tả sản phẩm"
-            ></textarea>
-          </div>
-          <div class="col-6">
+          <div class="col-md-4">
             <label for="productCategory" class="form-label">Danh mục</label>
             <select
               id="productCategory"
@@ -216,7 +223,22 @@
           </div>
         </div>
 
-        <div class="image-upload-row mt-3 mb-3">
+        <!-- Nhóm 5: Mô tả -->
+        <div class="row form-group">
+          <div class="col-12">
+            <label for="description" class="form-label">Mô tả</label>
+            <textarea
+              id="description"
+              th:field="*{description}"
+              class="form-control form-control-sm"
+              placeholder="Mô tả sản phẩm"
+              rows="4"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Nhóm 6: Hình ảnh -->
+        <div class="image-upload-row form-group">
           <div class="image-upload-box">
             <label class="image-title">Hình Ảnh 1</label>
             <div th:if="${product.image_url}">
@@ -279,7 +301,8 @@
           </div>
         </div>
 
-        <div class="row mt-3 text-end">
+        <!-- Nhóm 7: Nút hành động -->
+        <div class="row form-group text-end">
           <div class="col">
             <button
               th:if="${product.id == 0}"
@@ -326,7 +349,6 @@
         method="get"
         class="search-filter-row"
       >
-        <!-- Luôn giữ lại tab=list -->
         <input type="hidden" name="tab" value="list" />
         <div class="search-box">
           <input
@@ -367,14 +389,13 @@
               <th>Tên sản phẩm</th>
               <th>Loại hoa</th>
               <th>Hình ảnh</th>
-              <th>Số lượng</th>
+              <th>Số lượng bán ra</th>
               <th>Giá sản phẩm</th>
               <th>Giảm giá (%)</th>
-              <th>Hành động</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
-            <!-- Hiển thị nếu không có sản phẩm -->
             <tr th:if="${#lists.isEmpty(products)}">
               <td colspan="8" class="text-center text-muted">
                 Không có sản phẩm nào.
@@ -411,7 +432,7 @@
                   href="#"
                   class="delete-icon"
                   onclick="confirmDelete(this)"
-                  th:data-url="@{'/Product/delete/' + ${item.id} + '?tab=edit'}"
+                  th:data-url="@{'/Product/delete/' + ${item.id} + '?tab=list'}"
                   title="Xóa sản phẩm"
                 >
                   <i class="fa fa-trash"></i>
@@ -486,45 +507,3 @@
     </div>
   </div>
 </main>
-
-<script>
-  function toggleDiscountFields() {
-    const checkbox = document.getElementById("applyDiscount");
-    const discountSection = document.getElementById("discountFields");
-
-    if (checkbox.checked) {
-      discountSection.classList.remove("d-none");
-      discountSection.style.display = "block";
-    } else {
-      discountSection.style.display = "none";
-      document.getElementById("discountPercent").value = "";
-      document.getElementById("discountStart").value = "";
-      document.getElementById("discountEnd").value = "";
-    }
-  }
-
-  window.addEventListener("DOMContentLoaded", () => {
-    const checkbox = document.getElementById("applyDiscount");
-    toggleDiscountFields();
-
-    const hasError =
-      document.querySelector(".error[th\\:errors='*{discountPercent}']") ||
-      document.querySelector(".error[th\\:errors='*{discountStart}']") ||
-      document.querySelector(".error[th\\:errors='*{discountEnd}']");
-
-    if (hasError) {
-      checkbox.checked = true;
-      toggleDiscountFields();
-    }
-  });
-
-  // Tự động chuyển sang tab tương ứng
-  const params = new URLSearchParams(window.location.search);
-  const activeTab = params.get("tab");
-  if (activeTab) {
-    const triggerEl = document.querySelector(`#${activeTab}-tab`);
-    if (triggerEl) {
-      new bootstrap.Tab(triggerEl).show();
-    }
-  }
-</script>
