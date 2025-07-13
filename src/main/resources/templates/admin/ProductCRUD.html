@@ -1,257 +1,3 @@
-<style>
-  .custom-pagination .page-item .page-link {
-    margin: 0 4px;
-    color: #6c757d;
-    border: 1px solid #6c757d;
-    background-color: #fff;
-    border-radius: 50%;
-    transition: all 0.2s ease-in-out;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: 500;
-  }
-
-  .custom-pagination .page-item.active .page-link {
-    background-color: #6c757d;
-    color: #fff;
-    border-color: #6c757d;
-  }
-
-  .custom-pagination .page-item.disabled .page-link {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .custom-pagination .page-item .page-link:hover {
-    background-color: #e9ecef;
-    color: #343a40;
-    transform: scale(1.05);
-  }
-
-  .image-upload-box {
-    max-width: 110px;
-  }
-
-  .image-upload-box img {
-    width: 100%;
-    height: auto;
-    margin-bottom: 5px;
-    border: 1px solid #dee2e6;
-  }
-
-  .image-upload-box label.image-title {
-    font-weight: 500;
-    display: block;
-    margin-bottom: 5px;
-    color: #343a40;
-  }
-
-  .image-upload-box input[type="file"] {
-    display: none;
-  }
-
-  .image-upload-box .custom-btn {
-    font-size: 14px;
-    padding: 5px 10px;
-    font-weight: 500;
-    border-radius: 5px;
-    border: 1px solid #6c757d;
-    color: #6c757d;
-    background-color: #fff;
-    transition: transform 0.2s ease-in-out;
-  }
-
-  .image-upload-box .custom-btn:hover {
-    transform: translateY(-1px);
-  }
-
-  .image-upload-row {
-    display: flex;
-    gap: 15px;
-    justify-content: flex-start;
-  }
-
-  /* Giao diện chung */
-  main.container {
-    background: #f8f9fa;
-    padding: 15px;
-  }
-
-  h3 {
-    color: #343a40;
-    font-weight: 600;
-    margin-bottom: 12px;
-  }
-
-  .nav-tabs {
-    border-bottom: 2px solid #6c757d;
-  }
-
-  .nav-tabs .nav-link {
-    color: #495057;
-    font-weight: 500;
-    padding: 8px 16px;
-    border-radius: 5px 5px 0 0;
-    transition: all 0.3s ease;
-  }
-
-  .nav-tabs .nav-link.active {
-    background-color: #6c757d;
-    color: #fff;
-    border-color: #6c757d;
-  }
-
-  .nav-tabs .nav-link:hover {
-    background-color: #e9ecef;
-    color: #343a40;
-  }
-
-  .form-control-sm,
-  .form-select-sm {
-    border: 1px solid #ced4da;
-    border-radius: 5px;
-    padding: 5px 8px;
-    transition: all 0.2s ease-in-out;
-  }
-
-  .form-control-sm:focus,
-  .form-select-sm:focus {
-    border-color: #6c757d;
-    box-shadow: 0 0 3px rgba(108, 117, 125, 0.3);
-  }
-
-  .btn-primary,
-  .btn-warning,
-  .btn-danger,
-  .btn-success {
-    padding: 6px 14px;
-    font-weight: 500;
-    border-radius: 5px;
-    transition: transform 0.2s ease-in-out;
-    border: 1px solid transparent;
-  }
-
-  .btn-primary {
-    background-color: #6c757d;
-    color: #fff;
-  }
-
-  .btn-warning {
-    background-color: #adb5bd;
-    color: #343a40;
-  }
-
-  .btn-danger {
-    background-color: #dc3545;
-    color: #fff;
-  }
-
-  .btn-success {
-    background-color: #28a745;
-    color: #fff;
-  }
-
-  .btn-primary:hover,
-  .btn-warning:hover,
-  .btn-danger:hover,
-  .btn-success:hover {
-    transform: translateY(-1px);
-  }
-
-  .table {
-    background-color: #fff;
-  }
-
-  .table thead th {
-    background-color: #6c757d;
-    color: #fff;
-    font-weight: 500;
-    padding: 8px;
-  }
-
-  .table tbody tr:hover {
-    background-color: #f1f3f5;
-  }
-
-  /* CSS cho ô tìm kiếm và lọc */
-  .search-filter-row {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    margin: 12px 0;
-    padding: 6px;
-    background-color: #fff;
-  }
-
-  .search-box {
-    position: relative;
-    max-width: 320px;
-    width: 100%;
-  }
-
-  .search-box input {
-    padding: 5px 5px 5px 32px;
-    border: 1px solid #ced4da;
-    border-radius: 5px;
-    height: 32px;
-    transition: all 0.2s ease-in-out;
-    background-color: #fff;
-  }
-
-  .search-box input:focus {
-    border-color: #6c757d;
-    box-shadow: 0 0 3px rgba(108, 117, 125, 0.3);
-  }
-
-  .search-box i {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6c757d;
-    font-size: 14px;
-  }
-
-  .filter-box select {
-    height: 32px;
-    border: 1px solid #ced4da;
-    border-radius: 5px;
-    padding: 5px 8px;
-    transition: all 0.2s ease-in-out;
-    background-color: #fff;
-    min-width: 200px;
-  }
-
-  .filter-box select:focus {
-    border-color: #6c757d;
-    box-shadow: 0 0 3px rgba(108, 117, 125, 0.3);
-  }
-
-  /* CSS cho icon sửa/xóa */
-  .action-icons a {
-    font-size: 15px;
-    margin: 0 6px;
-    transition: all 0.2s ease-in-out;
-  }
-
-  .action-icons .edit-icon {
-    color: #6c757d;
-  }
-
-  .action-icons .delete-icon {
-    color: #dc3545;
-  }
-
-  .action-icons a:hover {
-    transform: scale(1.1);
-    opacity: 0.8;
-  }
-</style>
-
 <main class="container mt-3">
   <h3>Quản Lý Sản Phẩm</h3>
   <hr />
@@ -330,8 +76,8 @@
               class="form-control form-control-sm"
               placeholder="Tên sản phẩm"
             />
+            <i class="error" th:errors="*{name}"></i>
           </div>
-          <i class="error" th:errors="*{name}"></i>
         </div>
         <div class="row">
           <div class="col-md-6">
@@ -360,7 +106,6 @@
           </div>
         </div>
 
-        <!-- Thêm phần giảm giá -->
         <div class="row mt-3">
           <div class="col-12">
             <div class="form-check">
@@ -472,7 +217,6 @@
         </div>
 
         <div class="image-upload-row mt-3 mb-3">
-          <!-- Ảnh 1 -->
           <div class="image-upload-box">
             <label class="image-title">Hình Ảnh 1</label>
             <div th:if="${product.image_url}">
@@ -493,8 +237,6 @@
             >
             <input type="file" id="image1" name="image1" />
           </div>
-
-          <!-- Ảnh 2 -->
           <div class="image-upload-box">
             <label class="image-title">Hình Ảnh 2</label>
             <div th:if="${product.image_url2}">
@@ -515,8 +257,6 @@
             >
             <input type="file" id="image2" name="image2" />
           </div>
-
-          <!-- Ảnh 3 -->
           <div class="image-upload-box">
             <label class="image-title">Hình Ảnh 3</label>
             <div th:if="${product.image_url3}">
@@ -545,7 +285,7 @@
               th:if="${product.id == 0}"
               type="submit"
               class="btn btn-primary"
-              th:formaction="@{/Product/create}"
+              th:formaction="@{'/Product/create?tab=edit'}"
             >
               <i class="fa fa-plus"></i> Thêm
             </button>
@@ -553,7 +293,7 @@
               th:if="${product.id != 0}"
               type="submit"
               class="btn btn-warning"
-              th:formaction="@{/Product/update}"
+              th:formaction="@{'/Product/update?tab=edit'}"
             >
               <i class="fa fa-edit"></i> Cập Nhật
             </button>
@@ -562,13 +302,13 @@
               type="button"
               class="btn btn-danger"
               onclick="confirmDelete(this)"
-              th:data-url="@{/Product/delete/{id}(id=${product.id})}"
+              th:data-url="@{'/Product/delete/' + ${product.id} + '?tab=edit'}"
             >
               <i class="fa fa-trash"></i> Xóa
             </button>
-            <a class="btn btn-success" th:href="@{/Product/index}">
-              <i class="fa fa-sync"></i> Làm Mới</a
-            >
+            <a class="btn btn-success" th:href="@{/Product/index(tab='edit')}">
+              <i class="fa fa-sync"></i> Làm Mới
+            </a>
           </div>
         </div>
       </form>
@@ -581,25 +321,24 @@
       role="tabpanel"
       aria-labelledby="list-tab"
     >
-      <!-- Ô tìm kiếm và lọc -->
       <form
-        action="/Product/index"
+        th:action="@{/Product/index}"
         method="get"
         class="search-filter-row"
-        style="gap: 10px; align-items: center"
       >
+        <!-- Luôn giữ lại tab=list -->
+        <input type="hidden" name="tab" value="list" />
         <div class="search-box">
-          <i class="fa fa-search"></i>
           <input
             type="text"
+            id="searchInput"
             name="keyword"
             th:value="${keyword}"
             class="form-control form-control-sm"
             placeholder="Tìm kiếm sản phẩm..."
-            oninput="this.form.submit()"
           />
+          <i class="fa fa-search" onclick="this.closest('form').submit()"></i>
         </div>
-
         <div class="filter-box">
           <select
             name="productCategoryId"
@@ -615,6 +354,9 @@
             ></option>
           </select>
         </div>
+        <div class="count-box">
+          Tổng: <span th:text="${products.size()} + ' sản phẩm'"></span>
+        </div>
       </form>
 
       <div class="table-responsive">
@@ -623,35 +365,25 @@
             <tr>
               <th>ID</th>
               <th>Tên sản phẩm</th>
-              <th>Giá sản phẩm</th>
+              <th>Loại hoa</th>
+              <th>Hình ảnh</th>
               <th>Số lượng</th>
+              <th>Giá sản phẩm</th>
               <th>Giảm giá (%)</th>
-              <th>Ngày bắt đầu</th>
-              <th>Ngày kết thúc</th>
-              <th>Hình Ảnh</th>
-              <th>Loại Hoa</th>
-              <th>Màu Sắc</th>
-              <th>Danh mục</th>
               <th>Hành động</th>
             </tr>
           </thead>
           <tbody>
+            <!-- Hiển thị nếu không có sản phẩm -->
+            <tr th:if="${#lists.isEmpty(products)}">
+              <td colspan="8" class="text-center text-muted">
+                Không có sản phẩm nào.
+              </td>
+            </tr>
             <tr th:each="item : ${products}">
               <td th:text="${item.id}"></td>
               <td th:text="${item.name}"></td>
-              <td
-                th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'COMMA') + ' VNĐ'}"
-              ></td>
-              <td th:text="${item.quantity}"></td>
-              <td
-                th:text="${item.discountPercent != null ? item.discountPercent + '%' : 'Không'}"
-              ></td>
-              <td
-                th:text="${item.discountStart != null ? #temporals.format(item.discountStart, 'dd/MM/yyyy') : 'N/A'}"
-              ></td>
-              <td
-                th:text="${item.discountEnd != null ? #temporals.format(item.discountEnd, 'dd/MM/yyyy') : 'N/A'}"
-              ></td>
+              <td th:text="${item.category.name}"></td>
               <td>
                 <img
                   th:src="@{/images/{image}(image=${item.image_url})}"
@@ -660,12 +392,16 @@
                   width="50"
                 />
               </td>
-              <td th:text="${item.category.name}"></td>
-              <td th:text="${item.color.name}"></td>
-              <td th:text="${item.productCategory.name}"></td>
+              <td th:text="${item.quantity}"></td>
+              <td
+                th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'COMMA') + ' VNĐ'}"
+              ></td>
+              <td
+                th:text="${item.discountPercent != null ? item.discountPercent + '%' : ''}"
+              ></td>
               <td class="action-icons">
                 <a
-                  th:href="@{/Product/edit/{id}(id=${item.id})}"
+                  th:href="@{'/Product/edit/' + ${item.id} + '?tab=edit'}"
                   class="edit-icon"
                   title="Sửa sản phẩm"
                 >
@@ -675,7 +411,7 @@
                   href="#"
                   class="delete-icon"
                   onclick="confirmDelete(this)"
-                  th:data-url="@{/Product/delete/{id}(id=${item.id})}"
+                  th:data-url="@{'/Product/delete/' + ${item.id} + '?tab=edit'}"
                   title="Xóa sản phẩm"
                 >
                   <i class="fa fa-trash"></i>
@@ -685,37 +421,32 @@
           </tbody>
         </table>
       </div>
-      <!-- Phân trang -->
+
       <div class="d-flex justify-content-center mt-3" th:if="${totalPages > 0}">
         <nav>
           <ul class="pagination custom-pagination">
-            <!-- First Page -->
             <li
               class="page-item"
               th:classappend="${currentPage == 0} ? 'disabled'"
             >
               <a
                 class="page-link"
-                th:href="@{/Product/index(page=0, size=10, productCategoryId=${productCategoryId}, keyword=${keyword})}"
+                th:href="@{/Product/index(page=0, size=10, productCategoryId=${productCategoryId}, keyword=${keyword}, tab='list')}"
               >
                 <i class="fa fa-angle-double-left"></i>
               </a>
             </li>
-
-            <!-- Previous Page -->
             <li
               class="page-item"
               th:classappend="${currentPage == 0} ? 'disabled'"
             >
               <a
                 class="page-link"
-                th:href="@{/Product/index(page=${currentPage - 1}, size=10, productCategoryId=${productCategoryId}, keyword=${keyword})}"
+                th:href="@{/Product/index(page=${currentPage - 1}, size=10, productCategoryId=${productCategoryId}, keyword=${keyword}, tab='list')}"
               >
                 <i class="fa fa-angle-left"></i>
               </a>
             </li>
-
-            <!-- Page Numbers -->
             <li
               class="page-item"
               th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
@@ -723,32 +454,28 @@
             >
               <a
                 class="page-link"
-                th:href="@{/Product/index(page=${i}, size=10, productCategoryId=${productCategoryId}, keyword=${keyword})}"
+                th:href="@{/Product/index(page=${i}, size=10, productCategoryId=${productCategoryId}, keyword=${keyword}, tab='list')}"
                 th:text="${i + 1}"
               ></a>
             </li>
-
-            <!-- Next Page -->
             <li
               class="page-item"
               th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
             >
               <a
                 class="page-link"
-                th:href="@{/Product/index(page=${currentPage + 1}, size=10, productCategoryId=${productCategoryId}, keyword=${keyword})}"
+                th:href="@{/Product/index(page=${currentPage + 1}, size=10, productCategoryId=${productCategoryId}, keyword=${keyword}, tab='list')}"
               >
                 <i class="fa fa-angle-right"></i>
               </a>
             </li>
-
-            <!-- Last Page -->
             <li
               class="page-item"
               th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
             >
               <a
                 class="page-link"
-                th:href="@{/Product/index(page=${totalPages - 1}, size=10, productCategoryId=${productCategoryId}, keyword=${keyword})}"
+                th:href="@{/Product/index(page=${totalPages - 1}, size=10, productCategoryId=${productCategoryId}, keyword=${keyword}, tab='list')}"
               >
                 <i class="fa fa-angle-double-right"></i>
               </a>
@@ -790,4 +517,14 @@
       toggleDiscountFields();
     }
   });
+
+  // Tự động chuyển sang tab tương ứng
+  const params = new URLSearchParams(window.location.search);
+  const activeTab = params.get("tab");
+  if (activeTab) {
+    const triggerEl = document.querySelector(`#${activeTab}-tab`);
+    if (triggerEl) {
+      new bootstrap.Tab(triggerEl).show();
+    }
+  }
 </script>

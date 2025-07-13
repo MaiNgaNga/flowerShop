@@ -75,7 +75,6 @@
             data-aos-easing="ease-out-back"
           >
             <a
-              th:if="${product.id != null}"
               th:href="@{/detail(id=${product.id})}"
               class="text-decoration-none"
             >
@@ -86,9 +85,6 @@
                 style="width: 100%; height: 200px; object-fit: cover"
               />
             </a>
-            <span th:if="${product.id == null}" style="color: red"
-              >ID NULL</span
-            >
             <!-- Hiển thị tên danh mục sản phẩm -->
             <div
               class="product-category-name"
@@ -235,7 +231,6 @@
             data-aos-easing="ease-out-back"
           >
             <a
-              th:if="${product.id != null}"
               th:href="@{/detail(id=${product.id})}"
               class="text-decoration-none"
             >
@@ -246,9 +241,6 @@
                 style="width: 100%; height: 200px; object-fit: cover"
               />
             </a>
-            <span th:if="${product.id == null}" style="color: red"
-              >ID NULL</span
-            >
             <div class="new-flower-name" th:text="${product.name}">Tên hoa</div>
             <div
               class="new-flower-price"
@@ -329,7 +321,6 @@
         >
           <div class="product-image">
             <a
-              th:if="${product.id != null}"
               th:href="@{/detail(id=${product.id})}"
               class="text-decoration-none"
             >
@@ -346,9 +337,6 @@
                 onerror="this.src='/images/logo.png'; this.onerror=null;"
               />
             </a>
-            <span th:if="${product.id == null}" style="color: red"
-              >ID NULL</span
-            >
             <div class="cart-icon-wrapper">
               <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
               <div class="add-to-cart-text">Add To Cart</div>
@@ -401,133 +389,31 @@
       </h2>
       <div class="swiper post-slider">
         <div class="swiper-wrapper">
-          <!-- Slide 1 -->
-          <div class="swiper-slide">
+          <div class="swiper-slide" th:each="post : ${posts}">
             <img
-              src="https://i.pravatar.cc/150?img=3"
-              alt="avatar"
+              th:src="${post.image != null && post.image != '' ? '/images/' + post.image : '/images/logo.png'}"
+              alt="Ảnh bài viết"
               class="avatar-img"
+              style="object-fit: cover"
+              onerror="this.src='/images/logo.png'; this.onerror=null;"
             />
             <div class="post-content">
-              <p>Nguyễn Văn A vừa chia sẻ bài viết mới về tình bạn và hoa.</p>
-              <a href="#" class="read-more-btn">Xem chi tiết</a>
-            </div>
-          </div>
-
-          <!-- Slide 2 -->
-          <div class="swiper-slide">
-            <img
-              src="https://i.pravatar.cc/150?img=5"
-              alt="avatar"
-              class="avatar-img"
-            />
-            <div class="post-content">
-              <p>Trần Thị B chia sẻ kinh nghiệm tặng hoa dịp kỷ niệm.</p>
-              <a href="#" class="read-more-btn">Xem chi tiết</a>
-            </div>
-          </div>
-
-          <!-- Slide 3 -->
-          <div class="swiper-slide">
-            <img
-              src="https://i.pravatar.cc/150?img=7"
-              alt="avatar"
-              class="avatar-img"
-            />
-            <div class="post-content">
-              <p>Hoàng Cúc viết bài cảm động về ký ức tuổi thơ với hoa giấy.</p>
-              <a href="#" class="read-more-btn">Xem chi tiết</a>
-            </div>
-          </div>
-
-          <!-- Slide 4 -->
-          <div class="swiper-slide">
-            <img
-              src="https://i.pravatar.cc/150?img=10"
-              alt="avatar"
-              class="avatar-img"
-            />
-            <div class="post-content">
-              <p>Thanh Ngọc chia sẻ những mẫu hoa hot trend hè 2025.</p>
-              <a href="#" class="read-more-btn">Xem chi tiết</a>
-            </div>
-          </div>
-
-          <!-- Slide 4 -->
-          <div class="swiper-slide">
-            <img
-              src="https://i.pravatar.cc/150?img=10"
-              alt="avatar"
-              class="avatar-img"
-            />
-            <div class="post-content">
-              <p>Thanh Ngọc chia sẻ những mẫu hoa hot trend hè 2025.</p>
-              <a href="#" class="read-more-btn">Xem chi tiết</a>
-            </div>
-          </div>
-
-          <!-- Slide 4 -->
-          <div class="swiper-slide">
-            <img
-              src="https://i.pravatar.cc/150?img=10"
-              alt="avatar"
-              class="avatar-img"
-            />
-            <div class="post-content">
-              <p>Thanh Ngọc chia sẻ những mẫu hoa hot trend hè 2025.</p>
-              <a href="#" class="read-more-btn">Xem chi tiết</a>
-            </div>
-          </div>
-
-          <!-- Slide 4 -->
-          <div class="swiper-slide">
-            <img
-              src="https://i.pravatar.cc/150?img=10"
-              alt="avatar"
-              class="avatar-img"
-            />
-            <div class="post-content">
-              <p>Thanh Ngọc chia sẻ những mẫu hoa hot trend hè 2025.</p>
-              <a href="#" class="read-more-btn">Xem chi tiết</a>
-            </div>
-          </div>
-
-          <!-- Slide 4 -->
-          <div class="swiper-slide">
-            <img
-              src="https://i.pravatar.cc/150?img=10"
-              alt="avatar"
-              class="avatar-img"
-            />
-            <div class="post-content">
-              <p>Thanh Ngọc chia sẻ những mẫu hoa hot trend hè 2025.</p>
-              <a href="#" class="read-more-btn">Xem chi tiết</a>
-            </div>
-          </div>
-
-          <!-- Slide 4 -->
-          <div class="swiper-slide">
-            <img
-              src="https://i.pravatar.cc/150?img=10"
-              alt="avatar"
-              class="avatar-img"
-            />
-            <div class="post-content">
-              <p>Thanh Ngọc chia sẻ những mẫu hoa hot trend hè 2025.</p>
-              <a href="#" class="read-more-btn">Xem chi tiết</a>
-            </div>
-          </div>
-
-          <!-- Slide 4 -->
-          <div class="swiper-slide">
-            <img
-              src="https://i.pravatar.cc/150?img=10"
-              alt="avatar"
-              class="avatar-img"
-            />
-            <div class="post-content">
-              <p>Thanh Ngọc chia sẻ những mẫu hoa hot trend hè 2025.</p>
-              <a href="#" class="read-more-btn">Xem chi tiết</a>
+              <h5 th:text="${post.title}">Tiêu đề</h5>
+              <span th:utext="${post.summary}"></span>
+              <div
+                class="d-flex justify-content-between align-items-center mt-2"
+              >
+                <small class="text-muted"
+                  ><i class="fa fa-calendar"></i>
+                  <span
+                    th:text="${#temporals.format(post.postDate,'dd/MM/yyyy')}"
+                    >01/01/25</span
+                  ></small
+                >
+                <a th:href="@{/postDetail(id=${post.id})}" class="read-more-btn"
+                  >Xem chi tiết</a
+                >
+              </div>
             </div>
           </div>
         </div>

@@ -35,6 +35,8 @@ public interface PostDAO extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p WHERE p.id <> :excludeId ORDER BY p.postDate DESC")
     List<Post> findTopRelatedPosts(@Param("excludeId") Long excludeId, Pageable pageable);
 
-    List<Post> findTop12ByOrderByPostDateDesc();
+    List<Post> findTop12ByStatusTrueOrderByPostDateDesc();
+
+    Page<Post> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
 
 }

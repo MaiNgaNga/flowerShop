@@ -100,6 +100,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> findTop12Newest() {
-        return dao.findTop12ByOrderByPostDateDesc();
+        return dao.findTop12ByStatusTrueOrderByPostDateDesc();
     }
 }

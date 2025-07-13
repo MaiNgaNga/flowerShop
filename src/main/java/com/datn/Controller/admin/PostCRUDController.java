@@ -50,27 +50,33 @@ public class PostCRUDController {
     @RequestMapping("/index")
     public String index(Model model,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size) {
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "keyword", required = false) String keyword) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<Post> postPage = postService.findAllPageable(pageable);
+        Page<Post> postPage;
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            postPage = postService.findByTitleContaining(keyword.trim(), pageable);
+        } else {
+            postPage = postService.findAllPageable(pageable);
+        }
 
         model.addAttribute("posts", postPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", postPage.getTotalPages());
-
+        model.addAttribute("keyword", keyword); // để đổ lại vào ô tìm kiếm
         model.addAttribute("post", new Post());
-        // model.addAttribute("users", userService.findAll()); // ✅ Truyền danh sách
-        // người dùng
         model.addAttribute("view", "admin/PostCRUD");
+
         return "admin/layout";
     }
 
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         Post post = new Post();
-        post.setPostDate(LocalDate.now()); // ✅ Gán ngày hiện tại ở đây
-
+        post.setPostDate(LocalDate.now());
+        post.setStatus(true);
         model.addAttribute("post", post);
         model.addAttribute("users", userService.findAll());
         model.addAttribute("view", "admin/PostCRUD"); // hoặc path đúng tới form của bạn

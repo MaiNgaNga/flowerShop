@@ -285,9 +285,9 @@ public class PosController {
             if (orderOpt.isPresent()) {
                 Order order = orderOpt.get();
                 response.put("success", true);
-                response.put("status", order.getOrderStatus()); // "pending", "paid", "failed"
+                response.put("status", order.getStatus()); // "pending", "paid", "failed"
                 response.put("message", "Payment status retrieved successfully");
-                System.out.println("Order found. Status: " + order.getOrderStatus());
+                System.out.println("Order found. Status: " + order.getStatus());
             } else {
                 response.put("success", false);
                 response.put("status", "not_found");

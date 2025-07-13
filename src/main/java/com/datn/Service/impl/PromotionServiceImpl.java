@@ -51,17 +51,17 @@ public void update(Promotion entity) {
 
 
     @Override
-    public void deleteById(String id) {
+    public void deleteById(Long id) {
         promotionDAO.deleteById(id);
     }
 
     @Override
-    public boolean existsById(String id) {
+    public boolean existsById(Long id) {
         return promotionDAO.existsById(id);
     }
 
     @Override
-    public Promotion findByID(String id) {
+    public Promotion findByID(Long id) {
         return promotionDAO.findById(id).orElse(null);
     }
 

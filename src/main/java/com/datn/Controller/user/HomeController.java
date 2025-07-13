@@ -16,6 +16,9 @@ import com.datn.model.Product;
 import com.datn.model.Category;
 import com.datn.model.ProductCategory;
 
+import com.datn.Service.PostService;
+import com.datn.model.Post;
+
 @Controller
 public class HomeController {
     @Autowired
@@ -25,6 +28,9 @@ public class HomeController {
     @Autowired
     ProductCategoryService productCategoryService;
 
+    @Autowired
+    PostService postService;
+
     @GetMapping("/home")
     public String home(Model model) {
         List<ProductCategory> productCategories = productCategoryService.findAll();
@@ -33,17 +39,20 @@ public class HomeController {
         List<Product> latestProducts = productService.findLatestProductsPerCategory();
         List<Product> bestSellingProducts = productService.findBestSellingProductPerCategory();
 
+        // Lấy toàn bộ bài viết
+        List<Post> posts = postService.findAll();
+
         model.addAttribute("productCategories", productCategories);
         model.addAttribute("categories", categories);
         model.addAttribute("productQuantities", productQuantities);
         model.addAttribute("latestProducts", latestProducts);
         model.addAttribute("bestSellingProducts", bestSellingProducts);
         model.addAttribute("defaultBestSeller", productService.findBestSellerByCategory("Bó hoa tươi"));
+        model.addAttribute("posts", posts);
         model.addAttribute("view", "home");
 
         return "layouts/layout";
     }
-
 
     @GetMapping("/api/best-seller")
     @ResponseBody

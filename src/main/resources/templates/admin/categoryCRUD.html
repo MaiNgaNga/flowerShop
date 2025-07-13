@@ -132,6 +132,24 @@
       role="tabpanel"
       aria-labelledby="list-tab"
     >
+      <form
+        action="/Category/index"
+        method="get"
+        class="search-filter-row"
+        style="gap: 10px; align-items: center"
+      >
+        <div class="search-box">
+          <i class="fa fa-search"></i>
+          <input
+            type="text"
+            name="keyword"
+            th:value="${keyword}"
+            class="form-control form-control-sm custom-search-input"
+            placeholder="Tìm kiếm"
+            oninput="this.form.submit()"
+          />
+        </div>
+      </form>
       <div class="table-responsive">
         <table class="table table-striped table-hover">
           <thead class="table-dark">
@@ -167,6 +185,76 @@
             </th:block>
           </tbody>
         </table>
+      </div>
+      <div class="d-flex justify-content-center mt-3" th:if="${totalPages > 0}">
+        <nav>
+          <ul class="pagination custom-pagination">
+            <!-- First Page -->
+            <li
+              class="page-item"
+              th:classappend="${currentPage == 0} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/Category/index(page=0, size=10,  keyword=${keyword})}"
+              >
+                <i class="fa fa-angle-double-left"></i>
+              </a>
+            </li>
+
+            <!-- Previous Page -->
+            <li
+              class="page-item"
+              th:classappend="${currentPage == 0} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/Category/index(page=${currentPage - 1}, size=10,keyword=${keyword})}"
+              >
+                <i class="fa fa-angle-left"></i>
+              </a>
+            </li>
+
+            <!-- Page Numbers -->
+            <li
+              class="page-item"
+              th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+              th:classappend="${currentPage == i} ? 'active'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/Category/index(page=${i}, size=10, keyword=${keyword})}"
+                th:text="${i + 1}"
+              ></a>
+            </li>
+
+            <!-- Next Page -->
+            <li
+              class="page-item"
+              th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/Category/index(page=${currentPage + 1}, size=10, keyword=${keyword})}"
+              >
+                <i class="fa fa-angle-right"></i>
+              </a>
+            </li>
+
+            <!-- Last Page -->
+            <li
+              class="page-item"
+              th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/Category/index(page=${totalPages - 1}, size=10, keyword=${keyword})}"
+              >
+                <i class="fa fa-angle-double-right"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
     </div>
   </div>

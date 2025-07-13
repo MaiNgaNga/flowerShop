@@ -61,4 +61,11 @@ public class Post {
     public void preUpdate() {
         this.lastUpdatedAt = LocalDateTime.now();
     }
+
+    public String getSummary() {
+        if (content == null)
+            return "";
+        String plain = content.replaceAll("<[^>]*>", "");
+        return plain.length() > 80 ? plain.substring(0, 80) + "..." : plain;
+    }
 }
