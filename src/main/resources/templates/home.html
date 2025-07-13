@@ -21,7 +21,7 @@
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins&display=swap"
       rel="stylesheet"
     />
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
   </head>
   <body>
     <!-- Hero Section -->
@@ -29,7 +29,7 @@
       <div class="hero-overlay"></div>
       <div class="flower-particles" id="flower-particles"></div>
       <div class="hero-content">
-        <h1 data-aos="fade-down"> Karina Hana</h1>
+        <h1 data-aos="fade-down">Karina Hana</h1>
         <p data-aos="fade-up" data-aos-delay="200">
           Tạo nên những khoảnh khắc đáng nhớ với những thiết kế hoa tinh tế
         </p>
@@ -63,57 +63,44 @@
 
     <section class="new-flowers-section my-5 text-center">
       <h2 class="mb-4" data-aos="fade-up" data-aos-duration="800">
-        Mẫu hoa số lượng nhiều
+        Sản phẩm mới theo từng danh mục
       </h2>
       <div class="new-flower-grid-wrapper">
         <div class="new-flower-grid">
-          <!-- Hiển thị dữ liệu sản phẩm mới từ database -->
           <div
-            th:each="product, iterStat : ${productQuantities}"
+            th:each="product, iterStat : ${latestProducts}"
             class="new-flower-card"
             data-aos="zoom-in-up"
             th:data-aos-delay="${iterStat.index * 100}"
             data-aos-easing="ease-out-back"
           >
-            <a th:href="@{/detail(id=${product.id})}"
-                    class="text-decoration-none">
+            <a
+              th:if="${product.id != null}"
+              th:href="@{/detail(id=${product.id})}"
+              class="text-decoration-none"
+            >
               <img
-              th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
-              th:alt="${product.name}"
-              onerror="this.src='/images/logo.png'; this.onerror=null;"
-              style="width: 100%; height: 200px; object-fit: cover"
-            />
+                th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
+                th:alt="${product.name}"
+                onerror="this.src='/images/logo.png'; this.onerror=null;"
+                style="width: 100%; height: 200px; object-fit: cover"
+              />
             </a>
-            <div class="new-flower-name" th:text="${product.name}">Tên hoa</div>
-            <div
-              class="new-flower-price"
-              th:if="${product.discountPercent != null && product.discountPercent > 0}"
+            <span th:if="${product.id == null}" style="color: red"
+              >ID NULL</span
             >
-              <span
-                class="original-price"
-                th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
-                >Giá gốc</span
-              >
-              <span
-                class="discount-price"
-                th:text="${#numbers.formatDecimal(product.priceAfterDiscount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
-                >Giá khuyến mãi</span
-              >
-              <span
-                class="discount-percent"
-                th:text="'-' + ${product.discountPercent} + '%'"
-                >-10%</span
-              >
-            </div>
+            <!-- Hiển thị tên danh mục sản phẩm -->
             <div
-              class="new-flower-price"
-              th:unless="${product.discountPercent != null && product.discountPercent > 0}"
+              class="product-category-name"
+              th:text="${product.productCategory != null ? product.productCategory.name : 'Không có danh mục'}"
+              style="
+                font-size: 0.9em;
+                color: #666;
+                margin-bottom: 5px;
+                font-weight: 500;
+              "
             >
-              <span
-                class="current-price"
-                th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
-                >Giá</span
-              >
+              Danh mục
             </div>
           </div>
         </div>
@@ -232,38 +219,72 @@
         </div>
       </div>
     </section>
+
     <section class="new-flowers-section my-5 text-center">
-      <h2 class="mb-4" data-aos="fade-up" data-aos-duration="800">Sản phẩm mới theo từng danh mục</h2>
+      <h2 class="mb-4" data-aos="fade-up" data-aos-duration="800">
+        Mẫu hoa số lượng nhiều
+      </h2>
       <div class="new-flower-grid-wrapper">
         <div class="new-flower-grid">
-          <!-- Hiển thị sản phẩm mới nhất từ mỗi danh mục sản phẩm -->
+          <!-- Hiển thị dữ liệu sản phẩm mới từ database -->
           <div
-            th:each="product, iterStat : ${latestProducts}"
+            th:each="product, iterStat : ${productQuantities}"
             class="new-flower-card"
             data-aos="zoom-in-up"
             th:data-aos-delay="${iterStat.index * 100}"
             data-aos-easing="ease-out-back"
           >
-            <a th:href="@{/detail(id=${product.id})}"
-                    class="text-decoration-none">
+            <a
+              th:if="${product.id != null}"
+              th:href="@{/detail(id=${product.id})}"
+              class="text-decoration-none"
+            >
               <img
-              th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
-              th:alt="${product.name}"
-              onerror="this.src='/images/logo.png'; this.onerror=null;"
-              style="width: 100%; height: 200px; object-fit: cover"
-            />
+                th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
+                th:alt="${product.name}"
+                onerror="this.src='/images/logo.png'; this.onerror=null;"
+                style="width: 100%; height: 200px; object-fit: cover"
+              />
             </a>
-            <!-- Hiển thị tên danh mục sản phẩm -->
-            <div class="product-category-name" 
-                 th:text="${product.productCategory != null ? product.productCategory.name : 'Không có danh mục'}"
-                 style="font-size: 0.9em; color: #666; margin-bottom: 5px; font-weight: 500;">
-              Danh mục
+            <span th:if="${product.id == null}" style="color: red"
+              >ID NULL</span
+            >
+            <div class="new-flower-name" th:text="${product.name}">Tên hoa</div>
+            <div
+              class="new-flower-price"
+              th:if="${product.discountPercent != null && product.discountPercent > 0}"
+            >
+              <span
+                class="original-price"
+                th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+                >Giá gốc</span
+              >
+              <span
+                class="discount-price"
+                th:text="${#numbers.formatDecimal(product.priceAfterDiscount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+                >Giá khuyến mãi</span
+              >
+              <span
+                class="discount-percent"
+                th:text="'-' + ${product.discountPercent} + '%'"
+                >-10%</span
+              >
             </div>
-
+            <div
+              class="new-flower-price"
+              th:unless="${product.discountPercent != null && product.discountPercent > 0}"
+            >
+              <span
+                class="current-price"
+                th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+                >Giá</span
+              >
+            </div>
           </div>
         </div>
       </div>
     </section>
+
     <section class="best-seller-section" data-aos="fade-in" data-aos-delay="0">
       <h2 data-aos="fade-in" data-aos-delay="100">Best Seller</h2>
       <div>
@@ -273,17 +294,32 @@
           data-aos-delay="200"
           data-type="lang"
         >
-          Lãng hoa 
+          Lãng hoa
         </button>
-        <button class="filter-btn" data-aos="fade-in" data-aos-delay="200" data-type="gio">
-          Giỏ hoa 
+        <button
+          class="filter-btn"
+          data-aos="fade-in"
+          data-aos-delay="200"
+          data-type="gio"
+        >
+          Giỏ hoa
         </button>
-        <button class="filter-btn" data-aos="fade-in" data-aos-delay="200" data-type="bo">
-          Bó hoa 
+        <button
+          class="filter-btn"
+          data-aos="fade-in"
+          data-aos-delay="200"
+          data-type="bo"
+        >
+          Bó hoa
         </button>
       </div>
 
-      <div id="best-seller-grid" class="product-grid" data-aos="fade-in" data-aos-delay="200">
+      <div
+        id="best-seller-grid"
+        class="product-grid"
+        data-aos="fade-in"
+        data-aos-delay="200"
+      >
         <!-- Dynamic products loaded from database -->
         <div
           th:each="product, iterStat : ${defaultBestSeller}"
@@ -292,21 +328,27 @@
           th:data-aos-delay="${300 + iterStat.index * 100}"
         >
           <div class="product-image">
-            <a th:href="@{/detail(id=${product.id})}"
-                    class="text-decoration-none">
+            <a
+              th:if="${product.id != null}"
+              th:href="@{/detail(id=${product.id})}"
+              class="text-decoration-none"
+            >
               <img
-              th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
-              class="default-img"
-              th:alt="${product.name}"
-              onerror="this.src='/images/logo.png'; this.onerror=null;"
-            />
-            <img
-              th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
-              class="hover-img"
-              th:alt="${product.name}"
-              onerror="this.src='/images/logo.png'; this.onerror=null;"
-            />
+                th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
+                class="default-img"
+                th:alt="${product.name}"
+                onerror="this.src='/images/logo.png'; this.onerror=null;"
+              />
+              <img
+                th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
+                class="hover-img"
+                th:alt="${product.name}"
+                onerror="this.src='/images/logo.png'; this.onerror=null;"
+              />
             </a>
+            <span th:if="${product.id == null}" style="color: red"
+              >ID NULL</span
+            >
             <div class="cart-icon-wrapper">
               <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
               <div class="add-to-cart-text">Add To Cart</div>
@@ -517,7 +559,6 @@
             <div class="product-size">size M</div>
           </div>
         </div>
-        
       </div>
     </section>
 

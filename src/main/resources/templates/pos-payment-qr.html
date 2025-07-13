@@ -1,427 +1,118 @@
-<link rel="stylesheet" th:href="@{/css/pos.css}" />
+<link rel="stylesheet" th:href="@{/css/pos-payment-qr.css}" />
 
-<!-- POS Payment QR Page Identifier -->
-<div id="pos-payment-qr-page" style="display: none">pos-payment-qr</div>
-
-<div class="container-fluid" style="padding: 0; margin: 0">
-  <div class="row" style="height: 100vh; margin: 0">
-    <!-- QR Code Display - Left Side -->
+<div class="qr-main-container">
+  <div class="qr-left">
+    <div class="qr-title">
+      <i class="fas fa-qrcode"></i> Quét mã QR để thanh toán
+    </div>
+    <img
+      th:src="${qrCodePath}"
+      alt="QR Code thanh toán"
+      class="qr-img"
+      onerror="console.error('QR Code load failed:', this.src); this.style.display='none'; this.nextElementSibling.style.display='block';"
+    />
     <div
-      class="col-md-8 d-flex align-items-center justify-content-center"
-      style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+      id="qr-fallback"
+      style="display: none; color: #b91c1c; text-align: center"
     >
-      <div class="text-center">
+      <p>Không thể tải QR Code</p>
+      <p><strong>Đường dẫn:</strong> <span th:text="${qrCodePath}"></span></p>
+      <a th:href="${qrCodePath}" target="_blank" class="btn btn-sm btn-primary"
+        >Xem QR trực tiếp</a
+      >
+    </div>
+    <div class="qr-order-info">
+      <div class="info-block">
+        <div class="info-label">Mã đơn</div>
+        <div class="info-value" th:text="${orderCode}"></div>
+      </div>
+      <div class="info-block">
+        <div class="info-label">Số tiền</div>
         <div
-          class="card shadow-lg border-0"
-          style="max-width: 600px; border-radius: 20px"
-        >
-          <div
-            class="card-header text-white text-center"
-            style="
-              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-              border-radius: 20px 20px 0 0;
-            "
-          >
-            <h2 class="mb-0">
-              <i class="fas fa-qrcode"></i>
-              Quét mã QR để thanh toán
-            </h2>
-          </div>
-          <div class="card-body p-5">
-            <!-- QR Code -->
-            <div class="text-center mb-4">
-              <img
-                th:src="${qrCodePath}"
-                alt="QR Code thanh toán"
-                class="img-fluid border rounded-3 shadow"
-                style="
-                  max-width: 400px;
-                  max-height: 400px;
-                  border: 5px solid #f8f9fa !important;
-                "
-                onerror="console.error('QR Code load failed:', this.src); this.style.display='none'; this.nextElementSibling.style.display='block';"
-              />
-              <!-- Fallback if QR fails to load -->
-              <div
-                id="qr-fallback"
-                style="display: none"
-                class="alert alert-warning"
-              >
-                <p>Không thể tải QR Code</p>
-                <p>
-                  <strong>Đường dẫn:</strong>
-                  <span th:text="${qrCodePath}"></span>
-                </p>
-                <a
-                  th:href="${qrCodePath}"
-                  target="_blank"
-                  class="btn btn-sm btn-primary"
-                  >Xem QR trực tiếp</a
-                >
-              </div>
-            </div>
-
-            <!-- Payment Info -->
-            <div class="row text-center mb-4">
-              <div class="col-6">
-                <div class="p-3 bg-light rounded-3">
-                  <strong class="text-muted">Mã đơn:</strong><br />
-                  <span class="text-primary h5" th:text="${orderCode}"></span>
-                </div>
-              </div>
-              <div class="col-6">
-                <div class="p-3 bg-light rounded-3">
-                  <strong class="text-muted">Số tiền:</strong><br />
-                  <span
-                    class="text-danger h4"
-                    th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
-                  >
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Bank Info -->
-            <div class="alert alert-info" th:if="${bankInfo}">
-              <strong><i class="fas fa-university"></i> Thông tin NH:</strong
-              ><br />
-              <span th:text="${bankInfo}"></span>
-            </div>
-
-            <!-- Instructions -->
-            <div class="card bg-light">
-              <div class="card-body">
-                <h6 class="card-title">
-                  <i class="fas fa-mobile-alt"></i>
-                  Hướng dẫn thanh toán:
-                </h6>
-                <ol class="mb-0 small">
-                  <li>Mở ứng dụng ngân hàng trên điện thoại</li>
-                  <li>Chọn chức năng "Quét QR" hoặc "Chuyển khoản QR"</li>
-                  <li>Quét mã QR trên màn hình</li>
-                  <li>Xác nhận thông tin và hoàn tất thanh toán</li>
-                </ol>
-              </div>
-            </div>
-          </div>
-        </div>
+          class="info-value text-danger"
+          th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+        ></div>
       </div>
     </div>
-
-    <!-- Control Panel - Right Side -->
-    <div class="col-md-4 bg-white border-start" style="padding: 0">
-      <div class="p-4 h-100 d-flex flex-column">
-        <!-- Header -->
-        <div class="text-center mb-4 pb-3 border-bottom">
-          <h3 class="text-primary">
-            <i class="fas fa-cash-register"></i>
-            POS System
-          </h3>
-          <small class="text-muted">Quản lý thanh toán</small>
-        </div>
-
-        <!-- Order Summary -->
-        <div class="card mb-4 flex-grow-1">
-          <div class="card-header bg-success text-white">
-            <h6 class="mb-0">
-              <i class="fas fa-receipt"></i>
-              Chi tiết đơn hàng
-            </h6>
-          </div>
-          <div class="card-body" style="max-height: 300px; overflow-y: auto">
-            <div class="mb-3" th:if="${customerName}">
-              <strong>👤 Khách hàng:</strong>
-              <span th:text="${customerName}" class="text-primary"></span>
-            </div>
-
-            <div class="table-responsive">
-              <table class="table table-sm table-striped">
-                <thead class="table-light">
-                  <tr>
-                    <th>Sản phẩm</th>
-                    <th>SL</th>
-                    <th>Giá</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr th:each="detail : ${orderDetails}">
-                    <td>
-                      <small th:text="${detail.product.name}"></small>
-                    </td>
-                    <td class="text-center" th:text="${detail.quantity}"></td>
-                    <td class="text-end">
-                      <small
-                        th:text="${#numbers.formatDecimal(detail.price * detail.quantity, 0, 'COMMA', 0, 'POINT')}"
-                      ></small>
-                    </td>
-                  </tr>
-                </tbody>
-                <tfoot class="table-success">
-                  <tr>
-                    <th colspan="2">💰 Tổng:</th>
-                    <th
-                      class="text-end"
-                      th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
-                    ></th>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- Status & Countdown -->
-        <div class="card mb-4">
-          <div class="card-body text-center">
-            <div class="mb-3">
-              <h4 class="text-warning">
-                <i class="fas fa-clock"></i>
-                <span id="countdown">15:00</span>
-              </h4>
-              <small class="text-muted">Thời gian chờ thanh toán</small>
-            </div>
-
-            <div id="statusAlert" class="alert alert-warning">
-              <i class="fas fa-hourglass-half"></i>
-              Đang chờ khách hàng thanh toán...
-            </div>
-
-            <!-- Progress Bar -->
-            <div class="progress" style="height: 10px">
-              <div
-                id="progressBar"
-                class="progress-bar progress-bar-striped progress-bar-animated bg-warning"
-                role="progressbar"
-                style="width: 100%"
-              ></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="d-grid gap-2">
-          <button class="btn btn-success btn-lg" id="checkPaymentBtn">
-            <i class="fas fa-sync"></i>
-            Kiểm tra thanh toán
-          </button>
-
-          <button class="btn btn-info" id="printQRBtn">
-            <i class="fas fa-print"></i>
-            In mã QR
-          </button>
-
-          <button class="btn btn-warning" onclick="window.location.reload()">
-            <i class="fas fa-redo"></i>
-            Làm mới QR
-          </button>
-
-          <a href="/pos" class="btn btn-outline-danger">
-            <i class="fas fa-times"></i>
-            Hủy & Quay lại POS
-          </a>
-        </div>
+    <div class="qr-bank-info" th:if="${bankInfo}">
+      <strong><i class="fas fa-university"></i> Thông tin NH:</strong>
+      <span th:text="${bankInfo}"></span>
+    </div>
+    <div class="qr-instructions">
+      <h6><i class="fas fa-mobile-alt"></i> Hướng dẫn thanh toán:</h6>
+      <ol>
+        <li>Mở ứng dụng ngân hàng trên điện thoại</li>
+        <li>Chọn chức năng "Quét QR" hoặc "Chuyển khoản QR"</li>
+        <li>Quét mã QR trên màn hình</li>
+        <li>Xác nhận thông tin và hoàn tất thanh toán</li>
+      </ol>
+    </div>
+  </div>
+  <div class="qr-right">
+    <div class="qr-summary-title">
+      <i class="fas fa-cash-register"></i> Chi tiết đơn hàng
+    </div>
+    <div style="max-height: 220px; overflow-y: auto; margin-bottom: 10px">
+      <table class="table qr-summary-table">
+        <thead>
+          <tr>
+            <th>Sản phẩm</th>
+            <th>SL</th>
+            <th>Giá</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="detail : ${orderDetails}">
+            <td><small th:text="${detail.product.name}"></small></td>
+            <td class="text-center" th:text="${detail.quantity}"></td>
+            <td class="text-end">
+              <small
+                th:text="${#numbers.formatDecimal(detail.price * detail.quantity, 0, 'COMMA', 0, 'POINT')}"
+              ></small>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th colspan="2">💰 Tổng:</th>
+            <th
+              class="text-end"
+              th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+            ></th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="qr-countdown">
+      <span id="countdown">15:00</span>
+      <div style="font-size: 0.95em; color: #888">Thời gian chờ thanh toán</div>
+      <div class="progress" style="height: 8px; margin-top: 6px">
+        <div
+          id="progressBar"
+          class="progress-bar progress-bar-striped progress-bar-animated bg-warning"
+          role="progressbar"
+          style="width: 100%"
+        ></div>
       </div>
+    </div>
+    <div id="statusAlert" class="qr-status alert alert-warning">
+      <i class="fas fa-hourglass-half"></i> Đang chờ khách hàng thanh toán...
+    </div>
+    <div class="qr-actions">
+      <button class="btn btn-success" id="checkPaymentBtn">
+        <i class="fas fa-sync"></i> Kiểm tra thanh toán
+      </button>
+      <button class="btn btn-info" id="printQRBtn">
+        <i class="fas fa-print"></i> In mã QR
+      </button>
+      <button class="btn btn-warning" onclick="window.location.reload()">
+        <i class="fas fa-redo"></i> Làm mới QR
+      </button>
+      <a href="/pos" class="btn btn-outline-danger"
+        ><i class="fas fa-times"></i> Hủy & Quay lại POS</a
+      >
     </div>
   </div>
 </div>
 
-<script>
-  // Countdown Timer (15 minutes)
-  let timeLeft = 15 * 60;
-  let totalTime = 15 * 60;
-
-  function updateCountdown() {
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-    document.getElementById("countdown").textContent = `${minutes
-      .toString()
-      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-
-    // Update progress bar
-    const progressBar = document.getElementById("progressBar");
-    const percentage = (timeLeft / totalTime) * 100;
-    progressBar.style.width = percentage + "%";
-
-    if (percentage < 30) {
-      progressBar.className =
-        "progress-bar progress-bar-striped progress-bar-animated bg-danger";
-    } else if (percentage < 60) {
-      progressBar.className =
-        "progress-bar progress-bar-striped progress-bar-animated bg-warning";
-    }
-
-    if (timeLeft <= 0) {
-      alert("⏰ Hết thời gian thanh toán! Đơn hàng sẽ bị hủy.");
-      window.location.href = "/pos?error=timeout";
-      return;
-    }
-    timeLeft--;
-  }
-
-  // Start countdown
-  setInterval(updateCountdown, 1000);
-
-  // Check payment status
-  document
-    .getElementById("checkPaymentBtn")
-    .addEventListener("click", function () {
-      const btn = this;
-      const originalText = btn.innerHTML;
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang kiểm tra...';
-
-      // Simulate API call to check payment
-      setTimeout(() => {
-        // For demo - randomly succeed after a few checks
-        if (Math.random() > 0.7) {
-          document.getElementById("statusAlert").innerHTML =
-            '<i class="fas fa-check-circle"></i> ✅ Thanh toán thành công!';
-          document.getElementById("statusAlert").className =
-            "alert alert-success";
-
-          // Play success sound (if available)
-          try {
-            new Audio("/sounds/success.mp3").play();
-          } catch (e) {}
-
-          setTimeout(() => {
-            alert("🎉 Thanh toán thành công! Đơn hàng đã được xử lý.");
-            window.location.href = "/pos?success=payment_completed";
-          }, 2000);
-        } else {
-          btn.disabled = false;
-          btn.innerHTML = originalText;
-
-          // Show temporary message
-          const tempAlert = document.createElement("div");
-          tempAlert.className = "alert alert-warning mt-2";
-          tempAlert.innerHTML =
-            "<small>⏳ Chưa nhận được thanh toán. Vui lòng thử lại.</small>";
-          btn.parentNode.appendChild(tempAlert);
-
-          setTimeout(() => {
-            tempAlert.remove();
-          }, 3000);
-        }
-      }, 1500);
-    });
-
-  // Print QR Code
-  document.getElementById("printQRBtn").addEventListener("click", function () {
-    // Create print window
-    const printWindow = window.open("", "_blank");
-    const qrImage = document.querySelector('img[alt="QR Code thanh toán"]');
-    const orderCode = "[[${orderCode}]]";
-    const totalAmount = "[[${totalAmount}]]";
-
-    printWindow.document.write(`
-        <html>
-        <head>
-            <title>In mã QR - ${orderCode}</title>
-            <style>
-                body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-                .qr-container { border: 2px solid #333; padding: 20px; margin: 20px auto; max-width: 400px; }
-                img { max-width: 300px; margin: 20px 0; }
-                .info { margin: 10px 0; font-size: 14px; }
-                .total { font-size: 18px; font-weight: bold; color: #d9534f; }
-            </style>
-        </head>
-        <body>
-            <div class="qr-container">
-                <h2>🌸 Cửa Hàng Hoa</h2>
-                <div class="info">Mã đơn hàng: <strong>${orderCode}</strong></div>
-                <img src="${qrImage.src}" alt="QR Code">
-                <div class="total">Tổng tiền: ${new Intl.NumberFormat(
-                  "vi-VN"
-                ).format(totalAmount)} VNĐ</div>
-                <div class="info">Quét mã QR để thanh toán</div>
-                <div class="info"><small>Cảm ơn quý khách!</small></div>
-            </div>
-        </body>
-        </html>
-    `);
-
-    printWindow.document.close();
-    printWindow.print();
-  });
-
-  // Auto check payment every 20 seconds
-  setInterval(() => {
-    const orderCode = "[[${orderCode}]]";
-    console.log("Checking payment status for order:", orderCode);
-
-    // Silent check for payment status
-    fetch("/pos/check-payment-status", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ orderCode: orderCode }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Payment status response:", data);
-        if (data.success && data.status === "Đã thanh toán") {
-          document.getElementById("statusAlert").innerHTML =
-            '<i class="fas fa-check-circle"></i> ✅ Thanh toán thành công!';
-          document.getElementById("statusAlert").className =
-            "alert alert-success";
-
-          setTimeout(() => {
-            window.location.href = "/pos?success=payment_completed";
-          }, 2000);
-        }
-      })
-      .catch((error) => {
-        console.log("Auto-check error:", error);
-      });
-  }, 20000);
-
-  // Prevent page refresh accidentally
-  window.addEventListener("beforeunload", function (e) {
-    e.preventDefault();
-    e.returnValue =
-      "Bạn có chắc muốn rời khỏi trang? Giao dịch đang chờ thanh toán.";
-  });
-</script>
-
-<style>
-  /* Custom styles for QR payment page */
-  .card {
-    transition: all 0.3s ease;
-  }
-
-  .card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
-  }
-
-  .progress {
-    border-radius: 10px;
-    background-color: #e9ecef;
-  }
-
-  .progress-bar {
-    border-radius: 10px;
-  }
-
-  @media print {
-    .col-md-4 {
-      display: none !important;
-    }
-    .col-md-8 {
-      width: 100% !important;
-    }
-    body {
-      background: white !important;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .row {
-      height: auto !important;
-    }
-    .col-md-8,
-    .col-md-4 {
-      width: 100% !important;
-    }
-  }
-</style>
+<script src="/js/pos-payment-qr.js"></script>

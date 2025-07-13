@@ -27,34 +27,24 @@ public class HomeController {
 
     @GetMapping("/home")
     public String home(Model model) {
-        // Load data và kiểm tra
         List<ProductCategory> productCategories = productCategoryService.findAll();
         List<Category> categories = categoryService.findAll();
         List<Product> productQuantities = productService.findTop6ByOrderByQuantityDesc();
         List<Product> latestProducts = productService.findLatestProductsPerCategory();
         List<Product> bestSellingProducts = productService.findBestSellingProductPerCategory();
 
-        // Debug log
-        System.out.println("=== DEBUG HOME CONTROLLER ===");
-        System.out.println("ProductCategories count: " + productCategories.size());
-        System.out.println("Categories count: " + categories.size());
-        for (ProductCategory pc : productCategories) {
-            System.out.println("ProductCategory: " + pc.getName());
-        }
-
         model.addAttribute("productCategories", productCategories);
         model.addAttribute("categories", categories);
         model.addAttribute("productQuantities", productQuantities);
         model.addAttribute("latestProducts", latestProducts);
         model.addAttribute("bestSellingProducts", bestSellingProducts);
-        // Load default best seller (Bó hoa tươi) for initial display
         model.addAttribute("defaultBestSeller", productService.findBestSellerByCategory("Bó hoa tươi"));
         model.addAttribute("view", "home");
 
         return "layouts/layout";
     }
 
-    // API endpoint để lọc sản phẩm best seller theo loại
+
     @GetMapping("/api/best-seller")
     @ResponseBody
     public List<Product> getBestSellerByType(@RequestParam String type) {
@@ -71,49 +61,26 @@ public class HomeController {
         }
     }
 
-    // Debug endpoints
-    @GetMapping("/api/debug/categories")
-    @ResponseBody
-    public List<Category> getAllCategories() {
-        return categoryService.findAll();
-    }
-
-    @GetMapping("/api/debug/products")
-    @ResponseBody
-    public List<Product> getAllProducts() {
-        return productService.findAll();
-    }
-
-    @GetMapping("/api/debug/products-with-categories")
-    @ResponseBody
-    public List<Product> getProductsWithCategories() {
-        List<Product> products = productService.findAll();
-        for (Product product : products) {
-            System.out.println("Product: " + product.getName() +
-                    ", Category: " + (product.getCategory() != null ? product.getCategory().getName() : "NULL") +
-                    ", ProductCategory: "
-                    + (product.getProductCategory() != null ? product.getProductCategory().getName() : "NULL"));
-        }
-        return products;
-    }
-
-    @GetMapping("/api/debug/product-categories")
-    @ResponseBody
-    public List<ProductCategory> getAllProductCategories() {
-        return productCategoryService.findAll();
-    }
-
-    // Test endpoint for ProductCategory data
-    @GetMapping("/test-product-categories")
-    @ResponseBody
-    public String testProductCategories() {
+    @GetMapping("/search")
+    public String search(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size,
+            Model model) {
         List<ProductCategory> productCategories = productCategoryService.findAll();
-        StringBuilder result = new StringBuilder();
-        result.append("ProductCategories count: ").append(productCategories.size()).append("<br>");
-        for (ProductCategory pc : productCategories) {
-            result.append("ID: ").append(pc.getId())
-                    .append(", Name: ").append(pc.getName()).append("<br>");
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        java.util.Set<Product> resultSet = new java.util.LinkedHashSet<>();
+        if (keyword != null && !keyword.isEmpty()) {
+            String keywordNoDiacritics = com.datn.utils.StringUtils.removeVietnameseDiacritics(keyword);
+            resultSet.addAll(productService.searchByName(keyword, pageable).getContent());
+            resultSet.addAll(productService.searchByCategoryName(keyword, pageable).getContent());
+            resultSet.addAll(productService.searchByProductCategoryName(keyword, pageable).getContent());
         }
-        return result.toString();
+        model.addAttribute("products", resultSet);
+        model.addAttribute("searchKeyword", keyword);
+        model.addAttribute("productCategories", productCategories);
+        model.addAttribute("view", "search");
+        return "layouts/layout";
     }
+
 }

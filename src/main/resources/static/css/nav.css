@@ -11,7 +11,6 @@
   display: flex;
   align-items: center;
 }
-
 .nav-container {
   width: 100%;
   max-width: 1300px;
@@ -73,7 +72,7 @@
 }
 
 .dropdown-menu {
-  min-width: 400px;
+  min-width: 200px;
   width: max-content;
 }
 
@@ -104,7 +103,8 @@
   color: #7b2cbf;
 }
 
-.nav-links a {
+.nav-links a,
+.nav-links .dropdown-toggle {
   position: relative;
   text-decoration: none;
   color: #333;
@@ -113,36 +113,27 @@
   transition: color 0.25s ease;
 }
 
-.nav-links a::after {
+/* Hiệu ứng underline gradient cho tất cả nav item */
+
+.nav-links a::after,
+.nav-links .dropdown-toggle::after {
   content: "";
   position: absolute;
   left: 0;
   bottom: -2px;
   width: 100%;
-  height: 1.5px; /* giảm độ dày border-bottom */
-  background: linear-gradient(90deg, #e0c3fc, #a0c4ff); /* màu nhạt hơn */
+  height: 3px;
+  background: linear-gradient(135deg, #d4a5e6, #b2e0e0);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.3s ease;
-  border-radius: 2px;
-}
-
-.nav-links a.dropdown-toggle::after,
-.nav-links .dropdown-toggle.active::after,
-.nav-links .dropdown-toggle:hover::after {
-  background: none !important;
-  height: 0 !important;
-  box-shadow: none !important;
-  border-bottom: none !important;
-  display: none !important;
-}
-
-.nav-links a:hover {
-  color: #7b2cbf;
+  z-index: 1;
 }
 
 .nav-links a:hover::after,
-.nav-links a.active::after {
+.nav-links a.active::after,
+.nav-links .dropdown-toggle:hover::after,
+.nav-links .dropdown-toggle.active::after {
   transform: scaleX(1);
 }
 
@@ -242,13 +233,6 @@
   position: relative;
 }
 
-/* Ensure body content doesn't get hidden behind fixed header */
-/* Only apply padding-top to pages that use the main layout */
-body {
-  /* Remove global padding-top to avoid conflicts */
-}
-
-/* Override any conflicting styles */
 .nav-header * {
   box-sizing: border-box;
 }
@@ -389,44 +373,32 @@ main {
 }
 
 .nav-links a.dropdown-toggle {
-  font-weight: 400;
-  background: none;
-  box-shadow: none;
 }
-
-.nav-links a.dropdown-toggle.active::after,
-.nav-links a.dropdown-toggle:hover::after {
-  background: none;
-  box-shadow: none;
-}
-
-/* Bỏ gạch chân cho tất cả các thẻ a */
-a,
-.nav-links a,
-.dropdown-menu li a {
-  text-decoration: none !important;
-  box-shadow: none !important;
-}
-
-/* Khi hover: đổi màu nền và màu chữ cho tất cả các thẻ a trong nav-links và dropdown */
-.nav-links a:hover,
-.dropdown-menu li a:hover,
 .dropdown-columns li a:hover {
-  background: #7b2cbf !important; /* Màu nền tím */
-  color: #fff !important; /* Màu chữ trắng */
   border-radius: 6px;
   transition: background 0.3s, color 0.3s;
 }
+.nav-links a.dropdown-toggle:hover {
+  color: #7b2cbf;
+  font-weight: 500;
+  background: none;
+  box-shadow: none;
+}
+.nav-links a.dropdown-toggle {
+}
+.nav-links a:hover,
+.nav-links a.active {
+  color: #7b2cbf;
+  box-shadow: none !important;
+  background: none !important;
+  border: none !important;
+  outline: none !important;
+}
 
 /* Loại bỏ hiệu ứng underline khi hover */
-.nav-links a::after,
 .nav-links a:hover::after,
 .nav-links a.active::after {
-  display: none !important;
-  background: none !important;
-  height: 0 !important;
-  box-shadow: none !important;
-  border-bottom: none !important;
+  transform: scaleX(1);
 }
 
 @keyframes fadeIn {
@@ -458,8 +430,6 @@ a,
     height: auto;
   }
 
- 
-
   .search-box,
   .icons {
     margin-top: 8px;
@@ -475,4 +445,3 @@ a,
     max-height: 40px;
   }
 }
-

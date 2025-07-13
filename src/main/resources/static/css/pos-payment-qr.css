@@ -1,0 +1,140 @@
+body {
+  background: linear-gradient(135deg, #d4a5e6 80%, #b2e0e0 100%);
+}
+.qr-main-container {
+  max-width: 950px;
+  margin: 40px auto;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(100, 80, 180, 0.15);
+  display: flex;
+  overflow: hidden;
+}
+.qr-left,
+.qr-right {
+  padding: 40px 32px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.qr-left {
+  align-items: center;
+  background: linear-gradient(135deg, #d4a5e6 80%, #b2e0e0 100%);
+}
+.qr-title {
+  font-size: 2.1rem;
+  font-weight: bold;
+  color: #7c3aed;
+  margin-bottom: 18px;
+  letter-spacing: 1px;
+  text-align: center;
+}
+.qr-img {
+  width: 260px;
+  height: 260px;
+  object-fit: contain;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px #b2e0e0aa;
+  background: #fff;
+  margin-bottom: 18px;
+  border: 4px solid #fff;
+}
+.qr-order-info {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-bottom: 18px;
+}
+.qr-order-info .info-block {
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px 24px;
+  box-shadow: 0 2px 8px #d4a5e633;
+  text-align: center;
+}
+.qr-order-info .info-label {
+  color: #888;
+  font-size: 0.95em;
+}
+.qr-order-info .info-value {
+  color: #7c3aed;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+.qr-bank-info {
+  background: #e9d8fd;
+  border-radius: 8px;
+  padding: 10px 18px;
+  margin-bottom: 12px;
+  color: #4b2996;
+  font-size: 1em;
+  box-shadow: 0 1px 4px #b2e0e055;
+}
+.qr-instructions {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 16px 18px;
+  color: #444;
+  font-size: 1em;
+  margin-bottom: 0;
+  box-shadow: 0 1px 4px #b2e0e055;
+}
+.qr-instructions ol {
+  margin: 0;
+  padding-left: 18px;
+}
+.qr-right {
+  background: #fff;
+  border-left: 2px solid #e0e0e0;
+  min-width: 340px;
+  max-width: 400px;
+}
+.qr-summary-title {
+  color: #7c3aed;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 18px;
+  text-align: center;
+}
+.qr-summary-table th,
+.qr-summary-table td {
+  font-size: 1em;
+  padding: 6px 8px;
+}
+.qr-summary-table th {
+  color: #7c3aed;
+  background: #f3e8ff;
+  border: none;
+}
+.qr-summary-table td {
+  background: #fff;
+  border: none;
+}
+.qr-countdown {
+  text-align: center;
+  margin: 18px 0 10px 0;
+}
+.qr-countdown span {
+  font-size: 1.5em;
+  color: #d97706;
+  font-weight: bold;
+}
+.qr-status {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+}
+.qr-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 18px;
+}
+.qr-actions button,
+.qr-actions a {
+  font-size: 1.05em;
+  border-radius: 8px;
+  padding: 10px 0;
+}

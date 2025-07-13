@@ -114,14 +114,26 @@ document.addEventListener("DOMContentLoaded", function () {
          </div>`
         : `<div class="product-price">${formatPrice(product.price)}₫</div>`;
 
+    // Nếu có id thì bọc ảnh trong thẻ <a>, nếu không thì chỉ hiển thị ảnh
+    let imageBlock = "";
+    if (product.id !== undefined && product.id !== null) {
+      imageBlock = `
+        <a href="/detail?id=${product.id}" class="text-decoration-none">
+          <img src="${imageUrl}" class="default-img" alt="${product.name}" onerror="this.src='/images/logo.png'"/>
+          <img src="${imageUrl}" class="hover-img" alt="${product.name}" onerror="this.src='/images/logo.png'"/>
+        </a>
+      `;
+    } else {
+      imageBlock = `
+        <img src="${imageUrl}" class="default-img" alt="${product.name}" onerror="this.src='/images/logo.png'"/>
+        <img src="${imageUrl}" class="hover-img" alt="${product.name}" onerror="this.src='/images/logo.png'"/>
+        <span style="color:red;">ID NULL</span>
+      `;
+    }
+
     productCard.innerHTML = `
       <div class="product-image">
-        <img src="${imageUrl}" class="default-img" alt="${
-      product.name
-    }" onerror="this.src='/images/logo.png'"/>
-        <img src="${imageUrl}" class="hover-img" alt="${
-      product.name
-    }" onerror="this.src='/images/logo.png'"/>
+        ${imageBlock}
         <div class="cart-icon-wrapper">
           <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
           <div class="add-to-cart-text">Add To Cart</div>

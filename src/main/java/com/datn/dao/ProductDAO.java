@@ -1,3 +1,4 @@
+
 package com.datn.dao;
 
 import java.util.List;
@@ -11,8 +12,8 @@ import org.springframework.data.repository.query.Param;
 import com.datn.model.Product;
 
 public interface ProductDAO extends JpaRepository<Product, Long> {
-        // Lấy sản phẩm mới nhất từ mỗi product category
-        @Query(value = "SELECT p.* FROM products p " +
+        // Lấy 6 sản phẩm mới nhất từ 6 danh mục khác nhau
+        @Query(value = "SELECT TOP 6 p.* FROM products p " +
                         "INNER JOIN ( " +
                         "    SELECT product_Category_Id, MAX(id) as max_id " +
                         "    FROM products " +
@@ -98,5 +99,16 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
         // Tìm kiếm
         @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
         Page<Product> searchByName(@Param("keyword") String keyword, Pageable pageable);
+
+        // Tìm kiếm theo loại hoa (category name)
+        @Query("SELECT p FROM Product p WHERE LOWER(p.category.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))")
+        Page<Product> searchByCategoryName(@Param("categoryName") String categoryName, Pageable pageable);
+
+        // Tìm kiếm theo danh mục hoa (productCategory name)
+        @Query("SELECT p FROM Product p WHERE LOWER(p.productCategory.name) LIKE LOWER(CONCAT('%', :productCategoryName, '%'))")
+        Page<Product> searchByProductCategoryName(@Param("productCategoryName") String productCategoryName,
+                        Pageable pageable);
+
+        // Tìm kiếm theo tên sản phẩm (đã có sẵn: searchByName)
 
 }

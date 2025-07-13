@@ -41,9 +41,6 @@ public class Order {
     @Column(name = "status", columnDefinition = "NVARCHAR(255)")
     private String status;
 
-    @Column(name = "customer_name", columnDefinition = "NVARCHAR(255)")
-    private String customerName;
-
     @Column(name = "order_code", columnDefinition = "NVARCHAR(50)")
     private String orderCode;
 
