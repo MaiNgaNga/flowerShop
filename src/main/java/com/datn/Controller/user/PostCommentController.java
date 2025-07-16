@@ -29,7 +29,7 @@ public class PostCommentController {
         return "redirect:/postDetail?id=" + postId;
     }
 
-    // (Tùy chọn) Xóa bình luận
+    // (Tùy chọn) Xóa bình luận thẳng   
     @PostMapping("/delete")
     public String deleteComment(@RequestParam("id") Long id,
             @RequestParam("postId") Long postId) {
