@@ -1,7 +1,9 @@
 package com.datn.Controller.user;
 
 import com.datn.Service.PostService;
+import com.datn.Service.PostCommentService;
 import com.datn.model.Post;
+import com.datn.model.PostComment;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,7 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -21,18 +22,19 @@ public class PostController {
     @Autowired
     private PostService postService;
 
+    @Autowired
+    private PostCommentService postCommentService; // ✅ Thêm service bình luận
+
     @RequestMapping("/PostUser")
     public String postPage(Model model,
             @RequestParam(name = "p", defaultValue = "0") int page) {
 
         Pageable pageable = PageRequest.of(page, 12);
-        Page<Post> posts = postService.findAllPageable(pageable); // nếu bạn vẫn muốn phân trang
-
-        // Thêm danh sách 12 bài viết mới nhất
+        Page<Post> posts = postService.findAllPageable(pageable);
         List<Post> newestPosts = postService.findTop12Newest();
 
         model.addAttribute("page", posts);
-        model.addAttribute("newestPosts", newestPosts); // truyền vào HTML nếu cần
+        model.addAttribute("newestPosts", newestPosts);
         model.addAttribute("view", "post");
 
         return "layouts/layout";
@@ -68,12 +70,14 @@ public class PostController {
 
         model.addAttribute("post", post);
 
-        // lấy 4 bài viết khác
         List<Post> relatedPosts = postService.findRelatedPosts(id);
         model.addAttribute("relatedPosts", relatedPosts);
+
+        // ✅ Truyền danh sách bình luận theo bài viết
+        List<PostComment> comments = postCommentService.getCommentsByPostId(id);
+        model.addAttribute("postComments", comments);
 
         model.addAttribute("view", "post-detail");
         return "layouts/layout";
     }
-
 }
