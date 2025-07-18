@@ -81,14 +81,33 @@
   <h3>Quản Lý Bài Viết</h3>
   
   
-<form th:action="@{/Post/index}" method="get" class="mb-3">
-  <div class="input-group">
-    <input type="text" name="keyword" class="form-control" placeholder="Tìm theo tiêu đề..."
-           th:value="${keyword}">
-    <button class="btn btn-primary" type="submit">Tìm kiếm</button>
-    <a class="btn btn-outline-secondary" th:href="@{/Post/index} + '#list'">Làm mới</a>
+<form 
+  action="/Post/index"
+  method="get"
+  class="search-filter-row"
+  style="gap: 10px; align-items: center"
+>
+  <div class="search-box" style="position: relative;">
+    <i class="fa fa-search" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); color: #888;"></i>
+    <input
+      type="text"
+      name="keyword"
+      th:value="${keyword}"
+      class="form-control form-control-sm custom-search-input"
+      placeholder="Tìm theo tiêu đề..."
+      style="padding-left: 30px;"
+  
+    />
   </div>
+
+  <a 
+    th:href="@{/Post/index} + '#list'" 
+    class="btn btn-outline-secondary btn-sm"
+  >
+    Làm mới
+  </a>
 </form>
+
 
 
 
