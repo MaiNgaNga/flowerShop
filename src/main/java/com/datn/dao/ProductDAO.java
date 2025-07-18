@@ -1,3 +1,4 @@
+
 package com.datn.dao;
 
 import java.util.List;
@@ -11,8 +12,15 @@ import org.springframework.data.repository.query.Param;
 import com.datn.model.Product;
 
 public interface ProductDAO extends JpaRepository<Product, Long> {
-        // Lấy top 6 sản phẩm mới nhất (theo ID - sản phẩm được tạo gần đây nhất)
-        @Query(value = "SELECT TOP 6 * FROM products ORDER BY id DESC", nativeQuery = true)
+        // Lấy 6 sản phẩm mới nhất từ 6 danh mục khác nhau
+        @Query(value = "SELECT TOP 6 p.* FROM products p " +
+                        "INNER JOIN ( " +
+                        "    SELECT product_Category_Id, MAX(id) as max_id " +
+                        "    FROM products " +
+                        "    GROUP BY product_Category_Id " +
+                        ") latest ON p.product_Category_Id = latest.product_Category_Id " +
+                        "AND p.id = latest.max_id " +
+                        "ORDER BY p.product_Category_Id", nativeQuery = true)
         List<Product> findLatestProductsPerCategory();
 
         @Query("SELECT p FROM Product p WHERE p.productCategory.name LIKE :name order by p.id desc")
@@ -91,5 +99,16 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
         // Tìm kiếm
         @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
         Page<Product> searchByName(@Param("keyword") String keyword, Pageable pageable);
+
+        // Tìm kiếm theo loại hoa (category name)
+        @Query("SELECT p FROM Product p WHERE LOWER(p.category.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))")
+        Page<Product> searchByCategoryName(@Param("categoryName") String categoryName, Pageable pageable);
+
+        // Tìm kiếm theo danh mục hoa (productCategory name)
+        @Query("SELECT p FROM Product p WHERE LOWER(p.productCategory.name) LIKE LOWER(CONCAT('%', :productCategoryName, '%'))")
+        Page<Product> searchByProductCategoryName(@Param("productCategoryName") String productCategoryName,
+                        Pageable pageable);
+
+        // Tìm kiếm theo tên sản phẩm (đã có sẵn: searchByName)
 
 }

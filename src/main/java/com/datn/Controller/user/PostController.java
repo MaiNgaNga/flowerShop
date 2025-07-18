@@ -1,7 +1,10 @@
 package com.datn.Controller.user;
 
 import com.datn.Service.PostService;
+
 import com.datn.Service.PostCommentService;
+import com.datn.Service.ProductCategoryService;
+
 import com.datn.model.Post;
 import com.datn.model.PostComment;
 
@@ -21,6 +24,8 @@ public class PostController {
 
     @Autowired
     private PostService postService;
+    @Autowired
+    private ProductCategoryService pro_ca_service;
 
     @Autowired
     private PostCommentService postCommentService; // ✅ Thêm service bình luận
@@ -33,6 +38,7 @@ public class PostController {
         Page<Post> posts = postService.findAllPageable(pageable);
         List<Post> newestPosts = postService.findTop12Newest();
 
+        model.addAttribute("productCategories", pro_ca_service.findAll());
         model.addAttribute("page", posts);
         model.addAttribute("newestPosts", newestPosts);
         model.addAttribute("view", "post");
@@ -55,6 +61,7 @@ public class PostController {
             posts = Page.empty();
         }
 
+        model.addAttribute("productCategories", pro_ca_service.findAll());
         model.addAttribute("page", posts);
         model.addAttribute("view", "post");
 
@@ -73,9 +80,13 @@ public class PostController {
         List<Post> relatedPosts = postService.findRelatedPosts(id);
         model.addAttribute("relatedPosts", relatedPosts);
 
+
         // ✅ Truyền danh sách bình luận theo bài viết
         List<PostComment> comments = postCommentService.getCommentsByPostId(id);
         model.addAttribute("postComments", comments);
+
+
+        model.addAttribute("productCategories", pro_ca_service.findAll());
 
         model.addAttribute("view", "post-detail");
         return "layouts/layout";

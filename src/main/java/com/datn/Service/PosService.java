@@ -10,6 +10,7 @@ public interface PosService {
 
     Page<Product> getProductsPage(Pageable pageable);
 
-    Page<Product> filterProducts(String color, String type, String keyword, double minPrice, double maxPrice,
+    Page<Product> filterProducts(String color, String type, String category, String keyword, double minPrice,
+            double maxPrice,
             Pageable pageable);
 }

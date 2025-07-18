@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Kết quả tìm kiếm</title>
+    <style>
+      .search-title {
+        margin: 24px 0 16px 0;
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 600;
+      }
+      .product-grid-search {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 24px;
+        margin: 0 auto;
+        max-width: 100vw;
+      }
+      .product-card-search {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 12px;
+        text-align: center;
+        transition: box-shadow 0.2s;
+        min-height: 300px;
+      }
+      .product-card-search:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.13);
+      }
+      .product-card-search img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+      .product-name-search {
+        font-weight: 500;
+        margin: 10px 0 4px 0;
+        font-size: 1rem;
+        color: #222;
+      }
+      .product-price-search {
+        color: #e53935;
+        font-weight: 600;
+        font-size: 1.1rem;
+      }
+      @media (max-width: 1200px) {
+        .product-grid-search {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+      @media (max-width: 900px) {
+        .product-grid-search {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 600px) {
+        .product-grid-search {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div th:fragment="content">
+      <div class="search-title">
+        Kết quả tìm kiếm cho: <span th:text="${searchKeyword}"></span>
+      </div>
+      <div
+        th:if="${#lists.isEmpty(products)}"
+        style="text-align: center; color: #888; font-size: 1.2rem"
+      >
+        Không tìm thấy sản phẩm nào.
+      </div>
+      <div class="product-grid-search" th:if="${not #lists.isEmpty(products)}">
+        <div class="product-card-search" th:each="product : ${products}">
+          <a th:href="@{/detail(id=${product.id})}">
+            <img
+              th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
+              th:alt="${product.name}"
+              onerror="this.src='/images/logo.png'; this.onerror=null;"
+            />
+          </a>
+          <div class="product-name-search" th:text="${product.name}">
+            Tên sản phẩm
+          </div>
+          <div class="product-price-search">
+            <span
+              th:if="${product.discountPercent != null && product.discountPercent > 0}"
+              th:text="${#numbers.formatDecimal(product.priceAfterDiscount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+            ></span>
+            <span
+              th:unless="${product.discountPercent != null && product.discountPercent > 0}"
+              th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+            ></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

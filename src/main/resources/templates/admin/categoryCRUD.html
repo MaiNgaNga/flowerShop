@@ -1,3 +1,60 @@
+<style>
+  .custom-pagination .page-item .page-link {
+    border-radius: 50%;
+    margin: 0 5px;
+    color: #f090b8;
+    border: 1px solid #f090b8;
+    background-color: #fff;
+    transition: all 0.2s ease-in-out;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .custom-pagination .page-item.active .page-link {
+    background-color: #f090b8;
+    color: #fff;
+    border-color: #f090b8;
+  }
+
+  .custom-pagination .page-item.disabled .page-link {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .custom-pagination .page-item .page-link:hover {
+    background-color: #fcd6e5;
+    color: #d63384;
+  }
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Khoảng cách giữa icon và input */
+    padding: 12px; /* Tăng khoảng cách bên trong */
+    margin: 5px; /* Tăng khoảng cách xung quanh */
+  }
+
+  .search-box i.fa-search {
+    color: hotpink; /* Màu hồng cho nút tìm kiếm */
+    font-size: 18px;
+  }
+
+  .custom-search-input {
+    width: 250px; /* Thu ngắn chiều ngang */
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+  }
+
+  .custom-search-input:focus {
+    border-color: hotpink;
+    box-shadow: 0 0 3px pink;
+  }
+</style>
 <main class="container mt-3">
   <h3>Quản Lý Loại Hoa</h3>
   <hr />

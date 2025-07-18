@@ -1,0 +1,118 @@
+<link rel="stylesheet" th:href="@{/css/pos-payment-qr.css}" />
+
+<div class="qr-main-container">
+  <div class="qr-left">
+    <div class="qr-title">
+      <i class="fas fa-qrcode"></i> Quét mã QR để thanh toán
+    </div>
+    <img
+      th:src="${qrCodePath}"
+      alt="QR Code thanh toán"
+      class="qr-img"
+      onerror="console.error('QR Code load failed:', this.src); this.style.display='none'; this.nextElementSibling.style.display='block';"
+    />
+    <div
+      id="qr-fallback"
+      style="display: none; color: #b91c1c; text-align: center"
+    >
+      <p>Không thể tải QR Code</p>
+      <p><strong>Đường dẫn:</strong> <span th:text="${qrCodePath}"></span></p>
+      <a th:href="${qrCodePath}" target="_blank" class="btn btn-sm btn-primary"
+        >Xem QR trực tiếp</a
+      >
+    </div>
+    <div class="qr-order-info">
+      <div class="info-block">
+        <div class="info-label">Mã đơn</div>
+        <div class="info-value" th:text="${orderCode}"></div>
+      </div>
+      <div class="info-block">
+        <div class="info-label">Số tiền</div>
+        <div
+          class="info-value text-danger"
+          th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+        ></div>
+      </div>
+    </div>
+    <div class="qr-bank-info" th:if="${bankInfo}">
+      <strong><i class="fas fa-university"></i> Thông tin NH:</strong>
+      <span th:text="${bankInfo}"></span>
+    </div>
+    <div class="qr-instructions">
+      <h6><i class="fas fa-mobile-alt"></i> Hướng dẫn thanh toán:</h6>
+      <ol>
+        <li>Mở ứng dụng ngân hàng trên điện thoại</li>
+        <li>Chọn chức năng "Quét QR" hoặc "Chuyển khoản QR"</li>
+        <li>Quét mã QR trên màn hình</li>
+        <li>Xác nhận thông tin và hoàn tất thanh toán</li>
+      </ol>
+    </div>
+  </div>
+  <div class="qr-right">
+    <div class="qr-summary-title">
+      <i class="fas fa-cash-register"></i> Chi tiết đơn hàng
+    </div>
+    <div style="max-height: 220px; overflow-y: auto; margin-bottom: 10px">
+      <table class="table qr-summary-table">
+        <thead>
+          <tr>
+            <th>Sản phẩm</th>
+            <th>SL</th>
+            <th>Giá</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="detail : ${orderDetails}">
+            <td><small th:text="${detail.product.name}"></small></td>
+            <td class="text-center" th:text="${detail.quantity}"></td>
+            <td class="text-end">
+              <small
+                th:text="${#numbers.formatDecimal(detail.price * detail.quantity, 0, 'COMMA', 0, 'POINT')}"
+              ></small>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th colspan="2">💰 Tổng:</th>
+            <th
+              class="text-end"
+              th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+            ></th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="qr-countdown">
+      <span id="countdown">15:00</span>
+      <div style="font-size: 0.95em; color: #888">Thời gian chờ thanh toán</div>
+      <div class="progress" style="height: 8px; margin-top: 6px">
+        <div
+          id="progressBar"
+          class="progress-bar progress-bar-striped progress-bar-animated bg-warning"
+          role="progressbar"
+          style="width: 100%"
+        ></div>
+      </div>
+    </div>
+    <div id="statusAlert" class="qr-status alert alert-warning">
+      <i class="fas fa-hourglass-half"></i> Đang chờ khách hàng thanh toán...
+    </div>
+    <div class="qr-actions">
+      <button class="btn btn-success" id="checkPaymentBtn">
+        <i class="fas fa-sync"></i> Kiểm tra thanh toán
+      </button>
+      <button class="btn btn-info" id="printQRBtn">
+        <i class="fas fa-print"></i> In mã QR
+      </button>
+      <button class="btn btn-warning" onclick="window.location.reload()">
+        <i class="fas fa-redo"></i> Làm mới QR
+      </button>
+      <a href="/pos" class="btn btn-outline-danger"
+        ><i class="fas fa-times"></i> Hủy & Quay lại POS</a
+      >
+    </div>
+  </div>
+</div>
+
+<script src="/js/pos-payment-qr.js"></script>
