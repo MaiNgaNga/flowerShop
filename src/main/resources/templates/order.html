@@ -1,0 +1,135 @@
+<div class="container mt-4">
+  <div
+    class="success alert alert-success"
+    th:if="${success}"
+    th:text="${success}"
+  ></div>
+  <div
+    class="success alert alert-danger"
+    th:if="${message}"
+    th:text="${message}"
+  ></div>
+  <form th:action="@{/order/checkout}" method="post">
+    <div class="row">
+      <!-- Cột Thông tin Đặt hàng -->
+      <div class="col-md-7">
+        <div class="card p-4 mb-4">
+          <h5 class="mb-3 mau">Thông Tin Người Đặt Hàng</h5>
+
+          <div class="mb-3">
+            <label class="form-label">Họ và tên </label>
+            <input
+              type="text"
+              th:value="${user.name}"
+              class="form-control"
+              readonly
+            />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email </label>
+            <input
+              type="email"
+              readonly
+              th:value="${user.email}"
+              class="form-control"
+            />
+          </div>
+          <th:block th:object="${orderRequest}">
+            <div class="mb-3">
+              <label class="form-label">Số điện thoại *</label>
+              <input
+                type="text"
+                th:field="*{sdt}"
+                class="form-control"
+                placeholder="Nhập số điện thoại"
+              />
+              <i class="error" th:errors="*{sdt}"></i>
+            </div>
+
+            <!-- Thêm phần chọn địa chỉ -->
+
+            <div class="mb-3">
+              <label class="form-label">Xã/Phường *</label>
+              <select name="don_vi_hanh_chinh" id="ward">
+                <option value="Tra Linh">Trà Linh</option>
+                <option value="Tra My">Trà My</option>
+                <option value="Tra Tan">Trà Tân</option>
+                <option value="Tra Tap">Trà Tập</option>
+                <option value="Tra Van">Trà Vân</option>
+                <option value="Vu Gia">Vu Gia</option>
+                <option value="Viet An">Việt An</option>
+                <option value="Xuan Phu">Xuân Phú</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Địa chỉ cụ thể *</label>
+              <input
+                type="text"
+                id="specific"
+                class="form-control"
+                placeholder="Nhập địa chỉ cụ thể"
+              />
+              <input type="hidden" th:field="*{address}" id="address" />
+
+              <i class="error" th:errors="*{address}"></i>
+            </div>
+          </th:block>
+        </div>
+      </div>
+
+      <!-- Cột Đơn hàng -->
+      <div class="col-md-5">
+        <div class="card p-4 mb-4">
+          <h5 class="mb-3 mau">Đơn Hàng Của Bạn</h5>
+          <th:block th:each="item : ${cartItems}">
+            <div class="d-flex justify-content-between">
+              <p th:text="${item.product.name} + ' x ' + ${item.quantity}"></p>
+              <span
+                th:text="${#numbers.formatDecimal(item.getTotal(), 0, 'COMMA', 0, 'POINT')} + ' VND'"
+              ></span>
+            </div>
+            <input type="hidden" name="cartItemIds" th:value="${item.id}" />
+            <hr />
+          </th:block>
+
+          <p>
+            <strong>Tổng cộng:</strong>
+            <span
+              class="float-end"
+              th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+            ></span>
+          </p>
+        </div>
+
+        <!-- Nút Đặt Hàng gửi form -->
+        <button type="submit" class="btn btn-success w-100 mt-3">
+          ĐẶT HÀNG
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  const wardSelect = document.getElementById("ward");
+  const specificInput = document.getElementById("specific");
+  const addressInput = document.getElementById("address");
+
+  function updateAddress() {
+    const ward = wardSelect.selectedOptions[0]?.text || "";
+    const specific = specificInput.value.trim();
+    if (specific && ward) {
+      addressInput.value = `${specific}, ${ward}, Đà Nẵng`;
+    }
+  }
+
+  // Cập nhật địa chỉ khi người dùng nhập hoặc chọn
+  wardSelect.addEventListener("change", updateAddress);
+  specificInput.addEventListener("input", updateAddress);
+
+  // Đảm bảo cập nhật trước khi submit
+  document.querySelector("form").addEventListener("submit", function () {
+    updateAddress();
+  });
+</script>
