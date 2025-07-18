@@ -2,10 +2,12 @@ package com.datn.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import java.util.Date;
 import java.util.List;
 
 @Data
+@ToString(exclude = { "orderDetails" }) 
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -39,8 +41,12 @@ public class Order {
     @Column(name = "status", columnDefinition = "NVARCHAR(255)")
     private String status;
 
+    @Column(name = "order_code", columnDefinition = "NVARCHAR(50)")
+    private String orderCode;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetail> orderDetails;
+    
     @ManyToOne
     @JoinColumn(name = "promotion_id", referencedColumnName = "id")
     private Promotion promotion;

@@ -66,15 +66,6 @@ public void update(Promotion entity) {
     }
 
     @Override
-    public List<Promotion> getPromotionsInCurrentMonth() {
-       LocalDate now = LocalDate.now();
-       LocalDate start= now.withDayOfMonth(1);
-       LocalDate end = now.withDayOfMonth(now.lengthOfMonth());
-
-       return promotionDAO.findPromotionsByDateRange(start, end);
-    }
-
-    @Override
     public Page<Promotion> findByAllPromotion(Pageable pageable) {
         return promotionDAO.findAll(pageable);
     }
