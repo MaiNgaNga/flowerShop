@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.datn.Service.ProductCategoryService;
 import com.datn.Service.ProductService;
 import com.datn.model.Product;
 
@@ -20,8 +21,12 @@ public class ServicePageController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private ProductCategoryService productCategoryService;
+
     @GetMapping
     public String showServiceGift(Model model) {
+        model.addAttribute("productCategories", productCategoryService.findAll());
         model.addAttribute("view", "service-gift");
         return "layouts/layout";
     }
@@ -33,7 +38,7 @@ public class ServicePageController {
         Pageable pageable = PageRequest.of(page, size);
 
         Page<Product> services = productService.findByProductCategoryName("Dịch Vụ", pageable);
-
+        model.addAttribute("productCategories", productCategoryService.findAll());
         model.addAttribute("services", services);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", services.getTotalPages());

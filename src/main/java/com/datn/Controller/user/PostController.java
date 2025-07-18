@@ -1,6 +1,7 @@
 package com.datn.Controller.user;
 
 import com.datn.Service.PostService;
+import com.datn.Service.ProductCategoryService;
 import com.datn.model.Post;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -20,6 +20,8 @@ public class PostController {
 
     @Autowired
     private PostService postService;
+    @Autowired
+    private ProductCategoryService pro_ca_service;
 
     @RequestMapping("/PostUser")
     public String postPage(Model model,
@@ -31,6 +33,7 @@ public class PostController {
         // Thêm danh sách 12 bài viết mới nhất
         List<Post> newestPosts = postService.findTop12Newest();
 
+        model.addAttribute("productCategories", pro_ca_service.findAll());
         model.addAttribute("page", posts);
         model.addAttribute("newestPosts", newestPosts); // truyền vào HTML nếu cần
         model.addAttribute("view", "post");
@@ -53,6 +56,7 @@ public class PostController {
             posts = Page.empty();
         }
 
+        model.addAttribute("productCategories", pro_ca_service.findAll());
         model.addAttribute("page", posts);
         model.addAttribute("view", "post");
 
@@ -72,6 +76,7 @@ public class PostController {
         List<Post> relatedPosts = postService.findRelatedPosts(id);
         model.addAttribute("relatedPosts", relatedPosts);
 
+        model.addAttribute("productCategories", pro_ca_service.findAll());
         model.addAttribute("view", "post-detail");
         return "layouts/layout";
     }

@@ -2,6 +2,7 @@ package com.datn.dao;
 
 import java.util.List;
 import java.util.Date;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -10,14 +11,14 @@ import org.springframework.data.repository.query.Param;
 
 import com.datn.model.Order;
 
-
-
 public interface OrderDAO extends JpaRepository<Order, Long> {
   List<Order> findByUserIdOrderByIdDesc(int userId);
 
   List<Order> findByStatusOrderByIdDesc(String status);
 
   List<Order> findByStatusAndShipperId(String status, int shipperId);
+
+  Optional<Order> findByOrderCode(String orderCode);
 
   List<Order> findByStatusInAndShipperId(List<String> statuses, int shipperId);
 
@@ -47,15 +48,13 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
   Double getTotalCompletedAmountByShipperId(@Param("shipperId") int shipperId);
 
   @Query(value = "SELECT SUM(total_amount) FROM orders " +
-  "WHERE shipper_id = :shipperId " +
-  "AND status = N'Đã giao' " +
-  "AND CAST(create_date AS DATE) = :date", nativeQuery = true)
-  Double getTotalCompletedAmountByShipperIdAndDateNative(@Param("shipperId")
-  int shipperId,
-  @Param("date") Date date);
+      "WHERE shipper_id = :shipperId " +
+      "AND status = N'Đã giao' " +
+      "AND CAST(create_date AS DATE) = :date", nativeQuery = true)
+  Double getTotalCompletedAmountByShipperIdAndDateNative(@Param("shipperId") int shipperId,
+      @Param("date") Date date);
 
   @Query(value = "SELECT * FROM orders o WHERE o.shipper_id = :shipperId AND o.status = N'Đã giao' AND CONVERT(date, o.create_date) = :date", nativeQuery = true)
   List<Order> getOrdersByShipperAndDate(@Param("shipperId") int shipperId, @Param("date") Date date);
-
 
 }

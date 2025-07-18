@@ -42,7 +42,7 @@ h2 {
   background: #faf8ff;
 }
 .btn-success {
-  background: linear-gradient(135deg, #7c3aed 0%, #20c997 100%);
+  background: linear-gradient(135deg, #d4a5e6 0%, #b2e0e0 100%);
   border: none;
   font-weight: 700;
   letter-spacing: 1px;
@@ -54,7 +54,7 @@ h2 {
   transition: background 0.3s, transform 0.2s;
 }
 .btn-success:hover {
-  background: linear-gradient(135deg, #20c997 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #b2e0e0 0%, #d4a5e6 100%);
   transform: translateY(-2px) scale(1.03);
 }
 .form-label {
@@ -190,7 +190,7 @@ select.form-control {
   margin-left: 8px;
 }
 .pos-right .btn-success {
-  background: linear-gradient(135deg, #7c3aed 0%, #20c997 100%);
+  background: linear-gradient(135deg, #d4a5e6 0%, #b2e0e0 100%);
   border: none;
   font-weight: 700;
   letter-spacing: 1px;
@@ -204,7 +204,7 @@ select.form-control {
   width: 100%;
 }
 .pos-right .btn-success:hover {
-  background: linear-gradient(135deg, #20c997 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #b2e0e0 0%, #d4a5e6 100%);
   transform: translateY(-2px) scale(1.03);
 }
 .pos-right select,
@@ -239,20 +239,19 @@ select.form-control {
 }
 .pos-card-title {
   font-size: 1.1rem;
-  font-weight: 600;
+
   color: #222;
   margin-bottom: 4px;
   text-align: center;
 }
 .pos-card-price {
-  color: #d63384;
   font-weight: 700;
   font-size: 1.1rem;
   margin-bottom: 8px;
 }
 .pos-card-btn {
   margin-top: 8px;
-  background: linear-gradient(135deg, #7c3aed 0%, #20c997 100%);
+  background: linear-gradient(135deg, #d4a5e6 0%, #b2e0e0 100%);
   color: #fff;
   border: none;
   border-radius: 20px;
@@ -262,7 +261,7 @@ select.form-control {
   transition: background 0.2s;
 }
 .pos-card-btn:hover {
-  background: linear-gradient(135deg, #20c997 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #b2e0e0 0%, #d4a5e6 100%);
 }
 /* Bộ lọc hiện đại */
 .pos-filter-panel {
@@ -380,7 +379,7 @@ select.form-control {
 }
 #pagination button {
   border: none;
-  background: #f3e8ff;
+  background: linear-gradient(135deg, #d4a5e6 0%, #b2e0e0 100%);
   color: #7c3aed;
   font-weight: 500;
   border-radius: 8px;
@@ -391,7 +390,7 @@ select.form-control {
   cursor: pointer;
 }
 #pagination button:hover:not(:disabled) {
-  background: #7c3aed;
+  background: linear-gradient(135deg, #b2e0e0 0%, #d4a5e6 100%);
   color: #fff;
 }
 #pagination button.active {
