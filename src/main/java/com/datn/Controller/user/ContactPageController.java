@@ -12,6 +12,8 @@ import com.datn.model.Contact;
 
 import jakarta.validation.Valid;
 
+import com.datn.Service.ProductCategoryService;
+
 @Controller
 public class ContactPageController {
 
@@ -33,5 +35,5 @@ public class ContactPageController {
         model.addAttribute("view", "contact");
         return "layouts/layout";
     }
-    
+
 }

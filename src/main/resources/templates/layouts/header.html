@@ -17,10 +17,9 @@
       <a href="/home" class="active">Trang Chủ</a>
       <a href="/services">Dịch Vụ</a>
       <div class="dropdown">
-        <a href="/products" class="dropdown-toggle">Danh mục</a>
+        <a href="/products" class="dropdown-toggle nav-link">Danh mục</a>
         <ul class="dropdown-menu">
           <div class="dropdown-columns">
-            <li><a th:href="@{/products}">Tất cả sản phẩm</a></li>
             <li th:each="proCategory : ${productCategories}">
               <a
                 th:href="@{/ProductUser(id=${proCategory.id})}"
@@ -40,16 +39,22 @@
 
     <!-- Search bar -->
     <div class="search-box">
-      <form th:action="@{/search}" method="get" class="search-form">
+      <form
+        th:action="@{/search}"
+        method="get"
+        class="search-form"
+        style="display: flex; gap: 8px; align-items: center"
+      >
         <input
           type="text"
           name="keyword"
           placeholder="Tìm kiếm sản phẩm..."
           th:value="${searchKeyword}"
-          required
           autocomplete="off"
           id="searchInput"
+          style="min-width: 180px"
         />
+        <!-- Đã loại bỏ select, chỉ còn input từ khóa -->
         <button type="submit" id="searchBtn">
           <i class="fa-solid fa-magnifying-glass"></i>
         </button>
@@ -73,8 +78,7 @@
     <!-- Icons group: Cart + User -->
     <div class="icons">
       <div class="cart">
-        🛒
-        <span class="cart-count">3</span>
+        <a href="/cart"> 🛒 <span class="cart-count">3</span></a>
       </div>
       <div class="user-dropdown">
         <div class="user-icon">👤</div>
@@ -109,15 +113,40 @@
   </div>
 </header>
 
-<!-- Search JavaScript -->
+<!-- Search JavaScript & Active nav JS -->
 <script>
   document.addEventListener("DOMContentLoaded", function () {
+    // --- NAV ACTIVE JS ---
+    const path = window.location.pathname;
+    const navLinks = document.querySelectorAll(
+      ".nav-links > a, .nav-links .dropdown-toggle"
+    );
+    navLinks.forEach((link) => {
+      // Xác định logic active cho từng menu
+      if (
+        (link.getAttribute("href") === "/home" &&
+          (path === "/" || path === "/home")) ||
+        (link.getAttribute("href") === "/services" &&
+          path.startsWith("/services")) ||
+        (link.getAttribute("href") === "/products" &&
+          (path.startsWith("/products") || path.startsWith("/ProductUser"))) ||
+        (link.getAttribute("href") === "/contact" &&
+          path.startsWith("/contact")) ||
+        (link.getAttribute("href") === "/article" &&
+          path.startsWith("/article")) ||
+        (link.getAttribute("href") === "/pos" && path.startsWith("/pos"))
+      ) {
+        link.classList.add("active");
+      } else {
+        link.classList.remove("active");
+      }
+    });
+
+    // --- SEARCH JS giữ nguyên ---
     const searchInput = document.getElementById("searchInput");
     const searchSuggestions = document.getElementById("searchSuggestions");
     const suggestionList = document.getElementById("suggestionList");
     const searchBtn = document.getElementById("searchBtn");
-
-    // Common search suggestions
     const commonSuggestions = [
       "Bó hoa tươi",
       "Giỏ hoa tươi",
@@ -130,38 +159,27 @@
       "Hoa lan",
       "Hoa cúc",
     ];
-
     let searchTimeout;
-
-    // Show suggestions when input is focused
     searchInput.addEventListener("focus", function () {
       if (this.value.trim() === "") {
         showSuggestions(commonSuggestions);
       }
     });
-
-    // Handle input changes
     searchInput.addEventListener("input", function () {
       clearTimeout(searchTimeout);
       const query = this.value.trim();
-
       if (query.length === 0) {
         showSuggestions(commonSuggestions);
         return;
       }
-
       if (query.length < 2) {
         hideSuggestions();
         return;
       }
-
-      // Debounce search suggestions
       searchTimeout = setTimeout(() => {
-        // Filter common suggestions based on input
         const filteredSuggestions = commonSuggestions.filter((suggestion) =>
           suggestion.toLowerCase().includes(query.toLowerCase())
         );
-
         if (filteredSuggestions.length > 0) {
           showSuggestions(filteredSuggestions);
         } else {
@@ -169,8 +187,6 @@
         }
       }, 300);
     });
-
-    // Handle suggestion clicks
     suggestionList.addEventListener("click", function (e) {
       if (e.target.classList.contains("suggestion-item")) {
         searchInput.value = e.target.textContent;
@@ -178,8 +194,6 @@
         searchInput.focus();
       }
     });
-
-    // Hide suggestions when clicking outside
     document.addEventListener("click", function (e) {
       if (
         !searchInput.contains(e.target) &&
@@ -188,8 +202,6 @@
         hideSuggestions();
       }
     });
-
-    // Handle Enter key
     searchInput.addEventListener("keydown", function (e) {
       if (e.key === "Enter") {
         e.preventDefault();
@@ -198,8 +210,6 @@
         }
       }
     });
-
-    // Show suggestions
     function showSuggestions(suggestions) {
       suggestionList.innerHTML = "";
       suggestions.forEach((suggestion) => {
@@ -210,13 +220,9 @@
       });
       searchSuggestions.style.display = "block";
     }
-
-    // Hide suggestions
     function hideSuggestions() {
       searchSuggestions.style.display = "none";
     }
-
-    // Add loading state to search button
     searchBtn.addEventListener("click", function () {
       if (searchInput.value.trim() !== "") {
         this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';

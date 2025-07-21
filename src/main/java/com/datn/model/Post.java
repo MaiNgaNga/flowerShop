@@ -26,7 +26,7 @@ public class Post {
     private String title;
 
     @Lob
-    @Column(columnDefinition = "LONGTEXT", nullable = false)
+    @Column(columnDefinition = "NVARCHAR(MAX)", nullable = false)
     @NotBlank(message = "Nội dung bài viết không được để trống")
     private String content;
 
@@ -60,5 +60,12 @@ public class Post {
     @PreUpdate
     public void preUpdate() {
         this.lastUpdatedAt = LocalDateTime.now();
+    }
+
+    public String getSummary() {
+        if (content == null)
+            return "";
+        String plain = content.replaceAll("<[^>]*>", "");
+        return plain.length() > 80 ? plain.substring(0, 80) + "..." : plain;
     }
 }

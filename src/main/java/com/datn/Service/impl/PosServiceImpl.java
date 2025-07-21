@@ -26,11 +26,13 @@ public class PosServiceImpl implements PosService {
     }
 
     @Override
-    public Page<Product> filterProducts(String color, String type, String keyword, double minPrice, double maxPrice,
+    public Page<Product> filterProducts(String color, String type, String category, String keyword, double minPrice,
+            double maxPrice,
             Pageable pageable) {
         return posDAO.filterProducts(
                 (color == null || color.isEmpty()) ? null : color,
                 (type == null || type.isEmpty()) ? null : type,
+                (category == null || category.isEmpty()) ? null : category,
                 (keyword == null || keyword.isEmpty()) ? null : keyword,
                 minPrice, maxPrice, pageable);
     }

@@ -81,6 +81,39 @@
     <div class="post-content" th:utext="${post.content}" data-aos="fade-up">
       <!-- Nội dung bài viết -->
     </div>
+    <!-- Comments Section -->
+     <!-- Bình luận bài viết -->
+<div class="mt-5">
+  <h4 class="mb-4">Bình luận</h4>
+
+  <!-- Danh sách bình luận -->
+  <div id="comment-list">
+    <div class="mb-3 border-bottom pb-2" th:each="comment : ${postComments}">
+      <strong th:text="${comment.user.name}">Người dùng</strong>
+      <span class="text-muted small ms-2" th:text="${#temporals.format(comment.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2025 10:00</span>
+      <p class="mb-1" th:text="${comment.content}">Nội dung bình luận</p>
+    </div>
+  </div>
+
+  <!-- Form bình luận -->
+  <form method="post" th:action="@{/post-comments}" class="mt-4">
+    <input type="hidden" name="postId" th:value="${post.id}" />
+    <div class="mb-3">
+      <label for="commentContent" class="form-label">Viết bình luận:</label>
+      <!-- Hiển thị thông báo lỗi -->
+<div th:if="${errorMessage}" class="alert alert-warning">
+  <i class="fa fa-exclamation-circle me-1"></i>
+  <span th:text="${errorMessage}">Bạn cần đăng nhập để bình luận.</span>
+</div>
+      <textarea class="form-control" name="content" id="commentContent" rows="3" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">
+      <i class="fa fa-paper-plane me-1"></i> Gửi bình luận
+    </button>
+  </form>
+</div>
+
+
 
 <h3 class="related-title" data-aos="fade-up">Có thể bạn quan tâm</h3>
 <div class="related-articles row" data-aos="fade-up" data-aos-delay="100">

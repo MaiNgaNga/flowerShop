@@ -20,7 +20,7 @@ import com.datn.model.Product;
 @Controller
 public class ProductController {
     @Autowired
-    private ProductCategoryService pro_ca_service;
+    private ProductCategoryService productCategoryService;
 
     @Autowired
     private ProductService productService;
@@ -52,8 +52,8 @@ public class ProductController {
         }
 
         model.addAttribute("page", products);
-        model.addAttribute("pro_ca", pro_ca_service.findByID(pro_categoryId));
-        model.addAttribute("productCategories", pro_ca_service.findAll());
+        model.addAttribute("pro_ca", productCategoryService.findByID(pro_categoryId));
+        model.addAttribute("productCategories", productCategoryService.findAll());
         model.addAttribute("categogies", ca_Service.findAll());
         model.addAttribute("view", "product");
 
@@ -77,7 +77,7 @@ public class ProductController {
             }
 
             model.addAttribute("page", result);
-            model.addAttribute("productCategories", pro_ca_service.findAll());
+            model.addAttribute("productCategories", productCategoryService.findAll());
             model.addAttribute("categogies", ca_Service.findAll());
             model.addAttribute("searchKeyword", keyword);
             model.addAttribute("pro_ca", null);

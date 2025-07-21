@@ -1,60 +1,3 @@
-<style>
-  .custom-pagination .page-item .page-link {
-    border-radius: 50%;
-    margin: 0 5px;
-    color: #f090b8;
-    border: 1px solid #f090b8;
-    background-color: #fff;
-    transition: all 0.2s ease-in-out;
-    width: 38px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .custom-pagination .page-item.active .page-link {
-    background-color: #f090b8;
-    color: #fff;
-    border-color: #f090b8;
-  }
-
-  .custom-pagination .page-item.disabled .page-link {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .custom-pagination .page-item .page-link:hover {
-    background-color: #fcd6e5;
-    color: #d63384;
-  }
-  .search-box {
-    display: flex;
-    align-items: center;
-    gap: 8px; /* Khoảng cách giữa icon và input */
-    padding: 12px; /* Tăng khoảng cách bên trong */
-    margin: 5px; /* Tăng khoảng cách xung quanh */
-  }
-
-  .search-box i.fa-search {
-    color: hotpink; /* Màu hồng cho nút tìm kiếm */
-    font-size: 18px;
-  }
-
-  .custom-search-input {
-    width: 250px; /* Thu ngắn chiều ngang */
-    padding: 6px 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    outline: none;
-  }
-
-  .custom-search-input:focus {
-    border-color: hotpink;
-    box-shadow: 0 0 3px pink;
-  }
-</style>
 <main class="container mt-3">
   <h3>Quản Lý Loại Hoa</h3>
   <hr />
@@ -150,7 +93,7 @@
               th:if="${category.id ==0}"
               type="submit"
               class="btn btn-primary"
-              th:formaction="@{/Category/create}"
+              th:formaction="@{'/Category/create?tab=edit'}"
             >
               <i class="fa fa-plus"></i> Thêm
             </button>
@@ -159,7 +102,7 @@
               th:if="${category.id != 0}"
               type="submit"
               class="btn btn-warning"
-              th:formaction="@{/Category/update}"
+              th:formaction="@{'/Category/update?tab=edit'}"
             >
               <i class="fa fa-edit"></i> Cập Nhật
             </button>
@@ -169,12 +112,12 @@
               type="button"
               class="btn btn-danger"
               onclick="confirmDelete(this)"
-              th:data-url="@{/Category/delete/{id}(id=${category.id})}"
+              th:data-url="@{'/Category/delete/' + ${category.id} + '?tab=edit'}"
             >
               <i class="fa fa-trash"></i> Xóa
             </button>
 
-            <a class="btn btn-success" th:href="@{/Category/index}">
+            <a class="btn btn-success" th:href="@{/Category/index(tab='edit')}">
               <i class="fa fa-sync"></i> Làm Mới
             </a>
           </div>
@@ -195,6 +138,7 @@
         class="search-filter-row"
         style="gap: 10px; align-items: center"
       >
+        <input type="hidden" name="tab" value="list" />
         <div class="search-box">
           <i class="fa fa-search"></i>
           <input
@@ -223,19 +167,33 @@
                 <td th:text="${item.id}"></td>
                 <td th:text="${item.name}"></td>
                 <td th:text="${item.description}"></td>
-                <td>
+
+                <td class="action-icons">
                   <a
-                    class="btn btn-sm btn-info"
+<<<<<<< HEAD
                     th:href="@{/Category/edit/{id}(id=${item.id})}"
+                    class="edit-icon"
+                    title="Sửa sản phẩm"
+=======
+                    class="btn btn-sm btn-info"
+                    th:href="@{'/Category/edit/' + ${item.id} + '?tab=edit'}"
                     >Sửa</a
+>>>>>>> c628fd569105ad8178eae1072c0a7c4655531ead
                   >
+                    <i class="fa fa-edit"></i>
+                  </a>
                   <a
                     href="#"
-                    class="btn btn-sm btn-danger"
+                    class="delete-icon"
                     onclick="confirmDelete(this)"
+<<<<<<< HEAD
                     th:data-url="@{/Category/delete/{id}(id=${item.id})}"
+                    title="Xóa sản phẩm"
+=======
+                    th:data-url="@{'/Category/delete/' + ${item.id} + '?tab=list'}"
+>>>>>>> c628fd569105ad8178eae1072c0a7c4655531ead
                   >
-                    Xóa
+                    <i class="fa fa-trash"></i>
                   </a>
                 </td>
               </tr>
@@ -253,7 +211,7 @@
             >
               <a
                 class="page-link"
-                th:href="@{/Category/index(page=0, size=10,  keyword=${keyword})}"
+                th:href="@{/Category/index(page=0, size=10,  keyword=${keyword}, tab='list')}"
               >
                 <i class="fa fa-angle-double-left"></i>
               </a>
@@ -266,7 +224,7 @@
             >
               <a
                 class="page-link"
-                th:href="@{/Category/index(page=${currentPage - 1}, size=10,keyword=${keyword})}"
+                th:href="@{/Category/index(page=${currentPage - 1}, size=10,keyword=${keyword}, tab='list')}"
               >
                 <i class="fa fa-angle-left"></i>
               </a>
@@ -280,7 +238,7 @@
             >
               <a
                 class="page-link"
-                th:href="@{/Category/index(page=${i}, size=10, keyword=${keyword})}"
+                th:href="@{/Category/index(page=${i}, size=10, keyword=${keyword}, tab='list')}"
                 th:text="${i + 1}"
               ></a>
             </li>
@@ -292,7 +250,7 @@
             >
               <a
                 class="page-link"
-                th:href="@{/Category/index(page=${currentPage + 1}, size=10, keyword=${keyword})}"
+                th:href="@{/Category/index(page=${currentPage + 1}, size=10, keyword=${keyword}, tab='list')}"
               >
                 <i class="fa fa-angle-right"></i>
               </a>
@@ -305,7 +263,7 @@
             >
               <a
                 class="page-link"
-                th:href="@{/Category/index(page=${totalPages - 1}, size=10, keyword=${keyword})}"
+                th:href="@{/Category/index(page=${totalPages - 1}, size=10, keyword=${keyword}, tab='list')}"
               >
                 <i class="fa fa-angle-double-right"></i>
               </a>
