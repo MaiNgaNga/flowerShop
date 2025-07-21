@@ -75,15 +75,20 @@ Liên Chiểu, Đà Nẵng.</div>
       </div>
 
       <!-- Form -->
-      <form class="form mt-4" data-aos="fade-up" data-aos-delay="200">
-        <input type="text" placeholder="Họ và tên" class="form-control mb-3" />
-        <input type="email" placeholder="Email" class="form-control mb-3" />
+      <form id="contactForm" th:action="@{/sendContact}" method="post" th:object="${contact}" class="form mt-4" data-aos="fade-up" data-aos-delay="200">
+       
+        <input required type="text" th:field="*{name}" placeholder="Họ và tên" class="form-control mb-3" />
+        <input required type="email" th:field="*{email}" placeholder="Email" class="form-control mb-3" />
         <input
           type="text"
+          th:field="*{sdt}"
+          required
           placeholder="Số điện thoại"
           class="form-control mb-3"
         />
         <textarea
+          required
+          th:field="*{message}"
           placeholder="Nội dung"
           class="form-control mb-3"
           rows="4"
@@ -93,6 +98,10 @@ Liên Chiểu, Đà Nẵng.</div>
 
       </div>
       </form>
+
+      <div th:if="${successMessage}" class="alert alert-success mt-4" role="alert">
+        <p th:utext="${successMessage}"></p>
+      </div>
 
       <!-- Google Maps -->
       <div class="mt-5" data-aos="fade-up" data-aos-delay="300">

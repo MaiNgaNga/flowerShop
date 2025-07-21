@@ -50,9 +50,9 @@
       role="tabpanel"
       aria-labelledby="edit-tab"
     >
-      <form action="/User/index" th:object="${User}" method="post">
+      <form  th:object="${User}" method="post">
         <div class="row">
-          <th:block th:if="${User.role==1||User.role==null}">
+
             <div class="col-6">
               <div class="mb-1">
                 <label for="id" class="form-label">ID</label>
@@ -93,137 +93,78 @@
             </div>
             <div class="col-6">
               <div class="mb-1">
-                <label class="form-label">Vai trò</label>
-                <div>
-                  <input
-                    type="radio"
-                    th:field="*{role}"
-                    value="0"
-                    id="roleUser"
-                  />
-                  <label for="roleUser">User</label>
-
-                  <input
-                    type="radio"
-                    th:field="*{role}"
-                    value="1"
-                    id="roleAdmin"
-                  />
-                  <label for="roleAdmin">Admin</label>
-
-                  <input
-                    type="radio"
-                    th:field="*{role}"
-                    value="2"
-                    id="roleShipper"
-                  />
-                  <label for="roleShipper">Shipper</label>
-                  <i class="error" th:errors="*{role}"></i>
-                </div>
-              </div>
-            </div>
-
-            <input
-              type="hidden"
-              th:field="*{password}"
-              class="form-control form-control-sm"
-            />
-          </th:block>
-          <th:block th:if="${User.role == 2 || User.role == 0 }">
-            <div class="col-6">
-              <div class="mb-1">
-                <label for="id" class="form-label">ID</label>
+                <label for="sdt" class="form-label">Số điện thoại</label>
                 <input
                   type="text"
-                  id="id"
-                  th:field="*{id}"
-                  readonly
+                  th:field="*{sdt}"
+                  id="sdt"
                   class="form-control form-control-sm"
+                  placeholder="Nhập số điện thoại"
                 />
+                <i class="error" th:errors="*{sdt}"></i>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="mb-1">
+              
+                <!-- Nếu đang sửa và role = SHIPPER (2) thì chỉ hiển thị, không cho sửa -->
+                
+
+                <!-- Nếu đang thêm mới hoặc sửa user/admin -->
+               
+                  <label>Vai trò:</label>
+                  <div>
+                    <input
+                      type="radio"
+                      th:field="*{role}"
+                      value="0"
+                      id="roleUser"
+                    />
+                    <label for="roleUser">User</label>
+
+                    <input
+                      type="radio"
+                      th:field="*{role}"
+                      value="1"
+                      id="roleAdmin"
+                    />
+                    <label for="roleAdmin">Admin</label>
+                    <input
+                      type="radio"
+                      th:field="*{role}"
+                      value="2"
+                      id="roleShipper"
+                    />
+                    <label for="roleShipper">Shipper</label>
+
+                    <!-- KHÔNG CÓ radio Shipper ở đây -->
+                    <i class="error" th:errors="*{role}"></i>
+                  </div>
+                
               </div>
             </div>
             <div class="col-6">
-              <div class="mb-1">
-                <label for="name" class="form-label">Tên</label>
+              <div class="mb-1" >
+                <label for="password" class="form-label">Mật khẩu</label>
                 <input
-                  type="text"
-                  th:field="*{name}"
-                  id="name"
+                  type="password"
+                  th:field="*{password}"
+                  id="password"
                   class="form-control form-control-sm"
-                  placeholder="Nhập tên người dùng"
+                  placeholder="Nhập mật khẩu"
                 />
-                <i class="error" th:errors="*{name}"></i>
+                <i class="error" th:text="${errorPass}"></i>
               </div>
             </div>
-            <div class="col-6">
-              <div class="mb-1">
-                <label for="email" class="form-label">Email</label>
-                <input
-                  type="email"
-                  th:field="*{email}"
-                  readonly
-                  id="email"
-                  class="form-control form-control-sm"
-                  placeholder="Nhập email"
-                />
-                <i class="error" th:errors="*{email}"></i>
-              </div>
-            </div>
+          
 
-            <div class="col-6">
-              <div class="mb-1">
-                <label class="form-label">Vai trò</label>
-                <div>
-                  <input
-                    type="radio"
-                    th:field="*{role}"
-                    value="0"
-                    id="roleUser"
-                  />
-                  <label for="roleUser">User</label>
-
-                  <input
-                    type="radio"
-                    th:field="*{role}"
-                    value="1"
-                    id="roleAdmin"
-                  />
-                  <label for="roleAdmin">Admin</label>
-
-                  <input
-                    type="radio"
-                    th:field="*{role}"
-                    value="2"
-                    id="roleShipper"
-                  />
-                  <label for="roleShipper">Shipper</label>
-                  <i class="error" th:errors="*{role}"></i>
-                </div>
-              </div>
-            </div>
-
-            <input
-              type="hidden"
-              th:field="*{password}"
-              class="form-control form-control-sm"
-            />
-          </th:block>
-          <div class="col-6" th:if="${User.id==0}">
-            <div class="mb-1">
-              <label for="password">Mật khẩu</label>
-              <input
-                type="password"
-                th:field="*{password}"
-                class="form-control form-control-sm"
-              />
-              <i class="error" th:errors="*{password}"></i>
-            </div>
-          </div>
+      
         </div>
         <div class="row mt-4 text-end">
           <div class="col">
             <button
-              th:if="${User.id == 0}"
+              th:if="*{id} == null"
               type="submit"
               class="btn btn-primary"
               th:formaction="@{/User/create}"
@@ -231,7 +172,7 @@
               <i class="fa fa-plus"></i> Thêm
             </button>
             <button
-              th:if="${User.id != 00}"
+              th:if="*{id} != null"
               type="submit"
               class="btn btn-warning"
               th:formaction="@{/User/update}"
@@ -239,7 +180,7 @@
               <i class="fa fa-edit"></i> Cập Nhật
             </button>
             <button
-              th:if="${User.id != 0}"
+              th:if="*{id} != null"
               type="button"
               class="btn btn-danger"
               onclick="confirmDelete(this)"
@@ -273,6 +214,7 @@
               <th>ID</th>
               <th>Tên</th>
               <th>Email</th>
+              <th>SDT</th>
               <th>Vai Trò</th>
               <th></th>
             </tr>
@@ -283,6 +225,7 @@
                 <td th:text="${item.id}"></td>
                 <td th:text="${item.name}"></td>
                 <td th:text="${item.email}"></td>
+                <td th:text="${item.sdt}"></td>
                 <td>
                   <span th:switch="${item.role}">
                     <span th:case="0">User</span>

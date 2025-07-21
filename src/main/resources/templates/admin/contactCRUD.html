@@ -1,0 +1,320 @@
+<style>
+  .custom-pagination .page-item .page-link {
+    border-radius: 50%;
+    margin: 0 5px;
+    color: #f090b8;
+    border: 1px solid #f090b8;
+    background-color: #fff;
+    transition: all 0.2s ease-in-out;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .custom-pagination .page-item.active .page-link {
+    background-color: #f090b8;
+    color: #fff;
+    border-color: #f090b8;
+  }
+
+  .custom-pagination .page-item.disabled .page-link {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .custom-pagination .page-item .page-link:hover {
+    background-color: #fcd6e5;
+    color: #d63384;
+  }
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Khoảng cách giữa icon và input */
+    padding: 12px; /* Tăng khoảng cách bên trong */
+    margin: 5px; /* Tăng khoảng cách xung quanh */
+  }
+
+  .search-box i.fa-search {
+    color: hotpink; /* Màu hồng cho nút tìm kiếm */
+    font-size: 18px;
+  }
+
+  .custom-search-input {
+    width: 250px; /* Thu ngắn chiều ngang */
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+  }
+
+  .custom-search-input:focus {
+    border-color: hotpink;
+    box-shadow: 0 0 3px pink;
+  }
+</style>
+<main class="container mt-3">
+  <h3>Danh sách liên hệ </h3>
+  <hr />
+ 
+  <!-- Tab Navigation -->
+  <ul class="nav nav-tabs" id="flowerTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link active"
+        id="edit-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#edit"
+        type="button"
+        role="tab"
+        aria-controls="edit"
+        aria-selected="true"
+      >
+        Chỉnh sửa
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link"
+        id="list-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#list"
+        type="button"
+        role="tab"
+        aria-controls="list"
+        aria-selected="false"
+      >
+        Danh sách
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content" id="flowerTabContent">
+    <i class="error" th:if="${error}" th:text="${error}"></i>
+
+    <!-- Tab: Chỉnh sửa -->
+    <div
+      class="tab-pane fade show active"
+      id="edit"
+      role="tabpanel"
+      aria-labelledby="edit-tab"
+    >
+      <form action="/Category/index" th:object="${category}" method="post">
+        <div class="row">
+          <div class="col-6">
+            <div class="mb-1">
+              <label for="id" class="form-label">ID</label>
+              <input
+                type="text"
+                id="id"
+                th:field="*{id}"
+                readonly
+                class="form-control form-control-sm"
+              />
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-1">
+              <label for="name" class="form-label">Tên Loại Hoa</label>
+              <input
+                type="text"
+                th:field="*{name}"
+                id="name"
+                class="form-control form-control-sm"
+                placeholder="Tên Loại Hoa"
+              />
+              <i class="error" th:errors="*{name}"></i>
+            </div>
+          </div>
+          <div class="mb-1">
+            <label for="description" class="form-label">Mô tả</label>
+            <textarea
+              type="text"
+              th:field="*{description}"
+              id="description"
+              class="form-control form-control-sm"
+              placeholder="Mô tả"
+            ></textarea>
+          </div>
+        </div>
+        <div class="row mt-4 text-end">
+          <div class="col">
+            <button
+              th:if="${category.id ==0}"
+              type="submit"
+              class="btn btn-primary"
+              th:formaction="@{/Category/create}"
+            >
+              <i class="fa fa-plus"></i> Thêm
+            </button>
+
+            <button
+              th:if="${category.id != 0}"
+              type="submit"
+              class="btn btn-warning"
+              th:formaction="@{/Category/update}"
+            >
+              <i class="fa fa-edit"></i> Cập Nhật
+            </button>
+
+            <button
+              th:if="${category.id != 0}"
+              type="button"
+              class="btn btn-danger"
+              onclick="confirmDelete(this)"
+              th:data-url="@{/Category/delete/{id}(id=${category.id})}"
+            >
+              <i class="fa fa-trash"></i> Xóa
+            </button>
+
+            <a class="btn btn-success" th:href="@{/Category/index}">
+              <i class="fa fa-sync"></i> Làm Mới
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Tab: Danh sách -->
+    <div
+      class="tab-pane fade"
+      id="list"
+      role="tabpanel"
+      aria-labelledby="list-tab"
+    >
+      <form
+        action="/Category/index"
+        method="get"
+        class="search-filter-row"
+        style="gap: 10px; align-items: center"
+      >
+        <div class="search-box">
+          <i class="fa fa-search"></i>
+          <input
+            type="text"
+            name="keyword"
+            th:value="${keyword}"
+            class="form-control form-control-sm custom-search-input"
+            placeholder="Tìm kiếm"
+            oninput="this.form.submit()"
+          />
+        </div>
+      </form>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th>ID</th>
+              <th>Tên</th>
+              <th>Số điện thoại</th>
+              <th>Email</th>
+              <th>Nội dung</th>
+              <th>Trạng thái</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <th:block th:each="item : ${contacts}">
+              <tr>
+                <td th:text="${item.id}"></td>
+                <td th:text="${item.name}"></td>
+                <td th:text="${item.sdt}"></td>
+                <td th:text="${item.email}"></td>
+                <td th:text="${item.message}"></td>
+                <td th:text="${item.status}"></td>
+                <td>
+                  <a
+                    class="btn btn-sm btn-info"
+                    th:href="@{/Category/edit/{id}(id=${item.id})}"
+                    >Sửa</a
+                  >
+                  <a
+                    href="#"
+                    class="btn btn-sm btn-danger"
+                    onclick="confirmDelete(this)"
+                    th:data-url="@{/Category/delete/{id}(id=${item.id})}"
+                  >
+                    Xóa
+                  </a>
+                </td>
+              </tr>
+            </th:block>
+          </tbody>
+        </table>
+      </div>
+      <div class="d-flex justify-content-center mt-3" th:if="${totalPages > 0}">
+        <nav>
+          <ul class="pagination custom-pagination">
+            <!-- First Page -->
+            <li
+              class="page-item"
+              th:classappend="${currentPage == 0} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/Category/index(page=0, size=10,  keyword=${keyword})}"
+              >
+                <i class="fa fa-angle-double-left"></i>
+              </a>
+            </li>
+
+            <!-- Previous Page -->
+            <li
+              class="page-item"
+              th:classappend="${currentPage == 0} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/Category/index(page=${currentPage - 1}, size=10,keyword=${keyword})}"
+              >
+                <i class="fa fa-angle-left"></i>
+              </a>
+            </li>
+
+            <!-- Page Numbers -->
+            <li
+              class="page-item"
+              th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+              th:classappend="${currentPage == i} ? 'active'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/Category/index(page=${i}, size=10, keyword=${keyword})}"
+                th:text="${i + 1}"
+              ></a>
+            </li>
+
+            <!-- Next Page -->
+            <li
+              class="page-item"
+              th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/Category/index(page=${currentPage + 1}, size=10, keyword=${keyword})}"
+              >
+                <i class="fa fa-angle-right"></i>
+              </a>
+            </li>
+
+            <!-- Last Page -->
+            <li
+              class="page-item"
+              th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/Category/index(page=${totalPages - 1}, size=10, keyword=${keyword})}"
+              >
+                <i class="fa fa-angle-double-right"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</main>
