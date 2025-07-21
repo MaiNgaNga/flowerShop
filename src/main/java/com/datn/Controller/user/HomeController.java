@@ -31,7 +31,7 @@ public class HomeController {
     @Autowired
     PostService postService;
 
-    @GetMapping("/home")
+    @GetMapping("/")
     public String home(Model model) {
         List<ProductCategory> productCategories = productCategoryService.findAll();
         List<Category> categories = categoryService.findAll();

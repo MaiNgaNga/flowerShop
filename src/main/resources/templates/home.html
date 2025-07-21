@@ -501,6 +501,188 @@
       </div>
     </section>
 
+    <!-- Chatbot Popup -->
+    <div id="chatbot-popup">
+      <div id="chatbot-header">
+        <span>💬 Tư vấn viên FO Flower</span>
+        <button id="chatbot-close">&times;</button>
+      </div>
+      <div id="chatbot-body">
+        <div class="chatbot-message bot">
+          Xin chào! Tôi có thể giúp gì cho bạn?
+        </div>
+      </div>
+      <div id="chatbot-input-area">
+        <input type="text" id="chatbot-input" placeholder="Nhập câu hỏi..." />
+        <button id="chatbot-send">Gửi</button>
+      </div>
+    </div>
+    <button id="chatbot-toggle">
+      <i class="fa fa-comments"></i>
+    </button>
+    <style>
+      #chatbot-popup {
+        position: fixed;
+        bottom: 90px;
+        right: 30px;
+        width: 320px;
+        max-height: 420px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+        display: none;
+        flex-direction: column;
+        z-index: 9999;
+        overflow: hidden;
+        font-family: "Poppins", Arial, sans-serif;
+      }
+      #chatbot-header {
+        background: #7b2cbf;
+        color: #fff;
+        padding: 12px 16px;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      #chatbot-header button {
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 20px;
+        cursor: pointer;
+      }
+      #chatbot-body {
+        flex: 1;
+        padding: 12px;
+        overflow-y: auto;
+        background: #f8f9fa;
+        display: flex;
+        flex-direction: column;
+      }
+      .chatbot-message {
+        margin-bottom: 10px;
+        padding: 8px 12px;
+        border-radius: 12px;
+        max-width: 85%;
+        font-size: 15px;
+        line-height: 1.5;
+        word-break: break-word;
+      }
+      .chatbot-message.bot {
+        background: #e0c3fc;
+        color: #333;
+        align-self: flex-start;
+      }
+      .chatbot-message.user {
+        background: #b9fbc0;
+        color: #333;
+        align-self: flex-end;
+        margin-left: auto;
+      }
+      #chatbot-input-area {
+        display: flex;
+        border-top: 1px solid #eee;
+        background: #fff;
+      }
+      #chatbot-input {
+        flex: 1;
+        border: none;
+        padding: 10px;
+        font-size: 15px;
+        outline: none;
+        border-radius: 0 0 0 16px;
+      }
+      #chatbot-send {
+        background: #7b2cbf;
+        color: #fff;
+        border: none;
+        padding: 0 18px;
+        font-size: 15px;
+        cursor: pointer;
+        border-radius: 0 0 16px 0;
+      }
+      #chatbot-toggle {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #7b2cbf;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 56px;
+        height: 56px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+        font-size: 26px;
+        cursor: pointer;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    </style>
+    <script>
+      // Hiển thị/ẩn popup chatbot
+      document.getElementById("chatbot-toggle").onclick = function () {
+        document.getElementById("chatbot-popup").style.display = "flex";
+        this.style.display = "none";
+      };
+      document.getElementById("chatbot-close").onclick = function () {
+        document.getElementById("chatbot-popup").style.display = "none";
+        document.getElementById("chatbot-toggle").style.display = "flex";
+      };
+
+      // Hàm gửi tin nhắn và gọi API
+      async function sendChatbotMessage() {
+        const input = document.getElementById("chatbot-input");
+        const text = input.value.trim();
+        if (!text) return;
+        const body = document.getElementById("chatbot-body");
+
+        // Hiển thị tin nhắn người dùng
+        const userMsg = document.createElement("div");
+        userMsg.className = "chatbot-message user";
+        userMsg.innerText = text;
+        body.appendChild(userMsg);
+        input.value = "";
+        body.scrollTop = body.scrollHeight;
+
+        // Hiển thị trạng thái đang trả lời
+        const botMsg = document.createElement("div");
+        botMsg.className = "chatbot-message bot";
+        botMsg.innerText = "Đang trả lời...";
+        body.appendChild(botMsg);
+        body.scrollTop = body.scrollHeight;
+
+        // Gọi API
+        try {
+          const response = await fetch("http://localhost:3000/api/chat", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ question: text }),
+          });
+          if (!response.ok) throw new Error("Lỗi server");
+          const data = await response.json();
+          botMsg.innerText = data.answer || "Xin lỗi, tôi chưa có câu trả lời.";
+        } catch (e) {
+          botMsg.innerText = "Có lỗi khi kết nối đến máy chủ.";
+        }
+      }
+
+      // Gửi tin nhắn khi nhấn Enter
+      document
+        .getElementById("chatbot-input")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            sendChatbotMessage();
+          }
+        });
+      document.getElementById("chatbot-send").onclick = sendChatbotMessage;
+    </script>
+       {% comment %} // copy den day thoi nhe  {% endcomment %}
     <script th:src="@{/js/home-page.js}"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>

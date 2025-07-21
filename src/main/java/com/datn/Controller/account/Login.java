@@ -31,7 +31,7 @@ public class Login {
             if (role == 2) {
                 return "redirect:/shipper/pending-orders";
             }
-            return "redirect:/home";
+            return "redirect:/";
         } else {
             model.addAttribute("error", "Sai tài khoản hoặc mật khẩu!");
             return "account/login";
@@ -41,7 +41,7 @@ public class Login {
     @GetMapping("/logout")
     public String logout() {
         authService.logout();
-        return "redirect:/home";
+        return "redirect:/";
     }
 
 }
