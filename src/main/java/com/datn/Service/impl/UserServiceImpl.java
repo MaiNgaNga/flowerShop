@@ -31,12 +31,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(User entity) {
-        if (dao.existsById(entity.getId())) {
-            throw new IllegalArgumentException("Id này đã tồn tại!");
-        }
-        if (dao.existsByEmail(entity.getEmail())) {
-            throw new IllegalArgumentException("Email này đã tồn tại!");
-        }
+
         System.out.println("Mật khẩu sau khi mã hóa: " + entity.getPassword());
 
         return dao.save(entity);
@@ -54,6 +49,7 @@ public class UserServiceImpl implements UserService {
         }
 
         dao.save(entity);
+        System.out.println("User update: " + entity);
     }
 
     @Override
@@ -90,6 +86,17 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<User> findAllNonShipper() {
+        return dao.findAllNonShippers();
+    }
+
+    @Override
+    public User findBySdt(String sdt) {
+         return dao.findBySdt(sdt);
+
     }
 
 }
