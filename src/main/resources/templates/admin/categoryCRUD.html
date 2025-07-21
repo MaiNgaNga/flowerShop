@@ -93,7 +93,7 @@
               th:if="${category.id ==0}"
               type="submit"
               class="btn btn-primary"
-              th:formaction="@{/Category/create}"
+              th:formaction="@{'/Category/create?tab=edit'}"
             >
               <i class="fa fa-plus"></i> Thêm
             </button>
@@ -102,7 +102,7 @@
               th:if="${category.id != 0}"
               type="submit"
               class="btn btn-warning"
-              th:formaction="@{/Category/update}"
+              th:formaction="@{'/Category/update?tab=edit'}"
             >
               <i class="fa fa-edit"></i> Cập Nhật
             </button>
@@ -112,12 +112,12 @@
               type="button"
               class="btn btn-danger"
               onclick="confirmDelete(this)"
-              th:data-url="@{/Category/delete/{id}(id=${category.id})}"
+              th:data-url="@{'/Category/delete/' + ${category.id} + '?tab=edit'}"
             >
               <i class="fa fa-trash"></i> Xóa
             </button>
 
-            <a class="btn btn-success" th:href="@{/Category/index}">
+            <a class="btn btn-success" th:href="@{/Category/index(tab='edit')}">
               <i class="fa fa-sync"></i> Làm Mới
             </a>
           </div>
@@ -138,6 +138,7 @@
         class="search-filter-row"
         style="gap: 10px; align-items: center"
       >
+        <input type="hidden" name="tab" value="list" />
         <div class="search-box">
           <i class="fa fa-search"></i>
           <input
@@ -169,9 +170,15 @@
 
                 <td class="action-icons">
                   <a
+<<<<<<< HEAD
                     th:href="@{/Category/edit/{id}(id=${item.id})}"
                     class="edit-icon"
                     title="Sửa sản phẩm"
+=======
+                    class="btn btn-sm btn-info"
+                    th:href="@{'/Category/edit/' + ${item.id} + '?tab=edit'}"
+                    >Sửa</a
+>>>>>>> c628fd569105ad8178eae1072c0a7c4655531ead
                   >
                     <i class="fa fa-edit"></i>
                   </a>
@@ -179,8 +186,12 @@
                     href="#"
                     class="delete-icon"
                     onclick="confirmDelete(this)"
+<<<<<<< HEAD
                     th:data-url="@{/Category/delete/{id}(id=${item.id})}"
                     title="Xóa sản phẩm"
+=======
+                    th:data-url="@{'/Category/delete/' + ${item.id} + '?tab=list'}"
+>>>>>>> c628fd569105ad8178eae1072c0a7c4655531ead
                   >
                     <i class="fa fa-trash"></i>
                   </a>
@@ -200,7 +211,7 @@
             >
               <a
                 class="page-link"
-                th:href="@{/Category/index(page=0, size=10,  keyword=${keyword})}"
+                th:href="@{/Category/index(page=0, size=10,  keyword=${keyword}, tab='list')}"
               >
                 <i class="fa fa-angle-double-left"></i>
               </a>
@@ -213,7 +224,7 @@
             >
               <a
                 class="page-link"
-                th:href="@{/Category/index(page=${currentPage - 1}, size=10,keyword=${keyword})}"
+                th:href="@{/Category/index(page=${currentPage - 1}, size=10,keyword=${keyword}, tab='list')}"
               >
                 <i class="fa fa-angle-left"></i>
               </a>
@@ -227,7 +238,7 @@
             >
               <a
                 class="page-link"
-                th:href="@{/Category/index(page=${i}, size=10, keyword=${keyword})}"
+                th:href="@{/Category/index(page=${i}, size=10, keyword=${keyword}, tab='list')}"
                 th:text="${i + 1}"
               ></a>
             </li>
@@ -239,7 +250,7 @@
             >
               <a
                 class="page-link"
-                th:href="@{/Category/index(page=${currentPage + 1}, size=10, keyword=${keyword})}"
+                th:href="@{/Category/index(page=${currentPage + 1}, size=10, keyword=${keyword}, tab='list')}"
               >
                 <i class="fa fa-angle-right"></i>
               </a>
@@ -252,7 +263,7 @@
             >
               <a
                 class="page-link"
-                th:href="@{/Category/index(page=${totalPages - 1}, size=10, keyword=${keyword})}"
+                th:href="@{/Category/index(page=${totalPages - 1}, size=10, keyword=${keyword}, tab='list')}"
               >
                 <i class="fa fa-angle-double-right"></i>
               </a>
