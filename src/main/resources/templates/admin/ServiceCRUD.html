@@ -50,7 +50,7 @@
       aria-labelledby="edit-tab"
     >
       <form
-        th:action="@{/Service/index}"
+        action="/Service/index"
         th:object="${service}"
         method="post"
         enctype="multipart/form-data"
@@ -133,7 +133,7 @@
               class="btn btn-sm btn-outline-primary custom-btn mt-1"
               >Chọn ảnh</label
             >
-            <input type="file" id="image1" name="image1" accept="image/*" />
+            <input type="file" id="image1" name="image1" />
             <div
               class="error"
               th:if="${imageError1 != null}"
@@ -159,7 +159,7 @@
               class="btn btn-sm btn-outline-primary custom-btn mt-1"
               >Chọn ảnh</label
             >
-            <input type="file" id="image2" name="image2" accept="image/*" />
+            <input type="file" id="image2" name="image2" />
           </div>
           <div class="image-upload-box">
             <label class="image-title">Hình Ảnh 3</label>
@@ -180,7 +180,7 @@
               class="btn btn-sm btn-outline-primary custom-btn mt-1"
               >Chọn ảnh</label
             >
-            <input type="file" id="image3" name="image3" accept="image/*" />
+            <input type="file" id="image3" name="image3" />
           </div>
         </div>
 

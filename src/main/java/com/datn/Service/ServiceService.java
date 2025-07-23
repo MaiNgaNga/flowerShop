@@ -25,4 +25,11 @@ public interface ServiceService {
     Page<ServiceEntity> findByAllService(Pageable pageable);
 
     Page<ServiceEntity> searchByName(String name, Pageable pageable);
+
+    // Lấy danh sách dịch vụ đang hoạt động (có phân trang)
+    Page<ServiceEntity> findAvailableServices(Pageable pageable);
+
+    // Lấy toàn bộ dịch vụ đang hoạt động (không phân trang – dùng cho form
+    // <select>)
+    List<ServiceEntity> findAllAvailable();
 }

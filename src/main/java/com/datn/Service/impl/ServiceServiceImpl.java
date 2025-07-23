@@ -37,8 +37,11 @@ public class ServiceServiceImpl implements ServiceService {
     @Override
     public ServiceEntity create(ServiceEntity entity, MultipartFile image1, MultipartFile image2,
             MultipartFile image3) {
-        if (entity.getId() != null && dao.existsById(entity.getId())) {
-            throw new IllegalArgumentException("ID dịch vụ đã tồn tại.");
+        // if (entity.getId() != null && dao.existsById(entity.getId())) {
+        // throw new IllegalArgumentException("ID dịch vụ đã tồn tại.");
+        // }
+        if (dao.existsById(entity.getId())) {
+            throw new IllegalArgumentException("ID dịch vụ đã tồn tại!");
         }
 
         if (image1 != null && !image1.isEmpty()) {
@@ -115,4 +118,15 @@ public class ServiceServiceImpl implements ServiceService {
     public Page<ServiceEntity> searchByName(String name, Pageable pageable) {
         return dao.searchByName(name, pageable);
     }
+
+    @Override
+    public Page<ServiceEntity> findAvailableServices(Pageable pageable) {
+        return dao.findByAvailableTrue(pageable);
+    }
+
+    @Override
+    public List<ServiceEntity> findAllAvailable() {
+        return dao.findByAvailableTrue();
+    }
+
 }
