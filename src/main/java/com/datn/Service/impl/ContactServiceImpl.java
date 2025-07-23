@@ -28,11 +28,6 @@ public class ContactServiceImpl implements ContactService {
        
     }
 
-    @Override
-    public Contact getContactById(int id) {
-        // TODO Auto-generated method stub
-        return contactDAO.findById(id).orElse(null);
-    }
 
     @Override
     public void updateContact(int id, Contact contact) {
@@ -48,8 +43,18 @@ public class ContactServiceImpl implements ContactService {
 
 
     @Override
-    public Page<Contact> findAllUnprocessed(Pageable pageable) {
-        return contactDAO.findAllUnprocessed(pageable);
+    public Page<Contact> findbyStatus(boolean status, Pageable pageable) {
+        return contactDAO.findbyStatus(status, pageable);
+    }
+
+    @Override
+    public Page<Contact> findAll(Pageable pageable) {
+        return contactDAO.findAll(pageable);
+    }
+
+    @Override
+    public Contact findById(int id) {
+        return contactDAO.findById(id);
     }
 
 }

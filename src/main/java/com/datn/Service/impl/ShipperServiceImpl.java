@@ -36,7 +36,6 @@ public class ShipperServiceImpl implements ShipperService {
     @Override
     public void deleteById(int id) {
         shipperDAO.deleteById(id);
-        throw new UnsupportedOperationException("Unimplemented method 'deleteById'");
     }
 
     @Override
@@ -68,6 +67,16 @@ public class ShipperServiceImpl implements ShipperService {
     @Override
     public boolean existsByUserId(Integer userId) {
         return shipperDAO.existsByUserId(userId);
+    }
+
+    @Override
+    public void deleteByUserId(int userId) {
+        shipperDAO.deleteByUserId(userId);
+    }
+
+    @Override
+    public Shipper findByUserId(Integer userId) {
+        return shipperDAO.findByUserId(userId);
     }
 
    

@@ -75,12 +75,11 @@ public class UserCRUDController {
                 Shipper shipper = new Shipper();
                 shipper.setUser(User);
                 shipper.setTotalsNumberOrder(0);
-                shipper.setVehicle("Chưa cập nhật");
-                shipper.setCccd("Chưa cập nhật");
-                shipper.setAddress("Chưa cập nhật");
-                shipper.setHistoryOrder("Chưa cập nhật");
-                shipper.setStatus(true);
-                shipper.setIsDeleted(false);
+                shipper.setVehicle("");
+                shipper.setCccd("");
+                shipper.setAddress("");
+                shipper.setHistoryOrder("");
+
                
                 shipperService.save(shipper);
             }
@@ -103,56 +102,79 @@ public class UserCRUDController {
     }
 
     @PostMapping("/update")
-    public String update(Model model, @Valid @ModelAttribute("User") User User,
-            Errors errors, RedirectAttributes redirectAttributes) {
-        if (errors.hasErrors()) {
-            model.addAttribute("isEdit", true);
-            model.addAttribute("view", "admin/UserCRUD");
-            return "admin/layout";
+public String update(Model model, @Valid @ModelAttribute("User") User User,
+        Errors errors, RedirectAttributes redirectAttributes) {
+    if (errors.hasErrors()) {
+        model.addAttribute("isEdit", true);
+        model.addAttribute("view", "admin/UserCRUD");
+        return "admin/layout";
+    }
+
+    User exi = UserService.findByID(User.getId());
+    if (User.getPassword() == null || User.getPassword().isBlank()) {
+        User.setPassword(exi.getPassword());
+    }
+
+    User exitSDT = UserService.findBySdt(User.getSdt());
+    if (exitSDT != null && exitSDT.getId() != User.getId()) {
+        model.addAttribute("error", "Số điện thoại này đã tồn tại!");
+        model.addAttribute("view", "admin/UserCRUD");
+        return "admin/layout";
+    }
+
+    try {
+        Shipper exiShip = shipperService.findByUserId(User.getId());
+
+        // Nếu trước đó là shipper, giờ chuyển vai trò khác => ngưng hoạt động shipper
+        if (exi.getRole() == 2 && User.getRole() != 2 && exiShip != null) {
+            exiShip.setStatus(false);
+            shipperService.save(exiShip);
         }
 
-        // giữ lại mk cũ nếu k thay đổi
-        User exi = UserService.findByID(User.getId());
-        if (User.getPassword() == null || User.getPassword().isBlank()) {
-            User.setPassword(exi.getPassword());
-        }
-
-        User exitSDT = UserService.findBySdt(User.getSdt());
-        if (exitSDT != null && exitSDT.getId() != User.getId()) {
-            model.addAttribute("error", "Số điện thoại này đã tồn tại!");
-            model.addAttribute("view", "admin/UserCRUD");
-            return "admin/layout";
-        }
-        System.out.println("cap nhat thanh cong");
-        try {
-            if (exi.getRole() == 2 && exi.getRole() != 2) {
-                shipperService.deleteById(exi.getId());                
-            }
-            if (User.getRole() == 2 && exi.getRole() != 2) {
+        // Nếu chuyển từ vai trò khác thành shipper
+        if (exi.getRole() != 2 && User.getRole() == 2) {
+            if (exiShip != null) {
+                // Đã có shipper → kích hoạt lại
+                exiShip.setStatus(true);
+                shipperService.save(exiShip);
+            } else {
+                // Chưa có → tạo mới shipper
                 Shipper shipper = new Shipper();
                 shipper.setUser(User);
                 shipper.setTotalsNumberOrder(0);
-                shipper.setVehicle("Chưa cập nhật");
-                shipper.setCccd("Chưa cập nhật");
-                shipper.setAddress("Chưa cập nhật");
-                shipper.setHistoryOrder("Chưa cập nhật");
+                shipper.setVehicle("");
+                shipper.setCccd("");
+                shipper.setAddress("");
+                shipper.setHistoryOrder("");
                 shipper.setStatus(true);
-                shipper.setIsDeleted(false);
-                
                 shipperService.save(shipper);
             }
-
-            UserService.update(User);
-            redirectAttributes.addFlashAttribute("success", "Cập nhật User thành công!");
-            return "redirect:/User/edit/" + User.getId();
-
-        } catch (IllegalArgumentException e) {
-
-            model.addAttribute("error", e.getMessage());
-            model.addAttribute("view", "admin/UserCRUD");
-            return "admin/layout";
         }
+
+          // ✅ Nếu user có role = 2 (shipper) và bị chuyển sang trạng thái không hoạt động (status=false)
+        if (User.getRole() == 2 && !User.getStatus() && exiShip != null) {
+            exiShip.setStatus(false);
+            shipperService.save(exiShip);
+        }
+
+        // ✅ Nếu user là shipper và chuyển từ off → on thì cũng bật shipper
+        if (User.getRole() == 2 && User.getStatus() && exiShip != null) {
+            exiShip.setStatus(true);
+            shipperService.save(exiShip);
+        }
+
+
+        UserService.update(User);
+        redirectAttributes.addFlashAttribute("success", "Cập nhật User thành công!");
+        return "redirect:/User/edit/" + User.getId();
+
+    } catch (IllegalArgumentException e) {
+        model.addAttribute("error", e.getMessage());
+        model.addAttribute("view", "admin/UserCRUD");
+        return "admin/layout";
     }
+}
+
 
     @RequestMapping("/delete/{id}")
     public String delete(Model model, @ModelAttribute("User") User User,

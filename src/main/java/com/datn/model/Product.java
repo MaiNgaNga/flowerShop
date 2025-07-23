@@ -72,7 +72,7 @@ public class Product {
     private LocalDate discountEnd;
 
     @Column(nullable = false)
-    private Boolean available = true; // true: còn hàng, false: hết hàng
+        private Boolean available = true; // true: còn hàng, false: hết hàng
 
     public double getPriceAfterDiscount() {
         if (discountPercent != null && discountPercent > 0) {
