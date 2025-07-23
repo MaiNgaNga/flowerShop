@@ -72,10 +72,11 @@ public class PromotionCRUDController {
             return "admin/layout";
         }
 
-        if (promotion.getEndDate() != null && promotion.getStartDate() != null && promotion.getEndDate().isBefore(promotion.getStartDate())) {
+        if (promotion.getEndDate() != null && promotion.getStartDate() != null
+                && promotion.getEndDate().isBefore(promotion.getStartDate())) {
             model.addAttribute("errorEndDate", "Ngày kết thúc phải trước ngày bắt đầu!");
             model.addAttribute("view", "admin/promotionCRUD");
-            return "admin/layout";   
+            return "admin/layout";
         }
 
         String type = promotion.getDiscountType();
@@ -84,21 +85,21 @@ public class PromotionCRUDController {
             if (value <= 0 || value > 100) {
                 model.addAttribute("errorDiscount", "Giá trị giảm giá phần trăm phải nằm trong khoảng 0 - 100!");
                 model.addAttribute("view", "admin/promotionCRUD");
-                return "admin/layout";                
+                return "admin/layout";
             }
-            
-        }else if ("amount".equalsIgnoreCase(type)) {
+
+        } else if ("amount".equalsIgnoreCase(type)) {
             if (value <= 0) {
                 model.addAttribute("errorDiscount", "Giá trị giảm giá tiền tệ phải lớn hơn 0!");
                 model.addAttribute("view", "admin/promotionCRUD");
-                return "admin/layout";                
+                return "admin/layout";
             }
         } else {
             model.addAttribute("error", "Loại giảm giá không hợp lệ! Chỉ chấp nhận 'percent' hoặc 'amount'.");
             model.addAttribute("view", "admin/promotionCRUD");
-            return "admin/layout";     
+            return "admin/layout";
         }
-        
+
         try {
             // gán ngày hiện tại cho createDate
             promotion.setCreatedDate(LocalDateTime.now());
@@ -116,77 +117,79 @@ public class PromotionCRUDController {
     @GetMapping("/edit/{id}")
 
     public String edit(@PathVariable("id") Long id,
-                   @RequestParam(value = "page", defaultValue = "0") int page,
-                   Model model
-                   ) {
-    Promotion promotion = promotionService.findByID(id);
-    Pageable pageable = PageRequest.of(page, 10);
-    Page<Promotion> result = promotionDAO.findAll(pageable);
-    model.addAttribute("promotion", promotion);
-    model.addAttribute("promotions", result.getContent());
-    model.addAttribute("currentPage", result.getNumber());
-    model.addAttribute("totalPages", result.getTotalPages());
-    model.addAttribute("view", "admin/promotionCRUD");
-    return "admin/layout";
-  }
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            Model model) {
+        Promotion promotion = promotionService.findByID(id);
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Promotion> result = promotionDAO.findAll(pageable);
+        model.addAttribute("promotion", promotion);
+        model.addAttribute("promotions", result.getContent());
+        model.addAttribute("currentPage", result.getNumber());
+        model.addAttribute("totalPages", result.getTotalPages());
+        model.addAttribute("view", "admin/promotionCRUD");
+        return "admin/layout";
+    }
 
+    // @PostMapping("/update")
+    // public String update(Model model,
+    // @Valid @ModelAttribute("promotion") Promotion promotion,
+    // Errors errors,
+    // RedirectAttributes redirectAttributes) {
+    // if (errors.hasErrors()) {
+    // model.addAttribute("view", "admin/promotionCRUD");
+    // return "admin/layout";
+    // }
+    // if (promotion.getEndDate() != null && promotion.getStartDate() != null &&
+    // promotion.getEndDate().isBefore(promotion.getStartDate())) {
+    // model.addAttribute("errorEndDate", "Ngày kết thúc phải trước ngày bắt đầu!");
+    // model.addAttribute("view", "admin/promotionCRUD");
+    // return "admin/layout";
+    // }
+    // String type = promotion.getDiscountType();
+    // Double value = promotion.getDiscountValue();
+    // if ("percent".equalsIgnoreCase(type)) {
+    // if (value <= 0 || value > 100) {
+    // model.addAttribute("errorDiscount", "Giá trị giảm giá phần trăm phải nằm
+    // trong khoảng 0 - 100!");
+    // model.addAttribute("view", "admin/promotionCRUD");
+    // return "admin/layout";
+    // }
 
-    @PostMapping("/update")
-    public String update(Model model,
-            @Valid @ModelAttribute("promotion") Promotion promotion,
-            Errors errors,
-            RedirectAttributes redirectAttributes) {
-                if (errors.hasErrors()) {
-                    model.addAttribute("view", "admin/promotionCRUD");
-                    return "admin/layout";
-                 }
-                if (promotion.getEndDate() != null && promotion.getStartDate() != null && promotion.getEndDate().isBefore(promotion.getStartDate())) {
-                    model.addAttribute("errorEndDate", "Ngày kết thúc phải trước ngày bắt đầu!");
-                    model.addAttribute("view", "admin/promotionCRUD");
-                    return "admin/layout";
-                }
-                String type = promotion.getDiscountType();
-                Double value = promotion.getDiscountValue();
-                if ("percent".equalsIgnoreCase(type)) {
-                    if (value <= 0 || value > 100) {
-                        model.addAttribute("errorDiscount", "Giá trị giảm giá phần trăm phải nằm trong khoảng 0 - 100!");
-                        model.addAttribute("view", "admin/promotionCRUD");
-                        return "admin/layout";                
-                    }
-                    
-                } else if ("amount".equalsIgnoreCase(type)) {
-                    if (value <= 0) {
-                        model.addAttribute("errorDiscount", "Giá trị giảm giá tiền tệ phải lớn hơn 0!");
-                        model.addAttribute("view", "admin/promotionCRUD");
-                        return "admin/layout";                
-                    }
-                } else {
-                    model.addAttribute("error", "Loại giảm giá không hợp lệ! Chỉ chấp nhận 'percent' hoặc 'amount'.");
-                    model.addAttribute("view", "admin/promotionCRUD");
-                    return "admin/layout";     
-                }
-                try {
-                    // Lấy bản ghi cũ từ DB
-                    Promotion existing = promotionService.findByID(promotion.getId());
-                    if (existing == null) {
-                        throw new IllegalArgumentException("Không tìm thấy khuyến mãi để cập nhật");
-                    }
-                    // Giữ lại ngày tạo gốc
-                    promotion.setCreatedDate(existing.getCreatedDate());
+    // } else if ("amount".equalsIgnoreCase(type)) {
+    // if (value <= 0) {
+    // model.addAttribute("errorDiscount", "Giá trị giảm giá tiền tệ phải lớn hơn
+    // 0!");
+    // model.addAttribute("view", "admin/promotionCRUD");
+    // return "admin/layout";
+    // }
+    // } else {
+    // model.addAttribute("error", "Loại giảm giá không hợp lệ! Chỉ chấp nhận
+    // 'percent' hoặc 'amount'.");
+    // model.addAttribute("view", "admin/promotionCRUD");
+    // return "admin/layout";
+    // }
+    // try {
+    // // Lấy bản ghi cũ từ DB
+    // Promotion existing = promotionService.findByID(promotion.getId());
+    // if (existing == null) {
+    // throw new IllegalArgumentException("Không tìm thấy khuyến mãi để cập nhật");
+    // }
+    // // Giữ lại ngày tạo gốc
+    // promotion.setCreatedDate(existing.getCreatedDate());
 
-                    // Cập nhật ngày hiện tại cho updatedDate
-                    promotion.setUpdatedDate(LocalDateTime.now());
+    // // Cập nhật ngày hiện tại cho updatedDate
+    // promotion.setUpdatedDate(LocalDateTime.now());
 
-                    promotionService.update(promotion);
+    // promotionService.update(promotion);
 
-                    redirectAttributes.addFlashAttribute("success", "Cập nhật khuyến mãi thành công!");
-                    return "redirect:/Promotion/edit/" + promotion.getId();
-                    } catch (IllegalArgumentException e) {
-                        model.addAttribute("error", e.getMessage());
-                        model.addAttribute("view", "admin/promotionCRUD");
-                        return "admin/layout";
-                    }
-
+    // redirectAttributes.addFlashAttribute("success", "Cập nhật khuyến mãi thành
+    // công!");
+    // return "redirect:/Promotion/edit/" + promotion.getId();
+    // } catch (IllegalArgumentException e) {
+    // model.addAttribute("error", e.getMessage());
+    // model.addAttribute("view", "admin/promotionCRUD");
+    // return "admin/layout";
+    // }
 
     @PostMapping("/update")
     public String update(Model model,
@@ -221,7 +224,7 @@ public class PromotionCRUDController {
     @RequestMapping("/delete/{id}")
     public String delete(Model model, @ModelAttribute("promotion") Promotion promotion,
 
-    Errors errors, @PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+            Errors errors, @PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
 
         try {
             promotionService.deleteById(id);
