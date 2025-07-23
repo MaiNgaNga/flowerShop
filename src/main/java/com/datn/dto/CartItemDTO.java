@@ -5,6 +5,7 @@ public class CartItemDTO {
     private String name;
     private double price;
     private int quantity;
+    private Double priceAfterDiscount;
 
     public Long getProductId() {
         return productId;
@@ -36,5 +37,13 @@ public class CartItemDTO {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public Double getPriceAfterDiscount() {
+        return priceAfterDiscount;
+    }
+
+    public void setPriceAfterDiscount(Double priceAfterDiscount) {
+        this.priceAfterDiscount = priceAfterDiscount;
     }
 }

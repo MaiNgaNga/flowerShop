@@ -12,12 +12,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.datn.Service.CategoryService;
 import com.datn.Service.ProductService;
 import com.datn.Service.ProductCategoryService;
+import com.datn.Service.CartItemService;
 import com.datn.model.Product;
 import com.datn.model.Category;
 import com.datn.model.ProductCategory;
+import jakarta.servlet.http.HttpSession;
 
 import com.datn.Service.PostService;
 import com.datn.model.Post;
+import com.datn.utils.AuthService;
+import com.datn.model.User;
 
 @Controller
 public class HomeController {
@@ -31,6 +35,11 @@ public class HomeController {
     @Autowired
     PostService postService;
 
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private com.datn.Service.CartItemService cartItemService;
+
     @GetMapping("/home")
     public String home(Model model) {
         List<ProductCategory> productCategories = productCategoryService.findAll();
@@ -38,9 +47,18 @@ public class HomeController {
         List<Product> productQuantities = productService.findTop6ByOrderByQuantityDesc();
         List<Product> latestProducts = productService.findLatestProductsPerCategory();
         List<Product> bestSellingProducts = productService.findBestSellingProductPerCategory();
-
-        // Lấy toàn bộ bài viết
         List<Post> posts = postService.findAll();
+        List<Product> discountProducts = productService
+                .findTop4ByDiscountPercentGreaterThanAndAvailableIsTrueOrderByDiscountPercentDesc(0);
+
+        // Lấy số lượng sản phẩm trong giỏ hàng nếu đã đăng nhập
+        int cartCount = 0;
+        User user = authService.getUser();
+        if (user != null) {
+            Integer userId = user.getId(); // Sửa lại nếu getter id khác
+            cartCount = cartItemService.getCartItemsByUserId(userId).size();
+        }
+        model.addAttribute("cartCount", cartCount);
 
         model.addAttribute("productCategories", productCategories);
         model.addAttribute("categories", categories);
@@ -49,6 +67,7 @@ public class HomeController {
         model.addAttribute("bestSellingProducts", bestSellingProducts);
         model.addAttribute("defaultBestSeller", productService.findBestSellerByCategory("Bó hoa tươi"));
         model.addAttribute("posts", posts);
+        model.addAttribute("discountProducts", discountProducts);
         model.addAttribute("view", "home");
 
         return "layouts/layout";
@@ -59,8 +78,7 @@ public class HomeController {
     public List<Product> getBestSellerByType(@RequestParam String type) {
         switch (type.toLowerCase()) {
             case "lang":
-                return productService.findBestSellerByCategory("Giỏ hoa tươi"); // Use Giỏ hoa tươi as substitute for
-                                                                                // Lãng hoa
+                return productService.findBestSellerByCategory("Giỏ hoa tươi");
             case "gio":
                 return productService.findBestSellerByCategory("Giỏ hoa tươi");
             case "bo":
@@ -78,18 +96,31 @@ public class HomeController {
             Model model) {
         List<ProductCategory> productCategories = productCategoryService.findAll();
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
-        java.util.Set<Product> resultSet = new java.util.LinkedHashSet<>();
+
+        org.springframework.data.domain.Page<Product> resultPage = org.springframework.data.domain.Page.empty();
         if (keyword != null && !keyword.isEmpty()) {
-            String keywordNoDiacritics = com.datn.utils.StringUtils.removeVietnameseDiacritics(keyword);
-            resultSet.addAll(productService.searchByName(keyword, pageable).getContent());
-            resultSet.addAll(productService.searchByCategoryName(keyword, pageable).getContent());
-            resultSet.addAll(productService.searchByProductCategoryName(keyword, pageable).getContent());
+            // Ưu tiên tìm theo danh mục (category)
+            resultPage = productService.searchByCategoryName(keyword, pageable);
+            // Nếu không có kết quả, thử tìm theo loại hoa (productCategory)
+            if (resultPage.isEmpty()) {
+                resultPage = productService.searchByProductCategoryName(keyword, pageable);
+            }
         }
-        model.addAttribute("products", resultSet);
+        model.addAttribute("products", resultPage.getContent());
         model.addAttribute("searchKeyword", keyword);
         model.addAttribute("productCategories", productCategories);
         model.addAttribute("view", "search");
         return "layouts/layout";
+    }
+
+    @GetMapping("/cart/count")
+    @ResponseBody
+    public int getCartItemCount(HttpSession session) {
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId != null) {
+            return cartItemService.getCartItemsByUserId(userId).size();
+        }
+        return 0;
     }
 
 }

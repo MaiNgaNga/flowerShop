@@ -24,16 +24,16 @@ public class CartController {
     @Autowired
     private AuthService authService;
 
-
     @GetMapping
     public String viewCart(Model model) {
-        User user = authService.getUser()  ;                   
-        if (user == null) 
-        return "redirect:/login";
-
-        Integer userId=user.getId();
+        User user = authService.getUser();
+        if (user == null)
+            return "redirect:/login";
+        Integer userId = user.getId();
+        int cartCount = cartItemService.getCartItemsByUserId(userId).size();
+        model.addAttribute("cartCount", cartCount);
         List<CartItem> cartItems = cartItemService.getCartItemsByUserId(userId);
-        
+
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("totalAmount", cartItemService.getTotalAmount(userId));
         model.addAttribute("productCategories", pro_ca_Service.findAll());
@@ -43,19 +43,19 @@ public class CartController {
     }
 
     @PostMapping("/add")
-    public String addToCart(@RequestParam("productId") Long productId, 
-                            @RequestParam("quantity") int quantity){
-       User user = authService.getUser()  ;                   
-        if (user == null) 
-        return "redirect:/login";
-        Integer userId=user.getId();
+    public String addToCart(@RequestParam("productId") Long productId,
+            @RequestParam("quantity") int quantity) {
+        User user = authService.getUser();
+        if (user == null)
+            return "redirect:/login";
+        Integer userId = user.getId();
         cartItemService.addCartItem(userId, productId, quantity);
         return "redirect:/cart";
     }
 
     @PostMapping("/update")
-    public String UpdateToCart(@RequestParam("id") Integer cartItemId, 
-                            @RequestParam("quantity") int quantity){
+    public String UpdateToCart(@RequestParam("id") Integer cartItemId,
+            @RequestParam("quantity") int quantity) {
         cartItemService.updateCartItemQuantity(cartItemId, quantity);
         return "redirect:/cart";
     }

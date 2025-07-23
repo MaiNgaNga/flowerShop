@@ -74,7 +74,6 @@ public class Product {
     @Column(nullable = false)
         private Boolean available = true; // true: còn hàng, false: hết hàng
 
-    // Tính giá sau giảm (nếu có giảm giá hợp lệ)
     public double getPriceAfterDiscount() {
         if (discountPercent != null && discountPercent > 0) {
             LocalDate now = LocalDate.now();

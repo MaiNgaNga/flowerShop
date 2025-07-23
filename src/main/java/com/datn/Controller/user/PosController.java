@@ -29,6 +29,8 @@ import com.datn.model.OrderDetail;
 import com.datn.dao.OrderDAO;
 import java.util.Map;
 import java.util.HashMap;
+import com.datn.utils.AuthService;
+import com.datn.model.User;
 
 @Controller
 @RequestMapping("/pos")
@@ -50,6 +52,11 @@ public class PosController {
     @Autowired
     private QRCodeService qrCodeService;
 
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private com.datn.Service.CartItemService cartItemService;
+
     @GetMapping("")
     public String showPosPage(
             Model model,
@@ -68,6 +75,14 @@ public class PosController {
         String searchKeyword = (keyword != null && !keyword.trim().isEmpty()) ? keyword.trim() : null;
 
         Page<Product> productPage = posService.filterProducts(color, type, category, searchKeyword, min, max, pageable);
+
+        int cartCount = 0;
+        User user = authService.getUser();
+        if (user != null) {
+            Integer userId = user.getId(); // Sửa lại nếu getter id khác
+            cartCount = cartItemService.getCartItemsByUserId(userId).size();
+        }
+        model.addAttribute("cartCount", cartCount);
 
         model.addAttribute("productCategories", productCategoryService.findAll());
         model.addAttribute("products", productPage.getContent());
@@ -102,7 +117,18 @@ public class PosController {
             CartItemDTO item = new CartItemDTO();
             item.setProductId(productId);
             item.setName(product.getName());
-            item.setPrice(product.getPrice());
+            // Xử lý giá giảm
+            double price = product.getPrice();
+            Double priceAfterDiscount = null;
+            java.time.LocalDate today = java.time.LocalDate.now();
+            if (product.getDiscountPercent() != null && product.getDiscountPercent() > 0
+                    && product.getDiscountStart() != null && product.getDiscountEnd() != null
+                    && !today.isBefore(product.getDiscountStart()) && !today.isAfter(product.getDiscountEnd())) {
+                priceAfterDiscount = product.getPriceAfterDiscount();
+                price = priceAfterDiscount;
+            }
+            item.setPrice(price);
+            item.setPriceAfterDiscount(priceAfterDiscount);
             item.setQuantity(1);
             cart.add(item);
         }
@@ -263,42 +289,73 @@ public class PosController {
         }
         session.setAttribute("cart", cart);
         return cart;
-    } // API endpoint để check payment status
+    }
 
-    @PostMapping("/check-payment-status")
+    // API endpoint để check payment status
+    // @PostMapping("/check-payment-status")
+    // @ResponseBody
+    // public Map<String, Object> checkPaymentStatus(@RequestBody Map<String,
+    // String> requestBody) {
+    // Map<String, Object> response = new HashMap<>();
+    // try {
+    // String orderCode = requestBody.get("orderCode");
+    // System.out.println("Checking payment status for orderCode: " + orderCode);
+
+    // if (orderCode == null || orderCode.isEmpty()) {
+    // response.put("success", false);
+    // response.put("status", "missing_order_code");
+    // response.put("message", "Order code is required");
+    // return response;
+    // }
+
+    // // Kiểm tra trạng thái thanh toán trong database
+    // Optional<Order> orderOpt = orderDAO.findByOrderCode(orderCode);
+    // if (orderOpt.isPresent()) {
+    // Order order = orderOpt.get();
+    // response.put("success", true);
+    // response.put("status", order.getStatus()); // "pending", "paid", "failed"
+    // response.put("message", "Payment status retrieved successfully");
+    // System.out.println("Order found. Status: " + order.getStatus());
+    // } else {
+    // response.put("success", false);
+    // response.put("status", "not_found");
+    // response.put("message", "Order not found");
+    // System.out.println("Order not found for orderCode: " + orderCode);
+    // }
+    // } catch (Exception e) {
+    // System.out.println("Error checking payment status: " + e.getMessage());
+    // response.put("success", false);
+    // response.put("status", "error");
+    // response.put("message", "Error checking payment status");
+    // }
+    // return response;
+    // }
+
+    @PostMapping("/manual-confirm-payment")
     @ResponseBody
-    public Map<String, Object> checkPaymentStatus(@RequestBody Map<String, String> requestBody) {
+    public Map<String, Object> manualConfirmPayment(@RequestBody Map<String, String> requestBody) {
         Map<String, Object> response = new HashMap<>();
         try {
             String orderCode = requestBody.get("orderCode");
-            System.out.println("Checking payment status for orderCode: " + orderCode);
-
             if (orderCode == null || orderCode.isEmpty()) {
                 response.put("success", false);
-                response.put("status", "missing_order_code");
                 response.put("message", "Order code is required");
                 return response;
             }
-
-            // Kiểm tra trạng thái thanh toán trong database
             Optional<Order> orderOpt = orderDAO.findByOrderCode(orderCode);
             if (orderOpt.isPresent()) {
                 Order order = orderOpt.get();
+                order.setStatus("Đã thanh toán");
+                orderDAO.save(order);
                 response.put("success", true);
-                response.put("status", order.getStatus()); // "pending", "paid", "failed"
-                response.put("message", "Payment status retrieved successfully");
-                System.out.println("Order found. Status: " + order.getStatus());
+                response.put("message", "Order marked as paid");
             } else {
                 response.put("success", false);
-                response.put("status", "not_found");
                 response.put("message", "Order not found");
-                System.out.println("Order not found for orderCode: " + orderCode);
             }
         } catch (Exception e) {
-            System.out.println("Error checking payment status: " + e.getMessage());
             response.put("success", false);
-            response.put("status", "error");
-            response.put("message", "Error checking payment status");
+            response.put("message", "Error: " + e.getMessage());
         }
         return response;
     }

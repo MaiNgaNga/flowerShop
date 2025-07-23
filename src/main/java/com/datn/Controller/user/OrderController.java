@@ -62,6 +62,13 @@ public class OrderController {
 
     @GetMapping("/index")
         public String index(Model model ) {
+        int cartCount = 0;
+        User user = authService.getUser();
+        if (user != null) {
+            Integer userId = user.getId(); // Sửa lại nếu getter id khác
+            cartCount = cartItemService.getCartItemsByUserId(userId).size();
+        }
+        model.addAttribute("cartCount", cartCount);
         OrderRequest orderRequest=new OrderRequest();
         model.addAttribute("orderRequest", orderRequest);
         return showForm(model);

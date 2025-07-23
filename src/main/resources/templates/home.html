@@ -111,33 +111,20 @@
           data-aos="fade-right"
           data-aos-duration="1000"
         >
-          <div class="promo-card">
-            <span class="promo-tag">-10%</span>
-            <img
-              src="https://hoavily.com/uploads/file/Bai%20viet%202024/hoa-bang-tien-hoavlily.jpg"
-              alt="Sản phẩm 1"
-            />
-          </div>
-          <div class="promo-card">
-            <span class="promo-tag">-15%</span>
-            <img
-              src="https://hoavily.com/uploads/file/Bai%20viet%202024/hoa-bang-tien-hoavlily.jpg"
-              alt="Sản phẩm 2"
-            />
-          </div>
-          <div class="promo-card">
-            <span class="promo-tag">-20%</span>
-            <img
-              src="https://hoavily.com/uploads/file/Bai%20viet%202024/hoa-bang-tien-hoavlily.jpg"
-              alt="Sản phẩm 3"
-            />
-          </div>
-          <div class="promo-card">
-            <span class="promo-tag">-25%</span>
-            <img
-              src="https://hoavily.com/uploads/file/Bai%20viet%202024/hoa-bang-tien-hoavlily.jpg"
-              alt="Sản phẩm 4"
-            />
+          <div class="promo-card" th:each="product : ${discountProducts}">
+            <span
+              class="promo-tag"
+              th:text="'-' + ${product.discountPercent} + '%'"
+              >-10%</span
+            >
+            <a th:href="@{/detail(id=${product.id})}">
+              <img
+                th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
+                th:alt="${product.name}"
+                alt="Sản phẩm giảm giá"
+                onerror="this.src='/images/logo.png'; this.onerror=null;"
+              />
+            </a>
           </div>
         </div>
 
@@ -337,10 +324,24 @@
                 onerror="this.src='/images/logo.png'; this.onerror=null;"
               />
             </a>
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
-            </div>
+            <form
+              th:action="@{/cart/add}"
+              method="post"
+              style="display: inline"
+            >
+              <input type="hidden" name="productId" th:value="${product.id}" />
+              <input type="hidden" name="quantity" value="1" />
+              <button
+                type="submit"
+                class="cart-icon-wrapper"
+                style="border: none; background: none; padding: 0"
+              >
+                <div class="cart-icon">
+                  <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="add-to-cart-text">Add To Cart</div>
+              </button>
+            </form>
           </div>
           <div class="product-info">
             <div class="product-name" th:text="${product.name}">
@@ -458,33 +459,32 @@
         <div class="service-carousel" data-aos="zoom-in" data-aos-delay="100">
           <div class="carousel-images">
             <img
-              src="https://picsum.photos/id/1018/600/400"
+              th:src="@{/images/image1.jpg}"
               alt="Slide 1"
               class="carousel-img active"
             />
             <img
-              src="https://picsum.photos/id/1015/600/400"
+              th:src="@{/images/image2.jpeg}"
               alt="Slide 2"
               class="carousel-img"
             />
             <img
-              src="https://picsum.photos/id/1020/600/400"
+              th:src="@{/images/image3.jpg}"
               alt="Slide 3"
               class="carousel-img"
             />
             <img
-              src="https://picsum.photos/id/1021/600/400"
+              th:src="@{/images/image4.jpeg}"
               alt="Slide 4"
               class="carousel-img"
             />
             <img
-              src="https://picsum.photos/id/1022/600/400"
+              th:src="@{/images/image5.jpg}"
               alt="Slide 5"
               class="carousel-img"
             />
           </div>
         </div>
-
         <!-- Nội dung dịch vụ -->
         <div class="service-content" data-aos="fade-left" data-aos-delay="300">
           <h2>Dịch vụ</h2>
@@ -501,6 +501,126 @@
       </div>
     </section>
 
+    <!-- Chatbot Popup -->
+    <div id="chatbot-popup">
+      <div id="chatbot-header">
+        <span>💬 Tư vấn viên FO Flower</span>
+        <button id="chatbot-close">&times;</button>
+      </div>
+      <div id="chatbot-body">
+        <div class="chatbot-message bot">
+          Xin chào! Tôi có thể giúp gì cho bạn?
+        </div>
+      </div>
+      <div id="chatbot-input-area">
+        <input type="text" id="chatbot-input" placeholder="Nhập câu hỏi..." />
+        <button id="chatbot-send">Gửi</button>
+      </div>
+    </div>
+    <button id="chatbot-toggle">
+      <i class="fa fa-comments"></i>
+    </button>
+    <style>
+      #chatbot-popup {
+        position: fixed;
+        bottom: 90px;
+        right: 30px;
+        width: 320px;
+        max-height: 420px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+        display: none;
+        flex-direction: column;
+        z-index: 9999;
+        overflow: hidden;
+        font-family: "Poppins", Arial, sans-serif;
+      }
+      #chatbot-header {
+        background: #7b2cbf;
+        color: #fff;
+        padding: 12px 16px;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      #chatbot-header button {
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 20px;
+        cursor: pointer;
+      }
+      #chatbot-body {
+        flex: 1;
+        padding: 12px;
+        overflow-y: auto;
+        background: #f8f9fa;
+        display: flex;
+        flex-direction: column;
+      }
+      .chatbot-message {
+        margin-bottom: 10px;
+        padding: 8px 12px;
+        border-radius: 12px;
+        max-width: 85%;
+        font-size: 15px;
+        line-height: 1.5;
+        word-break: break-word;
+      }
+      .chatbot-message.bot {
+        background: #e0c3fc;
+        color: #333;
+        align-self: flex-start;
+      }
+      .chatbot-message.user {
+        background: #b9fbc0;
+        color: #333;
+        align-self: flex-end;
+        margin-left: auto;
+      }
+      #chatbot-input-area {
+        display: flex;
+        border-top: 1px solid #eee;
+        background: #fff;
+      }
+      #chatbot-input {
+        flex: 1;
+        border: none;
+        padding: 10px;
+        font-size: 15px;
+        outline: none;
+        border-radius: 0 0 0 16px;
+      }
+      #chatbot-send {
+        background: #7b2cbf;
+        color: #fff;
+        border: none;
+        padding: 0 18px;
+        font-size: 15px;
+        cursor: pointer;
+        border-radius: 0 0 16px 0;
+      }
+      #chatbot-toggle {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #7b2cbf;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 56px;
+        height: 56px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+        font-size: 26px;
+        cursor: pointer;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    </style>
     <script th:src="@{/js/home-page.js}"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>

@@ -7,14 +7,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
+import com.datn.Service.ProductCategoryService;
+import com.datn.Service.ProductService;
+import com.datn.model.Product;  
+import com.datn.utils.AuthService;
+import com.datn.model.User;
 import com.datn.Service.ServiceRequestService;
 import com.datn.Service.ServiceService;
 import com.datn.model.ServiceEntity;
 import com.datn.model.ServiceRequest;
-import com.datn.model.User;
-import com.datn.utils.AuthService;
-
+import com.datn.Service.CartItemService;
 import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
@@ -22,6 +24,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/services")
+
 public class ServicePageController {
 
     @Autowired
@@ -33,6 +36,17 @@ public class ServicePageController {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private CartItemService cartItemService;
+
+    @Autowired
+    private ProductCategoryService productCategoryService;
+
+    @Autowired
+    private ProductService productService;
+
+
+
     @GetMapping
     public String index(
             Model model,
@@ -40,6 +54,13 @@ public class ServicePageController {
             @RequestParam(value = "size", defaultValue = "3") int size) {
 
         // Lấy danh sách dịch vụ đang hoạt động theo trang
+        int cartCount = 0;
+        User user = authService.getUser();
+        if (user != null) {
+            Integer userId = user.getId(); // Sửa lại nếu getter id khác
+            cartCount = cartItemService.getCartItemsByUserId(userId).size();
+        }
+        model.addAttribute("cartCount", cartCount);
         Page<ServiceEntity> servicePage = serviceService.findAvailableServices(PageRequest.of(page, size));
 
         // Lấy tất cả dịch vụ đang hoạt động để hiển thị trong dropdown form
@@ -50,6 +71,7 @@ public class ServicePageController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", servicePage.getTotalPages());
         model.addAttribute("serviceRequest", new ServiceRequest());
+        model.addAttribute("productCategories", productCategoryService.findAll());
         model.addAttribute("view", "service");
         return "layouts/layout";
     }
