@@ -50,116 +50,129 @@
       role="tabpanel"
       aria-labelledby="edit-tab"
     >
-      <form  th:object="${User}" method="post">
+      <form th:object="${User}" method="post">
         <div class="row">
+          <div class="col-6">
+            <div class="mb-1">
+              <label for="id" class="form-label">ID</label>
+              <input
+                type="text"
+                id="id"
+                th:field="*{id}"
+                readonly
+                class="form-control form-control-sm"
+              />
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-1">
+              <label for="name" class="form-label">Tên</label>
+              <input
+                type="text"
+                th:field="*{name}"
+                id="name"
+                class="form-control form-control-sm"
+                placeholder="Nhập tên người dùng"
+              />
+              <i class="error" th:errors="*{name}"></i>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-1">
+              <label for="email" class="form-label">Email</label>
+              <input
+                type="email"
+                th:field="*{email}"
+                id="email"
+                class="form-control form-control-sm"
+                placeholder="Nhập email"
+              />
+              <i class="error" th:errors="*{email}"></i>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-1">
+              <label for="sdt" class="form-label">Số điện thoại</label>
+              <input
+                type="text"
+                th:field="*{sdt}"
+                id="sdt"
+                class="form-control form-control-sm"
+                placeholder="Nhập số điện thoại"
+              />
+              <i class="error" th:errors="*{sdt}"></i>
+            </div>
+          </div>
 
-            <div class="col-6">
-              <div class="mb-1">
-                <label for="id" class="form-label">ID</label>
+          <div class="col-6">
+            <div class="mb-1">
+              <label>Vai trò:</label>
+              <div>
                 <input
-                  type="text"
-                  id="id"
-                  th:field="*{id}"
-                  readonly
-                  class="form-control form-control-sm"
+                  type="radio"
+                  th:field="*{role}"
+                  value="0"
+                  id="roleUser"
                 />
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="mb-1">
-                <label for="name" class="form-label">Tên</label>
+                <label for="roleUser">User</label>
+
                 <input
-                  type="text"
-                  th:field="*{name}"
-                  id="name"
-                  class="form-control form-control-sm"
-                  placeholder="Nhập tên người dùng"
+                  type="radio"
+                  th:field="*{role}"
+                  value="1"
+                  id="roleAdmin"
                 />
-                <i class="error" th:errors="*{name}"></i>
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="mb-1">
-                <label for="email" class="form-label">Email</label>
+                <label for="roleAdmin">Admin</label>
                 <input
-                  type="email"
-                  th:field="*{email}"
-                  id="email"
-                  class="form-control form-control-sm"
-                  placeholder="Nhập email"
+                  type="radio"
+                  th:field="*{role}"
+                  value="2"
+                  id="roleShipper"
                 />
-                <i class="error" th:errors="*{email}"></i>
+                <label for="roleShipper">Shipper</label>
+
+                <!-- KHÔNG CÓ radio Shipper ở đây -->
+                <i class="error" th:errors="*{role}"></i>
               </div>
             </div>
-            <div class="col-6">
-              <div class="mb-1">
-                <label for="sdt" class="form-label">Số điện thoại</label>
+          </div>
+          <div class="col-6">
+            <div class="mb-1">
+              <label for="password" class="form-label">Mật khẩu</label>
+              <input
+                type="password"
+                th:field="*{password}"
+                id="password"
+                class="form-control form-control-sm"
+                placeholder="Nhập mật khẩu"
+              />
+              <i class="error" th:text="${errorPass}"></i>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="mb-1">
+              <label>Trạng thái:</label>
+              <div>
                 <input
-                  type="text"
-                  th:field="*{sdt}"
-                  id="sdt"
-                  class="form-control form-control-sm"
-                  placeholder="Nhập số điện thoại"
+                  type="radio"
+                  th:field="*{status}"
+                  value="false"
+                  id="roleUser"
                 />
-                <i class="error" th:errors="*{sdt}"></i>
-              </div>
-            </div>
+                <label for="roleUser">Off</label>
 
-            <div class="col-6">
-              <div class="mb-1">
-              
-                <!-- Nếu đang sửa và role = SHIPPER (2) thì chỉ hiển thị, không cho sửa -->
-                
-
-                <!-- Nếu đang thêm mới hoặc sửa user/admin -->
-               
-                  <label>Vai trò:</label>
-                  <div>
-                    <input
-                      type="radio"
-                      th:field="*{role}"
-                      value="0"
-                      id="roleUser"
-                    />
-                    <label for="roleUser">User</label>
-
-                    <input
-                      type="radio"
-                      th:field="*{role}"
-                      value="1"
-                      id="roleAdmin"
-                    />
-                    <label for="roleAdmin">Admin</label>
-                    <input
-                      type="radio"
-                      th:field="*{role}"
-                      value="2"
-                      id="roleShipper"
-                    />
-                    <label for="roleShipper">Shipper</label>
-
-                    <!-- KHÔNG CÓ radio Shipper ở đây -->
-                    <i class="error" th:errors="*{role}"></i>
-                  </div>
-                
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="mb-1" >
-                <label for="password" class="form-label">Mật khẩu</label>
                 <input
-                  type="password"
-                  th:field="*{password}"
-                  id="password"
-                  class="form-control form-control-sm"
-                  placeholder="Nhập mật khẩu"
+                  type="radio"
+                  th:field="*{status}"
+                  value="true"
+                  id="roleAdmin"
                 />
-                <i class="error" th:text="${errorPass}"></i>
+                <label for="roleAdmin">On</label>
+                <!-- KHÔNG CÓ radio Shipper ở đây -->
+                <i class="error" th:errors="*{status}"></i>
               </div>
             </div>
-          
-
-      
+          </div>
         </div>
         <div class="row mt-4 text-end">
           <div class="col">
@@ -216,6 +229,7 @@
               <th>Email</th>
               <th>SDT</th>
               <th>Vai Trò</th>
+              <th>Trạng thái</th>
               <th></th>
             </tr>
           </thead>
@@ -234,6 +248,8 @@
                     <span th:case="*">Không rõ</span>
                   </span>
                 </td>
+                <td th:text="${item.status ? 'On' : 'Off'}"
+                    th:class="${item.status ? 'text-success' : 'text-danger'}"></td>
                 <td>
                   <a
                     class="btn btn-sm btn-info"

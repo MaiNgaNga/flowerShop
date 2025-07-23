@@ -97,7 +97,7 @@ public class ShipperCRUDController {
         user.setRole(2); // hoặc true nếu bạn dùng boolean
             userService.update(user); // Cập nhật lại user
         }
-        shipper.setIsDeleted(true);
+      
         shipperService.save(shipper);
       
         redirectAttributes.addFlashAttribute("success", "Thêm shipper thành công!");
@@ -137,6 +137,13 @@ public class ShipperCRUDController {
             model.addAttribute("view", "admin/shipperCRUD");
             return "admin/layout";
         }; 
+        // nếu không thay đổi trạng thái, giữ nguyên
+        if (shipper.getStatus() == null) {
+            shipper.setStatus(existing.getStatus());
+            } else {
+                // nếu có thay đổi trạng thái, cập nhật lại
+                existing.setStatus(shipper.getStatus());
+            }
          // Lấy lại User từ DB nếu form không gửi đủ dữ liệu
         shipper.setUser(existing.getUser()); // Giữ nguyên User đã có
 
@@ -152,9 +159,6 @@ public String delete(@PathVariable("id") Integer id,
         Shipper shipper = shipperService.findById(id);
         if (shipper != null) {
             // Cập nhật trạng thái nếu cần
-            shipper.setStatus(false);
-
-            shipper.setIsDeleted(false); // Đánh dấu là đã xóa
             // Cập nhật lại shipper
             shipperService.save(shipper);
 

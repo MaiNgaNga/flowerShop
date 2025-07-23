@@ -30,6 +30,7 @@ public class ContactPageController {
     @PostMapping("/sendContact")
     public String createContact(Model model,@ModelAttribute("contact") Contact contact) {
 
+        contact.setStatus(false); // Mặc định là chưa xử lý
         contactService.saveContact(contact);
         model.addAttribute("successMessage", "Cảm ơn bạn đã gửi thông tin đến chúng tôi <br/>. (Chúng tôi sẽ sớm liên hệ với bạn trong thời gian sớm nhất!)");
         model.addAttribute("view", "contact");

@@ -80,6 +80,11 @@ public void update(Promotion entity) {
         return promotionDAO.findPromotionsByTitle(name, pageable);
     }
 
+    @Override
+    public Promotion findPromotionByName(String voucherCode) {
+        return promotionDAO.findPromotionByName(voucherCode);
+    }
+
   
     
 }
