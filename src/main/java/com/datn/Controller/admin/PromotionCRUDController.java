@@ -71,7 +71,6 @@ public class PromotionCRUDController {
             model.addAttribute("view", "admin/promotionCRUD");
             return "admin/layout";
         }
-
         try {
             // gán ngày hiện tại cho createDate
             promotion.setCreatedDate(LocalDateTime.now());
@@ -89,6 +88,19 @@ public class PromotionCRUDController {
     @GetMapping("/edit/{id}")
 
     public String edit(@PathVariable("id") Long id,
+                   @RequestParam(value = "page", defaultValue = "0") int page,
+                   Model model
+                   ) {
+    Promotion promotion = promotionService.findByID(id);
+    Pageable pageable = PageRequest.of(page, 10);
+    Page<Promotion> result = promotionDAO.findAll(pageable);
+    model.addAttribute("promotion", promotion);
+    model.addAttribute("promotions", result.getContent());
+    model.addAttribute("currentPage", result.getNumber());
+    model.addAttribute("totalPages", result.getTotalPages());
+    model.addAttribute("view", "admin/promotionCRUD");
+    return "admin/layout";
+  }
 
 
     @PostMapping("/update")
@@ -123,7 +135,7 @@ public class PromotionCRUDController {
     @RequestMapping("/delete/{id}")
     public String delete(Model model, @ModelAttribute("promotion") Promotion promotion,
 
-            Errors errors, @PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+    Errors errors, @PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
 
         try {
             promotionService.deleteById(id);
