@@ -30,9 +30,11 @@ public class ProductController {
 
     @Autowired
     private AuthService authService;
+
     @Autowired
     private com.datn.Service.CartItemService cartItemService;
 
+   
     @RequestMapping("/ProductUser")
     public String index(Model model,
             @RequestParam("id") Integer pro_categoryId,

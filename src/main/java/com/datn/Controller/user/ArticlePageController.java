@@ -25,7 +25,7 @@ public class ArticlePageController {
         int cartCount = 0;
         User user = authService.getUser();
         if (user != null) {
-            Integer userId = user.getId(); // Sửa lại nếu getter id khác
+            Integer userId = user.getId();
             cartCount = cartItemService.getCartItemsByUserId(userId).size();
         }
         model.addAttribute("cartCount", cartCount);

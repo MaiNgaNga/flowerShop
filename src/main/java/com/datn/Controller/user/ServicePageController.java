@@ -7,26 +7,23 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-<<<<<<<HEAD
 import com.datn.Service.ProductCategoryService;
 import com.datn.Service.ProductService;
-import com.datn.model.Product;
+import com.datn.model.Product;  
 import com.datn.utils.AuthService;
-import com.datn.model.User;=======
+import com.datn.model.User;
 import com.datn.Service.ServiceRequestService;
 import com.datn.Service.ServiceService;
 import com.datn.model.ServiceEntity;
 import com.datn.model.ServiceRequest;
-import com.datn.model.User;
-import com.datn.utils.AuthService;
-
+import com.datn.Service.CartItemService;
 import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
-import java.util.List;>>>>>>>adb40c58124725b30ef223491654021bff402d32
+import java.util.List;
 
-@Controller @RequestMapping("/services")
+@Controller
+@RequestMapping("/services")
 
 public class ServicePageController {
 
@@ -40,9 +37,15 @@ public class ServicePageController {
     private AuthService authService;
 
     @Autowired
-    private AuthService authService;
+    private CartItemService cartItemService;
+
     @Autowired
-    private com.datn.Service.CartItemService cartItemService;
+    private ProductCategoryService productCategoryService;
+
+    @Autowired
+    private ProductService productService;
+
+
 
     @GetMapping
     public String index(
@@ -68,6 +71,7 @@ public class ServicePageController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", servicePage.getTotalPages());
         model.addAttribute("serviceRequest", new ServiceRequest());
+        model.addAttribute("productCategories", productCategoryService.findAll());
         model.addAttribute("view", "service");
         return "layouts/layout";
     }
