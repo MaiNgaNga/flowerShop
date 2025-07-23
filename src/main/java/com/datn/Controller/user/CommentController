@@ -1,35 +1,35 @@
-// package com.datn.Controller.user;
+package com.datn.Controller.user;
 
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-// import com.datn.Service.CommentService;
-// import com.datn.model.Comment;
+import com.datn.Service.CommentService;
+import com.datn.model.Comment;
 
-// import java.util.List;
+import java.util.List;
 
-// @RestController
-// @RequestMapping("/comments")
-// public class CommentController {
+@RestController
+@RequestMapping("/comments")
+public class CommentController {
 
-//     @Autowired
-//     private CommentService commentService;
+    @Autowired
+    private CommentService commentService;
 
-//     // Lấy danh sách bình luận theo sản phẩm
-//     @GetMapping("/{productId}")
-//     public List<Comment> getCommentsByProduct(@PathVariable Long productId) {
-//         return commentService.getCommentsByProduct(productId);
-//     }
+    // Lấy danh sách bình luận theo sản phẩm
+    @GetMapping("/{productId}")
+    public List<Comment> getCommentsByProduct(@PathVariable Long productId) {
+        return commentService.getCommentsByProduct(productId);
+    }
 
-//     // Thêm bình luận mới
-//     @PostMapping
-//     public Comment addComment(@RequestParam String content, @RequestParam Long productId) {
-//         return commentService.saveComment(content, productId);
-//     }
+    // Thêm bình luận mới
+    @PostMapping
+    public Comment addComment(@RequestParam String content, @RequestParam Long productId) {
+        return commentService.saveComment(content, productId);
+    }
 
-//     // Xóa bình luận theo ID
-//     @DeleteMapping("/{id}")
-//     public void deleteComment(@PathVariable Long id) {
-//         commentService.deleteComment(id);
-//     }
-// }
+    // Xóa bình luận theo ID
+    @DeleteMapping("/{id}")
+    public void deleteComment(@PathVariable Long id) {
+        commentService.deleteComment(id);
+    }
+}

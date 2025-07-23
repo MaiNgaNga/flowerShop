@@ -1,0 +1,105 @@
+<div class="container m-5">
+  <!-- Thông báo thành công -->
+  <div
+    class="alert alert-success"
+    th:if="${message}"
+    th:text="${message}"
+  ></div>
+  <!-- Thông báo lỗi -->
+  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+
+  <div class="row">
+    <!-- Cột sản phẩm -->
+    <div class="col-md-8" style="border-right: 1px solid lightgrey">
+      <table class="table table-borderless align-middle">
+        <thead class="border-bottom">
+          <tr>
+            <th></th>
+            <th>SẢN PHẨM</th>
+            <th>GIÁ TIỀN SẢN PHẨM</th>
+            <th>SỐ LƯỢNG SẢN PHẨM</th>
+            <th>TẠM TÍNH</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:if="${#lists.isEmpty(cartItems)}">
+            <td
+              colspan="4"
+              style="text-align: center; font-style: italic; color: gray"
+            >
+              Giỏ hàng chưa có sản phẩm.
+            </td>
+          </tr>
+          <tr th:each="item : ${cartItems}">
+            <td>
+              <!-- Nút xóa sản phẩm -->
+              <a
+                th:href="@{/cart/remove(cartItemId=${item.id})}"
+                class="btn remove-item"
+              >
+                <i class="fa-solid fa-xmark text-danger"></i>
+              </a>
+            </td>
+            <td class="d-flex align-items-center">
+              <a th:href="@{/detail(id=${item.product.id})}">
+                <img
+                  th:src="@{/images/{image}(image=${item.product.image_url})}"
+                  class="rounded me-2"
+                  width="100px"
+                  alt="Sản phẩm"
+                />
+              </a>
+              <span th:text="${item.product.name}"></span>
+            </td>
+            <td
+              th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+            ></td>
+            <td>
+              <form th:action="@{/cart/update}" method="post">
+                <input type="hidden" name="id" th:value="${item.id}" />
+                <input
+                  type="number"
+                  class="form-control text-center w-50 update-quantity"
+                  name="quantity"
+                  th:value="${item.quantity}"
+                  onchange="this.form.submit()"
+                />
+              </form>
+            </td>
+
+            <td
+              class="subtotal"
+              th:text="${#numbers.formatDecimal(item.getTotal(), 0, 'COMMA', 0, 'POINT')} + ' VND'"
+            ></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="d-flex justify-content-between">
+        <button
+          type="button"
+          class="btn btn-outline-danger"
+          onclick="confirmDelete(this)"
+          th:data-url="@{/cart/clear}"
+        >
+          <i class="fa-solid fa-trash"></i> XÓA TẤT CẢ
+        </button>
+      </div>
+    </div>
+
+    <!-- Cột thanh toán -->
+    <div class="col-md-4">
+      <h6 class="fw-bold">TỔNG CỘNG GIỎ HÀNG</h6>
+      <ul class="list-group">
+        <li class="list-group-item d-flex justify-content-between">
+          <span>Tổng</span>
+          <strong
+            id="grand-total"
+            th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+          ></strong>
+        </li>
+      </ul>
+      <a href="/order/index" class="btn btn-success w-100 mt-3"> ĐẶT HÀNG</a>
+    </div>
+  </div>
+</div>

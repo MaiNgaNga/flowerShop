@@ -1,13 +1,13 @@
-// package com.datn.Service;
+package com.datn.Service;
 
-// import java.util.List;
+import java.util.List;
 
-// import com.datn.model.Comment;
+import com.datn.model.Comment;
 
-// public interface CommentService {
-// List<Comment> getCommentsByProduct(Long productId);
+public interface CommentService {
+List<Comment> getCommentsByProduct(Long productId);
 
-// Comment saveComment(String content, Long productId);
+Comment saveComment(String content, Long productId);
 
-// void deleteComment(Long id);
-// }
+void deleteComment(Long id);
+}

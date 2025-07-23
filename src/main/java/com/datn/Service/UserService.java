@@ -21,4 +21,7 @@ public interface UserService {
 
     boolean updatePassword(String newPassword);
 
+    List<User> findAllNonShipper();
+    User findBySdt(String sdt);
+
 }
