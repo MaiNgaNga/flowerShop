@@ -1,7 +1,6 @@
 package com.datn.dao;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,14 +15,15 @@ public interface PromotionDAO extends JpaRepository<Promotion, Long> {
 
     @Query("SELECT p FROM Promotion p WHERE p.endDate >= :fromDate AND p.startDate <= :toDate")
     Page<Promotion> findPromotionsByDateRange(@Param("fromDate") LocalDate fromDate,
-                                          @Param("toDate") LocalDate toDate,
-                                          Pageable pageable);
+            @Param("toDate") LocalDate toDate,
+            Pageable pageable);
 
-                                          
     @Query("SELECT p FROM Promotion p WHERE p.title like %:title%")
     Page<Promotion> findPromotionsByTitle(@Param("title") String title, Pageable pageable);
+
 
     @Query("SELECT p FROM Promotion p WHERE p.title = :voucher")
     Promotion findPromotionByName(@Param("voucher") String voucher);
 
 } 
+

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dịch Vụ - Cửa Hàng Hoa</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <!-- Style css -->
+    <link rel="stylesheet" th:href="@{/css/service.css}" />
+  </head>
+
+  <body>
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-overlay"></div>
+      <div class="flower-particles" id="flower-particles"></div>
+      <div class="hero-content">
+        <h1 data-aos="fade-down">Dịch Vụ Hoa Tươi Lãng Mạn</h1>
+        <p data-aos="fade-up" data-aos-delay="200">
+          Tạo nên những khoảnh khắc đáng nhớ với những thiết kế hoa tinh tế
+        </p>
+        <a
+          href="#services"
+          class="btn btn-primary"
+          data-aos="fade-up"
+          data-aos-delay="400"
+          >Khám Phá Ngay</a
+        >
+      </div>
+    </section>
+    <section id="services" class="services-section">
+      <div class="container">
+        <h2 data-aos="fade-up">Các Dịch Vụ Đặc Biệt</h2>
+        <div
+          th:each="service, iterStat : ${services}"
+          th:class="'service-block ' + (${iterStat.index % 2 == 1} ? 'flex-row-reverse' : '')"
+          data-aos="fade-up"
+          th:attr="data-aos-delay=${iterStat.index * 200}"
+        >
+          <div class="service-text">
+            <h2 class="display-5 fw-bold mb-4" th:text="${service.name}">
+              Tên dịch vụ
+            </h2>
+            <p class="mb-4" th:text="${service.description}">Mô tả dịch vụ</p>
+          </div>
+          <div
+            class="service-slideshow"
+            th:classappend="${iterStat.index % 2 == 0} ? ' first-block' : ' second-block'"
+          >
+            <div
+              th:id="'carousel' + ${service.id}"
+              class="carousel slide"
+              data-bs-ride="carousel"
+            >
+              <div class="carousel-inner">
+                <div class="carousel-item active" th:if="${service.imageUrl}">
+                  <img
+                    th:src="@{/images/{image}(image=${service.imageUrl})}"
+                    alt="Ảnh 1"
+                  />
+                </div>
+                <div class="carousel-item" th:if="${service.imageUrl2}">
+                  <img
+                    th:src="@{/images/{image}(image=${service.imageUrl2})}"
+                    alt="Ảnh 2"
+                  />
+                </div>
+                <div class="carousel-item" th:if="${service.imageUrl3}">
+                  <img
+                    th:src="@{/images/{image}(image=${service.imageUrl3})}"
+                    alt="Ảnh 3"
+                  />
+                </div>
+              </div>
+              <button
+                class="carousel-control-prev"
+                type="button"
+                th:attr="data-bs-target='#carousel' + ${service.id}"
+                data-bs-slide="prev"
+              >
+                <span
+                  class="carousel-control-prev-icon"
+                  aria-hidden="true"
+                ></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button
+                class="carousel-control-next"
+                type="button"
+                th:attr="data-bs-target='#carousel' + ${service.id}"
+                data-bs-slide="next"
+              >
+                <span
+                  class="carousel-control-next-icon"
+                  aria-hidden="true"
+                ></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PHÂN TRANG -->
+        <nav class="mt-5 d-flex justify-content-center">
+          <ul class="pagination">
+            <li
+              class="page-item"
+              th:classappend="${currentPage == 0} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{'/services'(page=${currentPage - 1})}"
+                aria-label="Previous"
+              >
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+
+            <li
+              class="page-item"
+              th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+              th:classappend="${pageNum == currentPage} ? 'active'"
+            >
+              <a
+                class="page-link"
+                th:href="@{'/services'(page=${pageNum})}"
+                th:text="${pageNum + 1}"
+                >1</a
+              >
+            </li>
+
+            <li
+              class="page-item"
+              th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{'/services'(page=${currentPage + 1})}"
+                aria-label="Next"
+              >
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </section>
+
+    <!-- Contact Form Section -->
+    <section class="contact-section">
+      <div class="container">
+        <h2 data-aos="fade-up">Đặt Dịch Vụ Ngay</h2>
+        <!-- Alert thành công -->
+        <div
+          th:if="${param.success}"
+          class="alert alert-success alert-dismissible fade show text-center"
+          role="alert"
+          id="successAlert"
+        >
+          Yêu cầu của bạn đã được gửi thành công! Chúng tôi sẽ liên hệ với bạn
+          trong thời gian sớm nhất.
+        </div>
+        <!-- Alert chưa đăng nhập -->
+        <div
+          th:if="${param.loginRequired}"
+          class="alert alert-warning alert-dismissible fade show text-center"
+          role="alert"
+        >
+          Bạn cần <a href="/login" class="alert-link">đăng nhập</a> để gửi yêu
+          cầu dịch vụ.
+        </div>
+
+        <form
+          id="contact-form"
+          th:action="@{/services/contact}"
+          th:object="${serviceRequest}"
+          method="post"
+        >
+          <div class="row">
+            <!-- Họ và tên -->
+            <div class="col-md-6 mb-4" data-aos="fade-right">
+              <label for="fullName" class="form-label">Họ và Tên</label>
+              <input
+                type="text"
+                class="form-control"
+                th:field="*{fullName}"
+                placeholder="Nhập họ và tên của bạn"
+              />
+              <div
+                class="text-danger small"
+                th:if="${#fields.hasErrors('fullName')}"
+                th:errors="*{fullName}"
+              ></div>
+            </div>
+
+            <!-- Email -->
+            <div class="col-md-6 mb-4" data-aos="fade-left">
+              <label for="email" class="form-label">Email</label>
+              <input
+                type="email"
+                class="form-control"
+                th:field="*{email}"
+                placeholder="example@email.com"
+              />
+              <div
+                class="text-danger small"
+                th:if="${#fields.hasErrors('email')}"
+                th:errors="*{email}"
+              ></div>
+            </div>
+
+            <!-- Số điện thoại -->
+            <div class="col-md-6 mb-4" data-aos="fade-right">
+              <label for="phone" class="form-label">Số Điện Thoại</label>
+              <input
+                type="text"
+                class="form-control"
+                th:field="*{phone}"
+                placeholder="Nhập số điện thoại"
+              />
+              <div
+                class="text-danger small"
+                th:if="${#fields.hasErrors('phone')}"
+                th:errors="*{phone}"
+              ></div>
+            </div>
+
+            <!-- Chọn dịch vụ -->
+            <div class="col-md-6 mb-4" data-aos="fade-left">
+              <label for="service" class="form-label">Chọn Dịch Vụ</label>
+              <select class="form-select" th:field="*{service}">
+                <option value="">-- Chọn dịch vụ --</option>
+                <option
+                  th:each="s : ${activeServices}"
+                  th:value="${s.id}"
+                  th:text="${s.name}"
+                ></option>
+              </select>
+              <div
+                class="text-danger small"
+                th:if="${#fields.hasErrors('service')}"
+                th:errors="*{service}"
+              ></div>
+            </div>
+
+            <!-- Yêu cầu chi tiết -->
+            <div class="col-12 mb-4" data-aos="fade-up" data-aos-delay="200">
+              <label for="detailRequest" class="form-label"
+                >Yêu Cầu Chi Tiết</label
+              >
+              <textarea
+                class="form-control"
+                th:field="*{detailRequest}"
+                rows="5"
+                placeholder="Mô tả chi tiết yêu cầu của bạn về dịch vụ"
+              ></textarea>
+              <div
+                class="text-danger small"
+                th:if="${#fields.hasErrors('detailRequest')}"
+                th:errors="*{detailRequest}"
+              ></div>
+            </div>
+
+            <!-- Nút gửi -->
+            <div
+              class="col-12 text-center"
+              data-aos="fade-up"
+              data-aos-delay="300"
+            >
+              <button type="submit" class="btn btn-submit">
+                Gửi Yêu Cầu
+                <span
+                  class="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/service.js}"></script>
+  </body>
+</html>

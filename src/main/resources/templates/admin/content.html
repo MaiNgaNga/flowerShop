@@ -1,22 +1,27 @@
 <div class="row">
   <!-- Sidebar (Aside) -->
   <aside class="col-md-2 pt-4 nenindex asidemana">
-    <img
+      <a href="/home" >
+          <img
       th:src="@{/images/2.png}"
+     
       alt="Trạm Hoa"
       height="100"
       style="text-align: center"
+      
     />
+      </a>
+  
     <nav class="nav flex-column pt-2">
-      <a href="/home" class="nav-link text-dark py-3 menu-item">
-        <i class="fa-solid fa-file-lines me-2"></i> Trang chủ
+      <a href="/statistical" class="nav-link text-dark py-3 menu-item">
+        <i class="fa-solid fa-file-lines me-2"></i> Thống kê
       </a>
       <!-- <a href="/dashboard" class="nav-link text-dark py-3 menu-item">
         <i class="fa-solid fa-file-lines me-2"></i> Dashboard
       </a> -->
       <a href="/User/index" class="nav-link text-dark py-3 menu-item">
         <i class="fa-solid fa-user"></i>
-         Người dùng
+        Người dùng
       </a>
       <a
         href="/ProductCategory/index"
@@ -31,12 +36,18 @@
       <a href="/Category/index" class="nav-link text-dark py-3 menu-item">
         <i class="fa-solid fa-comments me-2"></i> Loại hoa
       </a>
+      <a href="/Service/index" class="nav-link text-dark py-3 menu-item">
+        <i class="fa-solid fa-comments me-2"></i> Dịch vụ
+      </a>
       <a href="/orderAdmin" class="nav-link text-dark py-3 menu-item">
         <i class="fa-solid fa-chart-bar me-2"></i> Đơn hàng
-
       </a>
-
-
+      <a
+        href="/admin/service-requests"
+        class="nav-link text-dark py-3 menu-item"
+      >
+        <i class="fa-solid fa-clipboard-list me-2"></i> Đơn dịch vụ
+      </a>
       <a href="/Post/index" class="nav-link text-dark py-3 menu-item">
         <i class="fa-solid fa-comments me-2"></i> Bài viết</a
       >

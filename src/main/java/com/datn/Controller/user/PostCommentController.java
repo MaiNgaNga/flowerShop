@@ -1,8 +1,6 @@
 package com.datn.Controller.user;
 
 import com.datn.Service.PostCommentService;
-import com.datn.model.PostComment;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +27,7 @@ public class PostCommentController {
         return "redirect:/postDetail?id=" + postId;
     }
 
-    // (Tùy chọn) Xóa bình luận thẳng   
+    // (Tùy chọn) Xóa bình luận thẳng
     @PostMapping("/delete")
     public String deleteComment(@RequestParam("id") Long id,
             @RequestParam("postId") Long postId) {

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Thống Kê Cửa Hàng Hoa</title>
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f6fa;
+}
+.stats-container {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: nowrap; /* Ngăn các phần tử xuống dòng */
+    width: 100%;
+    max-width: 1200px; /* Giới hạn chiều rộng để vừa màn hình */
+}
+.card {
+    width: 250px;
+    height: 180px;
+    background: linear-gradient(135deg, #ffffff 0%, #eef2f7 100%);
+    border-radius: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.card::before {
+    content: '';
+    position: absolute;
+    bottom: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+    z-index: 0;
+}
+.card-content {
+    position: relative;
+    z-index: 1;
+}
+.number {
+    font-size: 48px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+.label {
+    font-size: 18px;
+    color: #7f8c8d;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+/* Màu sắc cho từng thẻ */
+.card.blue {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+.card.blue .number { color: #ffffff; }
+.card.blue .label { color: #ecf0f1; }
+.card.green {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+}
+.card.green .number { color: #ffffff; }
+.card.green .label { color: #ecf0f1; }
+.card.pink {
+    background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+}
+.card.pink .number { color: #ffffff; }
+.card.pink .label { color: #ecf0f1; }
+.card.orange {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+}
+.card.orange .number { color: #ffffff; }
+.card.orange .label { color: #ecf0f1; }
+/* Icon giả lập */
+.icon {
+    font-size: 40px;
+    margin-bottom: 15px;
+    color: #ffffff;
+}
+.icon::before {
+    content: "🌸"; /* Icon hoa giả lập */
+}
+.green .icon::before { content: "💐"; }
+.pink .icon::before { content: "📦"; }
+.orange .icon::before { content: "➕"; }
+/* Biểu đồ */
+.chart-card {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    padding: 20px;
+}
+    </style>
+</head>
+<body>
+  <center>
+      <!-- Phần thống kê 4 cục -->
+<div class="stats-container">
+    <div class="card blue">
+        <div class="card-content">
+            <div class="icon"></div>
+            <div class="number">45</div>
+            <div class="label">Đơn hàng hôm nay</div>
+        </div>
+    </div>
+    <div class="card green">
+        <div class="card-content">
+            <div class="icon"></div>
+            <div class="number">20</div>
+            <div class="label">Sản phẩm bán</div>
+        </div>
+    </div>
+    <div class="card pink">
+        <div class="card-content">
+            <div class="icon"></div>
+            <div class="number">10</div>
+            <div class="label">Kho còn lại</div>
+        </div>
+    </div>
+    <div class="card orange">
+        <div class="card-content">
+            <div class="icon"></div>
+            <div class="number">5</div>
+            <div class="label">Khách mới</div>
+        </div>
+    </div>
+</div>
+  </center>
+
+    <!-- Phần biểu đồ -->
+    <div class="container">
+        <div class="row">
+            <!-- Xu hướng doanh số -->
+            <div class="col-md-8 mb-4">
+                <div class="chart-card">
+                    <h2 class="text-center">Xu hướng doanh số</h2>
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Tỷ lệ doanh thu -->
+            <div class="col-md-4 mb-4">
+                <div class="chart-card">
+                    <h2 class="text-center">Tỷ lệ doanh thu</h2>
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Biểu đồ tròn
+        const pieChart = new Chart(document.getElementById('pieChart'), {
+            type: 'pie',
+            data: {
+                labels: ['Sản phẩm A', 'Sản phẩm B', 'Sản phẩm C', 'Sản phẩm D'],
+                datasets: [{
+                    data: [30, 25, 20, 25],
+                    backgroundColor: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'],
+                    borderColor: ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { font: { size: 10 }, color: '#333' }
+                    },
+                    title: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+       // Biểu đồ đường
+const lineChart = new Chart(document.getElementById('lineChart'), {
+    type: 'line',
+    data: {
+        labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+        datasets: [{
+            label: 'Doanh số',
+            data: [50, 60, 70, 65, 80, 90, 85, 95, 100, 110, 105, 120],
+            borderColor: '#FF6B6B',
+            backgroundColor: 'rgba(255, 107, 107, 0.2)',
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: { font: { size: 12 }, color: '#333' }
+            },
+            title: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: { font: { size: 12 }, color: '#333' },
+                title: {
+                    display: true,
+                    text: 'Triệu VNĐ',
+                    font: { size: 12 },
+                    color: '#333'
+                }
+            },
+            x: {
+                ticks: { font: { size: 12 }, color: '#333' }
+            }
+        }
+    }
+});
+    </script>
+</body>
+</html>

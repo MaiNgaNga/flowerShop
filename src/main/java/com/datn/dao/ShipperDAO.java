@@ -18,10 +18,14 @@ public interface ShipperDAO extends JpaRepository<Shipper, Integer>{
     @Query("SELECT s FROM Shipper s WHERE s.id = ?1")
     Shipper findById(int id);
 
+
     @Query("SELECT s FROM Shipper s ")
     List<Shipper> findAll();
 
     @Query("SELECT s FROM Shipper s ")
+
+
+    @Query("SELECT s FROM Shipper s")
     Page<Shipper> findAllActive(Pageable pageable);
 
     @Query("SELECT s FROM Shipper s WHERE s.user.name LIKE %:name%")
