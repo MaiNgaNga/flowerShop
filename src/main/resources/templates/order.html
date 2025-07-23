@@ -43,7 +43,7 @@
                 class="form-control"
                 placeholder="Nhập số điện thoại"
               />
-              <i class="error" th:errors="*{sdt}"></i>
+              <i class="error text-danger" th:errors="*{sdt}"></i>
             </div>
 
             <!-- Thêm phần chọn địa chỉ -->
@@ -156,7 +156,7 @@
               />
               <input type="hidden" th:field="*{address}" id="address" />
 
-              <i class="error" th:errors="*{address}"></i>
+              <i class="error text-danger" th:errors="*{address}"></i>
             </div>
           </th:block>
         </div>
@@ -178,7 +178,11 @@
           </th:block>
 
           <p>
-            <strong>Tổng cộng:</strong>
+            <span class="formattedOriginalTotal"> </span> <br />
+
+            <span class="formattedDiscount"> </span><br />
+            <strong>Số tiền phải thanh toán: </strong>
+
             <span
               class="float-end"
               th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
@@ -193,27 +197,99 @@
       </div>
     </div>
   </form>
-</div>
+  <!-- Áp dụng mã giảm giá -->
+  <form action="/order/apply-voucher" method="post" class="mb-3">
+    <label for="voucher" class="form-label fw-bold"
+      >Mã giảm giá <span class="text-muted">(nếu có)</span></label
+    >
+    <div class="input-group">
+      <input
+        type="text"
+        id="voucher"
+        name="voucher"
+        class="form-control"
+        placeholder="Nhập mã giảm giá, ví dụ: MA20K"
+        required
+      />
+      <button type="submit" class="btn btn-primary">Áp dụng</button>
+    </div>
+  </form>
+  <div id="voucher-message" class="mt-2"></div>
+  <div th:if="${error}" class="alert alert-danger mt-3" role="alert">
+    <p th:utext="${error}"></p>
+  </div>
+  <div th:if="${success}" class="alert alert-success mt-3" role="alert">
+    <p th:utext="${success}"></p>
+  </div>
 
-<script>
-  const wardSelect = document.getElementById("ward");
-  const specificInput = document.getElementById("specific");
-  const addressInput = document.getElementById("address");
+  <script>
+    const wardSelect = document.getElementById("ward");
+    const specificInput = document.getElementById("specific");
+    const addressInput = document.getElementById("address");
 
-  function updateAddress() {
-    const ward = wardSelect.selectedOptions[0]?.text || "";
-    const specific = specificInput.value.trim();
-    if (specific && ward) {
-      addressInput.value = `${specific}, ${ward}, Đà Nẵng`;
+    function updateAddress() {
+      const ward = wardSelect.selectedOptions[0]?.text || "";
+      const specific = specificInput.value.trim();
+      if (specific && ward) {
+        addressInput.value = `${specific}, ${ward}, Đà Nẵng`;
+      }
     }
-  }
 
-  // Cập nhật địa chỉ khi người dùng nhập hoặc chọn
-  wardSelect.addEventListener("change", updateAddress);
-  specificInput.addEventListener("input", updateAddress);
+    // Cập nhật địa chỉ khi người dùng nhập hoặc chọn
+    wardSelect.addEventListener("change", updateAddress);
+    specificInput.addEventListener("input", updateAddress);
 
-  // Đảm bảo cập nhật trước khi submit
-  document.querySelector("form").addEventListener("submit", function () {
-    updateAddress();
-  });
-</script>
+    // Đảm bảo cập nhật trước khi submit
+    document.querySelector("form").addEventListener("submit", function () {
+      updateAddress();
+    });
+    // Xử lý áp dụng mã giảm giá
+    document
+      .querySelector('form[action="/order/apply-voucher"]')
+      .addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const voucherInput = document.getElementById("voucher");
+        const voucher = voucherInput.value.trim();
+        const msgDiv = document.getElementById("voucher-message");
+
+        fetch("/order/apply-voucher", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({ voucher }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              msgDiv.className = "alert alert-success mt-3";
+              msgDiv.textContent = data.success;
+
+              // Cập nhật tổng cộng
+              const totalEl = document.querySelector(".float-end");
+              if (totalEl) totalEl.textContent = data.formattedTotal + " VND";
+              const originalTotalEl = document.querySelector(
+                ".formattedOriginalTotal"
+              );
+              if (originalTotalEl) {
+                originalTotalEl.innerHTML =
+                  "<b> Giá gốc: </b> <span class='float-end'>" +
+                  data.formattedOriginalTotal +
+                  " VND </span>";
+              }
+              const discountEl = document.querySelector(".formattedDiscount");
+              if (discountEl) {
+                discountEl.innerHTML =
+                  "<b>Giảm giá:</b> <span class='float-end'>" +
+                  data.formattedDiscount +
+                  " VND</span>";
+              }
+            } else if (data.error) {
+              msgDiv.className = "alert alert-danger mt-3";
+              msgDiv.textContent = data.error;
+            }
+          });
+      });
+  </script>
+</div>

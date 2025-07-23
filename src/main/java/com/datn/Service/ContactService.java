@@ -10,9 +10,12 @@ import com.datn.model.Contact;
 public interface ContactService {
     void saveContact(Contact contact);
     List<Contact> getAllContacts();
-    Contact getContactById(int id);
+    Contact findById(int id);
     void updateContact(int id, Contact contact);
     void deleteContact(int id);
 
-    Page<Contact> findAllUnprocessed(Pageable pageable);
+
+    Page<Contact> findAll(Pageable pageable);
+
+    Page<Contact> findbyStatus(boolean status,  Pageable pageable);
 }

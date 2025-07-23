@@ -12,7 +12,13 @@ import com.datn.model.Contact;
 public interface ContactDAO extends JpaRepository<Contact, Integer> {
     // Define any additional query methods if needed
 
-    @Query("SELECT c FROM Contact c WHERE c.status = true")
-    Page<Contact> findAllUnprocessed(Pageable pageable);
+    @Query("SELECT c FROM Contact c ")
+    Page<Contact> findAll(Pageable pageable);
+
+    @Query("SELECT c FROM Contact c WHERE c.id = ?1")
+    Contact findById(int id);
+
+    @Query("SELECT c FROM Contact c where c.status =?1")
+    Page<Contact> findbyStatus( boolean status, Pageable pageable);
 
 } 
