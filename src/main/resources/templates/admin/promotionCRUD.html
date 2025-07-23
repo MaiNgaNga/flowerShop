@@ -1,22 +1,24 @@
 <style>
   .custom-pagination .page-item .page-link {
-    border-radius: 50%;
-    margin: 0 5px;
-    color: #f090b8;
-    border: 1px solid #f090b8;
+    margin: 0 4px;
+    color: #333;
+    border: 1px solid #d4a5e6;
     background-color: #fff;
+    border-radius: 50%;
     transition: all 0.2s ease-in-out;
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
   }
-
+  
   .custom-pagination .page-item.active .page-link {
-    background-color: #f090b8;
+    background-color: #d4a5e6;
     color: #fff;
-    border-color: #f090b8;
+    border-color: #d4a5e6;
   }
 
   .custom-pagination .page-item.disabled .page-link {
@@ -25,31 +27,36 @@
   }
 
   .custom-pagination .page-item .page-link:hover {
-    background-color: #fcd6e5;
-    color: #d63384;
+    background: #e0f7f7;
+    color: #333;
+    border-color: #d4a5e6;
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(212, 165, 230, 0.3);
   }
+
   .filter-form {
-    background-color: #fff0f5;
     padding: 16px;
-    border-radius: 10px;
-    box-shadow: 0 0 8px rgba(240, 144, 184, 0.3);
-    border: 1px solid #f3c6d6;
     display: flex;
     flex-wrap: wrap;
     align-items: end;
     gap: 20px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+  }
+  .searchName{
+     border: 2px solid #90cdf4;
   }
 
   .filter-form form label {
     font-weight: 500;
-    color: #d63384;
     margin-bottom: 4px;
     display: block;
     white-space: nowrap;
   }
 
   .filter-form input[type="date"] {
-    border: 1px solid #f090b8;
+    border: 1px solid #90cdf4;
     padding: 6px 10px;
     border-radius: 6px;
     margin-right: 8px;
@@ -61,13 +68,13 @@
   }
 
   .filter-form .btn-primary {
-    background-color: #f090b8;
-    border-color: #f090b8;
+    background-color: #90cdf4;
+    border-color: #90cdf4;
   }
 
   .filter-form .btn-primary:hover {
-    background-color: #d96a99;
-    border-color: #d96a99;
+    background-color: #3ab0d4;
+
   }
 
   .filter-form form .form-control {
@@ -79,9 +86,7 @@
     border: 1px solid #ccc;
   }
 
-  .filter-form .btn-custom:hover {
-    background-color: #d4d4d4;
-  }
+
   /* table */
   /* Bảng tổng thể */
   .table-responsive {
@@ -385,7 +390,7 @@
               th:action="@{/Promotion/search}"
               id="filterForm"
               method="get"
-              class="row g-2 align-items-end"
+              class="row g-2 align-items-end seach-filter-row"
             >
               <div class="col-md-4">
                 <label for="fromDate" class="form-label">Từ ngày:</label>
@@ -435,7 +440,7 @@
                   name="title"
                   th:value="${title}"
                   placeholder="Tên khuyến mãi"
-                  class="form-control"
+                  class="form-control searchName"
                 />
               </div>
               <button class="btn btn-primary" type="submit">Tìm</button>
@@ -503,7 +508,7 @@
                   ></a>
                   <a
                   href="#"
-                  class="delete-icon"
+                  class="btn btn-sm btn-danger"
                   onclick="confirmDelete(this)"
                   th:data-url="@{/Promotion/delete/{id}(id=${item.id})}"
                   title="Xóa sản phẩm"

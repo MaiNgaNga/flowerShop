@@ -111,33 +111,20 @@
           data-aos="fade-right"
           data-aos-duration="1000"
         >
-          <div class="promo-card">
-            <span class="promo-tag">-10%</span>
-            <img
-              src="https://hoavily.com/uploads/file/Bai%20viet%202024/hoa-bang-tien-hoavlily.jpg"
-              alt="Sản phẩm 1"
-            />
-          </div>
-          <div class="promo-card">
-            <span class="promo-tag">-15%</span>
-            <img
-              src="https://hoavily.com/uploads/file/Bai%20viet%202024/hoa-bang-tien-hoavlily.jpg"
-              alt="Sản phẩm 2"
-            />
-          </div>
-          <div class="promo-card">
-            <span class="promo-tag">-20%</span>
-            <img
-              src="https://hoavily.com/uploads/file/Bai%20viet%202024/hoa-bang-tien-hoavlily.jpg"
-              alt="Sản phẩm 3"
-            />
-          </div>
-          <div class="promo-card">
-            <span class="promo-tag">-25%</span>
-            <img
-              src="https://hoavily.com/uploads/file/Bai%20viet%202024/hoa-bang-tien-hoavlily.jpg"
-              alt="Sản phẩm 4"
-            />
+          <div class="promo-card" th:each="product : ${discountProducts}">
+            <span
+              class="promo-tag"
+              th:text="'-' + ${product.discountPercent} + '%'"
+              >-10%</span
+            >
+            <a th:href="@{/detail(id=${product.id})}">
+              <img
+                th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
+                th:alt="${product.name}"
+                alt="Sản phẩm giảm giá"
+                onerror="this.src='/images/logo.png'; this.onerror=null;"
+              />
+            </a>
           </div>
         </div>
 
@@ -337,10 +324,24 @@
                 onerror="this.src='/images/logo.png'; this.onerror=null;"
               />
             </a>
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
-            </div>
+            <form
+              th:action="@{/cart/add}"
+              method="post"
+              style="display: inline"
+            >
+              <input type="hidden" name="productId" th:value="${product.id}" />
+              <input type="hidden" name="quantity" value="1" />
+              <button
+                type="submit"
+                class="cart-icon-wrapper"
+                style="border: none; background: none; padding: 0"
+              >
+                <div class="cart-icon">
+                  <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="add-to-cart-text">Add To Cart</div>
+              </button>
+            </form>
           </div>
           <div class="product-info">
             <div class="product-name" th:text="${product.name}">
@@ -458,33 +459,32 @@
         <div class="service-carousel" data-aos="zoom-in" data-aos-delay="100">
           <div class="carousel-images">
             <img
-              src="https://picsum.photos/id/1018/600/400"
+              th:src="@{/images/image1.jpg}"
               alt="Slide 1"
               class="carousel-img active"
             />
             <img
-              src="https://picsum.photos/id/1015/600/400"
+              th:src="@{/images/image2.jpeg}"
               alt="Slide 2"
               class="carousel-img"
             />
             <img
-              src="https://picsum.photos/id/1020/600/400"
+              th:src="@{/images/image3.jpg}"
               alt="Slide 3"
               class="carousel-img"
             />
             <img
-              src="https://picsum.photos/id/1021/600/400"
+              th:src="@{/images/image4.jpeg}"
               alt="Slide 4"
               class="carousel-img"
             />
             <img
-              src="https://picsum.photos/id/1022/600/400"
+              th:src="@{/images/image5.jpg}"
               alt="Slide 5"
               class="carousel-img"
             />
           </div>
         </div>
-
         <!-- Nội dung dịch vụ -->
         <div class="service-content" data-aos="fade-left" data-aos-delay="300">
           <h2>Dịch vụ</h2>
@@ -621,68 +621,6 @@
         justify-content: center;
       }
     </style>
-    <script>
-      // Hiển thị/ẩn popup chatbot
-      document.getElementById("chatbot-toggle").onclick = function () {
-        document.getElementById("chatbot-popup").style.display = "flex";
-        this.style.display = "none";
-      };
-      document.getElementById("chatbot-close").onclick = function () {
-        document.getElementById("chatbot-popup").style.display = "none";
-        document.getElementById("chatbot-toggle").style.display = "flex";
-      };
-
-      // Hàm gửi tin nhắn và gọi API
-      async function sendChatbotMessage() {
-        const input = document.getElementById("chatbot-input");
-        const text = input.value.trim();
-        if (!text) return;
-        const body = document.getElementById("chatbot-body");
-
-        // Hiển thị tin nhắn người dùng
-        const userMsg = document.createElement("div");
-        userMsg.className = "chatbot-message user";
-        userMsg.innerText = text;
-        body.appendChild(userMsg);
-        input.value = "";
-        body.scrollTop = body.scrollHeight;
-
-        // Hiển thị trạng thái đang trả lời
-        const botMsg = document.createElement("div");
-        botMsg.className = "chatbot-message bot";
-        botMsg.innerText = "Đang trả lời...";
-        body.appendChild(botMsg);
-        body.scrollTop = body.scrollHeight;
-
-        // Gọi API
-        try {
-          const response = await fetch("http://localhost:3000/api/chat", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ question: text }),
-          });
-          if (!response.ok) throw new Error("Lỗi server");
-          const data = await response.json();
-          botMsg.innerText = data.answer || "Xin lỗi, tôi chưa có câu trả lời.";
-        } catch (e) {
-          botMsg.innerText = "Có lỗi khi kết nối đến máy chủ.";
-        }
-      }
-
-      // Gửi tin nhắn khi nhấn Enter
-      document
-        .getElementById("chatbot-input")
-        .addEventListener("keypress", function (e) {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            sendChatbotMessage();
-          }
-        });
-      document.getElementById("chatbot-send").onclick = sendChatbotMessage;
-    </script>
-       {% comment %} // copy den day thoi nhe  {% endcomment %}
     <script th:src="@{/js/home-page.js}"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>

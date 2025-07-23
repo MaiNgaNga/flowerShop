@@ -17,7 +17,7 @@
       <a href="/home" class="active">Trang Chủ</a>
       <a href="/services">Dịch Vụ</a>
       <div class="dropdown">
-        <a href="/products" class="dropdown-toggle nav-link">Danh mục</a>
+        <a class="dropdown-toggle nav-link">Danh mục</a>
         <ul class="dropdown-menu">
           <div class="dropdown-columns">
             <li th:each="proCategory : ${productCategories}">
@@ -60,26 +60,20 @@
         </button>
       </form>
       <!-- Search suggestions dropdown -->
-      <div
-        class="search-suggestions"
-        id="searchSuggestions"
-        style="display: none"
-      >
-        <div class="suggestion-header">
-          <i class="fas fa-lightbulb me-2"></i>
-          <span>Gợi ý tìm kiếm</span>
-        </div>
-        <div class="suggestion-list" id="suggestionList">
-          <!-- Suggestions will be populated by JavaScript -->
-        </div>
-      </div>
     </div>
 
     <!-- Icons group: Cart + User -->
     <div class="icons">
       <div class="cart">
-        🛒
-        <span class="cart-count">3</span>
+        <a href="/cart" style="text-decoration: none">
+          🛒
+          <span
+            id="cart-count"
+            class="cart-count"
+            th:text="${cartCount != null ? cartCount : 0}"
+            >0</span
+          ></a
+        >
       </div>
       <div class="user-dropdown">
         <div class="user-icon">👤</div>
@@ -114,7 +108,6 @@
   </div>
 </header>
 
-<!-- Search JavaScript & Active nav JS -->
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     // --- NAV ACTIVE JS ---
@@ -129,108 +122,32 @@
           (path === "/" || path === "/home")) ||
         (link.getAttribute("href") === "/services" &&
           path.startsWith("/services")) ||
-        (link.getAttribute("href") === "/products" &&
-          (path.startsWith("/products") || path.startsWith("/ProductUser"))) ||
         (link.getAttribute("href") === "/contact" &&
           path.startsWith("/contact")) ||
         (link.getAttribute("href") === "/article" &&
           path.startsWith("/article")) ||
-        (link.getAttribute("href") === "/pos" && path.startsWith("/pos"))
+        (link.getAttribute("href") === "/pos" && path.startsWith("/pos")) ||
+        // Dòng này là quan trọng: nếu là dropdown-toggle (Danh mục) và path đúng thì active
+        (link.classList.contains("dropdown-toggle") &&
+          (path.startsWith("/ProductUser") || path.startsWith("/products")))
       ) {
         link.classList.add("active");
       } else {
         link.classList.remove("active");
       }
     });
-
-    // --- SEARCH JS giữ nguyên ---
-    const searchInput = document.getElementById("searchInput");
-    const searchSuggestions = document.getElementById("searchSuggestions");
-    const suggestionList = document.getElementById("suggestionList");
-    const searchBtn = document.getElementById("searchBtn");
-    const commonSuggestions = [
-      "Bó hoa tươi",
-      "Giỏ hoa tươi",
-      "Lãng hoa",
-      "Hoa cưới",
-      "Hoa sinh nhật",
-      "Hoa khai trương",
-      "Hoa chia buồn",
-      "Hoa hồng",
-      "Hoa lan",
-      "Hoa cúc",
-    ];
-    let searchTimeout;
-    searchInput.addEventListener("focus", function () {
-      if (this.value.trim() === "") {
-        showSuggestions(commonSuggestions);
-      }
-    });
-    searchInput.addEventListener("input", function () {
-      clearTimeout(searchTimeout);
-      const query = this.value.trim();
-      if (query.length === 0) {
-        showSuggestions(commonSuggestions);
-        return;
-      }
-      if (query.length < 2) {
-        hideSuggestions();
-        return;
-      }
-      searchTimeout = setTimeout(() => {
-        const filteredSuggestions = commonSuggestions.filter((suggestion) =>
-          suggestion.toLowerCase().includes(query.toLowerCase())
-        );
-        if (filteredSuggestions.length > 0) {
-          showSuggestions(filteredSuggestions);
-        } else {
-          hideSuggestions();
-        }
-      }, 300);
-    });
-    suggestionList.addEventListener("click", function (e) {
-      if (e.target.classList.contains("suggestion-item")) {
-        searchInput.value = e.target.textContent;
-        hideSuggestions();
-        searchInput.focus();
-      }
-    });
-    document.addEventListener("click", function (e) {
-      if (
-        !searchInput.contains(e.target) &&
-        !searchSuggestions.contains(e.target)
-      ) {
-        hideSuggestions();
-      }
-    });
-    searchInput.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        if (this.value.trim() !== "") {
-          this.closest("form").submit();
-        }
-      }
-    });
-    function showSuggestions(suggestions) {
-      suggestionList.innerHTML = "";
-      suggestions.forEach((suggestion) => {
-        const item = document.createElement("div");
-        item.className = "suggestion-item";
-        item.textContent = suggestion;
-        suggestionList.appendChild(item);
-      });
-      searchSuggestions.style.display = "block";
+    document.addEventListener("DOMContentLoaded", function () {
+      // ... các code nav active khác ...
+     document.addEventListener("DOMContentLoaded", function () {
+    // ... các code nav active khác ...
+    function updateCartCount() {
+      fetch('/cart/count')
+        .then(response => response.json())
+        .then(count => {
+          document.getElementById('cart-count').textContent = count;
+        });
     }
-    function hideSuggestions() {
-      searchSuggestions.style.display = "none";
-    }
-    searchBtn.addEventListener("click", function () {
-      if (searchInput.value.trim() !== "") {
-        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-        setTimeout(() => {
-          this.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i>';
-        }, 1000);
-      }
-    });
+    updateCartCount();
+  });
   });
 </script>

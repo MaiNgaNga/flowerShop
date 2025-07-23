@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
+import com.datn.utils.AuthService;
+import com.datn.model.User;
+
 @Controller
 public class PostController {
 
@@ -30,6 +33,11 @@ public class PostController {
     @Autowired
     private PostCommentService postCommentService; // ✅ Thêm service bình luận
 
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private com.datn.Service.CartItemService cartItemService;
+
     @RequestMapping("/PostUser")
     public String postPage(Model model,
             @RequestParam(name = "p", defaultValue = "0") int page) {
@@ -37,6 +45,14 @@ public class PostController {
         Pageable pageable = PageRequest.of(page, 12);
         Page<Post> posts = postService.findAllPageable(pageable);
         List<Post> newestPosts = postService.findTop12Newest();
+
+        int cartCount = 0;
+        User user = authService.getUser();
+        if (user != null) {
+            Integer userId = user.getId(); // Sửa lại nếu getter id khác
+            cartCount = cartItemService.getCartItemsByUserId(userId).size();
+        }
+        model.addAttribute("cartCount", cartCount);
 
         model.addAttribute("productCategories", pro_ca_service.findAll());
         model.addAttribute("page", posts);
@@ -80,11 +96,9 @@ public class PostController {
         List<Post> relatedPosts = postService.findRelatedPosts(id);
         model.addAttribute("relatedPosts", relatedPosts);
 
-
         // ✅ Truyền danh sách bình luận theo bài viết
         List<PostComment> comments = postCommentService.getCommentsByPostId(id);
         model.addAttribute("postComments", comments);
-
 
         model.addAttribute("productCategories", pro_ca_service.findAll());
 

@@ -16,6 +16,8 @@ import com.datn.Service.CategoryService;
 import com.datn.Service.ProductCategoryService;
 import com.datn.Service.ProductService;
 import com.datn.model.Product;
+import com.datn.utils.AuthService;
+import com.datn.model.User;
 
 @Controller
 public class ProductController {
@@ -28,6 +30,11 @@ public class ProductController {
     @Autowired
     private CategoryService ca_Service;
 
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private com.datn.Service.CartItemService cartItemService;
+
     @RequestMapping("/ProductUser")
     public String index(Model model,
             @RequestParam("id") Integer pro_categoryId,
@@ -37,6 +44,14 @@ public class ProductController {
             @RequestParam(name = "max", required = false) Double maxPrice,
             @RequestParam("p") Optional<Integer> p,
             @RequestParam(name = "filter", required = false) String filterType) {
+
+        int cartCount = 0;
+        User user = authService.getUser();
+        if (user != null) {
+            Integer userId = user.getId(); // Sửa lại nếu getter id khác
+            cartCount = cartItemService.getCartItemsByUserId(userId).size();
+        }
+        model.addAttribute("cartCount", cartCount);
         Pageable pageable = PageRequest.of(p.orElse(0), 12);
         Page<Product> products = null;
 

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.datn.Service.ProductCategoryService;
 import com.datn.Service.ProductService;
 import com.datn.model.Product;
+import com.datn.utils.AuthService;
+import com.datn.model.User;
 
 @Controller
 @RequestMapping("/services")
@@ -24,8 +26,20 @@ public class ServicePageController {
     @Autowired
     private ProductCategoryService productCategoryService;
 
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private com.datn.Service.CartItemService cartItemService;
+
     @GetMapping
     public String showServiceGift(Model model) {
+        int cartCount = 0;
+        User user = authService.getUser();
+        if (user != null) {
+            Integer userId = user.getId(); // Sửa lại nếu getter id khác
+            cartCount = cartItemService.getCartItemsByUserId(userId).size();
+        }
+        model.addAttribute("cartCount", cartCount);
         model.addAttribute("productCategories", productCategoryService.findAll());
         model.addAttribute("view", "service-gift");
         return "layouts/layout";

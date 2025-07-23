@@ -101,14 +101,16 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
         Page<Product> searchByName(@Param("keyword") String keyword, Pageable pageable);
 
         // Tìm kiếm theo loại hoa (category name)
-        @Query("SELECT p FROM Product p WHERE LOWER(p.category.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))")
+        @Query(value = "SELECT p.* FROM products p INNER JOIN categories c ON p.Category_Id = c.id WHERE c.name COLLATE Latin1_General_CI_AI LIKE CONCAT('%', :categoryName, '%')", countQuery = "SELECT COUNT(*) FROM products p INNER JOIN categories c ON p.Category_Id = c.id WHERE c.name COLLATE Latin1_General_CI_AI LIKE CONCAT('%', :categoryName, '%')", nativeQuery = true)
         Page<Product> searchByCategoryName(@Param("categoryName") String categoryName, Pageable pageable);
 
         // Tìm kiếm theo danh mục hoa (productCategory name)
-        @Query("SELECT p FROM Product p WHERE LOWER(p.productCategory.name) LIKE LOWER(CONCAT('%', :productCategoryName, '%'))")
+        @Query(value = "SELECT p.* FROM products p INNER JOIN product_categories pc ON p.product_Category_Id = pc.id WHERE pc.name COLLATE Latin1_General_CI_AI LIKE CONCAT('%', :productCategoryName, '%')", countQuery = "SELECT COUNT(*) FROM products p INNER JOIN product_categories pc ON p.product_Category_Id = pc.id WHERE pc.name COLLATE Latin1_General_CI_AI LIKE CONCAT('%', :productCategoryName, '%')", nativeQuery = true)
         Page<Product> searchByProductCategoryName(@Param("productCategoryName") String productCategoryName,
                         Pageable pageable);
 
         // Tìm kiếm theo tên sản phẩm (đã có sẵn: searchByName)
+
+        List<Product> findTop4ByDiscountPercentGreaterThanAndAvailableIsTrueOrderByDiscountPercentDesc(int minDiscount);
 
 }

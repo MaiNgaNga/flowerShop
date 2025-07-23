@@ -99,20 +99,38 @@
       <i class="fas fa-hourglass-half"></i> Đang chờ khách hàng thanh toán...
     </div>
     <div class="qr-actions">
-      <button class="btn btn-success" id="checkPaymentBtn">
-        <i class="fas fa-sync"></i> Kiểm tra thanh toán
+      <button class="btn btn-success" id="manualConfirmBtn">
+        <i class="fas fa-check"></i> Xác nhận đã thanh toán
       </button>
       <button class="btn btn-info" id="printQRBtn">
         <i class="fas fa-print"></i> In mã QR
       </button>
-      <button class="btn btn-warning" onclick="window.location.reload()">
+      <button
+        class="btn btn-warning"
+        id="refreshQRBtn"
+        type="button"
+        th:attr="data-ordercode=${orderCode}"
+      >
         <i class="fas fa-redo"></i> Làm mới QR
       </button>
-      <a href="/pos" class="btn btn-outline-danger"
-        ><i class="fas fa-times"></i> Hủy & Quay lại POS</a
-      >
+      <a href="/pos" class="btn btn-outline-danger">
+        <i class="fas fa-times"></i> Hủy & Quay lại POS
+      </a>
     </div>
   </div>
 </div>
 
 <script src="/js/pos-payment-qr.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var refreshBtn = document.getElementById("refreshQRBtn");
+    if (refreshBtn) {
+      refreshBtn.onclick = function () {
+        var orderCode = this.getAttribute("data-ordercode");
+        if (orderCode) {
+          window.location.href = "/pos/payment-qr?orderCode=" + orderCode;
+        }
+      };
+    }
+  });
+</script>

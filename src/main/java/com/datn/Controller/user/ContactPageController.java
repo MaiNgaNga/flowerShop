@@ -4,18 +4,49 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
+import com.datn.Service.ContactService;
 import com.datn.Service.ProductCategoryService;
+import com.datn.model.Contact;
+import com.datn.utils.AuthService;
+import com.datn.model.User;
 
 @Controller
 public class ContactPageController {
 
     @Autowired
-    private ProductCategoryService productCategoryService;
+    private ContactService contactService;
+
+    @Autowired
+    private ProductCategoryService pro_ca_Service;
+
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private com.datn.Service.CartItemService cartItemService;
 
     @GetMapping("/contact")
-    public String contact(Model model) {
-        model.addAttribute("productCategories", productCategoryService.findAll());
+    public String contact(Model model, @ModelAttribute("contact") Contact contact) {
+        int cartCount = 0;
+        User user = authService.getUser();
+        if (user != null) {
+            Integer userId = user.getId(); // Sửa lại nếu getter id khác
+            cartCount = cartItemService.getCartItemsByUserId(userId).size();
+        }
+        model.addAttribute("cartCount", cartCount);
+        model.addAttribute("view", "contact");
+        model.addAttribute("productCategories", pro_ca_Service.findAll());
+        return "layouts/layout";
+    }
+
+    @PostMapping("/sendContact")
+    public String createContact(Model model, @ModelAttribute("contact") Contact contact) {
+
+        contactService.saveContact(contact);
+        model.addAttribute("successMessage",
+                "Cảm ơn bạn đã gửi thông tin đến chúng tôi <br/>. (Chúng tôi sẽ sớm liên hệ với bạn trong thời gian sớm nhất!)");
         model.addAttribute("view", "contact");
         return "layouts/layout";
     }
