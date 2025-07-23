@@ -18,10 +18,8 @@ public class ContactPageController {
 
     @Autowired
     private ContactService contactService;
-
     @Autowired
     private ProductCategoryService pro_ca_Service;
-
     @Autowired
     private AuthService authService;
     @Autowired
@@ -32,7 +30,7 @@ public class ContactPageController {
         int cartCount = 0;
         User user = authService.getUser();
         if (user != null) {
-            Integer userId = user.getId(); // Sửa lại nếu getter id khác
+            Integer userId = user.getId();
             cartCount = cartItemService.getCartItemsByUserId(userId).size();
         }
         model.addAttribute("cartCount", cartCount);
@@ -43,7 +41,6 @@ public class ContactPageController {
 
     @PostMapping("/sendContact")
     public String createContact(Model model, @ModelAttribute("contact") Contact contact) {
-
         contactService.saveContact(contact);
         model.addAttribute("successMessage",
                 "Cảm ơn bạn đã gửi thông tin đến chúng tôi <br/>. (Chúng tôi sẽ sớm liên hệ với bạn trong thời gian sớm nhất!)");

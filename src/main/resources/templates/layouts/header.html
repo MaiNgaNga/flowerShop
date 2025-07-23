@@ -136,18 +136,13 @@
         link.classList.remove("active");
       }
     });
-    document.addEventListener("DOMContentLoaded", function () {
-      // ... các code nav active khác ...
-     document.addEventListener("DOMContentLoaded", function () {
-    // ... các code nav active khác ...
     function updateCartCount() {
-      fetch('/cart/count')
-        .then(response => response.json())
-        .then(count => {
-          document.getElementById('cart-count').textContent = count;
+      fetch("/cart/count")
+        .then((response) => response.json())
+        .then((count) => {
+          document.getElementById("cart-count").textContent = count;
         });
     }
     updateCartCount();
-  });
   });
 </script>

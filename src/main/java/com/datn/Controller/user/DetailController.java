@@ -34,15 +34,13 @@ public class DetailController {
     @RequestMapping("/detail")
     public String index(Model model, @RequestParam(value = "id", required = false) Long id,
             RedirectAttributes redirectAttributes) {
-
         int cartCount = 0;
         User user = authService.getUser();
         if (user != null) {
-            Integer userId = user.getId(); // Sửa lại nếu getter id khác
+            Integer userId = user.getId();
             cartCount = cartItemService.getCartItemsByUserId(userId).size();
         }
         model.addAttribute("cartCount", cartCount);
-
         model.addAttribute("comments", commentService.getCommentsByProduct(id));
         model.addAttribute("product", productService.findByID(id));
         model.addAttribute("productCategories", pro_ca_Service.findAll());
