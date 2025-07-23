@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
+  // Khởi động AOS
   AOS.init({ duration: 1000, once: true });
 
+  // Tạo hiệu ứng hoa bay
   const particleContainer = document.getElementById("flower-particles");
   function createFlower() {
     const flower = document.createElement("div");
@@ -13,6 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   setInterval(createFlower, 500);
 
+  // Cuộn mượt khi click anchor
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     anchor.addEventListener("click", function (e) {
       e.preventDefault();
@@ -22,23 +25,25 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  // Xử lý nút submit loading
   const form = document.getElementById("contact-form");
   if (form) {
     const submitBtn = form.querySelector(".btn-submit");
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      if (form.checkValidity()) {
-        submitBtn.classList.add("loading");
-        submitBtn.disabled = true;
-        setTimeout(() => {
-          submitBtn.classList.remove("loading");
-          submitBtn.disabled = false;
-          form.reset();
-          alert("Yêu cầu của bạn đã được gửi!");
-        }, 2000);
-      } else {
-        form.reportValidity();
-      }
+    form.addEventListener("submit", function () {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Đang gửi...
+      `;
     });
+  }
+
+  // Tự động ẩn alert sau 5 giây
+  const alert = document.getElementById("successAlert");
+  if (alert) {
+    setTimeout(() => {
+      alert.classList.remove("show");
+      alert.classList.add("fade");
+    }, 5000);
   }
 });

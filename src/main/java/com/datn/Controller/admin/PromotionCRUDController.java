@@ -1,10 +1,7 @@
 package com.datn.Controller.admin;
 
-import java.lang.ProcessBuilder.Redirect;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -71,6 +68,34 @@ public class PromotionCRUDController {
             model.addAttribute("view", "admin/promotionCRUD");
             return "admin/layout";
         }
+
+        if (promotion.getEndDate() != null && promotion.getStartDate() != null
+                && promotion.getEndDate().isBefore(promotion.getStartDate())) {
+            model.addAttribute("errorEndDate", "Ngày kết thúc phải trước ngày bắt đầu!");
+            model.addAttribute("view", "admin/promotionCRUD");
+            return "admin/layout";
+        }
+
+        String type = promotion.getDiscountType();
+        Double value = promotion.getDiscountValue();
+        if ("percent".equalsIgnoreCase(type)) {
+            if (value <= 0 || value > 100) {
+                model.addAttribute("errorDiscount", "Giá trị giảm giá phần trăm phải nằm trong khoảng 0 - 100!");
+                model.addAttribute("view", "admin/promotionCRUD");
+                return "admin/layout";
+            }
+
+        } else if ("amount".equalsIgnoreCase(type)) {
+            if (value <= 0) {
+                model.addAttribute("errorDiscount", "Giá trị giảm giá tiền tệ phải lớn hơn 0!");
+                model.addAttribute("view", "admin/promotionCRUD");
+                return "admin/layout";
+            }
+        } else {
+            model.addAttribute("error", "Loại giảm giá không hợp lệ! Chỉ chấp nhận 'percent' hoặc 'amount'.");
+            model.addAttribute("view", "admin/promotionCRUD");
+            return "admin/layout";
+        }
         try {
             // gán ngày hiện tại cho createDate
             promotion.setCreatedDate(LocalDateTime.now());
@@ -106,13 +131,42 @@ public class PromotionCRUDController {
             @Valid @ModelAttribute("promotion") Promotion promotion,
             Errors errors,
             RedirectAttributes redirectAttributes) {
+        if (errors.hasErrors()) {
+            model.addAttribute("view", "admin/promotionCRUD");
+            return "admin/layout";
+        }
+        if (promotion.getEndDate() != null && promotion.getStartDate() != null
+                && promotion.getEndDate().isBefore(promotion.getStartDate())) {
+            model.addAttribute("errorEndDate", "Ngày kết thúc phải trước ngày bắt đầu!");
+            model.addAttribute("view", "admin/promotionCRUD");
+            return "admin/layout";
+        }
+        String type = promotion.getDiscountType();
+        Double value = promotion.getDiscountValue();
+        if ("percent".equalsIgnoreCase(type)) {
+            if (value <= 0 || value > 100) {
+                model.addAttribute("errorDiscount", "Giá trị giảm giá phần trăm phải nằm trong khoảng 0 - 100!");
+                model.addAttribute("view", "admin/promotionCRUD");
+                return "admin/layout";
+            }
+
+        } else if ("amount".equalsIgnoreCase(type)) {
+            if (value <= 0) {
+                model.addAttribute("errorDiscount", "Giá trị giảm giá tiền tệ phải lớn hơn 0!");
+                model.addAttribute("view", "admin/promotionCRUD");
+                return "admin/layout";
+            }
+        } else {
+            model.addAttribute("error", "Loại giảm giá không hợp lệ! Chỉ chấp nhận 'percent' hoặc 'amount'.");
+            model.addAttribute("view", "admin/promotionCRUD");
+            return "admin/layout";
+        }
         try {
             // Lấy bản ghi cũ từ DB
             Promotion existing = promotionService.findByID(promotion.getId());
             if (existing == null) {
                 throw new IllegalArgumentException("Không tìm thấy khuyến mãi để cập nhật");
             }
-
             // Giữ lại ngày tạo gốc
             promotion.setCreatedDate(existing.getCreatedDate());
 
