@@ -164,39 +164,19 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<Product> searchByName(String name, Pageable pageable) {
-        // Lấy tất cả sản phẩm có tên gần giống (LIKE, không phân biệt hoa thường/hoa
-        // viết hoa)
-        Page<Product> page = dao.findAll(pageable); // lấy tất cả sản phẩm để lọc linh hoạt hơn
-        String keywordNoDiacritics = StringUtils.removeVietnameseDiacritics(name);
-        List<Product> filtered = page.getContent().stream()
-                .filter(p -> {
-                    String productName = StringUtils.removeVietnameseDiacritics(p.getName());
-                    return productName.contains(keywordNoDiacritics);
-                })
-                .toList();
-        return new org.springframework.data.domain.PageImpl<>(filtered, pageable, filtered.size());
+        return dao.searchByName(name, pageable);
     }
 
     // Tìm kiếm theo loại hoa (category)
+    @Override
     public Page<Product> searchByCategoryName(String categoryName, Pageable pageable) {
-        Page<Product> page = dao.findAll(pageable); // lấy tất cả sản phẩm để lọc linh hoạt hơn
-        String keywordNoDiacritics = StringUtils.removeVietnameseDiacritics(categoryName);
-        List<Product> filtered = page.getContent().stream()
-                .filter(p -> p.getCategory() != null && StringUtils
-                        .removeVietnameseDiacritics(p.getCategory().getName()).contains(keywordNoDiacritics))
-                .toList();
-        return new org.springframework.data.domain.PageImpl<>(filtered, pageable, filtered.size());
+        return dao.searchByCategoryName(categoryName, pageable);
     }
 
     // Tìm kiếm theo danh mục hoa (productCategory)
+    @Override
     public Page<Product> searchByProductCategoryName(String productCategoryName, Pageable pageable) {
-        Page<Product> page = dao.findAll(pageable); // lấy tất cả sản phẩm để lọc linh hoạt hơn
-        String keywordNoDiacritics = StringUtils.removeVietnameseDiacritics(productCategoryName);
-        List<Product> filtered = page.getContent().stream()
-                .filter(p -> p.getProductCategory() != null && StringUtils
-                        .removeVietnameseDiacritics(p.getProductCategory().getName()).contains(keywordNoDiacritics))
-                .toList();
-        return new org.springframework.data.domain.PageImpl<>(filtered, pageable, filtered.size());
+        return dao.searchByProductCategoryName(productCategoryName, pageable);
     }
 
     @Override
@@ -242,6 +222,20 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<Product> findByProductCategoryName(String name, Pageable pageable) {
         return dao.findByProductCategoryName(name, pageable);
+    }
+
+    @Override
+    public List<Product> findTop4ByDiscountPercentGreaterThanAndAvailableIsTrueOrderByDiscountPercentDesc(
+            int minDiscount) {
+        List<Product> products = dao
+                .findTop4ByDiscountPercentGreaterThanAndAvailableIsTrueOrderByDiscountPercentDesc(minDiscount);
+        java.time.LocalDate now = java.time.LocalDate.now();
+        return products.stream()
+                .filter(p -> p.getDiscountPercent() != null && p.getDiscountPercent() > 0
+                        && (p.getDiscountStart() == null || !now.isBefore(p.getDiscountStart()))
+                        && (p.getDiscountEnd() == null || !now.isAfter(p.getDiscountEnd())))
+                .limit(4)
+                .toList();
     }
 
 }

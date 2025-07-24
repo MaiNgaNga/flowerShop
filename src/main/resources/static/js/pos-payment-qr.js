@@ -1,4 +1,3 @@
-
 let timeLeft = 15 * 60;
 let totalTime = 15 * 60;
 
@@ -31,59 +30,60 @@ function updateCountdown() {
 
 setInterval(updateCountdown, 1000);
 
-const checkPaymentBtn = document.getElementById("checkPaymentBtn");
-if (checkPaymentBtn) {
-  checkPaymentBtn.addEventListener("click", function () {
-    const btn = this;
-    const originalText = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang kiểm tra...';
+// const checkPaymentBtn = document.getElementById("checkPaymentBtn");
+// if (checkPaymentBtn) {
+//   checkPaymentBtn.addEventListener("click", function () {
+//     const btn = this;
+//     const originalText = btn.innerHTML;
+//     btn.disabled = true;
+//     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang kiểm tra...';
 
-    setTimeout(() => {
-      if (Math.random() > 0.7) {
-        document.getElementById("statusAlert").innerHTML =
-          '<i class="fas fa-check-circle"></i> ✅ Thanh toán thành công!';
-        document.getElementById("statusAlert").className =
-          "alert alert-success";
+//     setTimeout(() => {
+//       if (Math.random() > 0.7) {
+//         document.getElementById("statusAlert").innerHTML =
+//           '<i class="fas fa-check-circle"></i> ✅ Thanh toán thành công!';
+//         document.getElementById("statusAlert").className =
+//           "alert alert-success";
 
-        try {
-          new Audio("/sounds/success.mp3").play();
-        } catch (e) {}
+//         try {
+//           new Audio("/sounds/success.mp3").play();
+//         } catch (e) {}
 
-        setTimeout(() => {
-          alert("🎉 Thanh toán thành công! Đơn hàng đã được xử lý.");
-          window.location.href = "/pos?success=payment_completed";
-        }, 2000);
-      } else {
-        btn.disabled = false;
-        btn.innerHTML = originalText;
+//         setTimeout(() => {
+//           alert("🎉 Thanh toán thành công! Đơn hàng đã được xử lý.");
+//           window.location.href = "/pos?success=payment_completed";
+//         }, 2000);
+//       } else {
+//         btn.disabled = false;
+//         btn.innerHTML = originalText;
 
-        const tempAlert = document.createElement("div");
-        tempAlert.className = "alert alert-warning mt-2";
-        tempAlert.innerHTML =
-          "<small>⏳ Chưa nhận được thanh toán. Vui lòng thử lại.</small>";
-        btn.parentNode.appendChild(tempAlert);
+//         const tempAlert = document.createElement("div");
+//         tempAlert.className = "alert alert-warning mt-2";
+//         tempAlert.innerHTML =
+//           "<small>⏳ Chưa nhận được thanh toán. Vui lòng thử lại.</small>";
+//         btn.parentNode.appendChild(tempAlert);
 
-        setTimeout(() => {
-          tempAlert.remove();
-        }, 3000);
-      }
-    }, 1500);
-  });
-}
+//         setTimeout(() => {
+//           tempAlert.remove();
+//         }, 3000);
+//       }
+//     }, 1500);
+//   });
+// }
 
 const printQRBtn = document.getElementById("printQRBtn");
 if (printQRBtn) {
   printQRBtn.addEventListener("click", function () {
-    const printWindow = window.open("", "_blank");
     const qrImage = document.querySelector('img[alt="QR Code thanh toán"]');
     const orderCode =
-      document.querySelector(".info-value[th\\:text='${orderCode}']")
-        ?.textContent || "";
+      document.querySelector(".info-value")?.textContent.trim() || "";
     const totalAmount =
-      document.querySelector(".info-value.text-danger")?.textContent || "";
+      document.querySelector(".info-value.text-danger")?.textContent.trim() ||
+      "";
 
-    printWindow.document.write(`
+    function printQR(qrImageHtml) {
+      const printWindow = window.open("", "_blank");
+      printWindow.document.write(`
         <html>
         <head>
             <title>In mã QR - ${orderCode}</title>
@@ -99,24 +99,41 @@ if (printQRBtn) {
             <div class="qr-container">
                 <h2>🌸 Cửa Hàng Hoa</h2>
                 <div class="info">Mã đơn hàng: <strong>${orderCode}</strong></div>
-                <img src="${qrImage.src}" alt="QR Code">
+                ${qrImageHtml}
                 <div class="total">Tổng tiền: ${totalAmount}</div>
                 <div class="info">Quét mã QR để thanh toán</div>
                 <div class="info"><small>Cảm ơn quý khách!</small></div>
             </div>
         </body>
         </html>
-    `);
+      `);
+      printWindow.document.close();
+      printWindow.print();
+    }
 
-    printWindow.document.close();
-    printWindow.print();
+    if (qrImage && qrImage.src && !qrImage.src.startsWith("data:")) {
+      fetch(qrImage.src)
+        .then((res) => res.blob())
+        .then((blob) => {
+          const reader = new FileReader();
+          reader.onloadend = function () {
+            printQR(`<img src="${reader.result}" alt="QR Code">`);
+          };
+          reader.readAsDataURL(blob);
+        });
+    } else {
+      let qrImageHtml =
+        qrImage && qrImage.src
+          ? `<img src="${qrImage.src}" alt="QR Code">`
+          : "<div style='color:red;'>Không có mã QR</div>";
+      printQR(qrImageHtml);
+    }
   });
 }
 
 setInterval(() => {
   const orderCode =
-    document.querySelector(".info-value[th\\:text='${orderCode}']")
-      ?.textContent || "";
+    document.querySelector(".info-value")?.textContent.trim() || "";
   if (!orderCode) return;
   fetch("/pos/check-payment-status", {
     method: "POST",
@@ -135,8 +152,7 @@ setInterval(() => {
         }, 2000);
       }
     })
-    .catch((error) => {
-    });
+    .catch((error) => {});
 }, 20000);
 
 window.addEventListener("beforeunload", function (e) {
@@ -144,3 +160,23 @@ window.addEventListener("beforeunload", function (e) {
   e.returnValue =
     "Bạn có chắc muốn rời khỏi trang? Giao dịch đang chờ thanh toán.";
 });
+
+document.getElementById("manualConfirmBtn").onclick = function () {
+  var orderCode = document
+    .getElementById("refreshQRBtn")
+    .getAttribute("data-ordercode");
+  fetch("/pos/manual-confirm-payment", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ orderCode: orderCode }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) {
+        alert("Đã xác nhận thanh toán thành công!");
+        window.location.reload();
+      } else {
+        alert("Lỗi: " + data.message);
+      }
+    });
+};

@@ -37,12 +37,7 @@ public class Shipper {
 
     private String historyOrder;
 
-
-    private Boolean status;
-
-    private Boolean isDeleted = false;
-
-    // Getters và Setters
+    Boolean status ; // Trạng thái shipper, mặc định là true (hoạt động)
 
     
 }

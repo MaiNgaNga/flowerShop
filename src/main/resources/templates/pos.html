@@ -77,21 +77,64 @@
       <div class="pos-product-list">
         <div class="pos-product-grid">
           <div th:each="product : ${products}" class="pos-card">
-            <img
-              th:if="${product.image_url != null and !#strings.isEmpty(product.image_url)}"
-              th:src="@{'/images/' + ${product.image_url}}"
-              th:alt="${product.name}"
-              class="pos-card-img"
-            />
-            <img
-              th:unless="${product.image_url != null and !#strings.isEmpty(product.image_url)}"
-              th:src="@{'/images/no-image.png'}"
-              th:alt="No image"
-              class="pos-card-img"
-            />
+            <div style="position: relative">
+              <img
+                th:if="${product.image_url != null and !#strings.isEmpty(product.image_url)}"
+                th:src="@{'/images/' + ${product.image_url}}"
+                th:alt="${product.name}"
+                class="pos-card-img"
+              />
+              <img
+                th:unless="${product.image_url != null and !#strings.isEmpty(product.image_url)}"
+                th:src="@{'/images/no-image.png'}"
+                th:alt="No image"
+                class="pos-card-img"
+              />
+              <span
+                th:if="${product.discountPercent != null && product.discountPercent > 0 && product.discountStart != null && product.discountEnd != null && !T(java.time.LocalDate).now().isBefore(product.discountStart) && !T(java.time.LocalDate).now().isAfter(product.discountEnd)}"
+                class="promo-tag"
+                style="
+                  position: absolute;
+                  top: 5px;
+                  left: 5px;
+                  background: #e53935;
+                  color: #fff;
+                  padding: 2px 8px;
+                  border-radius: 6px;
+                  font-size: 13px;
+                  z-index: 2;
+                "
+              >
+                -<span th:text="${product.discountPercent}"></span>%
+              </span>
+            </div>
             <div class="pos-card-title" th:text="${product.name}"></div>
             <div
               class="pos-card-price"
+              style="
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+              "
+              th:if="${product.discountPercent != null && product.discountPercent > 0 && product.discountStart != null && product.discountEnd != null && !T(java.time.LocalDate).now().isBefore(product.discountStart) && !T(java.time.LocalDate).now().isAfter(product.discountEnd)}"
+            >
+              <span
+                style="color: #e53935; font-weight: bold"
+                th:text="${#numbers.formatDecimal(product.priceAfterDiscount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+              ></span>
+              <span
+                style="
+                  text-decoration: line-through;
+                  color: #888;
+                  font-size: 13px;
+                  margin-left: 6px;
+                "
+                th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+              ></span>
+            </div>
+            <div
+              class="pos-card-price"
+              th:unless="${product.discountPercent != null && product.discountPercent > 0 && product.discountStart != null && product.discountEnd != null && !T(java.time.LocalDate).now().isBefore(product.discountStart) && !T(java.time.LocalDate).now().isAfter(product.discountEnd)}"
               th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VND'"
             ></div>
             <button
@@ -163,7 +206,6 @@
           <label class="form-label">Phương thức thanh toán</label>
           <select name="paymentMethod" class="form-control">
             <option value="cash">Tiền mặt</option>
-            <option value="card">Thẻ</option>
             <option value="qr_code">QR Code chuyển khoản</option>
           </select>
         </div>

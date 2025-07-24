@@ -40,5 +40,9 @@ public class User {
      @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Shipper> shippers;
 
+    @NotNull(message = "Trạng thái không được để trống")
+    @Column(nullable = false)
+    private Boolean status = true;
+
 
 }
