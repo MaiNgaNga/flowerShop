@@ -170,11 +170,10 @@
 
                 <td class="action-icons">
                   <a
-                    th:href="@{/Category/edit/{id}(id=${item.id})}"
+                    class="edit-icon"
                     title="Sửa sản phẩm"
                     class="btn btn-sm btn-info edit-icon"
                     th:href="@{'/Category/edit/' + ${item.id} + '?tab=edit'}"
-                    >Sửa</a
                   >
                     <i class="fa fa-edit"></i>
                   </a>
@@ -182,9 +181,7 @@
                     href="#"
                     class="delete-icon"
                     onclick="confirmDelete(this)"
-                    th:data-url="@{/Category/delete/{id}(id=${item.id})}"
                     title="Xóa sản phẩm"
-
                     th:data-url="@{'/Category/delete/' + ${item.id} + '?tab=list'}"
                   >
                     <i class="fa fa-trash"></i>
