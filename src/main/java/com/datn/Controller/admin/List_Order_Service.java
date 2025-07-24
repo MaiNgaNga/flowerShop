@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin/service-requests")
@@ -21,6 +22,7 @@ public class List_Order_Service {
     @Autowired
     private ServiceRequestService requestService;
 
+    // Hiển thị cả 2 danh sách: yêu cầu và đơn hàng
     @GetMapping
     public String listRequests(
             Model model,
@@ -28,14 +30,38 @@ public class List_Order_Service {
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        List<ServiceRequest> allRequests = requestService.findAll();
 
-        List<ServiceRequest> requests = requestService.findAll();
-        model.addAttribute("requests", requests);
+        // Bộ lọc
+        List<ServiceRequest> filteredRequests = allRequests.stream()
+                .filter(req -> (status == null || req.getStatus() == status))
+                .filter(req -> (keyword == null || keyword.isBlank() ||
+                        req.getFullName().toLowerCase().contains(keyword.toLowerCase()) ||
+                        req.getEmail().toLowerCase().contains(keyword.toLowerCase()) ||
+                        req.getPhone().contains(keyword)))
+                .filter(req -> (from == null || !req.getCreatedAt().toLocalDate().isBefore(from)))
+                .filter(req -> (to == null || !req.getCreatedAt().toLocalDate().isAfter(to)))
+                .collect(Collectors.toList());
+
+        // Yêu cầu chưa chốt đơn (PENDING, CONTACTED)
+        List<ServiceRequest> requestList = filteredRequests.stream()
+                .filter(r -> r.getStatus() != ServiceRequestStatus.CONFIRMED)
+                .collect(Collectors.toList());
+
+        // Đơn hàng đã chốt
+        List<ServiceRequest> confirmedOrders = filteredRequests.stream()
+                .filter(r -> r.getStatus() == ServiceRequestStatus.CONFIRMED)
+                .collect(Collectors.toList());
+
+        model.addAttribute("requests", requestList);
+        model.addAttribute("orders", confirmedOrders);
         model.addAttribute("statuses", ServiceRequestStatus.values());
+
         model.addAttribute("view", "admin/list-order-service");
         return "admin/layout";
     }
 
+    // Báo giá (liên hệ)
     @PostMapping("/{id}/contact")
     public String contactCustomer(
             @PathVariable("id") Long id,
@@ -56,6 +82,7 @@ public class List_Order_Service {
         return "redirect:/admin/service-requests";
     }
 
+    // Hủy yêu cầu
     @PostMapping("/{id}/cancel")
     public String cancelRequest(@PathVariable("id") Long id, RedirectAttributes ra) {
         ServiceRequest request = requestService.findById(id);
@@ -71,6 +98,7 @@ public class List_Order_Service {
         return "redirect:/admin/service-requests";
     }
 
+    // Xác nhận đơn
     @PostMapping("/{id}/confirm")
     public String confirmRequest(@PathVariable("id") Long id, RedirectAttributes ra) {
         ServiceRequest request = requestService.findById(id);
