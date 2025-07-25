@@ -1,0 +1,243 @@
+body {
+  font-family: "Roboto", sans-serif;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  min-height: 100vh;
+  margin: 0;
+}
+
+.content {
+  padding: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.card {
+  border: none;
+  border-radius: 15px;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.card-header {
+  background: #bfdbfe;
+  color: #1e3a8a;
+  font-weight: 500;
+  border-radius: 15px 15px 0 0;
+  padding: 15px 20px;
+  border-bottom: none;
+}
+
+.nav-tabs {
+  border-bottom: 2px solid #d1d5db;
+}
+
+.nav-tabs .nav-link {
+  border: none;
+  padding: 12px 20px;
+  font-weight: 500;
+  color: #4b5563;
+  transition: all 0.3s ease;
+  border-radius: 8px 8px 0 0;
+}
+
+.nav-tabs .nav-link.active {
+  background: #60a5fa;
+  color: #ffffff;
+  border-bottom: none;
+}
+
+.nav-tabs .nav-link:hover {
+  background: #e5e7eb;
+  color: #1f2937;
+}
+
+.filter-section {
+  background: #f9fafb;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #e5e7eb;
+}
+
+.form-label {
+  color: #374151;
+  font-weight: 500;
+}
+
+.form-control,
+.form-select {
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+}
+
+.table {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table th {
+  background: #f1f5f9;
+  color: #374151;
+  font-weight: 500;
+  text-align: center;
+}
+
+.table td {
+  vertical-align: middle;
+  text-align: center;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+}
+
+.btn-action {
+  font-size: 0.9rem;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: none;
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn-action::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+}
+
+.btn-action:hover::before {
+  width: 200px;
+  height: 200px;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+}
+
+.btn-primary:hover {
+  background-color: #1d4ed8;
+}
+
+.btn-success {
+  background-color: #34d399;
+}
+
+.btn-success:hover {
+  background-color: #10b981;
+}
+
+.btn-danger {
+  background-color: #f87171;
+}
+
+.btn-danger:hover {
+  background-color: #ef4444;
+}
+
+.btn-info {
+  background-color: #22d3ee;
+}
+
+.btn-info:hover {
+  background-color: #06b6d4;
+}
+
+.btn-secondary {
+  background-color: #6b7280;
+}
+
+.btn-secondary:hover {
+  background-color: #4b5563;
+}
+
+.modal-content {
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+  background: #bfdbfe;
+  color: #1e3a8a;
+  border-radius: 15px 15px 0 0;
+  border-bottom: none;
+}
+
+.modal-footer {
+  border-top: none;
+}
+
+.filter-buttons {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.modal-dialog {
+  max-width: 600px;
+}
+
+#createOrderModal .modal-dialog,
+#orderDetailsModal .modal-dialog {
+  max-width: 800px;
+  /* Set both modals to 800px width */
+}
+
+.modal-form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.modal-form-row .col-md-6 {
+  flex: 1;
+  min-width: 250px;
+}
+
+/* Ensure full-width inputs and selects in both modals */
+#createOrderModal .form-control,
+#createOrderModal .form-select,
+#orderDetailsModal .form-control,
+#orderDetailsModal .form-select {
+  width: 100%;
+}
+
+/* Full-width description field for orderDetailsModal */
+#orderDetailsModal .description-field {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+
+/* Description field in createOrderModal shares row with execution time */
+#createOrderModal .description-field {
+  flex: 1;
+  min-width: 250px;
+}
