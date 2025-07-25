@@ -68,6 +68,7 @@ public class ProductController {
 
         model.addAttribute("page", products);
         model.addAttribute("pro_ca", productCategoryService.findByID(pro_categoryId));
+        model.addAttribute("bestsellerProduct", productService.findBestSeller());
         model.addAttribute("productCategories", productCategoryService.findAll());
         model.addAttribute("categogies", ca_Service.findAll());
         model.addAttribute("view", "product");

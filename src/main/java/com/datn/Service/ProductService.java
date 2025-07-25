@@ -79,4 +79,6 @@ public interface ProductService {
         List<Product> findTop4ByDiscountPercentGreaterThanAndAvailableIsTrueOrderByDiscountPercentDesc(int minDiscount);
 
         List<Product> findTop10ByProductCategoryName(String productCategoryName);
+        /// sản phẩm hot
+         List<Product> findBestSeller();
 }

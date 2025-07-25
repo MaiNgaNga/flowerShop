@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sản phẩm</title>
-     <link rel="stylesheet" th:href="@{/css/productCategory.css}" />
-     <link
+    <link rel="stylesheet" th:href="@{/css/productCategory.css}" />
+    <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
@@ -367,54 +367,68 @@
         </article>
       </div>
       <div class="container">
-      <div class="text">Sản phẩm hot của các danh mục khác</div>
-      <div class="row">
-        <!-- Card 1 -->
-      <th:block th:each="item:${hotProductsOtherCategories}">
-          <div class="col-lg-3 col-md-6">
-          <div class="product-card">
-            <div class="product-img-container">
-              <div class="flip-box">
-                <img
-                  th:src="@{/images/{image}(image=${item.image_url})}"
-                  class="product-img front-img"
-                />
-                <img
-                  th:src="@{/images/{image}(image=${item.image_url})}"
-                  class="product-img back-img"
-                 
-                />
-              </div>
+        <div class="text text-secondary fs-3 mb-2 mt-4">Sản phẩm bán chạy nhất</div>
+        <div class="row">
+          <!-- Card 1 -->
+          <th:block
+            th:each="product : ${#lists.size(bestsellerProduct) > 8 ? bestsellerProduct.subList(0, 8) : bestsellerProduct}"
+          >
+            <div class="col-lg-3 col-md-6">
+              <div class="product-card">
+                <div class="product-img-container">
+                  <div class="flip-box">
+                    <a
+                      th:href="@{/detail(id=${product.id})}"
+                      class="text-decoration-none"
+                    >
+                      <img
+                        th:src="@{/images/{image}(image=*{product.image_url})}"
+                        class="product-img front-img"
+                      />
+                      <img
+                        th:src="@{/images/{image}(image=*{product.image_url2})}"
+                        class="product-img back-img"
+                      />
+                    </a>
+                  </div>
 
-              <div class="overlay">
-                <div class="add-to-cart-container">
-                  <button class="add-to-cart">
-                    <i class="fa fa-shopping-cart"></i>
-                  </button>
-                  <div class="add-to-cart-text">Add to cart</div>
+                  <div class="overlay">
+                    <form
+                      th:action="@{/cart/add}"
+                      method="post"
+                      style="display: inline"
+                    >
+                      <div class="add-to-cart-container">
+                        <input
+                          type="hidden"
+                          name="productId"
+                          th:value="${product.id}"
+                        />
+                        <input type="hidden" name="quantity" value="1" />
+                        <button class="add-to-cart">
+                          <i class="fa fa-shopping-cart"></i>
+                        </button>
+                        <div class="add-to-cart-text">Add to cart</div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                <div class="product-info">
+                  <h4 th:text="${product.name}">Bó hoa cưới</h4>
+                  <p th:text="${product.price}">360,000₫</p>
+                  <div class="sizes">
+                    <button class="size-btn">Mua ngay</button>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="product-info">
-              <h4 th:text="${item.name}">Bó hoa cưới</h4>
-              <p th:text="${item.price}">360,000₫</p>
-              <div class="sizes">
-                <button class="size-btn">Mua ngay</button>
-              </div>
-            </div>
-          </div>
+          </th:block>
         </div>
-      </th:block>
-        <!-- 2 -->
-       
-       
-        
       </div>
     </div>
-    </div>
-     <script th:src="@{/js/services-page.js}"></script>
+    <script th:src="@{/js/services-page.js}"></script>
   </body>
   <!-- AOS JS -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 </html>
