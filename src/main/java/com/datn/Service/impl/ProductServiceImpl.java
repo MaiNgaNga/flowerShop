@@ -25,6 +25,8 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     ParamService param;
 
+
+
     @Override
     public List<Product> findAll() {
         return dao.findAll();
@@ -236,6 +238,11 @@ public class ProductServiceImpl implements ProductService {
                         && (p.getDiscountEnd() == null || !now.isAfter(p.getDiscountEnd())))
                 .limit(4)
                 .toList();
+    }
+
+    @Override
+    public List<Product> findBestSeller() {
+        return dao.findSellingProducts();
     }
 
 }

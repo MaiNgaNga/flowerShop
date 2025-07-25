@@ -77,4 +77,7 @@ public interface ProductService {
         
         // Lấy 4 sản phẩm giảm giá nhiều nhất, còn hiệu lực, còn hàng
         List<Product> findTop4ByDiscountPercentGreaterThanAndAvailableIsTrueOrderByDiscountPercentDesc(int minDiscount);
+
+        /// sản phẩm hot
+         List<Product> findBestSeller();
 }

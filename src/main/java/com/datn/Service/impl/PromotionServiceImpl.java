@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.datn.Service.PromotionService;
 import com.datn.dao.PromotionDAO;
@@ -84,6 +85,19 @@ public void update(Promotion entity) {
     public Promotion findPromotionByName(String voucherCode) {
         return promotionDAO.findPromotionByName(voucherCode);
     }
+
+    @Transactional
+    @Override
+    public void updateUseCount(Long id, int useCount) {
+        promotionDAO.updateUseCount(id, useCount);
+    }
+
+    @Override
+    public List<Promotion> findValidPromotion() {
+        return promotionDAO.findValidPromotions();
+    }
+
+
 
   
     
