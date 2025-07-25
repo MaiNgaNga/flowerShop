@@ -76,7 +76,7 @@ public class HomeController {
         model.addAttribute("latestProducts", latestProducts);
         model.addAttribute("promotionsCode", promotionservice.findValidPromotion());
         model.addAttribute("bestSellingProducts", bestSellingProducts);
-        model.addAttribute("defaultBestSeller", productService.findBestSellerByCategory("Lãng hoa tươi"));
+        model.addAttribute("defaultBestSeller", productService.findBestSellerByCategory("Hoa khai trương"));
         model.addAttribute("posts", posts);
         model.addAttribute("discountProducts", discountProducts);
         model.addAttribute("top10PhuKien", top10PhuKien);
@@ -90,7 +90,7 @@ public class HomeController {
     public List<Product> getBestSellerByType(@RequestParam String type) {
         switch (type.toLowerCase()) {
             case "lang":
-                return productService.findBestSellerByCategory("Lãng hoa tươi");
+                return productService.findBestSellerByCategory("Hoa khai trương");
             case "gio":
                 return productService.findBestSellerByCategory("Giỏ hoa tươi");
             case "bo":
