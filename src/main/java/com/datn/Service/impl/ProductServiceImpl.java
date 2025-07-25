@@ -238,4 +238,9 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
     }
 
+    @Override
+    public List<Product> findTop10ByProductCategoryName(String productCategoryName) {
+        return dao.findTop10ByProductCategoryName(productCategoryName);
+    }
+
 }

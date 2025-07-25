@@ -10,4 +10,6 @@ List<Comment> getCommentsByProduct(Long productId);
 Comment saveComment(String content, Long productId);
 
 void deleteComment(Long id);
+
+List<Comment> getTop3Comments();
 }

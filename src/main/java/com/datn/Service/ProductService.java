@@ -74,7 +74,9 @@ public interface ProductService {
         List<Product> findProductByCategory(Integer categoryId);
 
         Page<Product> findByProductCategoryName(String name, Pageable pageable);
-        
+
         // Lấy 4 sản phẩm giảm giá nhiều nhất, còn hiệu lực, còn hàng
         List<Product> findTop4ByDiscountPercentGreaterThanAndAvailableIsTrueOrderByDiscountPercentDesc(int minDiscount);
+
+        List<Product> findTop10ByProductCategoryName(String productCategoryName);
 }
