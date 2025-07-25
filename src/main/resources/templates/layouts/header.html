@@ -17,7 +17,7 @@
       <a href="/home" class="active">Trang Chủ</a>
       <a href="/services">Dịch Vụ</a>
       <div class="dropdown">
-        <a class="dropdown-toggle nav-link">Danh mục</a>
+        <a href="#" class="dropdown-category">Danh mục</a>
         <ul class="dropdown-menu">
           <div class="dropdown-columns">
             <li th:each="proCategory : ${productCategories}">
@@ -113,7 +113,7 @@
     // --- NAV ACTIVE JS ---
     const path = window.location.pathname;
     const navLinks = document.querySelectorAll(
-      ".nav-links > a, .nav-links .dropdown-toggle"
+      ".nav-links > a, .nav-links .dropdown-category"
     );
     navLinks.forEach((link) => {
       // Xác định logic active cho từng menu
@@ -128,7 +128,7 @@
           path.startsWith("/article")) ||
         (link.getAttribute("href") === "/pos" && path.startsWith("/pos")) ||
         // Dòng này là quan trọng: nếu là dropdown-toggle (Danh mục) và path đúng thì active
-        (link.classList.contains("dropdown-toggle") &&
+        (link.classList.contains("dropdown-category") &&
           (path.startsWith("/ProductUser") || path.startsWith("/products")))
       ) {
         link.classList.add("active");
@@ -136,6 +136,19 @@
         link.classList.remove("active");
       }
     });
+
+    // Chặn submit form tìm kiếm nếu chưa nhập từ khóa, không phản hồi gì
+    const searchForm = document.querySelector(".search-form");
+    if (searchForm) {
+      searchForm.addEventListener("submit", function (e) {
+        const keyword = document.getElementById("searchInput").value.trim();
+        if (!keyword) {
+          e.preventDefault();
+          // Không làm gì, không hiển thị alert hay thông báo
+        }
+      });
+    }
+
     function updateCartCount() {
       fetch("/cart/count")
         .then((response) => response.json())

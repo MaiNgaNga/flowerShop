@@ -157,110 +157,39 @@
     </section>
 
     <!-- Phần này có thể đặt trong file dichvu_luoi4.html -->
+    <div class="text-center">
+      <h2 class="mb-4" data-aos="fade-up" data-aos-duration="800">
+        Các mã giảm giá hiện có 
+      </h2>
+    </div>
+
     <section class="category-cards my-5 d-flex justify-content-center gap-5">
       <div class="image-grid">
-        <div
-          class="image-card"
-          data-aos="zoom-in"
-          data-aos-delay="0"
-          data-aos-duration="800"
+        <th:block
+          th:each="promotions : ${#lists.size(promotionsCode) > 3 ? promotionsCode.subList(0, 3) : promotionsCode}"
         >
-          <img
-            src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80"
-            alt="Ảnh 1"
-          />
-          <div class="image-overlay"></div>
-          <div class="image-overlay-button">Phụ kiện</div>
-        </div>
-
-        <div
-          class="image-card"
-          data-aos="zoom-in"
-          data-aos-delay="100"
-          data-aos-duration="800"
-        >
-          <img
-            src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80"
-            alt="Ảnh 2"
-          />
-          <div class="image-overlay"></div>
-          <div class="image-overlay-button">Khám phá</div>
-        </div>
-
-        <div
-          class="image-card"
-          data-aos="zoom-in"
-          data-aos-delay="200"
-          data-aos-duration="800"
-        >
-          <img
-            src="https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=600&q=80"
-            alt="Ảnh 3"
-          />
-          <div class="image-overlay"></div>
-          <div class="image-overlay-button">Mua ngay</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="new-flowers-section my-5 text-center">
-      <h2 class="mb-4" data-aos="fade-up" data-aos-duration="800">
-        Mẫu hoa số lượng nhiều
-      </h2>
-      <div class="new-flower-grid-wrapper">
-        <div class="new-flower-grid">
-          <!-- Hiển thị dữ liệu sản phẩm mới từ database -->
           <div
-            th:each="product, iterStat : ${productQuantities}"
-            class="new-flower-card"
-            data-aos="zoom-in-up"
-            th:data-aos-delay="${iterStat.index * 100}"
-            data-aos-easing="ease-out-back"
+            class="image-card"
+            data-aos="zoom-in"
+            data-aos-delay="0"
+            data-aos-duration="800"
           >
-            <a
-              th:href="@{/detail(id=${product.id})}"
-              class="text-decoration-none"
-            >
-              <img
-                th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
-                th:alt="${product.name}"
-                onerror="this.src='/images/logo.png'; this.onerror=null;"
-                style="width: 100%; height: 200px; object-fit: cover"
-              />
-            </a>
-            <div class="new-flower-name" th:text="${product.name}">Tên hoa</div>
-            <div
-              class="new-flower-price"
-              th:if="${product.discountPercent != null && product.discountPercent > 0}"
-            >
-              <span
-                class="original-price"
-                th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
-                >Giá gốc</span
-              >
-              <span
-                class="discount-price"
-                th:text="${#numbers.formatDecimal(product.priceAfterDiscount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
-                >Giá khuyến mãi</span
-              >
-              <span
-                class="discount-percent"
-                th:text="'-' + ${product.discountPercent} + '%'"
-                >-10%</span
-              >
-            </div>
-            <div
-              class="new-flower-price"
-              th:unless="${product.discountPercent != null && product.discountPercent > 0}"
-            >
-              <span
-                class="current-price"
-                th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
-                >Giá</span
-              >
+            <img
+              src="https://images.unsplash.com/photo-1554388450-b06c82abd505?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTUwfHxmbG93ZXJ8ZW58MHx8MHx8fDA%3D"
+              alt="Ảnh 1"
+            />
+
+            <div class="always-show-content centered">
+              <div class="code-banner">
+                <p class="code-label">🎁 Tặng bạn mã:</p>
+                <div th:text="${promotions.title}" class="code-box">M30</div>
+                <p th:text="${promotions.description}" class="code-description">
+                  🎉 Nhập mã để được giảm ngay <strong>50K</strong>
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        </th:block>
       </div>
     </section>
 
@@ -366,15 +295,6 @@
             >
               Giá sản phẩm
             </div>
-            <div class="product-size">
-              Số lượng: <span th:text="${product.quantity}">0</span>
-            </div>
-            <div
-              class="product-size"
-              th:text="${product.color != null ? product.color.name : 'N/A'}"
-            >
-              Màu sắc
-            </div>
           </div>
         </div>
       </div>
@@ -423,27 +343,108 @@
     <section class="accessory-section">
       <h2>Phụ kiện</h2>
       <div class="product-grid" data-aos="fade-in" data-aos-delay="200">
-        <!-- Begin Card -->
-        <div class="product-card" data-aos="fade-in" data-aos-delay="300">
+        <div
+          class="product-card"
+          th:each="product, iterStat : ${top10PhuKien}"
+          data-aos="fade-in"
+          th:data-aos-delay="${300 + iterStat.index * 100}"
+        >
           <div class="product-image">
-            <img
-              src="https://th.bing.com/th/id/OIP.hL0olW_0qRVlrXhz8-RB4wHaI4?rs=1&pid=ImgDetMain"
-              class="default-img"
-            />
-            <img
-              src="https://saigonreview.vn/wp-content/uploads/2023/09/1695615220-shop-hoa-tuoi-quan-11-750x737.jpg"
-              class="hover-img"
-            />
-            <div class="cart-icon-wrapper">
-              <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-              <div class="add-to-cart-text">Add To Cart</div>
-            </div>
+            <a
+              th:href="@{/detail(id=${product.id})}"
+              class="text-decoration-none"
+            >
+              <img
+                th:src="${product.image_url != null and product.image_url != '' ? '/images/' + product.image_url : '/images/logo.png'}"
+                class="default-img"
+                th:alt="${product.name}"
+                onerror="this.src='/images/logo.png'; this.onerror=null;"
+              />
+              <img
+                th:src="${product.image_url2 != null and product.image_url2 != '' ? '/images/' + product.image_url2 : '/images/logo.png'}"
+                class="hover-img"
+                th:alt="${product.name}"
+                onerror="this.src='/images/logo.png'; this.onerror=null;"
+              />
+            </a>
+            <form
+              th:action="@{/cart/add}"
+              method="post"
+              style="display: inline"
+            >
+              <input type="hidden" name="productId" th:value="${product.id}" />
+              <input type="hidden" name="quantity" value="1" />
+              <button
+                type="submit"
+                class="cart-icon-wrapper"
+                style="border: none; background: none; padding: 0"
+              >
+                <div class="cart-icon">
+                  <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="add-to-cart-text">Add To Cart</div>
+              </button>
+            </form>
           </div>
           <div class="product-info">
-            <div class="product-name">Terrarium – Joy In Happy Garden 001</div>
-            <div class="product-price">360,000₫ – 450,000₫</div>
-            <div class="product-size">size L</div>
-            <div class="product-size">size M</div>
+            <div class="product-name" th:text="${product.name}">
+              Tên sản phẩm
+            </div>
+            <div
+              class="product-price"
+              th:if="${product.discountPercent != null && product.discountPercent > 0}"
+            >
+              <span
+                th:text="${#numbers.formatDecimal(product.priceAfterDiscount, 0, 'COMMA', 0, 'POINT')} + '₫'"
+              ></span>
+              <span
+                style="text-decoration: line-through; color: #999"
+                th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'"
+              ></span>
+            </div>
+            <div
+              class="product-price"
+              th:unless="${product.discountPercent != null && product.discountPercent > 0}"
+              th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'"
+            >
+              Giá sản phẩm
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Đặt trong file home.html, ngay sau section Best Seller -->
+    <section
+      class="testimonials-section"
+      data-aos="fade-up"
+      data-aos-duration="800"
+    >
+      <div class="container">
+        <h2 class="section-title" data-aos="fade-right" data-aos-delay="100">
+          Đánh Giá Từ Khách Hàng
+        </h2>
+        <div class="testimonials-grid">
+          <div
+            th:each="comment, iterStat : ${comments}"
+            class="testimonial-card"
+            data-aos="fade-up"
+            th:data-aos-delay="${iterStat.index * 100}"
+          >
+            <div class="rating">
+              <span
+                th:each="i : ${#numbers.sequence(1, 5)}"
+                th:class="${i <= comment.rating} ? 'star filled fas fa-star' : 'star fas fa-star'"
+                th:classappend="${i <= comment.rating} ? 'filled' : ''"
+              ></span>
+            </div>
+
+            <h3 class="user-name" th:text="${comment.user.name}">
+              Tên người dùng
+            </h3>
+            <p class="user-comment" th:text="${comment.content}">
+              Nội dung bình luận
+            </p>
           </div>
         </div>
       </div>
