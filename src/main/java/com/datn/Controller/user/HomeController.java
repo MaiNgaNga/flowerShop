@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.datn.Service.CategoryService;
 import com.datn.Service.ProductService;
+import com.datn.Service.PromotionService;
 import com.datn.Service.ProductCategoryService;
 import com.datn.Service.CartItemService;
 import com.datn.model.Product;
@@ -34,6 +35,9 @@ public class HomeController {
 
     @Autowired
     PostService postService;
+
+    @Autowired
+    PromotionService promotionservice;
 
     @Autowired
     private AuthService authService;
@@ -64,6 +68,7 @@ public class HomeController {
         model.addAttribute("categories", categories);
         model.addAttribute("productQuantities", productQuantities);
         model.addAttribute("latestProducts", latestProducts);
+        model.addAttribute("promotionsCode", promotionservice.findValidPromotion());
         model.addAttribute("bestSellingProducts", bestSellingProducts);
         model.addAttribute("defaultBestSeller", productService.findBestSellerByCategory("Bó hoa tươi"));
         model.addAttribute("posts", posts);

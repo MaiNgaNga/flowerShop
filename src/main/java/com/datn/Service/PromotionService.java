@@ -20,6 +20,8 @@ public interface PromotionService {
     Page<Promotion> findByAllPromotion(Pageable pageable);
     Page<Promotion> searchByDate(LocalDate fromDate, LocalDate toDate, Pageable pageable);
     Page<Promotion> searchByName(String name, Pageable pageable);
-    Promotion findPromotionByName(String voucherCode);  
+    Promotion findPromotionByName(String voucherCode); 
+    void updateUseCount(Long id, int useCount); 
+    List<Promotion> findValidPromotion();
     
 } 
