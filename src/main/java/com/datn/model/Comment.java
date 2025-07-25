@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 
 @Entity
 @Table(name = "comments")
@@ -36,6 +38,11 @@ private Product product;
 @NotBlank(message = "Nội dung không được để trống")
 @Column(columnDefinition = "NVARCHAR(255)")
 private String content;
+
+@NotNull(message = "Vui lòng chọn số sao")
+    @Min(value = 1, message = "Số sao phải từ 1 đến 5")
+    @Max(value = 5, message = "Số sao phải từ 1 đến 5")
+    private Integer rating; 
 
 @Column(name = "created_at", updatable = false)
 @CreationTimestamp

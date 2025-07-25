@@ -57,7 +57,7 @@
 .dropdown .dropdown-menu {
   display: none;
   position: absolute;
-  top: 85%;
+  top: 90%;
   left: 0;
   background: white;
   border: 1px solid #eee;
@@ -311,7 +311,6 @@ main {
   position: relative;
 }
 
-/* FIX hover bị thu lên */
 .dropdown-menu {
   display: none;
   position: absolute;
@@ -350,14 +349,13 @@ main {
 .dropdown-columns {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 0 24px;
+  gap: 0 10px;
 }
 
 .dropdown-columns li {
   list-style: none;
-  margin-bottom: 8px;
   min-width: 180px;
-  padding: 8px 16px;
+
 }
 
 .dropdown-columns li a {

@@ -241,6 +241,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<Product> findTop10ByProductCategoryName(String productCategoryName) {
+        return dao.findTop10ByProductCategoryName(productCategoryName);
     public List<Product> findBestSeller() {
         return dao.findSellingProducts();
     }
