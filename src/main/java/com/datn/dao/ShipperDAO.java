@@ -22,9 +22,6 @@ public interface ShipperDAO extends JpaRepository<Shipper, Integer>{
     @Query("SELECT s FROM Shipper s ")
     List<Shipper> findAll();
 
-    @Query("SELECT s FROM Shipper s ")
-
-
     @Query("SELECT s FROM Shipper s")
     Page<Shipper> findAllActive(Pageable pageable);
 

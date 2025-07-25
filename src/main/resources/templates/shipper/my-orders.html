@@ -1,0 +1,65 @@
+<!-- shipper/view/my-orders.html -->
+<div class="container" th:fragment="content">
+  <h2 class="mb-4">Đơn hàng đang giao</h2>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Mã đơn</th>
+        <th>Khách hàng</th>
+        <th>Địa chỉ giao</th>
+        <th>Số điện thoại</th>
+        <th>Ngày nhận</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="order : ${orders}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${order.user.name}"></td>
+        <td th:text="${order.address}"></td>
+        <td th:text="${order.sdt}"></td>
+        <td th:text="${#dates.format(order.createDate, 'dd-MM-yyyy')}"></td>
+        <td>
+          <div class="btn-group" role="group">
+            <form
+              th:action="@{'/shipper/orders/complete/' + ${order.id}}"
+              method="post"
+            >
+              <button
+                type="submit"
+                class="btn btn-success btn-sm ms-1"
+                title="Đã giao"
+              >
+                <i class="bi bi-check-circle"></i> Đã giao
+              </button>
+            </form>
+            <form
+              th:action="@{'/shipper/orders/return/' + ${order.id}}"
+              method="post"
+            >
+              <button
+                type="submit"
+                class="btn btn-warning btn-sm"
+                title="Hoàn hàng"
+              >
+                <i class="bi bi-arrow-return-left"></i> Hoàn hàng
+              </button>
+            </form>
+            <form
+              th:action="@{'/shipper/orders/cancel/' + ${order.id}}"
+              method="post"
+            >
+              <button
+                type="submit"
+                class="btn btn-danger btn-sm ms-1"
+                title="Hủy đơn"
+              >
+                <i class="bi bi-x-circle"></i> Hủy đơn
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

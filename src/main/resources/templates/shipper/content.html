@@ -1,0 +1,11 @@
+<!-- shipper/content.html -->
+<div class="row">
+  <div th:insert="~{/shipper/sidebar}"></div>
+
+  <article class="col-md-10 articlemana">
+    <!-- Gọi fragment qua biến view -->
+    <main th:insert="~{${view}}"></main>
+
+    <div th:insert="~{/shipper/footer}"></div>
+  </article>
+</div>
