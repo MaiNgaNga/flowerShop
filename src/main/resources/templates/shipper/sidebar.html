@@ -1,0 +1,34 @@
+<!-- shipper/sidebar.html -->
+<aside class="col-md-2 pt-4 nenindex asidemana" th:fragment="content">
+  <img
+    th:src="@{/images/logo.png}"
+    alt="Trạm Hoa"
+    height="60"
+    style="text-align: center"
+  />
+  <div class="d-flex align-items-center">
+    <h5>Xin chào Shipper!</h5>
+  </div>
+
+  <nav class="nav flex-column pt-2">
+    <a href="/shipper/pending-orders" class="nav-link text-dark py-3 menu-item">
+      <i class="fa-solid fa-box-open me-2"></i> Đơn chờ giao
+    </a>
+    <a href="/shipper/my-orders" class="nav-link text-dark py-3 menu-item">
+      <i class="fa-solid fa-truck me-2"></i> Đơn đang giao
+    </a>
+    <a
+      href="/shipper/returned-orders"
+      class="nav-link text-dark py-3 menu-item"
+    >
+      <i class="fas fa-undo-alt me-2"></i> Đơn hàng hoàn trả
+    </a>
+    <a href="/shipper/history" class="nav-link text-dark py-3 menu-item">
+      <i class="fa-solid fa-clock-rotate-left me-2"></i> Lịch sử giao hàng
+    </a>
+
+    <a class="nav-link text-dark py-3 menu-item" href="/logout"
+      ><i class="fa-solid fa-right-from-bracket me-2"></i> Đăng xuất</a
+    >
+  </nav>
+</aside>

@@ -1,0 +1,35 @@
+<!-- shipper/view/pending-orders.html -->
+<div class="container" th:fragment="content">
+  <h2 class="mb-4">Đơn hàng chờ giao</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Mã đơn</th>
+        <th>Khách hàng</th>
+        <th>Ngày đặt</th>
+        <th>Tổng tiền</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="order : ${orders}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${order.user.name}"></td>
+        <td th:text="${#dates.format(order.createDate, 'dd-MM-yyyy')}"></td>
+        <td th:text="${order.totalAmount} + ' VNĐ'"></td>
+        <td>
+          <form
+            th:action="@{/shipper/receive}"
+            method="post"
+            style="display: inline"
+          >
+            <input type="hidden" name="orderId" th:value="${order.id}" />
+            <button type="submit" class="btn btn-success btn-sm">
+              Nhận đơn
+            </button>
+          </form>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

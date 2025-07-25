@@ -57,6 +57,7 @@ public class DetailController {
     @PostMapping("/detail/comment")
     public String comment(Model model, @RequestParam("comment") String content,
             @RequestParam("productId") Long productId,
+            @RequestParam("rating") Integer rating,
             RedirectAttributes redirectAttributes) {
         try {
             if (content == null || content.trim().isEmpty()) {
@@ -64,12 +65,11 @@ public class DetailController {
             } else if (productService.findByID(productId) == null) {
                 redirectAttributes.addFlashAttribute("error", "Sản phẩm không tồn tại.");
             } else {
-                commentService.saveComment(content, productId);
+                commentService.saveComment(content, productId, rating);
             }
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi. Vui lòng thử lại sau.");
         }
         return "redirect:/detail?id=" + productId;
     }
-
 }

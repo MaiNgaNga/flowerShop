@@ -110,9 +110,10 @@ public class OrderController {
          
         finalAmount = Math.max(totalAmount - discountValue, 0); // tránh âm
        
-        session.setAttribute("finalAmount", finalAmount);
-
         response.put("success", "Áp dụng mã thành công! Giảm " + (int) discountValue + " VNĐ");
+        session.setAttribute("finalAmount", finalAmount);
+        session.setAttribute("promotionId", promotion.getId()); 
+
         response.put("discountValue", discountValue);
         response.put("formattedOriginalTotal", String.format("%,.0f", totalAmount));
         response.put("formattedDiscount", String.format("%,.0f", discountValue));
@@ -123,12 +124,13 @@ public class OrderController {
     }
 
 
-
    @PostMapping("/checkout")
     public String checkout(@Valid @ModelAttribute("orderRequest") OrderRequest orderRequest, BindingResult result, Model model, HttpSession session) {
     if (result.hasErrors()) {
         return showForm(model);
     }
+
+
     User user= authService.getUser();
     List<CartItem> cartItems = cartItemService.getCartItemsByUserId(user.getId());
     if (cartItems.isEmpty()) {
@@ -165,11 +167,28 @@ public class OrderController {
     orderService.saveOrder(savedOrder, orderDetails);
 
     cartItemService.clearCartByUserId(user.getId());
+    
     model.addAttribute("success", "Đặt hàng thành công");
-    // Xóa thông tin giảm giá khỏi session
   
+    Long promotionId = (Long) session.getAttribute("promotionId");
+    if (promotionId != null) {
+        Promotion appliedPromotion = promotionService.findByID(promotionId);
+        if (appliedPromotion != null) {
+            order.setPromotion(appliedPromotion);
+
+            int currentCount = appliedPromotion.getUseCount();
+            if (currentCount > 0) {
+                promotionService.updateUseCount(promotionId, currentCount - 1);
+            }
+        }
+    }
+
+
+
     session.removeAttribute("finalAmount");
     session.removeAttribute("totalAmount");
+    session.removeAttribute("appliedPromotion");
+
     return showForm(model);
 }
 
@@ -181,7 +200,6 @@ public class OrderController {
         model.addAttribute("cartItems", cartItems);
        
         model.addAttribute("totalAmount", cartItemService.getTotalAmount(user.getId()));
-        
 
         model.addAttribute("productCategories", pro_ca_service.findAll());
         model.addAttribute("view", "order");

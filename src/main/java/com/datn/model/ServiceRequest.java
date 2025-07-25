@@ -20,7 +20,7 @@ public class ServiceRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "full_name", nullable = false, length = 50)
+    @Column(name = "full_name", nullable = false, columnDefinition = "NVARCHAR(50)")
     @NotBlank(message = "Họ và tên không được để trống")
     @Size(max = 50, message = "Họ và tên tối đa 50 ký tự")
     @Pattern(regexp = "^[^\\d]+$", message = "Họ và tên không được chứa số")
@@ -37,19 +37,12 @@ public class ServiceRequest {
     @Pattern(regexp = "^\\d{10,11}$", message = "Số điện thoại phải gồm 10 hoặc 11 chữ số")
     private String phone;
 
-    @Column(name = "detail_request", columnDefinition = "NVARCHAR(MAX)", nullable = false)
-    @NotBlank(message = "Chi tiết yêu cầu không được để trống")
-    private String detailRequest;
-
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private ServiceRequestStatus status = ServiceRequestStatus.PENDING;
-
-    @Column(name = "quoted_price")
-    private BigDecimal quotedPrice;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
