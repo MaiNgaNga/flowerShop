@@ -362,10 +362,8 @@
                       ></td>
                       <td>
                         <span
-                          th:class="'badge bg-' + 
-                             (request.status == 'PENDING' ? 'warning text-dark' : 
-                             (request.status == 'CONTACTED' ? 'primary' : 
-                             (request.status == 'CONFIRMED' ? 'success' : 'secondary')))"
+                          class="badge"
+                          th:classappend="' bg-' + ${request.status.badgeColor}"
                           th:text="${request.status.displayName}"
                         >
                         </span>
@@ -375,8 +373,12 @@
                           class="btn btn-success btn-action"
                           data-bs-toggle="modal"
                           data-bs-target="#createOrderModal"
+                          th:attr="data-request-id=${request.id}, 
+                                    data-service-name=${request.service.name}, 
+                                    data-status=${request.status.name()},
+                                    disabled=${request.status.name() == 'CANCELLED'}"
                         >
-                          <i class="bi bi-plus-circle"></i>
+                          <i class="bi bi-pencil"></i>
                         </button>
                       </td>
                     </tr>
@@ -420,7 +422,7 @@
                     <tr>
                       <th>Mã đơn</th>
                       <th>Tên khách hàng</th>
-                      <th>Dịch vụ</th>
+                      <th>Tên Dịch vụ</th>
                       <th>Giá chốt</th>
                       <th>Ngày xác nhận</th>
                       <th>Trạng thái</th>
@@ -428,18 +430,30 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>#DH001</td>
-                      <td>Trần Thị B</td>
-                      <td>Dịch vụ sửa chữa</td>
-                      <td>3,500,000 VNĐ</td>
-                      <td>23-07-2025</td>
+                    <tr th:each="order : ${orderList}">
+                      <td th:text="${order.id}">#DH001</td>
+                      <td th:text="${order.request.fullName}">Trần Thị B</td>
+                      <td th:text="${order.request.service.name}">
+                        Dịch vụ sửa chữa
+                      </td>
+                      <td
+                        th:text="${#numbers.formatDecimal(order.quotedPrice, 0, 'POINT', 0, 'COMMA') + ' VNĐ'}"
+                      ></td>
+                      <td
+                        th:text="${#temporals.format(order.confirmedAt, 'dd-MM-yyyy')}"
+                      ></td>
                       <td>
-                        <span class="badge bg-warning">Chưa thanh toán</span>
+                        <span
+                          class="badge"
+                          th:classappend="' bg-' + ${order.status.badgeColor}"
+                          th:text="${order.status.displayName}"
+                        >
+                        </span>
                       </td>
                       <td>
                         <button
-                          class="btn btn-info btn-action"
+                          class="btn btn-info btn-action btn-detail"
+                          th:attr="data-id=${order.id}, data-status=${order.status}"
                           data-bs-toggle="modal"
                           data-bs-target="#orderDetailsModal"
                         >
@@ -478,15 +492,16 @@
             ></button>
           </div>
           <div class="modal-body">
-            <form>
+            <form method="post" id="createOrderForm" data-request-id="">
               <div class="modal-form-row">
                 <div class="col-md-6">
+                  <input type="hidden" name="requestId" id="requestIdInput" />
                   <div class="mb-3">
                     <label class="form-label">Dịch vụ</label>
                     <input
                       type="text"
+                      id="serviceNameInput"
                       class="form-control"
-                      value="Dịch vụ dọn dẹp"
                       readonly
                     />
                   </div>
@@ -494,6 +509,7 @@
                     <label class="form-label">Giá (VNĐ)</label>
                     <input
                       type="number"
+                      name="quotedPrice"
                       class="form-control"
                       placeholder="Nhập giá"
                     />
@@ -502,21 +518,19 @@
                 <div class="col-md-6">
                   <div class="mb-3">
                     <label class="form-label">Địa điểm</label>
-                    <select class="form-select">
-                      <option value="">Chọn quận</option>
-                      <option value="hai-chau">Hải Châu</option>
-                      <option value="thanh-khe">Thanh Khê</option>
-                      <option value="son-tra">Sơn Trà</option>
-                      <option value="ngu-hanh-son">Ngũ Hành Sơn</option>
-                      <option value="lien-chieu">Liên Chiểu</option>
-                      <option value="cam-le">Cẩm Lệ</option>
-                      <option value="hoa-vang">Hòa Vang</option>
+                    <select
+                      id="districtSelect"
+                      class="form-select"
+                      name="district"
+                    >
+                      <option value="">Chọn quận/huyện</option>
                     </select>
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Địa chỉ chi tiết</label>
                     <input
                       type="text"
+                      name="addressDetail"
                       class="form-control"
                       placeholder="Nhập địa chỉ chi tiết"
                     />
@@ -527,13 +541,18 @@
                 <div class="col-md-6">
                   <div class="mb-3">
                     <label class="form-label">Thời gian thực hiện</label>
-                    <input type="datetime-local" class="form-control" />
+                    <input
+                      type="date"
+                      name="executionTime"
+                      class="form-control"
+                    />
                   </div>
                 </div>
                 <div class="col-md-6 description-field">
                   <div class="mb-3">
                     <label class="form-label">Mô tả</label>
                     <textarea
+                      name="description"
                       class="form-control"
                       rows="4"
                       placeholder="Nhập mô tả dịch vụ"
@@ -544,13 +563,19 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary btn-action">
+            <button
+              type="button"
+              class="btn btn-primary btn-action btn-contact"
+            >
               <i class="bi bi-telephone"></i>
             </button>
-            <button type="button" class="btn btn-success btn-action">
+            <button
+              type="button"
+              class="btn btn-success btn-action btn-confirm"
+            >
               <i class="bi bi-check-circle"></i>
             </button>
-            <button type="button" class="btn btn-danger btn-action">
+            <button type="button" class="btn btn-danger btn-action btn-cancel">
               <i class="bi bi-x-circle"></i>
             </button>
             <button
@@ -593,92 +618,95 @@
                   <div class="mb-3">
                     <label class="form-label">Mã đơn</label>
                     <input
+                      id="modal-id"
                       type="text"
                       class="form-control"
-                      value="#DH001"
                       readonly
                     />
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Tên khách hàng</label>
                     <input
+                      id="modal-name"
                       type="text"
                       class="form-control"
-                      value="Trần Thị B"
                       readonly
                     />
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Dịch vụ</label>
                     <input
+                      id="modal-service"
                       type="text"
                       class="form-control"
-                      value="Dịch vụ sửa chữa"
                       readonly
                     />
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Giá chốt</label>
                     <input
+                      id="modal-quoted-price"
                       type="text"
                       class="form-control"
-                      value="3,500,000 VNĐ"
                       readonly
                     />
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label class="form-label">Ngày xác nhận</label>
+                    <label class="form-label">Ngày yêu cầu</label>
                     <input
+                      id="modal-request-date"
                       type="text"
                       class="form-control"
-                      value="23-07-2025"
                       readonly
                     />
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Thời gian thực hiện</label>
                     <input
+                      id="modal-perform-date"
                       type="text"
                       class="form-control"
-                      value="25-07-2025 14:00"
                       readonly
                     />
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Địa điểm</label>
                     <input
+                      id="modal-province"
                       type="text"
                       class="form-control"
-                      value="Hải Châu"
                       readonly
                     />
                   </div>
                   <div class="mb-3">
                     <label class="form-label">Địa chỉ chi tiết</label>
                     <input
+                      id="modal-address"
                       type="text"
                       class="form-control"
-                      value="123 Đường Lê Lợi, Hải Châu"
                       readonly
                     />
                   </div>
                 </div>
                 <div class="mb-3 description-field">
                   <label class="form-label">Mô tả</label>
-                  <textarea class="form-control" rows="4" readonly>
-Sửa chữa hệ thống điện tại nhà</textarea
-                  >
+                  <textarea
+                    id="modal-note"
+                    class="form-control"
+                    rows="4"
+                    readonly
+                  ></textarea>
                 </div>
               </div>
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-success btn-action">
+            <button id="btn-confirm" class="btn btn-success btn-action">
               <i class="bi bi-check-circle"></i>
             </button>
-            <button type="button" class="btn btn-danger btn-action">
+            <button id="btn-cancel" class="btn btn-danger btn-action">
               <i class="bi bi-x-circle"></i>
             </button>
             <button
@@ -692,7 +720,243 @@ Sửa chữa hệ thống điện tại nhà</textarea
         </div>
       </div>
     </div>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const modal = document.getElementById("createOrderModal");
+        const form = document.getElementById("createOrderForm");
+
+        modal.addEventListener("show.bs.modal", function (event) {
+          const button = event.relatedTarget;
+          const requestId = button.getAttribute("data-request-id");
+          const serviceName = button.getAttribute("data-service-name");
+          const status = button.getAttribute("data-status");
+
+          // Gán giá trị
+          document.getElementById("requestIdInput").value = requestId;
+          document.getElementById("serviceNameInput").value = serviceName;
+          form.setAttribute("data-request-id", requestId);
+
+          // Hiện/ẩn nút theo trạng thái
+          const btnContact = modal.querySelector(".btn-contact");
+          const btnConfirm = modal.querySelector(".btn-confirm");
+          const btnCancel = modal.querySelector(".btn-cancel");
+
+          if (status === "PENDING") {
+            btnContact.style.display = "inline-flex";
+            btnConfirm.style.display = "none";
+            btnCancel.style.display = "none";
+          } else if (status === "CONTACTED") {
+            btnContact.style.display = "none";
+            btnConfirm.style.display = "inline-flex";
+            btnCancel.style.display = "inline-flex";
+          } else {
+            // Nếu đã xác nhận/hủy -> ẩn toàn bộ
+            btnContact.style.display = "none";
+            btnConfirm.style.display = "none";
+            btnCancel.style.display = "none";
+          }
+        });
+
+        // Xử lý từng nút
+        const requestAction = (type) => {
+          const id = form.getAttribute("data-request-id");
+
+          if (!id) {
+            alert("Thiếu ID yêu cầu");
+            return;
+          }
+
+          const url = `/admin/service-requests/${id}/${type}`;
+          const formData = new FormData();
+
+          // Với "confirm", phải validate
+          if (type === "confirm") {
+            const price = form.querySelector("input[name='quotedPrice']").value;
+            const district = form.querySelector(
+              "select[name='district']"
+            ).value;
+            const address = form.querySelector(
+              "input[name='addressDetail']"
+            ).value;
+            const time = form.querySelector(
+              "input[name='executionTime']"
+            ).value;
+
+            if (!price || !district || !address || !time) {
+              alert("Vui lòng nhập đầy đủ thông tin để tạo đơn.");
+              return;
+            }
+
+            formData.append("quotedPrice", price);
+            formData.append("district", district);
+            formData.append("addressDetail", address);
+            formData.append("executionTime", time);
+            formData.append(
+              "description",
+              form.querySelector("textarea[name='description']").value
+            );
+          }
+
+          fetch(url, {
+            method: "POST",
+            body: formData,
+          })
+            .then((res) => {
+              if (res.redirected) {
+                window.location.href = res.url;
+              } else {
+                alert("Thao tác không thành công.");
+              }
+            })
+            .catch((err) => {
+              console.error("Lỗi:", err);
+            });
+        };
+
+        modal.querySelector(".btn-contact").addEventListener("click", () => {
+          requestAction("contact");
+        });
+
+        modal.querySelector(".btn-cancel").addEventListener("click", () => {
+          if (confirm("Bạn có chắc muốn hủy yêu cầu này không?")) {
+            requestAction("cancel");
+          }
+        });
+
+        modal.querySelector(".btn-confirm").addEventListener("click", () => {
+          requestAction("confirm");
+        });
+      });
+    </script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const districtSelect = document.getElementById("districtSelect");
+
+        // Lấy danh sách phường/xã trực thuộc TP. Đà Nẵng (mã tỉnh: 48), depth=3
+        fetch("https://provinces.open-api.vn/api/p/48?depth=3")
+          .then((response) => response.json())
+          .then((data) => {
+            const allWards = [];
+
+            data.districts.forEach((district) => {
+              district.wards.forEach((ward) => {
+                allWards.push({
+                  name: ward.name,
+                  parentDistrict: district.name,
+                });
+              });
+            });
+
+            // Sắp xếp tên tăng dần
+            allWards.sort((a, b) => a.name.localeCompare(b.name));
+
+            allWards.forEach((ward) => {
+              const option = document.createElement("option");
+              option.value = ward.name;
+              option.textContent = `${ward.name} (${ward.parentDistrict})`;
+              districtSelect.appendChild(option);
+            });
+          })
+          .catch((error) => {
+            console.error("Không thể tải danh sách địa điểm:", error);
+          });
+      });
+    </script>
+
+    <script>
+      let currentRequestId = null;
+
+      $(document).ready(function () {
+        $(document).on("click", ".btn-detail", function () {
+          const id = $(this).data("id");
+          currentRequestId = id;
+
+          $.ajax({
+            url: `/admin/service-requests/service-request/${id}/detail`,
+            method: "GET",
+            success: function (data) {
+              // DEBUG xem có dữ liệu không
+              console.log("Chi tiết nhận được:", data);
+
+              $("#modal-id").val(data.id);
+              $("#modal-name").val(data.fullName);
+              $("#modal-service").val(data.serviceName);
+              $("#modal-request-date").val(data.requestDate.substring(0, 10));
+              $("#modal-perform-date").val(data.performDate);
+              $("#modal-province").val(data.province);
+              $("#modal-address").val(data.address);
+              $("#modal-note").val(data.note || "(Không có)");
+              $("#modal-quoted-price").val(
+                data.quotedPrice.toLocaleString("vi-VN") + " VNĐ"
+              );
+
+              $("#modal-status").text(data.status);
+
+              if (data.status === "Chưa thanh toán") {
+                $("#btn-confirm").hide();
+                $("#btn-cancel").show();
+              } else if (data.status === "Đã thanh toán") {
+                $("#btn-confirm").show();
+                $("#btn-cancel").hide();
+              } else {
+                $("#btn-confirm").hide();
+                $("#btn-cancel").hide();
+              }
+
+              // Mở modal
+              const modal = new bootstrap.Modal(
+                document.getElementById("orderDetailsModal")
+              );
+              modal.show();
+            },
+            error: function (xhr, status, error) {
+              console.error("Lỗi khi lấy chi tiết yêu cầu:", error);
+              alert("Không thể tải dữ liệu yêu cầu dịch vụ.");
+            },
+          });
+        });
+
+        $("#btn-confirm").click(function () {
+          if (!currentRequestId) return;
+          $.post(`/admin/service-requests/${currentRequestId}/complete`)
+            .done(function () {
+              alert("Đã xác nhận hoàn thành đơn.");
+              location.reload();
+            })
+            .fail(function () {
+              alert("Lỗi khi xác nhận hoàn thành.");
+            });
+        });
+
+        $("#btn-cancel").click(function () {
+          if (!currentRequestId) return;
+          $.post(`/admin/service-requests/${currentRequestId}/cancel`)
+            .done(function () {
+              alert("Đã hủy đơn thành công.");
+              location.reload();
+            })
+            .fail(function () {
+              alert("Lỗi khi hủy đơn.");
+            });
+        });
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        // Bắt sự kiện khi bất kỳ modal nào đóng
+        document.querySelectorAll(".modal").forEach((modal) => {
+          modal.addEventListener("hidden.bs.modal", function () {
+            // Xoá backdrop nếu còn sót lại
+            document
+              .querySelectorAll(".modal-backdrop")
+              .forEach((el) => el.remove());
+            document.body.classList.remove("modal-open");
+            document.body.style.overflow = "auto";
+          });
+        });
+      });
+    </script>
   </body>
 </html>

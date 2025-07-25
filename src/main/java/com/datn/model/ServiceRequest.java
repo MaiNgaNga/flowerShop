@@ -44,9 +44,6 @@ public class ServiceRequest {
     @Column(nullable = false, length = 20)
     private ServiceRequestStatus status = ServiceRequestStatus.PENDING;
 
-    @Column(name = "quoted_price")
-    private BigDecimal quotedPrice;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
