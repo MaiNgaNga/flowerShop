@@ -28,16 +28,18 @@ public class CommentServiceImpl implements CommentService {
         return commentDAO.findByProduct_Id(productId);
     }
 
-    public Comment saveComment(String content, Long productId) {
+    public Comment saveComment(String content, Long productId, Integer rating) {
         User user = authService.getUser();
         Product product = productService.findByID(productId);
         Comment comment = new Comment();
         comment.setContent(content);
         comment.setUser(user);
         comment.setProduct(product);
+        comment.setRating(rating);
         comment.setCreatedAt(LocalDateTime.now());
 
         return commentDAO.save(comment);
+
     }
 
     // Xóa bình luận theo ID
