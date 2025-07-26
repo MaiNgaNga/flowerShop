@@ -1,6 +1,7 @@
 package com.datn.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Future;
 import lombok.Data;
 import lombok.ToString;
 import java.util.Date;
@@ -50,4 +51,11 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "promotion_id", referencedColumnName = "id")
     private Promotion promotion;
+    
+    @Temporal(TemporalType.DATE)
+    @Column(name = "delivery_date")
+    private Date deliveryDate;
+
+    @Column(name = "description", columnDefinition = "NVARCHAR(500)")
+    private String description;
 }

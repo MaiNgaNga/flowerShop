@@ -144,6 +144,8 @@ public class OrderController {
     order.setSdt(orderRequest.getSdt());
     order.setAddress(orderRequest.getAddress());
     order.setStatus("Chưa xác nhận");
+    order.setDeliveryDate(orderRequest.getDeliveryDate());
+    order.setDescription(orderRequest.getDescription());
      // Kiểm tra xem có mã giảm không
     Double finalAmount = (Double) session.getAttribute("finalAmount");
     if (finalAmount == null) {
