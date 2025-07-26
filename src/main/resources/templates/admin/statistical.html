@@ -73,10 +73,9 @@
         .card.blue { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
         .card.green { background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); }
         .card.pink { background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%); }
-        .card.orange { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); }
 
-        .card.blue .number, .card.green .number, .card.pink .number, .card.orange .number { color: #ffffff; }
-        .card.blue .label, .card.green .label, .card.pink .label, .card.orange .label { color: #ecf0f1; }
+        .card.blue .number, .card.green .number, .card.pink .number { color: #ffffff; }
+        .card.blue .label, .card.green .label, .card.pink .label { color: #ecf0f1; }
 
         .chart-card {
             background: #ffffff;
@@ -85,17 +84,55 @@
             padding: 20px;
             margin-top: 30px;
         }
+        .legend-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 cột đều nhau */
+    gap: 10px 20px;
+    justify-items: start;
+    align-items: center;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #333;
+}
+
+.legend-color-box {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+.chart-card {
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        padding: 10px; /* Reduced padding */
+    }
+
+    canvas#topProductsChart {
+        display: block;
+        width: 100% !important;
+        height: 300px !important; /* Fixed height to match the image */
+    }
+
     </style>
 </head>
 <body>
 
-<!-- Bộ lọc tháng năm -->
-<div class="filter-container mb-3 d-flex justify-content-center gap-2">
+<!-- Bộ lọc năm -->
+<div class="filter-container mb-3 d-flex justify-content-center">
     <select id="yearSelect" class="form-select w-auto">
-       
+
         <option value="2024" th:selected="${selectedYear == 2024}">2024</option>
         <option value="2025" th:selected="${selectedYear == 2025}">2025</option>
     </select>
+    <!-- Bộ lọc năm & tháng -->
 
     <select id="monthSelect" class="form-select w-auto">
         <option value="1" th:selected="${selectedMonth == 1}">Tháng 1</option>
@@ -111,14 +148,38 @@
         <option value="11" th:selected="${selectedMonth == 11}">Tháng 11</option>
         <option value="12" th:selected="${selectedMonth == 12}">Tháng 12</option>
     </select>
+
+
 </div>
 
+
+<script>
+    document.getElementById("monthSelect").addEventListener("change", redirectToStatistical);
+    document.getElementById("yearSelect").addEventListener("change", redirectToStatistical);
+
+    function redirectToStatistical() {
+        const month = document.getElementById("monthSelect").value;
+        const year = document.getElementById("yearSelect").value;
+        window.location.href = `/statistical?month=${month}&year=${year}`;
+    }
+</script>
+
+<script>
+    document.getElementById("monthSelect").addEventListener("change", redirectToStatistical);
+    document.getElementById("yearSelect").addEventListener("change", redirectToStatistical);
+
+    function redirectToStatistical() {
+        const month = document.getElementById("monthSelect").value;
+        const year = document.getElementById("yearSelect").value;
+        window.location.href = `/statistical?month=${month}&year=${year}`;
+    }
+</script>
 <!-- 4 Thẻ thống kê -->
 <center>
     <div class="stats-container">
         <div class="card blue">
             <div class="card-content">
-                <div class="number" id="totalRevenue" th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT')} + ' đ'"></div>
+                <div class="number" id="totalRevenue" th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</div>
                 <div class="label">Tổng doanh thu trong năm [[${selectedYear}]]</div>
             </div>
         </div>
@@ -134,12 +195,12 @@
                 <div class="label">Số lượng đơn đặt hàng trong tháng</div>
             </div>
         </div>
-        <!-- <div class="card orange">
+        <div class="card pink">
             <div class="card-content">
-                <div class="number" id="totalServices">0</div>
-                <div class="label">Số lượng dịch vụ trong tháng</div>
+                <!-- <div class="number" id="totalOrders" th:text="">0</div> -->
+                <div class="label">Số lượng đơn đặt dịch vụ  trong năm</div>
             </div>
-        </div> -->
+        </div>
     </div>
 </center>
 
@@ -148,63 +209,112 @@
     <div class="row">
         <div class="col-md-8 mb-4">
             <div class="chart-card">
-                <h2 class="text-center">Xu hướng doanh số</h2>
+                <h4 class="text-center">Xu hướng doanh số năm: [[${selectedYear}]]</h4>
                 <canvas id="lineChart"></canvas>
             </div>
         </div>
-        <!-- <div class="col-md-4 mb-4">
-            <div class="chart-card">
-                <h2 class="text-center">Tỷ lệ doanh thu</h2>
-                <canvas id="pieChart"></canvas>
-            </div>
-        </div> -->
+        <div class="col-md-4 mb-4">
+    <div class="chart-card">
+        <h4 class="text-center">6 sản phẩm bán chạy năm: 2025</h4>
+        <div style="max-width: 300px; margin: 0 auto; height: 300px; position: relative;">
+            <canvas id="topProductsChart"></canvas>
+        </div>
+        <div id="customLegend" class="legend-grid mt-3"></div>
+    </div>
+</div>
     </div>
 </div>
 
-<!-- Script xử lý -->
+
+<!-- SCRIPT VẼ BIỂU ĐỒ PIE -->
 <script>
-    const dataByYearMonth = {
-        2023: {
-            1: { bestCategory: 40, canceledOrders: 15, totalOrders: 8, totalServices: 4, lineData: [45, 55, 65, 60, 75, 85, 80, 90, 95, 100, 95, 110], pieData: [28, 22, 25, 25] },
-            2: { bestCategory: 42, canceledOrders: 16, totalOrders: 9, totalServices: 5, lineData: [50, 60, 70, 65, 80, 90, 85, 95, 100, 110, 105, 120], pieData: [30, 25, 20, 25] },
-        },
-        2024: {
-            1: { bestCategory: 43, canceledOrders: 18, totalOrders: 10, totalServices: 6, lineData: [55, 65, 75, 70, 85, 95, 90, 100, 105, 115, 110, 125], pieData: [32, 23, 22, 23] },
-        },
-        2025: {
-            1: { bestCategory: 45, canceledOrders: 20, totalOrders: 10, totalServices: 5, lineData: [50, 60, 70, 65, 80, 90, 85, 95, 100, 110, 105, 120], pieData: [30, 25, 20, 25] },
-        }
-    };
+    const pieCtx = document.getElementById('topProductsChart').getContext('2d');
+    let pieChart;
 
-    const pieChart = new Chart(document.getElementById('pieChart'), {
-        type: 'pie',
-        data: {
-            labels: ['Sản phẩm A', 'Sản phẩm B', 'Sản phẩm C', 'Sản phẩm D'],
-            datasets: [{
-                data: [30, 25, 20, 25],
-                backgroundColor: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'],
-                borderColor: ['#fff'],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: { font: { size: 10 }, color: '#333' }
-                }
+   function fetchTopProducts(year) {
+    fetch(`/api/top-products?year=${year}`)
+        .then(res => res.json())
+        .then(data => {
+            const labels = data.map(item => item.name);
+            const values = data.map(item => item.total_quantity_sold);
+
+            const colors = [
+                '#FF6384', '#36A2EB', '#FFCE56',
+                '#4BC0C0', '#9966FF', '#FF9F40'
+            ];
+
+            if (pieChart) {
+                pieChart.data.labels = labels;
+                pieChart.data.datasets[0].data = values;
+                pieChart.update();
+            } else {
+                pieChart = new Chart(pieCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: values,
+                            backgroundColor: colors,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false // Ẩn legend mặc định
+                            }
+                        },
+                        layout: {
+                            padding: 20
+                        }
+                    }
+                });
             }
-        }
-    });
 
+            // Tạo custom legend
+            const legendContainer = document.getElementById("customLegend");
+            legendContainer.innerHTML = ""; // Xóa legend cũ
+
+            labels.forEach((label, index) => {
+                const color = colors[index];
+                const div = document.createElement("div");
+                div.className = "legend-item";
+                div.innerHTML = `
+                    <div class="legend-color-box" style="background-color:${color}"></div>
+                    <span>${label}</span>
+                `;
+                legendContainer.appendChild(div);
+            });
+        })
+        .catch(err => console.error('Lỗi lấy top sản phẩm:', err));
+}
+
+
+    // Gọi lần đầu khi load trang
+    const defaultYear1 = document.getElementById('yearSelect').value;
+    fetchTopProducts(defaultYear1);
+
+    // Gọi lại khi chọn năm mới
+    document.getElementById('yearSelect').addEventListener('change', function () {
+        const selectedYear = this.value;
+        fetchTopProducts(selectedYear);
+        fetchRevenueData(selectedYear); // Nếu có biểu đồ doanh thu nữa
+    });
+</script>
+
+
+
+<!-- Script xử lý -->
+<script th:inline="javascript">
     const lineChart = new Chart(document.getElementById('lineChart'), {
         type: 'line',
         data: {
             labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
             datasets: [{
                 label: 'Doanh số',
-                data: [50, 60, 70, 65, 80, 90, 85, 95, 100, 110, 105, 120],
+                data: Array(12).fill(0),
                 borderColor: '#FF6B6B',
                 backgroundColor: 'rgba(255, 107, 107, 0.2)',
                 fill: true,
@@ -232,38 +342,31 @@
         }
     });
 
-    function updateDashboard(year, month) {
-        const data = (dataByYearMonth[year] && dataByYearMonth[year][month]) || {
-            bestCategory: 0,
-            canceledOrders: 0,
-            totalOrders: 0,
-            totalServices: 0,
-            lineData: Array(12).fill(0),
-            pieData: [0, 0, 0, 0]
-        };
+    function fetchRevenueData(year) {
+        fetch(`/api/revenue-by-month?year=${year}`)
+            .then(response => response.json())
+            .then(data => {
+                // Chuyển đổi dữ liệu từ Map thành mảng 12 tháng
+                const revenueData = Array(12).fill(0);
+                Object.keys(data).forEach(month => {
+                    revenueData[parseInt(month) - 1] = data[month] / 1_000_000; // Chia cho 1 triệu để hiển thị đơn vị Triệu VNĐ
+                });
 
-        document.getElementById('canceledOrders').textContent = data.canceledOrders;
-        document.getElementById('totalOrders').textContent = data.totalOrders;
-        document.getElementById('totalServices').textContent = data.totalServices;
-
-        lineChart.data.datasets[0].data = data.lineData;
-        lineChart.update();
-
-        pieChart.data.datasets[0].data = data.pieData;
-        pieChart.update();
+                // Cập nhật biểu đồ
+                lineChart.data.datasets[0].data = revenueData;
+                lineChart.update();
+            })
+            .catch(error => console.error('Lỗi khi lấy dữ liệu doanh thu:', error));
     }
-
-    document.getElementById('monthSelect').addEventListener('change', function () {
-        const year = document.getElementById('yearSelect').value;
-        const month = this.value;
-        updateDashboard(year, month);
-    });
 
     document.getElementById('yearSelect').addEventListener('change', function () {
         const year = this.value;
-        const month = document.getElementById('monthSelect').value;
-        updateDashboard(year, month);
+        fetchRevenueData(year);
     });
+
+    // Khởi tạo biểu đồ với năm mặc định
+    const defaultYear = /*[[${selectedYear}]]*/ 2025; // Giá trị dự phòng nếu Thymeleaf không render
+    fetchRevenueData(defaultYear);
 </script>
 </body>
 </html>

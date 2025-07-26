@@ -1,6 +1,7 @@
 package com.datn.Service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -79,6 +80,10 @@ public interface ProductService {
         List<Product> findTop4ByDiscountPercentGreaterThanAndAvailableIsTrueOrderByDiscountPercentDesc(int minDiscount);
 
         List<Product> findTop10ByProductCategoryName(String productCategoryName);
+
         /// sản phẩm hot
-         List<Product> findBestSeller();
+        List<Product> findBestSeller();
+
+        List<Map<String, Object>> getTop6SellingProductsByYear(int year);
+
 }
