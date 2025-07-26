@@ -9,8 +9,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
 
 import com.datn.model.Order;
 
@@ -78,5 +81,23 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
             @Param("fromDate") LocalDate fromDate,
             @Param("toDate") LocalDate toDate,
             Pageable pageable);
+
+  // thống kê đơn hàng hủy
+  @Query(value = "SELECT COUNT(*) FROM orders WHERE status = N'Đã hủy' AND MONTH(create_date) = :month AND YEAR(create_date) = :year", nativeQuery = true)
+  Long countCanceledOrdersByMonthAndYear(@Param("month") int month, @Param("year") int year);
+
+  // thống kê Đếm tổng số đơn hàng trong tháng/năm
+  @Query(value = "SELECT COUNT(*) FROM orders WHERE MONTH(create_date) = :month AND YEAR(create_date) = :year", nativeQuery = true)
+  Long countTotalOrdersByMonthAndYear(@Param("month") int month, @Param("year") int year);
+
+  // Thống kê doanh thu theo năm
+  @Query("SELECT SUM(o.totalAmount) FROM Order o WHERE YEAR(o.createDate) = :year")
+  Double getTotalRevenueInYear(@Param("year") int year);
+
+  // Thống kê doanh thu theo tháng trong năm
+  @Query("SELECT MONTH(o.createDate) AS month, SUM(o.totalAmount) AS revenue " +
+      "FROM Order o WHERE YEAR(o.createDate) = :year " +
+      "GROUP BY MONTH(o.createDate) ORDER BY MONTH(o.createDate)")
+  List<Object[]> getMonthlyRevenueByYear(@Param("year") int year);
 
 }

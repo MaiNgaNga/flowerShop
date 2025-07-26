@@ -14,10 +14,16 @@ import com.datn.model.User;
 
 import jakarta.transaction.Transactional;
 
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+=======
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -28,6 +34,38 @@ public class OrderServiceImpl implements OrderService {
     private OrderDetailDAO orderDetailDAO;
     @Autowired
     private UserDAO userDAO;
+
+    // Thống kê doanh thu theo tháng trong năm
+    @Override
+    public Map<Integer, Double> getMonthlyRevenueByYear(int year) {
+        List<Object[]> results = dao.getMonthlyRevenueByYear(year);
+        Map<Integer, Double> revenueMap = new HashMap<>();
+        for (Object[] row : results) {
+            Integer month = (Integer) row[0];
+            Double revenue = (Double) row[1];
+            revenueMap.put(month, revenue);
+        }
+        return revenueMap;
+    }
+
+    // Thống kê doanh thu theo trong năm
+    @Override
+    public Double getTotalRevenueInYear(int year) {
+        Double total = dao.getTotalRevenueInYear(year);
+        return total != null ? total : 0.0;
+    }
+
+    // đếm tổng số đơn hàng trong tháng/năm
+    @Override
+    public Long getTotalOrdersInMonth(int month, int year) {
+        return dao.countTotalOrdersByMonthAndYear(month, year);
+    }
+
+    // thống kê đơn hàng hủy
+    @Override
+    public Long countCancelledOrdersByMonthAndYear(int month, int year) {
+        return dao.countCanceledOrdersByMonthAndYear(month, year);
+    }
 
     @Override
     public Order saveOrder(Order order, List<OrderDetail> orderDetails) {

@@ -3,7 +3,10 @@ package com.datn.Service.impl;
 
 import com.datn.utils.StringUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +28,6 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     ParamService param;
 
-
-
     @Override
     public List<Product> findAll() {
         return dao.findAll();
@@ -46,15 +47,15 @@ public class ProductServiceImpl implements ProductService {
 
         if (image1 != null && !image1.isEmpty()) {
             entity.setImage_url(param.save(image1,
-                    "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
+                    "D:\\Graduation Project\\Git2\\src\\main\\resources\\static\\images").getName());
         }
         if (image2 != null && !image2.isEmpty()) {
             entity.setImage_url2(param.save(image2,
-                    "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
+                    "D:\\Graduation Project\\Git2\\src\\main\\resources\\static\\images").getName());
         }
         if (image3 != null && !image3.isEmpty()) {
             entity.setImage_url3(param.save(image3,
-                    "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
+                    "D:\\Graduation Project\\Git2\\src\\main\\resources\\static\\images").getName());
         }
         return dao.save(entity);
     }
@@ -65,7 +66,7 @@ public class ProductServiceImpl implements ProductService {
         if (dao.existsById(entity.getId())) {
             if (image1 != null && !image1.isEmpty()) {
                 entity.setImage_url(param.save(image1,
-                        "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
+                        "D:\\Graduation Project\\Git2\\src\\main\\resources\\static\\images").getName());
             } else {
                 entity.setImage_url(oldImages.length > 0 ? oldImages[0] : null);
             }
@@ -73,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
             // Ảnh 2
             if (image2 != null && !image2.isEmpty()) {
                 entity.setImage_url2(param.save(image2,
-                        "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
+                        "D:\\Graduation Project\\Git2\\src\\main\\resources\\static\\images").getName());
             } else {
                 entity.setImage_url2(oldImages.length > 1 ? oldImages[1] : null);
             }
@@ -81,7 +82,7 @@ public class ProductServiceImpl implements ProductService {
             // Ảnh 3
             if (image3 != null && !image3.isEmpty()) {
                 entity.setImage_url3(param.save(image3,
-                        "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
+                        "D:\\Graduation Project\\Git2\\src\\main\\resources\\static\\images").getName());
             } else {
                 entity.setImage_url3(oldImages.length > 2 ? oldImages[2] : null);
             }
@@ -244,8 +245,14 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> findTop10ByProductCategoryName(String productCategoryName) {
         return dao.findTop10ByProductCategoryName(productCategoryName);
     }
+
     public List<Product> findBestSeller() {
         return dao.findSellingProducts();
+    }
+
+    @Override
+    public List<Map<String, Object>> getTop6SellingProductsByYear(int year) {
+        return dao.getTop6SellingProductsByYear(year);
     }
 
 }
