@@ -157,6 +157,126 @@
   </head>
 
   <body>
+    <!-- Toast thông báo lỗi -->
+    <div
+      id="errorToast"
+      th:if="${errorMessage != null}"
+      class="toast align-items-center text-bg-danger border-0 show"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+      style="
+        position: fixed;
+        top: 30px;
+        right: 30px;
+        min-width: 300px;
+        z-index: 9999;
+        transform: translateX(120%);
+        opacity: 0;
+        transition: transform 0.5s, opacity 0.5s;
+      "
+    >
+      <div class="d-flex">
+        <div class="toast-body">
+          <span th:text="${errorMessage}"></span>
+        </div>
+        <button
+          type="button"
+          class="btn-close btn-close-white me-2 m-auto"
+          data-bs-dismiss="toast"
+          aria-label="Close"
+          onclick="hideToast('errorToast')"
+        ></button>
+      </div>
+    </div>
+    <!-- Toast thông báo thành công -->
+    <div
+      id="successToast"
+      th:if="${successMessage != null}"
+      class="toast align-items-center text-bg-success border-0 show"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+      style="
+        position: fixed;
+        top: 90px;
+        right: 30px;
+        min-width: 300px;
+        z-index: 9999;
+        transform: translateX(120%);
+        opacity: 0;
+        transition: transform 0.5s, opacity 0.5s;
+      "
+    >
+      <div class="d-flex">
+        <div class="toast-body">
+          <span th:text="${successMessage}"></span>
+        </div>
+        <button
+          type="button"
+          class="btn-close btn-close-white me-2 m-auto"
+          data-bs-dismiss="toast"
+          aria-label="Close"
+          onclick="hideToast('successToast')"
+        ></button>
+      </div>
+    </div>
+    <!-- Toast cảnh báo -->
+    <div
+      id="warningToast"
+      th:if="${warningMessage != null}"
+      class="toast align-items-center text-bg-warning border-0 show"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+      style="
+        position: fixed;
+        top: 150px;
+        right: 30px;
+        min-width: 300px;
+        z-index: 9999;
+        transform: translateX(120%);
+        opacity: 0;
+        transition: transform 0.5s, opacity 0.5s;
+      "
+    >
+      <div class="d-flex">
+        <div class="toast-body">
+          <span th:text="${warningMessage}"></span>
+        </div>
+        <button
+          type="button"
+          class="btn-close btn-close-white me-2 m-auto"
+          data-bs-dismiss="toast"
+          aria-label="Close"
+          onclick="hideToast('warningToast')"
+        ></button>
+      </div>
+    </div>
+    <script>
+      function showToast(id) {
+        var toast = document.getElementById(id);
+        if (toast) {
+          toast.style.transform = "translateX(0)";
+          toast.style.opacity = "1";
+          setTimeout(function () {
+            hideToast(id);
+          }, 5000);
+        }
+      }
+      function hideToast(id) {
+        var toast = document.getElementById(id);
+        if (toast) {
+          toast.style.transform = "translateX(120%)";
+          toast.style.opacity = "0";
+        }
+      }
+      window.addEventListener("DOMContentLoaded", function () {
+        showToast("errorToast");
+        showToast("successToast");
+        showToast("warningToast");
+      });
+    </script>
     <div class="bodi">
       <div class="container-fluid" th:insert="~{/admin/content}"></div>
     </div>

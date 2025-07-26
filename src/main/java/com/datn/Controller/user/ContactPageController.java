@@ -1,11 +1,13 @@
 package com.datn.Controller.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.datn.Service.ContactService;
 import com.datn.Service.ProductCategoryService;
@@ -40,15 +42,12 @@ public class ContactPageController {
     }
 
     @PostMapping("/sendContact")
-
-    public String createContact(Model model,@ModelAttribute("contact") Contact contact) {
-
-        contact.setStatus(false); // Mặc định là chưa xử lý
+    @ResponseBody
+    public ResponseEntity<String> createContact(@ModelAttribute Contact contact) {
+        contact.setStatus(false);
         contactService.saveContact(contact);
-        model.addAttribute("successMessage",
-                "Cảm ơn bạn đã gửi thông tin đến chúng tôi <br/>. (Chúng tôi sẽ sớm liên hệ với bạn trong thời gian sớm nhất!)");
-        model.addAttribute("view", "contact");
-        return "layouts/layout";
+        return ResponseEntity.ok("Gửi liên hệ thành công!");
     }
+
 
 }

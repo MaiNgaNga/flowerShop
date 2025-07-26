@@ -1,3 +1,4 @@
+
 package com.datn.Service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +14,16 @@ import com.datn.model.User;
 
 import jakarta.transaction.Transactional;
 
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+=======
+import java.time.LocalDate;
+import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -209,5 +217,15 @@ public class OrderServiceImpl implements OrderService {
     public Double getTotalAmountByShipperAndDate(int shipperId, java.util.Date date) {
         return dao.getTotalCompletedAmountByShipperIdAndDateNative(shipperId, date);
 
+    }
+
+    @Override
+    public List<Order> getAllOfflineOrders() {
+        return dao.findByOrderTypeIgnoreCase("Offline");
+    }
+
+    @Override
+    public Page<Order> getPosOrdersByType(String orderType, LocalDate fromDate, LocalDate toDate, Pageable pageable) {
+        return dao.findPosOrders(orderType, fromDate, toDate, pageable);
     }
 }

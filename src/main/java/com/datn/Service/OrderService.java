@@ -1,15 +1,20 @@
 package com.datn.Service;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Date;
+
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 
 import com.datn.model.Order;
 import com.datn.model.OrderDetail;
@@ -63,6 +68,7 @@ public interface OrderService {
 
     Double getTotalAmountByShipperAndDate(int shipperId, Date date);
 
+
     Long countCancelledOrdersByMonthAndYear(int month, int year);
 
     Long getTotalOrdersInMonth(int month, int year);
@@ -70,5 +76,10 @@ public interface OrderService {
     Double getTotalRevenueInYear(int year);
 
     Map<Integer, Double> getMonthlyRevenueByYear(int year);
+
+
+    List<Order> getAllOfflineOrders();
+
+    Page<Order> getPosOrdersByType(String orderType, LocalDate fromDate, LocalDate toDate, Pageable pageable);
 
 }
