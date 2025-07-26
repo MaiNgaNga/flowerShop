@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.datn.Service.OrderService;
 import com.datn.dao.ProductCategoryDAO;
@@ -41,7 +42,7 @@ public class OrderCRUD {
     }
 
     @PostMapping("/update/{orderId}")
-    public String checkout(@PathVariable("orderId") Long orderId, @RequestParam("status") String status) {
+    public String checkout(@PathVariable("orderId") Long orderId, @RequestParam("status") String status,RedirectAttributes redirectAttributes) {
 
         Order order = orderService.getOrderById(orderId);
         if (order != null) {
@@ -49,6 +50,8 @@ public class OrderCRUD {
                 case "Chờ giao":
                     if (order.getStatus().equals("Chưa xác nhận")) {
                         orderService.updateStatus(orderId, "Đã xác nhận");
+                        // Gửi thông báo flash
+                        redirectAttributes.addFlashAttribute("toastSuccess", "Xác nhận đơn hàng thành công!");
                     }
                     break;
                 case "Đã xác nhận":
@@ -60,6 +63,7 @@ public class OrderCRUD {
                     break;
             }
         }
+        
         return "redirect:/orderAdmin";
     }
 
