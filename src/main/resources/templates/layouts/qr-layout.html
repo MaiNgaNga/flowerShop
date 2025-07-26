@@ -24,13 +24,51 @@
     />
   </head>
 
-  <body
-    style="
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      margin: 0;
-      padding: 0;
-    "
-  >
+  <body>
+    <!-- Modal xác nhận thanh toán dùng chung cho các view con -->
+    <div
+      class="modal fade"
+      id="confirmPaymentModal"
+      tabindex="-1"
+      aria-labelledby="confirmPaymentModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmPaymentModalLabel">
+              Xác nhận thanh toán
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            Bạn xác nhận <b>khách hàng đã thanh toán</b> đơn hàng này?
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Hủy
+            </button>
+            <button
+              type="button"
+              class="btn btn-success"
+              id="confirmPaymentActionBtn"
+            >
+              Xác nhận
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Main Content - QR Payment Page -->
     <main th:insert="~{${view}}"></main>
 

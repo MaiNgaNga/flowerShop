@@ -282,7 +282,15 @@
               <h4 th:text="${product.name}">Bó hoa cưới</h4>
               <p th:text="${product.price}">360,000₫</p>
               <div class="sizes">
-                <button class="size-btn">Mua ngay</button>
+               <form th:action="@{/cart/add}" method="post">
+                      <input
+                        type="hidden"
+                        name="productId"
+                        th:value="${product.id}"
+                      />
+                      <input type="hidden" name="quantity" value="1" />
+                      <button type="submit" class="size-btn">Mua ngay</button>
+                    </form>
               </div>
             </div>
           </div>

@@ -8,10 +8,10 @@
   ></div>
 
   <!-- Tab Navigation -->
-  <ul class="nav nav-tabs" id="UserTab" role="tablist">
+  <ul class="nav nav-tabs border-bottom-0" id="UserTab" role="tablist">
     <li class="nav-item" role="presentation">
       <button
-        class="nav-link active"
+        class="nav-link active fw-medium text-dark px-4 py-2"
         id="edit-tab"
         data-bs-toggle="tab"
         data-bs-target="#edit"
@@ -19,13 +19,14 @@
         role="tab"
         aria-controls="edit"
         aria-selected="true"
+        style="transition: all 0.2s ease-in-out"
       >
         Chỉnh sửa
       </button>
     </li>
     <li class="nav-item" role="presentation">
       <button
-        class="nav-link"
+        class="nav-link fw-medium text-dark px-4 py-2"
         id="list-tab"
         data-bs-toggle="tab"
         data-bs-target="#list"
@@ -33,6 +34,7 @@
         role="tab"
         aria-controls="list"
         aria-selected="false"
+        style="transition: all 0.2s ease-in-out"
       >
         Danh sách
       </button>
@@ -50,23 +52,29 @@
       role="tabpanel"
       aria-labelledby="edit-tab"
     >
-      <form th:object="${User}" method="post">
-        <div class="row">
-          <div class="col-6">
-            <div class="mb-1">
-              <label for="id" class="form-label">ID</label>
+      <form
+        th:object="${User}"
+        method="post"
+        class="p-4 bg-white border rounded shadow-sm"
+      >
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="id" class="form-label fw-medium text-muted">ID</label>
               <input
                 type="text"
                 id="id"
                 th:field="*{id}"
                 readonly
-                class="form-control form-control-sm"
+                class="form-control form-control-sm bg-light"
               />
             </div>
           </div>
-          <div class="col-6">
-            <div class="mb-1">
-              <label for="name" class="form-label">Tên</label>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="name" class="form-label fw-medium text-muted"
+                >Tên</label
+              >
               <input
                 type="text"
                 th:field="*{name}"
@@ -74,12 +82,14 @@
                 class="form-control form-control-sm"
                 placeholder="Nhập tên người dùng"
               />
-              <i class="error" th:errors="*{name}"></i>
+              <small class="text-danger" th:errors="*{name}"></small>
             </div>
           </div>
-          <div class="col-6">
-            <div class="mb-1">
-              <label for="email" class="form-label">Email</label>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="email" class="form-label fw-medium text-muted"
+                >Email</label
+              >
               <input
                 type="email"
                 th:field="*{email}"
@@ -87,12 +97,14 @@
                 class="form-control form-control-sm"
                 placeholder="Nhập email"
               />
-              <i class="error" th:errors="*{email}"></i>
+              <small class="text-danger" th:errors="*{email}"></small>
             </div>
           </div>
-          <div class="col-6">
-            <div class="mb-1">
-              <label for="sdt" class="form-label">Số điện thoại</label>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="sdt" class="form-label fw-medium text-muted"
+                >Số điện thoại</label
+              >
               <input
                 type="text"
                 th:field="*{sdt}"
@@ -100,45 +112,58 @@
                 class="form-control form-control-sm"
                 placeholder="Nhập số điện thoại"
               />
-              <i class="error" th:errors="*{sdt}"></i>
+              <small class="text-danger" th:errors="*{sdt}"></small>
             </div>
           </div>
-
-          <div class="col-6">
-            <div class="mb-1">
-              <label>Vai trò:</label>
-              <div>
-                <input
-                  type="radio"
-                  th:field="*{role}"
-                  value="0"
-                  id="roleUser"
-                />
-                <label for="roleUser">User</label>
-
-                <input
-                  type="radio"
-                  th:field="*{role}"
-                  value="1"
-                  id="roleAdmin"
-                />
-                <label for="roleAdmin">Admin</label>
-                <input
-                  type="radio"
-                  th:field="*{role}"
-                  value="2"
-                  id="roleShipper"
-                />
-                <label for="roleShipper">Shipper</label>
-
-                <!-- KHÔNG CÓ radio Shipper ở đây -->
-                <i class="error" th:errors="*{role}"></i>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label fw-medium text-muted">Vai trò</label>
+              <div class="d-flex gap-3">
+                <div class="form-check">
+                  <input
+                    type="radio"
+                    th:field="*{role}"
+                    value="0"
+                    id="roleUser"
+                    class="form-check-input"
+                  />
+                  <label for="roleUser" class="form-check-label text-muted"
+                    >User</label
+                  >
+                </div>
+                <div class="form-check">
+                  <input
+                    type="radio"
+                    th:field="*{role}"
+                    value="1"
+                    id="roleAdmin"
+                    class="form-check-input"
+                  />
+                  <label for="roleAdmin" class="form-check-label text-muted"
+                    >Admin</label
+                  >
+                </div>
+                <div class="form-check">
+                  <input
+                    type="radio"
+                    th:field="*{role}"
+                    value="2"
+                    id="roleShipper"
+                    class="form-check-input"
+                  />
+                  <label for="roleShipper" class="form-check-label text-muted"
+                    >Shipper</label
+                  >
+                </div>
               </div>
+              <small class="text-danger" th:errors="*{role}"></small>
             </div>
           </div>
-          <div class="col-6">
-            <div class="mb-1">
-              <label for="password" class="form-label">Mật khẩu</label>
+          <div th:if="*{id == null}" class="col-md-6">
+            <div class="mb-3">
+              <label for="password" class="form-label fw-medium text-muted"
+                >Mật khẩu</label
+              >
               <input
                 type="password"
                 th:field="*{password}"
@@ -146,67 +171,75 @@
                 class="form-control form-control-sm"
                 placeholder="Nhập mật khẩu"
               />
-              <i class="error" th:text="${errorPass}"></i>
+              <small class="text-danger" th:text="${errorPass}"></small>
             </div>
           </div>
-          <div class="col-6">
-            <div class="mb-1">
-              <label>Trạng thái:</label>
-              <div>
-                <input
-                  type="radio"
-                  th:field="*{status}"
-                  value="false"
-                  id="roleUser"
-                />
-                <label for="roleUser">Off</label>
-
-                <input
-                  type="radio"
-                  th:field="*{status}"
-                  value="true"
-                  id="roleAdmin"
-                />
-                <label for="roleAdmin">On</label>
-                <!-- KHÔNG CÓ radio Shipper ở đây -->
-                <i class="error" th:errors="*{status}"></i>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label fw-medium text-muted">Trạng thái</label>
+              <div class="d-flex gap-3">
+                <div class="form-check">
+                  <input
+                    type="radio"
+                    th:field="*{status}"
+                    value="false"
+                    id="statusOff"
+                    class="form-check-input"
+                  />
+                  <label for="statusOff" class="form-check-label text-muted"
+                    >Off</label
+                  >
+                </div>
+                <div class="form-check">
+                  <input
+                    type="radio"
+                    th:field="*{status}"
+                    value="true"
+                    id="statusOn"
+                    class="form-check-input"
+                  />
+                  <label for="statusOn" class="form-check-label text-muted"
+                    >On</label
+                  >
+                </div>
               </div>
+              <small class="text-danger" th:errors="*{status}"></small>
             </div>
           </div>
         </div>
-        <div class="row mt-4 text-end">
-          <div class="col">
+        <div class="row mt-4">
+          <div class="col text-end">
             <button
               th:if="*{id} == null"
               type="submit"
-              class="btn btn-primary"
+              class="btn btn-primary btn-sm me-2"
               th:formaction="@{/User/create}"
             >
-              <i class="fa fa-plus"></i> Thêm
+              <i class="fa fa-plus me-1"></i> Thêm
             </button>
             <button
               th:if="*{id} != null"
               type="submit"
-              class="btn btn-warning"
+              class="btn btn-warning btn-sm me-2"
               th:formaction="@{/User/update}"
             >
-              <i class="fa fa-edit"></i> Cập Nhật
+              <i class="fa fa-edit me-1"></i> Cập Nhật
             </button>
             <button
               th:if="*{id} != null"
               type="button"
-              class="btn btn-danger"
+              class="btn btn-danger btn-sm me-2"
               onclick="confirmDelete(this)"
               th:data-url="@{/User/delete/{id}(id=${User.id})}"
             >
-              <i class="fa fa-trash"></i> Xóa
+              <i class="fa fa-trash me-1"></i> Xóa
             </button>
             <button
               type="submit"
-              class="btn btn-success"
+              class="btn btn-success btn-sm"
               th:formaction="@{/User/index}"
             >
-              <i class="fa fa-sync"></i> Làm Mới
+              <i class="fa fa-sync me-1"></i> Làm Mới
             </button>
           </div>
         </div>
@@ -221,26 +254,26 @@
       aria-labelledby="list-tab"
     >
       <div class="table-responsive">
-        <table class="table table-striped table-hover">
+        <table class="table table-striped table-hover align-middle">
           <thead class="table-dark">
             <tr>
-              <th>ID</th>
-              <th>Tên</th>
-              <th>Email</th>
-              <th>SDT</th>
-              <th>Vai Trò</th>
-              <th>Trạng thái</th>
-              <th></th>
+              <th class="text-center">ID</th>
+              <th class="text-start">Tên</th>
+              <th class="text-start">Email</th>
+              <th class="text-start">SDT</th>
+              <th class="text-center">Vai Trò</th>
+              <th class="text-center">Trạng thái</th>
+              <th class="text-center">Thao tác</th>
             </tr>
           </thead>
           <tbody>
             <th:block th:each="item : ${Users}">
               <tr>
-                <td th:text="${item.id}"></td>
-                <td th:text="${item.name}"></td>
-                <td th:text="${item.email}"></td>
-                <td th:text="${item.sdt}"></td>
-                <td>
+                <td class="text-center" th:text="${item.id}"></td>
+                <td class="text-start" th:text="${item.name}"></td>
+                <td class="text-start" th:text="${item.email}"></td>
+                <td class="text-start" th:text="${item.sdt}"></td>
+                <td class="text-center">
                   <span th:switch="${item.role}">
                     <span th:case="0">User</span>
                     <span th:case="1">Admin</span>
@@ -248,21 +281,31 @@
                     <span th:case="*">Không rõ</span>
                   </span>
                 </td>
-                <td th:text="${item.status ? 'On' : 'Off'}"
-                    th:class="${item.status ? 'text-success' : 'text-danger'}"></td>
-                <td>
-                  <a
-                    class="btn btn-sm btn-info"
-                    th:href="@{/User/edit/{id}(id=${item.id})}"
-                    >Sửa</a
+                <td class="text-center">
+                  <span th:if="${item.status == true}" class="badge bg-success"
+                    >Onl</span
                   >
+                  <span th:if="${item.status == false}" class="badge bg-danger"
+                    >Off</span
+                  >
+                </td>
+                <td class="action-icons">
+                  <a
+                    th:href="@{'/User/edit/' + ${item.id} + '?tab=edit'}"
+                    class="edit-icon"
+                    title="Sửa sản phẩm"
+                  >
+                    <i class="fa fa-edit"></i>
+                  </a>
                   <a
                     href="#"
-                    class="btn btn-sm btn-danger"
+                    class="delete-icon"
                     onclick="confirmDelete(this)"
-                    th:data-url="@{/User/delete/{id}(id=${item.id})}"
-                    >Xóa</a
+                    th:data-url="@{'/User/delete/' + ${item.id} + '?tab=list'}"
+                    title="Xóa sản phẩm"
                   >
+                    <i class="fa fa-trash"></i>
+                  </a>
                 </td>
               </tr>
             </th:block>

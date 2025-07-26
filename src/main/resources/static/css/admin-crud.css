@@ -99,7 +99,6 @@ input[type="file"] {
 .btn-warning,
 .btn-danger,
 .btn-success {
-  padding: 6px 14px;
   font-weight: 500;
   border-radius: 5px;
   transition: transform 0.2s ease-in-out;
@@ -428,4 +427,66 @@ body {
    ======================================== */
 .error {
   color: red;
+}
+
+/* table dep */
+.table thead th,
+.table tbody td {
+  padding-left: 16px !important; /* Tạo khoảng cách trái */
+  padding-right: 16px !important; /* Khoảng cách phải */
+  vertical-align: middle; /* Căn giữa theo chiều dọc */
+}
+
+.table td,
+.table th {
+  font-size: 15px; /* Dễ đọc hơn */
+  white-space: nowrap; /* Không cho xuống dòng */
+}
+
+.table {
+  border-collapse: separate; /* Cho phép tách ô để padding rõ hơn */
+  border-spacing: 0 5px; /* Khoảng cách giữa các hàng */
+}
+
+.ft {
+  text-align: center;
+  font-family: "Arial", sans-serif;
+  font-size: 14px;
+  color: #555;
+  padding: 20px 0;
+  border-top: 1px solid #e0e0e0;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.ft:hover {
+  color: #000;
+  background-color: #f0f0f0;
+}
+
+/*  */
+.nav-tabs .nav-link {
+  border: none;
+  border-bottom: 2px solid transparent;
+  background-color: #f8f9fa;
+  border-radius: 0.25rem 0.25rem 0 0;
+}
+.nav-tabs .nav-link:hover {
+  background-color: #e9ecef;
+}
+.nav-tabs .nav-link.active {
+  background-color: #fff;
+  border-bottom: 2px solid #007bff;
+  color: #007bff;
+}
+.form-control-sm {
+  border-color: #ced4da;
+  transition: border-color 0.15s ease-in-out;
+}
+.form-control-sm:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+.bg-light {
+  background-color: #f8f9fa;
 }
