@@ -139,8 +139,8 @@
           <thead class="table-dark">
             <tr>
               <th>ID</th>
-              <th>Tên Danh Mục</th>
-              <th>Mô Tả</th>
+              <th class="text-start">Tên Danh Mục</th>
+              <th class="text-start">Mô Tả</th>
               <th></th>
             </tr>
           </thead>
@@ -148,21 +148,22 @@
             <th:block th:each="item : ${productCategories}">
               <tr>
                 <td th:text="${item.id}"></td>
-                <td th:text="${item.name}"></td>
-                <td th:text="${item.description}"></td>
+                <td class="text-start" th:text="${item.name}"></td>
+                <td class="text-start" th:text="${item.description}"></td>
                 <td>
                   <a
-                    class="btn btn-sm btn-info"
+                    class="btn btn-sm btn-info text-white"
                     th:href="@{/ProductCategory/edit/{id}(id=${item.id})}"
-                    >Sửa</a
-                  >
+                    ><i class="fa-solid fa-pen-to-square"></i
+                  ></a>
                   <a
                     href="#"
                     class="btn btn-sm btn-danger"
                     onclick="confirmDelete(this)"
                     th:data-url="@{/ProductCategory/delete/{id}(id=${item.id})}"
+                    title="Xóa sản phẩm"
                   >
-                    Xóa
+                    <i class="fa fa-trash"></i>
                   </a>
                 </td>
               </tr>

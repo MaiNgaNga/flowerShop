@@ -18,6 +18,7 @@ import com.datn.Service.UserService;
 import com.datn.dao.ShipperDAO;
 import com.datn.model.Shipper;
 import com.datn.model.User;
+import com.datn.validator.CCCDValidator;
 
 import jakarta.validation.Valid;
 
@@ -137,6 +138,14 @@ public class ShipperCRUDController {
             model.addAttribute("view", "admin/shipperCRUD");
             return "admin/layout";
         }; 
+
+        if ( !CCCDValidator.isValidCCCD(shipper.getCccd()) ) {
+            model.addAttribute("errorCCCD", "CCCD không hợp lệ! Phải gồm 12 chữ số và mã tỉnh hợp lệ.");
+            model.addAttribute("view", "admin/shipperCRUD");
+            return "admin/layout";
+            
+        }
+        
         // nếu không thay đổi trạng thái, giữ nguyên
         if (shipper.getStatus() == null) {
             shipper.setStatus(existing.getStatus());
@@ -146,6 +155,7 @@ public class ShipperCRUDController {
             }
          // Lấy lại User từ DB nếu form không gửi đủ dữ liệu
         shipper.setUser(existing.getUser()); // Giữ nguyên User đã có
+
 
         shipperService.update(shipper);
         redirectAttributes.addFlashAttribute("success", "Cập nhật shipper thành công!");

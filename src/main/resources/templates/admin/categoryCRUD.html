@@ -156,7 +156,7 @@
           <thead class="table-dark">
             <tr>
               <th>ID</th>
-              <th>Tên Loại Hoa</th>
+              <th class="text-start">Tên Loại Hoa</th>
               <th>Mô Tả</th>
               <th></th>
             </tr>
@@ -165,7 +165,7 @@
             <th:block th:each="item : ${categorys}">
               <tr>
                 <td th:text="${item.id}"></td>
-                <td th:text="${item.name}"></td>
+                <td class="text-start" th:text="${item.name}"></td>
                 <td th:text="${item.description}"></td>
 
                 <td class="action-icons">

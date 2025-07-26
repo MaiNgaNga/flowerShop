@@ -1,296 +1,427 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8" />
-  <title>Quản Lý Bài Viết</title>
-  <link rel="stylesheet" href="/css/bootstrap.min.css" />
-  <script src="/js/bootstrap.bundle.min.js"></script>
-  <style>
-    .custom-pagination .page-item .page-link {
-      border-radius: 50%;
-      margin: 0 5px;
-      color: #f090b8;
-      border: 1px solid #f090b8;
-      background-color: #fff;
-      transition: all 0.2s ease-in-out;
-      width: 38px;
-      height: 38px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <title>Quản Lý Bài Viết</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <style>
+      .custom-pagination .page-item .page-link {
+        border-radius: 50%;
+        margin: 0 5px;
+        color: #f090b8;
+        border: 1px solid #f090b8;
+        background-color: #fff;
+        transition: all 0.2s ease-in-out;
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-    .custom-pagination .page-item.active .page-link {
-      background-color: #f090b8;
-      color: #fff;
-      border-color: #f090b8;
-    }
+      .custom-pagination .page-item.active .page-link {
+        background-color: #f090b8;
+        color: #fff;
+        border-color: #f090b8;
+      }
 
-    .custom-pagination .page-item.disabled .page-link {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+      .custom-pagination .page-item.disabled .page-link {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
 
-    .custom-pagination .page-item .page-link:hover {
-      background-color: #fcd6e5;
-      color: #d63384;
-    }
-  .table-rounded {
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1); /* tùy chọn để đẹp hơn */
-}
- .input-group-sm .form-control {
-    border-radius: 20px 0 0 20px;
-  }
+      .custom-pagination .page-item .page-link:hover {
+        background-color: #fcd6e5;
+        color: #d63384;
+      }
+      .table-rounded {
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* tùy chọn để đẹp hơn */
+      }
+      .input-group-sm .form-control {
+        border-radius: 20px 0 0 20px;
+      }
 
-  .input-group-sm .btn {
-    border-radius: 0 20px 20px 0;
-  }
+      .input-group-sm .btn {
+        border-radius: 0 20px 20px 0;
+      }
+    </style>
+  </head>
+  <!-- Place the first <script> tag in your HTML's <head> -->
+  <script
+    src="https://cdn.tiny.cloud/1/cnfptje0f4crq45ntzlrwi1ho10qgicxywquizuda645imkj/tinymce/7/tinymce.min.js"
+    referrerpolicy="origin"
+  ></script>
 
-  </style>
-</head>
-<!-- Place the first <script> tag in your HTML's <head> -->
-<script src="https://cdn.tiny.cloud/1/cnfptje0f4crq45ntzlrwi1ho10qgicxywquizuda645imkj/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+  <!-- Place the following <script> and <textarea> tags your HTML's <body> -->
+  <!-- Place the first <script> tag in your HTML's <head> -->
+  <script
+    src="https://cdn.tiny.cloud/1/cnfptje0f4crq45ntzlrwi1ho10qgicxywquizuda645imkj/tinymce/7/tinymce.min.js"
+    referrerpolicy="origin"
+  ></script>
 
-<!-- Place the following <script> and <textarea> tags your HTML's <body> -->
-<!-- Place the first <script> tag in your HTML's <head> -->
-<script src="https://cdn.tiny.cloud/1/cnfptje0f4crq45ntzlrwi1ho10qgicxywquizuda645imkj/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+  <!-- Place the following <script> and <textarea> tags your HTML's <body> -->
+  <script>
+    tinymce.init({
+      selector: "textarea",
+      plugins:
+        "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount",
+      toolbar:
+        "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
+    });
+  </script>
 
-<!-- Place the following <script> and <textarea> tags your HTML's <body> -->
-<script>
-  tinymce.init({
-    selector: 'textarea',
-    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-  });
-</script>
+  <body>
+    <main class="container mt-3">
+      <h3>Quản Lý Bài Viết</h3>
 
-
-<body>
-<main class="container mt-3">
-  
-  <h3>Quản Lý Bài Viết</h3>
-  
-  
-<form 
-  action="/Post/index"
-  method="get"
-  class="search-filter-row"
-  style="gap: 10px; align-items: center"
->
-  <div class="search-box" style="position: relative;">
-    <i class="fa fa-search" style="position: absolute; top: 50%; left: 10px; transform: translateY(-50%); color: #888;"></i>
-    <input
-      type="text"
-      name="keyword"
-      th:value="${keyword}"
-      class="form-control form-control-sm custom-search-input"
-      placeholder="Tìm theo tiêu đề..."
-      style="padding-left: 30px;"
-  
-    />
-  </div>
-
-  <a 
-    th:href="@{/Post/index} + '#list'" 
-    class="btn btn-outline-secondary btn-sm"
-  >
-    Làm mới
-  </a>
-</form>
-
-
-
-
-<hr />
-
-  <div class="alert alert-success" th:if="${success}" th:text="${success}"></div>
-
-  <!-- Tab Navigation -->
-  <ul class="nav nav-tabs" id="postTab" role="tablist">
-    <li class="nav-item">
-      <button class="nav-link active" id="edit-tab" data-bs-toggle="tab" data-bs-target="#edit" type="button" role="tab">Chỉnh sửa</button>
-    </li>
-    <li class="nav-item">
-      <button class="nav-link" id="list-tab" data-bs-toggle="tab" data-bs-target="#list" type="button" role="tab">Danh sách</button>
-    </li>
-  </ul>
-
-  <div class="tab-content mt-3">
-    <!-- Tab: Chỉnh sửa -->
-    <div class="tab-pane fade show active" id="edit" role="tabpanel">
-      <form action="/Post/index" method="post" enctype="multipart/form-data" th:object="${post}">
-        <div class="row">
-          <div class="col-md-6">
-            <label for="id" class="form-label">ID</label>
-            <input type="text" id="id" th:field="*{id}" readonly class="form-control form-control-sm"/>
-          </div>
-          <div class="col-md-6">
-            <label for="title" class="form-label">Tiêu đề</label>
-            <input type="text" id="title" th:field="*{title}" class="form-control form-control-sm" placeholder="Tiêu đề bài viết"/>
-            <i class="error" th:errors="*{title}"></i>
-          </div>
+      <form
+        action="/Post/index"
+        method="get"
+        class="search-filter-row"
+        style="gap: 10px; align-items: center"
+      >
+        <div class="search-box" style="position: relative">
+          <i
+            class="fa fa-search"
+            style="
+              position: absolute;
+              top: 50%;
+              left: 10px;
+              transform: translateY(-50%);
+              color: #888;
+            "
+          ></i>
+          <input
+            type="text"
+            name="keyword"
+            th:value="${keyword}"
+            class="form-control form-control-sm custom-search-input"
+            placeholder="Tìm theo tiêu đề..."
+            style="padding-left: 30px"
+          />
         </div>
 
-        <div class="row mt-2">
-          <div class="col-12">
-            <label for="content" class="form-label">Nội dung</label>
-            <textarea id="content" th:field="*{content}" class="form-control form-control-sm" rows="6" placeholder="Nội dung bài viết"></textarea>
-            <i class="error" th:errors="*{content}"></i>
-          </div>
-        </div>
-      
-        <div class="row mt-2">
-          <div class="col-md-6">
-        
-<div class="col-md-6">
-  <label class="form-label">Ngày đăng</label>
-  <input type="date" th:field="*{postDate}" class="form-control form-control-sm" readonly />
-</div>
-
-
-
-
-
-          </div>
-
-          <div class="col-md-6">
-            <label for="status" class="form-label">Trạng thái</label>
-            <select id="status" th:field="*{status}" class="form-control form-control-sm">
-              <option th:value="true">Hiển thị</option>
-              <option th:value="false">Ẩn</option>
-            </select>
-          </div>
-        </div>
-
-     
-
-        <div class="mb-2 mt-2">
-          <label for="image" class="form-label">Ảnh</label>
-          <div class="mt-2">
-            <input type="hidden" name="oldImage" th:if="${post.image}" th:value="${post.image}" />
-            <img th:if="${post.image}" th:src="@{/images/{image}(image=${post.image})}" class="img-thumbnail" width="150" alt="Ảnh đại diện"/>
-            <label for="image" class="btn btn-primary">Chọn ảnh</label>
-            <input type="file" id="image" name="imageFile" hidden />
-          </div>
-        </div>
-
-
-        <div class="row mt-3 text-end">
-          <div class="col">
-         <button th:if="${post.id == null or post.id == 0}" class="btn btn-primary" th:formaction="@{/Post/create}" type="submit">
-  <i class="fa fa-plus"></i> Thêm
-</button>
-
-            <button th:if="${post.id != 0}" class="btn btn-warning" th:formaction="@{/Post/update}" type="submit">
-              <i class="fa fa-edit"></i> Cập Nhật
-            </button>
-            <button th:if="${post.id != 0}" class="btn btn-danger" type="button" onclick="confirmDelete(this)" th:data-url="@{/Post/delete/{id}(id=${post.id})}">
-              <i class="fa fa-trash"></i> Xóa
-            </button>
-            <a class="btn btn-success" th:href="@{/Post/index}">
-              <i class="fa fa-sync"></i> Làm mới
-            </a>
-          </div>
-        </div>
+        <a
+          th:href="@{/Post/index} + '#list'"
+          class="btn btn-outline-secondary btn-sm"
+        >
+          Làm mới
+        </a>
       </form>
-    </div>
 
-    <!-- Tab: Danh sách -->
-    <div class="tab-pane fade" id="list" role="tabpanel">
-      
-      <div class="table-responsive">
- <table class="table table-striped table-hover table-rounded">
+      <hr />
 
-         <thead class="table-dark" >
+      <div
+        class="alert alert-success"
+        th:if="${success}"
+        th:text="${success}"
+      ></div>
 
-            <tr>
-              <th>ID</th>
-              <th>Tiêu đề</th>
-              <th>Ngày đăng</th>
-              <th>Ảnh</th>
-              <th>Người đăng</th>
-              <th>Trạng thái</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr th:each="item : ${posts}">
-              <td th:text="${item.id}"></td>
-              <td th:text="${item.title}"></td>
-              <td th:text="${#temporals.format(item.postDate, 'dd/MM/yyyy')}"></td>
-              <td>
-                <img th:if="${item.image}" th:src="@{/images/{image}(image=${item.image})}" class="img-thumbnail" width="100" alt="Ảnh bài viết"/>
-                <span th:if="${item.image == null}" class="text-muted">Chưa có ảnh</span>
-              </td>
-              <td th:text="${item.user.name}"></td> 
-              
-              <td>
-                <span th:text="${item.status ? 'Hiển thị' : 'Ẩn'}" class="badge bg-secondary"></span>
-              </td>
-              <td>
-              <a class="btn btn-sm btn-info" th:href="@{/Post/edit/{id}(id=${item.id})}">
-    <i class="fa fa-edit"></i> Sửa
-</a>
-<a class="btn btn-sm btn-danger" href="#" onclick="confirmDelete(this)" 
-   th:data-url="@{/Post/delete/{id}(id=${item.id})}">
-    <i class="fa fa-trash"></i> Xóa
-</a>
+      <!-- Tab Navigation -->
+      <ul class="nav nav-tabs" id="postTab" role="tablist">
+        <li class="nav-item">
+          <button
+            class="nav-link active"
+            id="edit-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#edit"
+            type="button"
+            role="tab"
+          >
+            Chỉnh sửa
+          </button>
+        </li>
+        <li class="nav-item">
+          <button
+            class="nav-link"
+            id="list-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#list"
+            type="button"
+            role="tab"
+          >
+            Danh sách
+          </button>
+        </li>
+      </ul>
 
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="tab-content mt-3">
+        <!-- Tab: Chỉnh sửa -->
+        <div class="tab-pane fade show active" id="edit" role="tabpanel">
+          <form
+            action="/Post/index"
+            method="post"
+            enctype="multipart/form-data"
+            th:object="${post}"
+          >
+            <div class="row">
+              <div class="col-md-6">
+                <label for="id" class="form-label">ID</label>
+                <input
+                  type="text"
+                  id="id"
+                  th:field="*{id}"
+                  readonly
+                  class="form-control form-control-sm"
+                />
+              </div>
+              <div class="col-md-6">
+                <label for="title" class="form-label">Tiêu đề</label>
+                <input
+                  type="text"
+                  id="title"
+                  th:field="*{title}"
+                  class="form-control form-control-sm"
+                  placeholder="Tiêu đề bài viết"
+                />
+                <i class="error" th:errors="*{title}"></i>
+              </div>
+            </div>
+
+            <div class="row mt-2">
+              <div class="col-12">
+                <label for="content" class="form-label">Nội dung</label>
+                <textarea
+                  id="content"
+                  th:field="*{content}"
+                  class="form-control form-control-sm"
+                  rows="6"
+                  placeholder="Nội dung bài viết"
+                ></textarea>
+                <i class="error" th:errors="*{content}"></i>
+              </div>
+            </div>
+
+            <div class="row mt-2">
+              <div class="col-md-6">
+                <div class="col-md-6">
+                  <label class="form-label">Ngày đăng</label>
+                  <input
+                    type="date"
+                    th:field="*{postDate}"
+                    class="form-control form-control-sm"
+                    readonly
+                  />
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="status" class="form-label">Trạng thái</label>
+                <select
+                  id="status"
+                  th:field="*{status}"
+                  class="form-control form-control-sm"
+                >
+                  <option th:value="true">Hiển thị</option>
+                  <option th:value="false">Ẩn</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-2 mt-2">
+              <label for="image" class="form-label">Ảnh</label>
+              <div class="mt-2">
+                <input
+                  type="hidden"
+                  name="oldImage"
+                  th:if="${post.image}"
+                  th:value="${post.image}"
+                />
+                <img
+                  th:if="${post.image}"
+                  th:src="@{/images/{image}(image=${post.image})}"
+                  class="img-thumbnail"
+                  width="150"
+                  alt="Ảnh đại diện"
+                />
+                <label for="image" class="btn btn-primary">Chọn ảnh</label>
+                <input type="file" id="image" name="imageFile" hidden />
+              </div>
+            </div>
+
+            <div class="row mt-3 text-end">
+              <div class="col">
+                <button
+                  th:if="${post.id == null or post.id == 0}"
+                  class="btn btn-primary"
+                  th:formaction="@{/Post/create}"
+                  type="submit"
+                >
+                  <i class="fa fa-plus"></i> Thêm
+                </button>
+
+                <button
+                  th:if="${post.id != 0}"
+                  class="btn btn-warning"
+                  th:formaction="@{/Post/update}"
+                  type="submit"
+                >
+                  <i class="fa fa-edit"></i> Cập Nhật
+                </button>
+                <button
+                  th:if="${post.id != 0}"
+                  class="btn btn-danger"
+                  type="button"
+                  onclick="confirmDelete(this)"
+                  th:data-url="@{/Post/delete/{id}(id=${post.id})}"
+                >
+                  <i class="fa fa-trash"></i> Xóa
+                </button>
+                <a class="btn btn-success" th:href="@{/Post/index}">
+                  <i class="fa fa-sync"></i> Làm mới
+                </a>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Tab: Danh sách -->
+        <div class="tab-pane fade" id="list" role="tabpanel">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover table-rounded">
+              <thead class="table-dark">
+                <tr>
+                  <th>ID</th>
+                  <th>Ảnh</th>
+                  <th>Tiêu đề</th>
+                  <th>Ngày đăng</th>
+                  <th class="text-start">Người đăng</th>
+                  <th>Trạng thái</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="item : ${posts}">
+                  <td th:text="${item.id}"></td>
+                  <td>
+                    <img
+                      th:if="${item.image}"
+                      th:src="@{/images/{image}(image=${item.image})}"
+                      class="img-thumbnail"
+                      width="80"
+                     
+                      alt="Ảnh bài viết"
+                    />
+                    <span th:if="${item.image == null}" class="text-muted"
+                      >Chưa có ảnh</span
+                    >
+                  </td>
+                  <td th:text="${item.title}"></td>
+                  <td
+                    th:text="${#temporals.format(item.postDate, 'dd/MM/yyyy')}"
+                  ></td>
+
+                  <td class="text-start" th:text="${item.user.name}"></td>
+
+                  <td>
+                    <span
+                      th:text="${item.status ? 'Hiển thị' : 'Ẩn'}"
+                      class="badge bg-secondary"
+                    ></span>
+                  </td>
+                  <td>
+                    <a
+                      class="btn btn-sm btn-info text-white"
+                      th:href="@{/Post/edit/{id}(id=${item.id})}"
+                    >
+                      <i class="fa fa-edit"></i>
+                    </a>
+                    <a
+                      class="btn btn-sm btn-danger"
+                      href="#"
+                      onclick="confirmDelete(this)"
+                      th:data-url="@{/Post/delete/{id}(id=${item.id})}"
+                    >
+                      <i class="fa fa-trash"></i>
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Phân trang -->
+          <div class="d-flex justify-content-center mt-4">
+            <nav>
+              <ul class="pagination custom-pagination">
+                <li
+                  class="page-item"
+                  th:classappend="${currentPage == 0} ? 'disabled'"
+                >
+                  <a class="page-link" th:href="@{|/Post/index?page=0#list|}"
+                    ><i class="fa fa-angle-double-left"></i
+                  ></a>
+                </li>
+                <li
+                  class="page-item"
+                  th:classappend="${currentPage == 0} ? 'disabled'"
+                >
+                  <a
+                    class="page-link"
+                    th:href="@{|/Post/index?page=${currentPage - 1}#list|}"
+                    ><i class="fa fa-angle-left"></i
+                  ></a>
+                </li>
+                <li
+                  class="page-item"
+                  th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                  th:classappend="${currentPage == i} ? 'active'"
+                >
+                  <a
+                    class="page-link"
+                    th:href="@{|/Post/index?page=${i}#list|}"
+                    th:text="${i + 1}"
+                  ></a>
+                </li>
+                <li
+                  class="page-item"
+                  th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
+                >
+                  <a
+                    class="page-link"
+                    th:href="@{|/Post/index?page=${currentPage + 1}#list|}"
+                    ><i class="fa fa-angle-right"></i
+                  ></a>
+                </li>
+                <li
+                  class="page-item"
+                  th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
+                >
+                  <a
+                    class="page-link"
+                    th:href="@{|/Post/index?page=${totalPages - 1}#list|}"
+                    ><i class="fa fa-angle-double-right"></i
+                  ></a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
       </div>
+    </main>
 
-  <!-- Phân trang -->
-<div class="d-flex justify-content-center mt-4">
-  <nav>
-    <ul class="pagination custom-pagination">
-      <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-        <a class="page-link" th:href="@{|/Post/index?page=0#list|}"><i class="fa fa-angle-double-left"></i></a>
-      </li>
-      <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-        <a class="page-link" th:href="@{|/Post/index?page=${currentPage - 1}#list|}"><i class="fa fa-angle-left"></i></a>
-      </li>
-      <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i} ? 'active'">
-        <a class="page-link" th:href="@{|/Post/index?page=${i}#list|}" th:text="${i + 1}"></a>
-      </li>
-      <li class="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
-        <a class="page-link" th:href="@{|/Post/index?page=${currentPage + 1}#list|}"><i class="fa fa-angle-right"></i></a>
-      </li>
-      <li class="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
-        <a class="page-link" th:href="@{|/Post/index?page=${totalPages - 1}#list|}"><i class="fa fa-angle-double-right"></i></a>
-      </li>
-    </ul>
-  </nav>
-</div>
-
-    </div>
-  </div>
-</main>
-
-<script>
-  function confirmDelete(el) {
-    if (confirm("Bạn có chắc chắn muốn xóa?")) {
-      window.location.href = el.getAttribute("data-url");
-    }
-  }
-</script>
-</body>
+    <script>
+      function confirmDelete(el) {
+        if (confirm("Bạn có chắc chắn muốn xóa?")) {
+          window.location.href = el.getAttribute("data-url");
+        }
+      }
+    </script>
+  </body>
 </html>
 <script th:inline="javascript">
-  window.addEventListener('DOMContentLoaded', function () {
+  window.addEventListener("DOMContentLoaded", function () {
     const urlParams = new URLSearchParams(window.location.search);
     const keyword = /*[[${keyword != null}]]*/ false;
 
-    if (window.location.hash === '#list' || keyword) {
-      const listTab = document.querySelector('#list-tab');
+    if (window.location.hash === "#list" || keyword) {
+      const listTab = document.querySelector("#list-tab");
       if (listTab) {
         new bootstrap.Tab(listTab).show();
       }
     }
   });
 </script>
-

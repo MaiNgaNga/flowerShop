@@ -229,6 +229,7 @@
                 placeholder="Nhập số CCCD"
               />
               <i class="error" th:errors="*{cccd}"></i>
+              <i th:if="${errorCCCD}" class="error" th:text="${errorCCCD}"></i>
             </div>
           </div>
           <!-- CCCD -->
@@ -370,9 +371,9 @@
             <tr>
               <th>ID</th>
               <th>userId</th>
-              <th>Tên Shipper</th>
-              <th>Email</th>
-              <th>Phương tiện</th>
+              <th class="text-start">Tên Shipper</th>
+              <th class="text-start">Email</th>
+              <th class="text-start">Phương tiện</th>
               <th>CCCD</th>
               <th>Địa chỉ</th>
               <th>Trạng thái</th>
@@ -384,17 +385,17 @@
               <tr th:each="item : ${shippers}">
                 <td th:text="${item.id}"></td>
                 <td th:text="${item.user != null ? item.user.id : ''}"></td>
-                <td th:text="${item.user != null ? item.user.name : ''}"></td>
-                <td th:text="${item.user != null ? item.user.email : ''}"></td>
-                <td th:text="${item.vehicle}"></td>
+                <td class="text-start" th:text="${item.user != null ? item.user.name : ''}"></td>
+                <td class="text-start" th:text="${item.user != null ? item.user.email : ''}"></td>
+                <td class="text-start" th:text="${item.vehicle}"></td>
                 <td th:text="${item.cccd}"></td>
                 <td th:text="${item.address}"></td>
                 <td>
                   <span th:if="${item.status == true}" class="badge bg-success"
-                    >Đang hoạt động</span
+                    >Onl</span
                   >
                   <span th:if="${item.status == false}" class="badge bg-danger"
-                    >Ngưng hoạt động</span
+                    >Off</span
                   >
                 </td>
                 <!-- <td>

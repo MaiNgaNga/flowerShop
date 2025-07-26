@@ -20,7 +20,12 @@
     <!-- AOS Animate On Scroll -->
     <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
     <link rel="stylesheet" th:href="@{/css/contact-page.css}" />
-    <style></style>
+    <!-- animate -->
+    <!-- Animate.css for smooth entrance (optional but nice) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
   </head>
 
   <body>
@@ -31,8 +36,9 @@
           <i class="fas fa-map-marker-alt"></i>
         </div>
         <div class="contact-title">ĐỊA CHỈ</div>
-        <div class="contact-info">116, Nguyễn Huy Tưởng, Hòa Minh,
-Liên Chiểu, Đà Nẵng.</div>
+        <div class="contact-info">
+          116, Nguyễn Huy Tưởng, Hòa Minh, Liên Chiểu, Đà Nẵng.
+        </div>
       </div>
 
       <!-- Fanpage, Hotline, Email -->
@@ -64,21 +70,36 @@ Liên Chiểu, Đà Nẵng.</div>
 
       <!-- Logo + Tiêu đề -->
       <div class="text-center mt-4" data-aos="zoom-in">
-        <img
-          th:src="@{/images/2.png}"
-          alt="Logo"
-          style="height: 110px"
-        />
+        <img th:src="@{/images/2.png}" alt="Logo" style="height: 110px" />
         <div class="logotext">
           <h1>Contact us</h1>
         </div>
       </div>
 
       <!-- Form -->
-      <form id="contactForm" th:action="@{/sendContact}" method="post" th:object="${contact}" class="form mt-4" data-aos="fade-up" data-aos-delay="200">
-       
-        <input required type="text" th:field="*{name}" placeholder="Họ và tên" class="form-control mb-3" />
-        <input required type="email" th:field="*{email}" placeholder="Email" class="form-control mb-3" />
+      <form
+        id="contactForm"
+        th:action="@{/sendContact}"
+        method="post"
+        th:object="${contact}"
+        class="form mt-4"
+        data-aos="fade-up"
+        data-aos-delay="200"
+      >
+        <input
+          required
+          type="text"
+          th:field="*{name}"
+          placeholder="Họ và tên"
+          class="form-control mb-3"
+        />
+        <input
+          required
+          type="email"
+          th:field="*{email}"
+          placeholder="Email"
+          class="form-control mb-3"
+        />
         <input
           type="text"
           th:field="*{sdt}"
@@ -93,14 +114,39 @@ Liên Chiểu, Đà Nẵng.</div>
           class="form-control mb-3"
           rows="4"
         ></textarea>
-      <div class="text-center">
-         <button type="submit" class="btn btn-hover1"><span>Gửi liên hệ</span></button>
-
-      </div>
+        <div class="text-center">
+          <button type="submit" class="btn btn-hover1">
+            <span>Gửi liên hệ</span>
+          </button>
+        </div>
       </form>
 
-      <div th:if="${successMessage}" class="alert alert-success mt-4" role="alert">
-        <p th:utext="${successMessage}"></p>
+      <div
+        th:if="${successMessage}"
+        id="customToastContainer"
+        class="toast-container position-fixed top-0 end-0 p-3"
+        style="z-index: 9999"
+      >
+        <div
+          id="customToast"
+          class="toast text-white bg-success border-0 shadow-lg animate__animated animate__fadeInRight"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+        >
+          <div class="d-flex">
+            <div
+              class="toast-body fw-semibold fs-6"
+              th:utext="${successMessage}"
+            ></div>
+            <button
+              type="button"
+              class="btn-close btn-close-white me-2 m-auto"
+              data-bs-dismiss="toast"
+              aria-label="Close"
+            ></button>
+          </div>
+        </div>
       </div>
 
       <!-- Google Maps -->
@@ -125,6 +171,99 @@ Liên Chiểu, Đà Nẵng.</div>
         duration: 800,
         once: true,
       });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("contactForm");
+
+        form.addEventListener("submit", function (e) {
+          e.preventDefault(); // chặn reload
+
+          const formData = new FormData(form);
+
+          fetch(form.action, {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => {
+              if (!response.ok) throw new Error("Lỗi gửi dữ liệu");
+              return response.text(); // hoặc response.json() nếu bạn trả JSON
+            })
+            .then((data) => {
+              // ✅ Hiển thị toast thành công
+              showSuccessToast(
+                " ✅ Cảm ơn bạn đã gửi thông tin đến chúng tôi <br/>. (Chúng tôi sẽ sớm liên hệ với bạn trong thời gian sớm nhất!"
+              );
+              form.reset(); // Reset form sau khi gửi
+            })
+            .catch((error) => {
+              console.error("Lỗi:", error);
+              showErrorToast(
+                "Đã xảy ra lỗi khi gửi liên hệ. Vui lòng thử lại!"
+              );
+            });
+        });
+
+        function showSuccessToast(message) {
+          const toastHtml = `
+        <div id="customToast" class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true" style="min-width: 300px;">
+          <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+        </div>
+      `;
+          showToast(toastHtml);
+        }
+
+        function showErrorToast(message) {
+          const toastHtml = `
+        <div id="customToast" class="toast align-items-center text-bg-danger border-0 show" role="alert" aria-live="assertive" aria-atomic="true" style="min-width: 300px;">
+          <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+        </div>
+      `;
+          showToast(toastHtml);
+        }
+
+        function showToast(toastHtml) {
+          let container = document.getElementById("customToastContainer");
+          if (!container) {
+            container = document.createElement("div");
+            container.id = "customToastContainer";
+            container.className =
+              "toast-container position-fixed bottom-0 end-0 p-3";
+            container.style.zIndex = "9999";
+            document.body.appendChild(container);
+          }
+
+          container.innerHTML = toastHtml;
+
+          const toastElement = container.querySelector(".toast");
+
+          // 👇 Add Animate.css class (fadeInRight for vào, fadeOutRight for tắt)
+          toastElement.classList.add(
+            "animate__animated",
+            "animate__fadeInRight"
+          );
+
+          const toast = new bootstrap.Toast(toastElement, {
+            delay: 6000,
+            autohide: true,
+          });
+
+          toast.show();
+
+          // 👇 Khi toast bắt đầu ẩn, thêm hiệu ứng ra ngoài
+          toastElement.addEventListener("hide.bs.toast", () => {
+            toastElement.classList.remove("animate__fadeInRight");
+            toastElement.classList.add("animate__fadeOutRight");
+          });
+        }
+      });
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
