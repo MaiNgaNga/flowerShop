@@ -81,15 +81,22 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
         List<Product> findBestSellerByCategory(@Param("categoryName") String categoryName);
 
         @Query(value = """
-        SELECT TOP 8 p.*
-        FROM products p
-        JOIN order_details od ON p.id = od.product_id
-        GROUP BY p.id, p.name, p.description, p.price, p.quantity,
-                p.image_url, p.image_url2, p.image_url3, p.product_category_id,
-                p.color_id, p.category_id, p.discount_percent, p.discount_start, p.discount_end, p.available
-        ORDER BY SUM(od.quantity) DESC
-        """, nativeQuery = true)
-        List<Product> findSellingProducts();
+    SELECT TOP 8 
+        p.id, p.name, p.description, p.price, p.quantity,
+        p.image_url, p.image_url2, p.image_url3, 
+        p.product_category_id, p.color_id, p.category_id, 
+        p.discount_percent, p.discount_start, p.discount_end, p.available
+    FROM products p
+    JOIN order_details od ON p.id = od.product_id
+    GROUP BY 
+        p.id, p.name, p.description, p.price, p.quantity,
+        p.image_url, p.image_url2, p.image_url3, 
+        p.product_category_id, p.color_id, p.category_id, 
+        p.discount_percent, p.discount_start, p.discount_end, p.available
+    ORDER BY SUM(od.quantity) DESC
+""", nativeQuery = true)
+List<Product> findSellingProducts();
+
 
         // san pham tuong tu theo category
         @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId")
@@ -124,4 +131,6 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
 
         List<Product> findTop4ByDiscountPercentGreaterThanAndAvailableIsTrueOrderByDiscountPercentDesc(int minDiscount);
 
+        @Query(value = "SELECT TOP 10 p.* FROM products p INNER JOIN product_categories pc ON p.product_Category_Id = pc.id WHERE pc.name = :productCategoryName ORDER BY p.quantity DESC", nativeQuery = true)
+        List<Product> findTop10ByProductCategoryName(@Param("productCategoryName") String productCategoryName);
 }

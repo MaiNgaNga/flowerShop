@@ -302,7 +302,6 @@
                       th:src="@{/images/{image}(image=${item.image})}"
                       class="img-thumbnail"
                       width="80"
-                     
                       alt="Ảnh bài viết"
                     />
                     <span th:if="${item.image == null}" class="text-muted"
@@ -322,18 +321,20 @@
                       class="badge bg-secondary"
                     ></span>
                   </td>
-                  <td>
+                  <td class="action-icons">
                     <a
-                      class="btn btn-sm btn-info text-white"
-                      th:href="@{/Post/edit/{id}(id=${item.id})}"
+                      th:href="@{'/Post/edit/' + ${item.id} + '?tab=edit'}"
+                      class="edit-icon"
+                      title="Sửa sản phẩm"
                     >
                       <i class="fa fa-edit"></i>
                     </a>
                     <a
-                      class="btn btn-sm btn-danger"
                       href="#"
+                      class="delete-icon"
                       onclick="confirmDelete(this)"
-                      th:data-url="@{/Post/delete/{id}(id=${item.id})}"
+                      th:data-url="@{'/Post/delete/' + ${item.id} + '?tab=list'}"
+                      title="Xóa sản phẩm"
                     >
                       <i class="fa fa-trash"></i>
                     </a>

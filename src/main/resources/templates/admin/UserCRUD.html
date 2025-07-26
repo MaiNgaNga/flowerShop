@@ -57,7 +57,6 @@
         method="post"
         class="p-4 bg-white border rounded shadow-sm"
       >
-        
         <div class="row g-3">
           <div class="col-md-6">
             <div class="mb-3">
@@ -290,20 +289,20 @@
                     >Off</span
                   >
                 </td>
-                <td class="text-center">
+                <td class="action-icons">
                   <a
-                    class="btn btn-sm btn-info text-white"
-                    th:href="@{/User/edit/{id}(id=${item.id})}"
-                    title="Chỉnh sửa"
+                    th:href="@{'/User/edit/' + ${item.id} + '?tab=edit'}"
+                    class="edit-icon"
+                    title="Sửa sản phẩm"
                   >
-                    <i class="fa-solid fa-pen-to-square"></i>
+                    <i class="fa fa-edit"></i>
                   </a>
                   <a
                     href="#"
-                    class="btn btn-sm btn-danger"
+                    class="delete-icon"
                     onclick="confirmDelete(this)"
-                    th:data-url="@{/User/delete/{id}(id=${item.id})}"
-                    title="Xóa"
+                    th:data-url="@{'/User/delete/' + ${item.id} + '?tab=list'}"
+                    title="Xóa sản phẩm"
                   >
                     <i class="fa fa-trash"></i>
                   </a>

@@ -187,26 +187,32 @@
       role="tabpanel"
       aria-labelledby="edit-tab"
     >
-      <form th:object="${shipper}" method="post">
-        <div class="row">
+      <form
+        th:object="${shipper}"
+        method="post"
+        class="p-4 bg-white border rounded shadow-sm"
+      >
+        <div class="row g-3">
           <!-- ID -->
-          <div class="col-6">
-            <div class="mb-1">
-              <label for="id" class="form-label">ID</label>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="id" class="form-label fw-medium text-muted">ID</label>
               <input
                 type="text"
                 id="id"
                 th:field="*{id}"
                 readonly
-                class="form-control form-control-sm"
+                class="form-control form-control-sm bg-light"
               />
             </div>
           </div>
 
-          <!-- Notes -->
-          <div class="col-6">
-            <div class="mb-1">
-              <label for="vehicle" class="form-label">Phương tiện</label>
+          <!-- Vehicle -->
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="vehicle" class="form-label fw-medium text-muted"
+                >Phương tiện</label
+              >
               <input
                 type="text"
                 id="vehicle"
@@ -214,13 +220,16 @@
                 class="form-control form-control-sm"
                 placeholder="Nhập phương tiện"
               />
-              <i class="error" th:errors="*{vehicle}"></i>
+              <small class="text-danger" th:errors="*{vehicle}"></small>
             </div>
           </div>
+
           <!-- CCCD -->
-          <div class="col-6">
-            <div class="mb-1">
-              <label for="cccd" class="form-label">CCCD</label>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="cccd" class="form-label fw-medium text-muted"
+                >CCCD</label
+              >
               <input
                 type="text"
                 id="cccd"
@@ -228,14 +237,21 @@
                 class="form-control form-control-sm"
                 placeholder="Nhập số CCCD"
               />
-              <i class="error" th:errors="*{cccd}"></i>
-              <i th:if="${errorCCCD}" class="error" th:text="${errorCCCD}"></i>
+              <small class="text-danger" th:errors="*{cccd}"></small>
+              <small
+                class="text-danger"
+                th:if="${errorCCCD}"
+                th:text="${errorCCCD}"
+              ></small>
             </div>
           </div>
-          <!-- CCCD -->
-          <div class="col-6">
-            <div class="mb-1">
-              <label for="address" class="form-label">Địa chỉ</label>
+
+          <!-- Address -->
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="address" class="form-label fw-medium text-muted"
+                >Địa chỉ</label
+              >
               <input
                 type="text"
                 id="address"
@@ -243,7 +259,7 @@
                 class="form-control form-control-sm"
                 placeholder="Nhập địa chỉ"
               />
-              <i class="error" th:errors="*{address}"></i>
+              <small class="text-danger" th:errors="*{address}"></small>
             </div>
           </div>
         </div>
@@ -251,16 +267,13 @@
         <!-- Buttons -->
         <div class="row mt-4 text-end">
           <div class="col">
-            <!-- NÚT THÊM -->
-
-            <!-- NÚT CẬP NHẬT -->
             <button
               type="submit"
-              class="btn btn-warning"
+              class="btn btn-warning btn-sm"
               th:if="*{id} != null"
               th:formaction="@{/Shipper/update}"
             >
-              <i class="fa fa-edit"></i> Cập Nhật
+              <i class="fa fa-edit me-1"></i> Cập Nhật
             </button>
           </div>
         </div>
@@ -277,7 +290,7 @@
       <div class="filter-form">
         <div class="row align-items-end g-3">
           <!-- Form lọc theo trạng thái -->
-           <div class="col-md-8">
+          <div class="col-md-8">
             <form
               th:action="@{/Shipper/searchByStatus}"
               id="filterForm"
@@ -385,8 +398,14 @@
               <tr th:each="item : ${shippers}">
                 <td th:text="${item.id}"></td>
                 <td th:text="${item.user != null ? item.user.id : ''}"></td>
-                <td class="text-start" th:text="${item.user != null ? item.user.name : ''}"></td>
-                <td class="text-start" th:text="${item.user != null ? item.user.email : ''}"></td>
+                <td
+                  class="text-start"
+                  th:text="${item.user != null ? item.user.name : ''}"
+                ></td>
+                <td
+                  class="text-start"
+                  th:text="${item.user != null ? item.user.email : ''}"
+                ></td>
                 <td class="text-start" th:text="${item.vehicle}"></td>
                 <td th:text="${item.cccd}"></td>
                 <td th:text="${item.address}"></td>
@@ -405,22 +424,14 @@
                     th:text="${item.totalsNumberOrder}"
                   ></span>
                 </td> -->
-                <td>
+                <td class="action-icons">
                   <a
-                    class="btn btn-sm btn-info"
-                    th:href="@{/Shipper/edit/{id}(id=${item.id})}"
+                    th:href="@{'/Shipper/edit/' + ${item.id} + '?tab=edit'}"
+                    class="edit-icon"
+                    title="Sửa sản phẩm"
                   >
-                    <i class="fa-solid fa-pen-to-square"></i>
+                    <i class="fa fa-edit"></i>
                   </a>
-                  <!-- <a
-                    href="#"
-                    class="btn btn-sm btn-danger"
-                    onclick="confirmDelete(this)"
-                    th:data-url="@{/Shipper/delete/{id}(id=${item.id})}"
-                    title="Xóa"
-                  >
-                    <i class="fa fa-trash"></i>
-                  </a> -->
                 </td>
               </tr>
             </th:block>

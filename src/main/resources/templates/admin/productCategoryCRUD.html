@@ -51,80 +51,86 @@
       aria-labelledby="edit-tab"
     >
       <form
-        action="/ProductCategory/index"
-        th:object="${productCategory}"
-        method="post"
+  action="/ProductCategory/index"
+  th:object="${productCategory}"
+  method="post"
+  class="p-4 bg-white border rounded shadow-sm"
+>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="mb-3">
+        <label for="id" class="form-label fw-medium text-muted">ID</label>
+        <input
+          type="text"
+          id="id"
+          th:field="*{id}"
+          readonly
+          class="form-control form-control-sm bg-light"
+        />
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="mb-3">
+        <label for="name" class="form-label fw-medium text-muted">Tên Danh Mục</label>
+        <input
+          type="text"
+          th:field="*{name}"
+          id="name"
+          class="form-control form-control-sm"
+          placeholder="Tên Danh Mục"
+        />
+        <small class="text-danger" th:errors="*{name}"></small>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="mb-3">
+        <label for="description" class="form-label fw-medium text-muted">Mô tả</label>
+        <textarea
+          th:field="*{description}"
+          id="description"
+          class="form-control form-control-sm"
+          placeholder="Mô tả"
+          rows="3"
+        ></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-4 text-end">
+    <div class="col">
+      <button
+        th:if="${productCategory.id == 0}"
+        type="submit"
+        class="btn btn-primary btn-sm me-2"
+        th:formaction="@{/ProductCategory/create}"
       >
-        <div class="row">
-          <div class="col-6">
-            <div class="mb-1">
-              <label for="id" class="form-label">ID</label>
-              <input
-                type="text"
-                id="id"
-                th:field="*{id}"
-                readonly
-                class="form-control form-control-sm"
-              />
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="mb-1">
-              <label for="name" class="form-label">Tên Danh Mục</label>
-              <input
-                type="text"
-                th:field="*{name}"
-                id="name"
-                class="form-control form-control-sm"
-                placeholder="Tên Danh Mục"
-              />
-              <i class="error" th:errors="*{name}"></i>
-            </div>
-          </div>
-          <div class="mb-1">
-            <label for="description" class="form-label">Mô tả</label>
-            <textarea
-              type="text"
-              th:field="*{description}"
-              id="description"
-              class="form-control form-control-sm"
-              placeholder="Mô tả"
-            ></textarea>
-          </div>
-        </div>
-        <div class="row mt-4 text-end">
-          <div class="col">
-            <button
-              th:if="${productCategory.id == 0}"
-              type="submit"
-              class="btn btn-primary"
-              th:formaction="@{/ProductCategory/create}"
-            >
-              <i class="fa fa-plus"></i> Thêm
-            </button>
-            <button
-              th:if="${productCategory.id != 0}"
-              type="submit"
-              class="btn btn-warning"
-              th:formaction="@{/ProductCategory/update}"
-            >
-              <i class="fa fa-edit"></i> Cập Nhật
-            </button>
-            <button
-              th:if="${productCategory.id != 0}"
-              type="button"
-              class="btn btn-danger"
-              onclick="confirmDelete(this)"
-              th:data-url="@{/ProductCategory/delete/{id}(id=${productCategory.id})}"
-            >
-              <i class="fa fa-trash"></i> Xóa
-            </button>
-            <a class="btn btn-success" th:href="@{/ProductCategory/index}">
-              <i class="fa fa-sync"></i> Làm Mới
-            </a>
-          </div>
-        </div>
-      </form>
+        <i class="fa fa-plus me-1"></i> Thêm
+      </button>
+      <button
+        th:if="${productCategory.id != 0}"
+        type="submit"
+        class="btn btn-warning btn-sm me-2"
+        th:formaction="@{/ProductCategory/update}"
+      >
+        <i class="fa fa-edit me-1"></i> Cập Nhật
+      </button>
+      <button
+        th:if="${productCategory.id != 0}"
+        type="button"
+        class="btn btn-danger btn-sm me-2"
+        onclick="confirmDelete(this)"
+        th:data-url="@{/ProductCategory/delete/{id}(id=${productCategory.id})}"
+      >
+        <i class="fa fa-trash me-1"></i> Xóa
+      </button>
+      <a
+        class="btn btn-success btn-sm"
+        th:href="@{/ProductCategory/index}"
+      >
+        <i class="fa fa-sync me-1"></i> Làm Mới
+      </a>
+    </div>
+  </div>
+</form>
     </div>
 
     <!-- Tab: Danh sách -->
@@ -150,17 +156,19 @@
                 <td th:text="${item.id}"></td>
                 <td class="text-start" th:text="${item.name}"></td>
                 <td class="text-start" th:text="${item.description}"></td>
-                <td>
+                <td class="action-icons">
                   <a
-                    class="btn btn-sm btn-info text-white"
-                    th:href="@{/ProductCategory/edit/{id}(id=${item.id})}"
-                    ><i class="fa-solid fa-pen-to-square"></i
-                  ></a>
+                    th:href="@{'/Promotion/edit/' + ${item.id} + '?tab=edit'}"
+                    class="edit-icon"
+                    title="Sửa sản phẩm"
+                  >
+                    <i class="fa fa-edit"></i>
+                  </a>
                   <a
                     href="#"
-                    class="btn btn-sm btn-danger"
+                    class="delete-icon"
                     onclick="confirmDelete(this)"
-                    th:data-url="@{/ProductCategory/delete/{id}(id=${item.id})}"
+                    th:data-url="@{'/Promotion/delete/' + ${item.id} + '?tab=list'}"
                     title="Xóa sản phẩm"
                   >
                     <i class="fa fa-trash"></i>

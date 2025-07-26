@@ -49,23 +49,30 @@
       role="tabpanel"
       aria-labelledby="edit-tab"
     >
-      <form action="/Category/index" th:object="${category}" method="post">
-        <div class="row">
-          <div class="col-6">
-            <div class="mb-1">
-              <label for="id" class="form-label">ID</label>
+      <form
+        action="/Category/index"
+        th:object="${category}"
+        method="post"
+        class="p-4 bg-white border rounded shadow-sm"
+      >
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="id" class="form-label fw-medium text-muted">ID</label>
               <input
                 type="text"
                 id="id"
                 th:field="*{id}"
                 readonly
-                class="form-control form-control-sm"
+                class="form-control form-control-sm bg-light"
               />
             </div>
           </div>
-          <div class="col-6">
-            <div class="mb-1">
-              <label for="name" class="form-label">Tên Loại Hoa</label>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="name" class="form-label fw-medium text-muted"
+                >Tên Loại Hoa</label
+              >
               <input
                 type="text"
                 th:field="*{name}"
@@ -73,52 +80,56 @@
                 class="form-control form-control-sm"
                 placeholder="Tên Loại Hoa"
               />
-              <i class="error" th:errors="*{name}"></i>
+              <small class="text-danger" th:errors="*{name}"></small>
             </div>
           </div>
-          <div class="mb-1">
-            <label for="description" class="form-label">Mô tả</label>
-            <textarea
-              type="text"
-              th:field="*{description}"
-              id="description"
-              class="form-control form-control-sm"
-              placeholder="Mô tả"
-            ></textarea>
+          <div class="col-12">
+            <div class="mb-3">
+              <label for="description" class="form-label fw-medium text-muted"
+                >Mô tả</label
+              >
+              <textarea
+                th:field="*{description}"
+                id="description"
+                class="form-control form-control-sm"
+                placeholder="Mô tả"
+                rows="3"
+              ></textarea>
+            </div>
           </div>
         </div>
         <div class="row mt-4 text-end">
           <div class="col">
             <button
-              th:if="${category.id ==0}"
+              th:if="${category.id == 0}"
               type="submit"
-              class="btn btn-primary"
+              class="btn btn-primary btn-sm me-2"
               th:formaction="@{'/Category/create?tab=edit'}"
             >
-              <i class="fa fa-plus"></i> Thêm
+              <i class="fa fa-plus me-1"></i> Thêm
             </button>
-
             <button
               th:if="${category.id != 0}"
               type="submit"
-              class="btn btn-warning"
+              class="btn btn-warning btn-sm me-2"
               th:formaction="@{'/Category/update?tab=edit'}"
             >
-              <i class="fa fa-edit"></i> Cập Nhật
+              <i class="fa fa-edit me-1"></i> Cập Nhật
             </button>
-
             <button
               th:if="${category.id != 0}"
               type="button"
-              class="btn btn-danger"
+              class="btn btn-danger btn-sm me-2"
               onclick="confirmDelete(this)"
               th:data-url="@{'/Category/delete/' + ${category.id} + '?tab=edit'}"
             >
-              <i class="fa fa-trash"></i> Xóa
+              <i class="fa fa-trash me-1"></i> Xóa
             </button>
-
-            <a class="btn btn-success" th:href="@{/Category/index(tab='edit')}">
-              <i class="fa fa-sync"></i> Làm Mới
+            <a
+              class="btn btn-success btn-sm"
+              th:href="@{/Category/index(tab='edit')}"
+            >
+              <i class="fa fa-sync me-1"></i> Làm Mới
             </a>
           </div>
         </div>
@@ -170,10 +181,9 @@
 
                 <td class="action-icons">
                   <a
+                    th:href="@{'/Category/edit/' + ${item.id} + '?tab=edit'}"
                     class="edit-icon"
                     title="Sửa sản phẩm"
-                    class="btn btn-sm btn-info edit-icon"
-                    th:href="@{'/Category/edit/' + ${item.id} + '?tab=edit'}"
                   >
                     <i class="fa fa-edit"></i>
                   </a>
@@ -181,8 +191,8 @@
                     href="#"
                     class="delete-icon"
                     onclick="confirmDelete(this)"
-                    title="Xóa sản phẩm"
                     th:data-url="@{'/Category/delete/' + ${item.id} + '?tab=list'}"
+                    title="Xóa sản phẩm"
                   >
                     <i class="fa fa-trash"></i>
                   </a>

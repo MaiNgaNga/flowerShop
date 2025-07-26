@@ -571,3 +571,21 @@ h4 {
 body {
   padding-top: 50px;
 }
+
+
+/* Rating */
+.star-rating-custom {
+  display: flex;
+  gap: 4px;
+  font-size: 2rem;
+  cursor: pointer;
+}
+.star-rating-custom span {
+  color: #ddd;
+  transition: color 0.2s;
+}
+.star-rating-custom .selected,
+.star-rating-custom span:hover,
+.star-rating-custom span:hover ~ span {
+  color: #ffc107;
+}
