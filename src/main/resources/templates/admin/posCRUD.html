@@ -1,0 +1,191 @@
+
+<main class="container mt-4">
+  <h2 class="mb-4">Quản Lý Bán Hàng Tại Quầy</h2>
+  <div class="card mb-3 p-3">
+    <form method="get" class="row g-3 align-items-end">
+      <div class="col-md-3">
+        <label for="fromDate" class="form-label">Từ ngày:</label>
+        <input type="date" class="form-control" id="fromDate" name="fromDate" th:value="${fromDate}"  />
+      </div>
+      <div class="col-md-3">
+        <label for="toDate" class="form-label">Đến ngày:</label>
+        <input type="date" class="form-control" id="toDate" name="toDate" th:value="${toDate}" />
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary">Lọc</button>
+        <a href="/admin/pos/index" class="btn btn-secondary ms-2">Làm mới</a>
+      </div>
+    </form>
+  </div>
+  <div class="card p-3">
+    <ul class="nav nav-tabs mb-3" id="posTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="list-tab" data-bs-toggle="tab" data-bs-target="#list" type="button" role="tab" aria-controls="list" aria-selected="true">Danh sách đơn hàng</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="detail-tab" data-bs-toggle="tab" data-bs-target="#detail" type="button" role="tab" aria-controls="detail" aria-selected="false">Chi tiết đơn hàng</button>
+      </li>
+    </ul>
+    <div class="tab-content" id="posTabContent">
+            <!-- Tab Danh sách -->
+            <div
+              class="tab-pane fade show active"
+              id="list"
+              role="tabpanel"
+              aria-labelledby="list-tab"
+            >
+              <div class="card">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-dark">
+                      <tr>
+                        <th>ID</th>
+                        <th>Mã đơn</th>
+                        <th>Tổng tiền</th>
+                        <th>Ngày bán</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="order : ${orders.content}">
+                      <td th:text="${order.id}"></td>
+                      <td th:text="${order.orderCode}"></td>
+                      <td th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
+                      <td th:text="${#dates.format(order.createDate, 'dd/MM/yyyy')}"></td>
+                      <td th:text="${order.status}"></td>
+                      <td>
+                        <a th:href="@{/admin/pos/index(orderId=${order.id})}" class="btn btn-sm btn-info">Chi tiết</a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <!-- Pagination: chỉ hiển thị một lần sau bảng -->
+                <div class="d-flex justify-content-center mt-3">
+                  <nav th:if="${orders.totalPages > 1}">
+                    <ul class="pagination">
+                      <li class="page-item" th:classappend="${orders.first} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/pos/index(page=${orders.number - 1}, size=${orders.size}, fromDate=${fromDate}, toDate=${toDate})}" aria-label="Previous">
+                          <span aria-hidden="true">&laquo;</span>
+                        </a>
+                      </li>
+                      <li class="page-item" th:each="i : ${#numbers.sequence(0, orders.totalPages - 1)}" th:classappend="${i == orders.number} ? 'active'">
+                        <a class="page-link" th:href="@{/admin/pos/index(page=${i}, size=${orders.size}, fromDate=${fromDate}, toDate=${toDate})}" th:text="${i + 1}"></a>
+                      </li>
+                      <li class="page-item" th:classappend="${orders.last} ? 'disabled'">
+                        <a class="page-link" th:href="@{/admin/pos/index(page=${orders.number + 1}, size=${orders.size}, fromDate=${fromDate}, toDate=${toDate})}" aria-label="Next">
+                          <span aria-hidden="true">&raquo;</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+                        <!-- Đã có vòng lặp th:each ở trên, các dòng này bị dư thừa và gây lỗi nếu không có biến order. Đã xóa để tránh lỗi. -->
+                      </tr>
+                      <tr th:if="${#lists.isEmpty(orders)}">
+                        <td colspan="7" class="text-center text-muted">
+                          Hiện chưa có đơn hàng nào tại quầy.
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <!-- Tab Chi tiết -->
+            <div
+              class="tab-pane fade"
+              id="detail"
+              role="tabpanel"
+              aria-labelledby="detail-tab"
+            >
+              <div th:if="${orderDetail != null}">
+                <div class="card mb-3 p-3">
+                  <h5>Thông tin đơn hàng</h5>
+                  <div class="row mb-2">
+                    <div class="col-md-4">
+                      <b>Mã đơn:</b> <span th:text="${orderDetail.orderCode}"></span>
+                    </div>
+                    <div class="col-md-4">
+                      <b>Ngày bán:</b>
+                      <span
+                        th:text="${#dates.format(orderDetail.createDate, 'dd/MM/yyyy')}"
+                      ></span>
+                    </div>
+                    <div class="col-md-4">
+                      <b>Trạng thái:</b>
+                      <span th:text="${orderDetail.status}"></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="table-responsive">
+                    <table
+                      class="table table-bordered table-hover align-middle"
+                    >
+                      <thead class="table-light">
+                        <tr>
+                          <th>#</th>
+                          <th>Tên sản phẩm</th>
+                          <th>Số lượng</th>
+                          <th>Đơn giá</th>
+                          <th>Thành tiền</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr th:each="item,iter : ${orderDetail.orderDetails}">
+                          <td th:text="${iter.index + 1}"></td>
+                          <td th:text="${item.product.name}"></td>
+                          <td th:text="${item.quantity}"></td>
+                          <td
+                            th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+                          ></td>
+                          <td
+                            th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+                          ></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(orderDetail.orderDetails)}">
+                          <td colspan="5" class="text-center text-muted">
+                            Không có sản phẩm nào trong đơn hàng này.
+                          </td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td colspan="4" class="text-end fw-bold">
+                            Tổng tiền:
+                          </td>
+                          <td
+                            class="fw-bold text-danger"
+                            th:text="${#numbers.formatDecimal(orderDetail.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+                          ></td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div
+                th:if="${orderDetail == null}"
+                class="text-center text-muted mt-4"
+              >
+                Vui lòng chọn đơn hàng để xem chi tiết.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+<script th:inline="javascript">
+    var hasOrderDetail = /*[[${orderDetail != null}]]*/ false;
+    if (hasOrderDetail) {
+        var detailTab = document.getElementById('detail-tab');
+        if (detailTab) {
+            detailTab.click();
+        }
+    }
+  </script>
+<script src="/js/posCRUD.js"></script>
+</main>
+

@@ -66,7 +66,9 @@ public class PosController {
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Double minPrice,
-            @RequestParam(required = false) Double maxPrice) {
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) String success,
+            @RequestParam(required = false) String error) {
         int pageSize = 9;
         Pageable pageable = PageRequest.of(page, pageSize);
         double min = (minPrice != null) ? minPrice : 0;
@@ -83,6 +85,15 @@ public class PosController {
             cartCount = cartItemService.getCartItemsByUserId(userId).size();
         }
         model.addAttribute("cartCount", cartCount);
+
+        // Hiển thị toast thành công nếu có param success
+        if (success != null && success.equals("payment_completed")) {
+            model.addAttribute("successMessage", "Thanh toán thành công!");
+        }
+        // Hiển thị toast lỗi nếu có param error
+        if (error != null && error.equals("empty_cart")) {
+            model.addAttribute("errorMessage", "Giỏ hàng trống! Vui lòng chọn sản phẩm trước khi thanh toán.");
+        }
 
         model.addAttribute("productCategories", productCategoryService.findAll());
         model.addAttribute("products", productPage.getContent());
