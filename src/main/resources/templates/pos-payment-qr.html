@@ -98,8 +98,14 @@
     <div id="statusAlert" class="qr-status alert alert-warning">
       <i class="fas fa-hourglass-half"></i> Đang chờ khách hàng thanh toán...
     </div>
+
     <div class="qr-actions">
-      <button class="btn btn-success" id="manualConfirmBtn">
+      <button
+        class="btn btn-success"
+        id="manualConfirmBtn"
+        data-bs-toggle="modal"
+        data-bs-target="#confirmPaymentModal"
+      >
         <i class="fas fa-check"></i> Xác nhận đã thanh toán
       </button>
       <button class="btn btn-info" id="printQRBtn">

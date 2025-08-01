@@ -140,20 +140,22 @@ public class OrderController {
             return showForm(model);
         }
 
-        // Tạo đơn hàng mới
-        Order order = new Order();
-        order.setUser(user);
-        order.setCreateDate(new Date());
-        order.setSdt(orderRequest.getSdt());
-        order.setAddress(orderRequest.getAddress());
-        order.setStatus("Chưa xác nhận");
+    Order order = new Order();
+    order.setUser(user);
+    order.setCreateDate(new Date());
+    order.setSdt(orderRequest.getSdt());
+    order.setAddress(orderRequest.getAddress());
+    order.setStatus("Chưa xác nhận");
+    order.setDeliveryDate(orderRequest.getDeliveryDate());
+    order.setDescription(orderRequest.getDescription());
+     // Kiểm tra xem có mã giảm không
+    Double finalAmount = (Double) session.getAttribute("finalAmount");
+    if (finalAmount == null) {
+        // Nếu không có, lấy giá gốc
+        finalAmount = cartItemService.getTotalAmount(user.getId());
+    }
+    order.setTotalAmount(finalAmount);
 
-        // Kiểm tra có mã giảm giá hay không
-        Double finalAmount = (Double) session.getAttribute("finalAmount");
-        if (finalAmount == null) {
-            finalAmount = cartItemService.getTotalAmount(user.getId());
-        }
-        order.setTotalAmount(finalAmount);
 
         List<OrderDetail> orderDetails = new ArrayList<>();
         Order savedOrder = orderService.saveOrder(order, orderDetails);
