@@ -214,14 +214,34 @@
         </div>
         <button
           type="button"
-          class="btn-close btn-close-white me-2 m-auto"
+          class="btn-close btn-close- me-2 m-auto"
           data-bs-dismiss="toast"
           aria-label="Close"
           onclick="hideToast('successToast')"
         ></button>
       </div>
     </div>
-    <!-- Toast cảnh báo -->
+
+    <div
+      id="customToast"
+      class="toast align-items-center border-0 position-fixed"
+      style="
+        top: 100px;
+        right: 30px;
+        min-width: 300px;
+        z-index: 99999;
+        display: block !important;
+        opacity: 0;
+        transform: translateX(120%);
+        background: #fffbe6;
+        color: #856404;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        transition: transform 0.5s, opacity 0.5s;
+      "
+    >
+      <div class="toast-body">&nbsp;</div>
+    </div>
+    <!-- DEBUG: warningMessage = [[${warningMessage}]] -->
     <div
       id="warningToast"
       th:if="${warningMessage != null}"
@@ -272,9 +292,30 @@
         }
       }
       window.addEventListener("DOMContentLoaded", function () {
-        showToast("errorToast");
-        showToast("successToast");
-        showToast("warningToast");
+        if (
+          document.getElementById("errorToast") &&
+          document
+            .getElementById("errorToast")
+            .querySelector(".toast-body span")
+            .textContent.trim() !== ""
+        )
+          showToast("errorToast");
+        if (
+          document.getElementById("successToast") &&
+          document
+            .getElementById("successToast")
+            .querySelector(".toast-body span")
+            .textContent.trim() !== ""
+        )
+          showToast("successToast");
+        if (
+          document.getElementById("warningToast") &&
+          document
+            .getElementById("warningToast")
+            .querySelector(".toast-body span")
+            .textContent.trim() !== ""
+        )
+          showToast("warningToast");
       });
     </script>
     <div class="bodi">
