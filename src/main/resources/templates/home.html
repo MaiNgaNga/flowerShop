@@ -111,7 +111,10 @@
           data-aos="fade-right"
           data-aos-duration="1000"
         >
-          <div class="promo-card" th:each="product : ${discountProducts}">
+          <div
+            class="promo-card"
+            th:each="product : ${#lists.size(discountProducts) > 4 ? discountProducts.subList(0, 4) : discountProducts}"
+          >
             <span
               class="promo-tag"
               th:text="'-' + ${product.discountPercent} + '%'"
@@ -202,7 +205,7 @@
           data-aos-delay="200"
           data-type="lang"
         >
-          Hoa khai trương
+          Lãng hoa
         </button>
         <button
           class="filter-btn"
@@ -625,5 +628,7 @@
     <script th:src="@{/js/home-page.js}"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <!-- Modal thêm vào giỏ hàng thành công -->
+    <div th:replace="fragments/cart-success-modal :: #cartSuccessModal"></div>
   </body>
 </html>
