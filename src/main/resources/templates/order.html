@@ -158,6 +158,26 @@
 
               <i class="error text-danger" th:errors="*{address}"></i>
             </div>
+            <div class="mb-3">
+              <label class="form-label">Ngày giao hàng *</label>
+              <input
+                type="date"
+                th:field="*{deliveryDate}"
+                class="form-control"
+              />
+              <i class="error text-danger" th:errors="*{deliveryDate}"></i>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Ghi chú / Mô tả thêm</label>
+              <textarea
+                th:field="*{description}"
+                class="form-control"
+                rows="3"
+                placeholder="Nhập mô tả nếu có"
+              ></textarea>
+              <i class="error text-danger" th:errors="*{description}"></i>
+            </div>
           </th:block>
         </div>
       </div>

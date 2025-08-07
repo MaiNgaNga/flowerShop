@@ -155,28 +155,29 @@ setInterval(() => {
     .catch((error) => {});
 }, 20000);
 
-window.addEventListener("beforeunload", function (e) {
-  e.preventDefault();
-  e.returnValue =
-    "Bạn có chắc muốn rời khỏi trang? Giao dịch đang chờ thanh toán.";
-});
-
-document.getElementById("manualConfirmBtn").onclick = function () {
-  var orderCode = document
-    .getElementById("refreshQRBtn")
-    .getAttribute("data-ordercode");
-  fetch("/pos/manual-confirm-payment", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ orderCode: orderCode }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.success) {
-        alert("Đã xác nhận thanh toán thành công!");
-        window.location.reload();
-      } else {
-        alert("Lỗi: " + data.message);
-      }
-    });
-};
+// Đã chuyển sang dùng modal xác nhận, xử lý xác nhận ở nút trong modal
+var confirmBtn = document.getElementById("confirmPaymentActionBtn");
+if (confirmBtn) {
+  confirmBtn.onclick = function () {
+    var orderCode = document
+      .getElementById("refreshQRBtn")
+      .getAttribute("data-ordercode");
+    fetch("/pos/manual-confirm-payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderCode: orderCode }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          var modal = bootstrap.Modal.getInstance(
+            document.getElementById("confirmPaymentModal")
+          );
+          if (modal) modal.hide();
+          window.location.href = "/pos?success=payment_completed";
+        } else {
+          alert("Lỗi: " + data.message);
+        }
+      });
+  };
+}

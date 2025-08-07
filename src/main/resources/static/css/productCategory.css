@@ -192,6 +192,7 @@ h3 {
   color: #d63384;
   border-color: #d63384;
 }
+/* Khung sản phẩm */
 .product-card {
   background: #fff;
   border-radius: 14px;
@@ -207,20 +208,19 @@ h3 {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
+/* Container ảnh sản phẩm */
 .product-img-container {
   position: relative;
   overflow: hidden;
 }
 
+/* Ảnh sản phẩm */
 .product-img {
   width: 100%;
-  transition: transform 0, 6s ease, opacity 0, 6s ease;
+  transition: transform 0.6s ease, opacity 0.6s ease;
 }
 
-.product-card:hover .product-img {
-  transform: scale(1.05);
-}
-
+/* Overlay giỏ hàng */
 .overlay {
   position: absolute;
   top: 0;
@@ -232,6 +232,7 @@ h3 {
   align-items: center;
   justify-content: center;
   opacity: 0;
+  pointer-events: none;
   transition: opacity 0.4s ease;
 }
 
@@ -239,20 +240,13 @@ h3 {
   opacity: 1;
 }
 
+/* Nút và chữ giỏ hàng */
 .add-to-cart-container {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.add-to-cart-text {
-  font-size: 14px;
-  font-weight: bold;
-  color: #f5f1f1;
-  margin-bottom: 5px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  pointer-events: auto;
 }
 
 .add-to-cart {
@@ -273,10 +267,20 @@ h3 {
   opacity: 1;
 }
 
+.add-to-cart-text {
+  font-size: 14px;
+  font-weight: bold;
+  color: #f5f1f1;
+  margin-bottom: 5px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
 .add-to-cart:hover + .add-to-cart-text {
   opacity: 1;
 }
 
+/* Phần thông tin sản phẩm */
 .product-info {
   padding: 16px 12px;
   text-align: center;
@@ -301,6 +305,7 @@ h3 {
   margin-bottom: 12px;
 }
 
+/* Nút “Mua ngay” */
 .sizes {
   display: flex;
   justify-content: center;
@@ -328,6 +333,7 @@ h3 {
 .size-btn:hover {
   transform: scale(1.03);
 }
+
 .size-btn::before {
   content: "";
   position: absolute;
@@ -340,9 +346,12 @@ h3 {
   transition: left 0.5s ease;
   z-index: 0;
 }
+
 .size-btn:hover::before {
   left: 125%;
 }
+
+/* Hiệu ứng lật ảnh sản phẩm */
 .flip-box {
   position: relative;
   width: 100%;
@@ -377,6 +386,10 @@ h3 {
 .product-card:hover .back-img {
   transform: rotateY(0deg);
 }
+
+
+/*  */
+
 .page-numbers {
   list-style: none;
   display: flex;

@@ -116,9 +116,9 @@
         <thead class="table-dark">
           <tr>
             <th>ID</th>
-            <th>Tên</th>
-            <th>Số điện thoại</th>
-            <th>Email</th>
+            <th class="text-start">Tên</th>
+            <th class="text-start">Số điện thoại</th>
+            <th class="text-start">Email</th>
             <th>Nội dung</th>
             <th>Trạng thái</th>
             <th></th>
@@ -136,9 +136,9 @@
           <th:block th:each="item : ${contacts}">
             <tr>
               <td th:text="${item.id}"></td>
-              <td th:text="${item.name}"></td>
-              <td th:text="${item.sdt}"></td>
-              <td th:text="${item.email}"></td>
+              <td class="text-start" th:text="${item.name}"></td>
+              <td class="text-start" th:text="${item.sdt}"></td>
+              <td class="text-start" th:text="${item.email}"></td>
               <td th:text="${item.message}"></td>
               <td
                 th:text="${item.status ? 'Đã xử lý' : 'Chưa xử lý'}"

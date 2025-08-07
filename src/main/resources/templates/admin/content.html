@@ -46,6 +46,9 @@
       >
         <i class="fa-solid fa-clipboard-list me-2"></i> Đơn dịch vụ
       </a>
+      <a href="/admin/pos/index" class="nav-link text-dark py-3 menu-item">
+        <i class="fa-solid fa-cash-register me-2"></i> Quản lý POS
+      </a>
       <a href="/Post/index" class="nav-link text-dark py-3 menu-item">
         <i class="fa-solid fa-comments me-2"></i> Bài viết</a
       >
@@ -62,7 +65,7 @@
     </nav>
   </aside>
   <article id="content" class="col-md-10 articlemana">
-    <main th:insert="~{${view}}"></main>
+    <main style="min-height: 110vh;" th:insert="~{${view}}"></main>
     <footer th:insert="~{/admin/footer}"></footer>
   </article>
 </div>
