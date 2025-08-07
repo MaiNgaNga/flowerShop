@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.datn.model.Order;
 import com.datn.model.Shipper;
 
 public interface ShipperDAO extends JpaRepository<Shipper, Integer> {
@@ -40,5 +41,8 @@ public interface ShipperDAO extends JpaRepository<Shipper, Integer> {
     // ShipperRepository
     @Query("SELECT COUNT(s) > 0 FROM Shipper s WHERE s.user.id = :userId and s.user.role = 2")
     boolean existsByUserId(@Param("userId") Integer userId);
+
+    @Query("SELECT o FROM Order o WHERE o.status IN :statuses AND o.shipper.id = :shipperId")
+List<Order> findByStatusInAndShipperId(@Param("statuses") List<String> statuses, @Param("shipperId") int shipperId);
 
 }
