@@ -57,20 +57,20 @@ public class UserCRUDController {
             return "admin/layout";
         }
 
-        // Kiểm tra email đã tồn tại hay chưa
-        if (UserService.findByEmail(User.getEmail()) != null) {
-            model.addAttribute("error", "Email này đã tồn tại!");
-            model.addAttribute("view", "admin/UserCRUD");
-            return "admin/layout";            
-        }
+        // // Kiểm tra email đã tồn tại hay chưa
+        // if (UserService.findByEmail(User.getEmail()) != null) {
+        //     model.addAttribute("error", "Email này đã tồn tại!");
+        //     model.addAttribute("view", "admin/UserCRUD");
+        //     return "admin/layout";            
+        // }
 
-        // Kiểm tra số điện thoại đã tồn tại chưa
-        User exitSDT = UserService.findBySdt(User.getSdt());
-        if (exitSDT != null && exitSDT.getId() != User.getId()) {
-            model.addAttribute("error", "Số điện thoại này đã tồn tại!");
-            model.addAttribute("view", "admin/UserCRUD");
-            return "admin/layout";
-        }
+        // // Kiểm tra số điện thoại đã tồn tại chưa
+        // User exitSDT = UserService.findBySdt(User.getSdt());
+        // if (exitSDT != null && exitSDT.getId() != User.getId()) {
+        //     model.addAttribute("error", "Số điện thoại này đã tồn tại!");
+        //     model.addAttribute("view", "admin/UserCRUD");
+        //     return "admin/layout";
+        // }
 
         // Kiểm tra độ dài mật khẩu
         if (User.getPassword() == null || User.getPassword().length() < 4 ) {

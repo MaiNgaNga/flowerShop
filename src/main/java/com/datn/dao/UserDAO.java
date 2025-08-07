@@ -9,7 +9,7 @@ import com.datn.model.User;
 
 public interface UserDAO extends JpaRepository<User, Integer> {
     boolean existsByEmail(String email);
-
+    boolean existsBySdt(String sdt);
     User findByEmail(String email);
 
     User findBySdt(String sdt);

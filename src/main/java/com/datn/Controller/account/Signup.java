@@ -37,6 +37,11 @@ public class Signup {
     @PostMapping("/signup")
     public String signup(Model model, @Valid @ModelAttribute("User") User User, Errors errors,
             RedirectAttributes redirectAttributes) {
+    if (User.getPassword() == null || User.getPassword().isEmpty() || User.getPassword().length() < 4) {
+        model.addAttribute("errorPassword", "Mật khẩu không được để trống và phải có ít nhất 4 kí tự");
+        return showSignupForm(model);
+    }
+
         if (errors.hasErrors()) {
             return showSignupForm(model);
         }
@@ -46,8 +51,9 @@ public class Signup {
             redirectAttributes.addFlashAttribute("success", "Đăng kí User thành công!");
             return "redirect:/signup";
         } catch (IllegalArgumentException e) {
+            System.out.println("looix : "+e);
             model.addAttribute("error", e.getMessage());
-            return showSignupForm(model);
+            return "account/signup";
         }
 
     }
