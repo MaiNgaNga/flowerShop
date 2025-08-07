@@ -19,6 +19,7 @@ import com.datn.model.User;
 
 @Controller
 public class ProductController {
+
     @Autowired
     private ProductCategoryService productCategoryService;
 
@@ -34,75 +35,88 @@ public class ProductController {
     @Autowired
     private com.datn.Service.CartItemService cartItemService;
 
-   
+    // Xử lý hiển thị sản phẩm theo danh mục cho người dùng
     @RequestMapping("/ProductUser")
     public String index(Model model,
-            @RequestParam("id") Integer pro_categoryId,
-            @RequestParam(name = "categoryId", required = false) Integer ca_Id,
-            @RequestParam(name = "color", required = false) String color,
-            @RequestParam(name = "min", required = false) Double minPrice,
-            @RequestParam(name = "max", required = false) Double maxPrice,
-            @RequestParam("p") Optional<Integer> p,
-            @RequestParam(name = "filter", required = false) String filterType) {
+            @RequestParam("id") Integer pro_categoryId, // ID của danh mục sản phẩm chính
+            @RequestParam(name = "categoryId", required = false) Integer ca_Id, // ID danh mục con (nếu có)
+            @RequestParam(name = "color", required = false) String color, // Màu lọc
+            @RequestParam(name = "min", required = false) Double minPrice, // Giá tối thiểu
+            @RequestParam(name = "max", required = false) Double maxPrice, // Giá tối đa
+            @RequestParam("p") Optional<Integer> p, // Trang hiện tại
+            @RequestParam(name = "filter", required = false) String filterType) { // Kiểu lọc
 
         int cartCount = 0;
+
+        // Lấy user đang đăng nhập (nếu có) để lấy số lượng sản phẩm trong giỏ hàng
         User user = authService.getUser();
         if (user != null) {
-            Integer userId = user.getId(); // Sửa lại nếu getter id khác
-            cartCount = cartItemService.getCartItemsByUserId(userId).size();
+            Integer userId = user.getId(); // Lấy ID người dùng
+            cartCount = cartItemService.getCartItemsByUserId(userId).size(); // Đếm số sản phẩm trong giỏ
         }
+
         model.addAttribute("cartCount", cartCount);
+
+        // Khởi tạo phân trang với 12 sản phẩm mỗi trang
         Pageable pageable = PageRequest.of(p.orElse(0), 12);
         Page<Product> products = null;
 
-        // Xác định kiểu lọc
+        // Lọc theo khoảng giá
         if ("price".equals(filterType) && minPrice != null && maxPrice != null) {
             products = productService.findByPriceRange(pro_categoryId, minPrice, maxPrice, pageable);
-        } else if ("color".equals(filterType) && color != null) {
+        }
+        // Lọc theo màu sắc
+        else if ("color".equals(filterType) && color != null) {
             products = productService.findByColor(pro_categoryId, color, pageable);
-        } else if ("ca_id".equals(filterType) && ca_Id != null) {
+        }
+        // Lọc theo danh mục con
+        else if ("ca_id".equals(filterType) && ca_Id != null) {
             products = productService.findByCaId(pro_categoryId, ca_Id, pageable);
-        } else {
+        }
+        // Nếu không có điều kiện lọc, lấy toàn bộ sản phẩm thuộc danh mục
+        else {
             products = productService.findByProductCategoryIdPage(pro_categoryId, pageable);
         }
 
-        model.addAttribute("page", products);
-        model.addAttribute("pro_ca", productCategoryService.findByID(pro_categoryId));
-        model.addAttribute("bestsellerProduct", productService.findBestSeller());
-        model.addAttribute("productCategories", productCategoryService.findAll());
-        model.addAttribute("categogies", ca_Service.findAll());
-        model.addAttribute("view", "product");
+        // Truyền các dữ liệu cần thiết sang view
+        model.addAttribute("page", products); // Danh sách sản phẩm theo trang
+        model.addAttribute("pro_ca", productCategoryService.findByID(pro_categoryId)); // Thông tin danh mục chính
+        model.addAttribute("bestsellerProduct", productService.findBestSeller()); // Danh sách sản phẩm bán chạy
+        model.addAttribute("productCategories", productCategoryService.findAll()); // Tất cả danh mục sản phẩm chính
+        model.addAttribute("categogies", ca_Service.findAll()); // Tất cả danh mục con
+        model.addAttribute("view", "product"); // Tên view được load bên layout
 
-        return "layouts/layout";
-
+        return "layouts/layout"; // Trả về layout chính có nhúng view "product"
     }
 
+    // Xử lý tìm kiếm sản phẩm theo tên
     @RequestMapping("/search")
     public String searchProductByName(Model model,
-            @RequestParam(name = "keyword", required = false) String keyword,
-            @RequestParam(name = "p", defaultValue = "0") int page) {
+            @RequestParam(name = "keyword", required = false) String keyword, // Từ khóa tìm kiếm
+            @RequestParam(name = "p", defaultValue = "0") int page) { // Trang hiện tại
         try {
-            Pageable pageable = PageRequest.of(page, 12);
+            Pageable pageable = PageRequest.of(page, 12); // Phân trang
             Page<Product> result;
 
+            // Nếu từ khóa trống, trả về danh sách rỗng
             if (keyword == null || keyword.trim().isEmpty()) {
-                // Nếu không nhập từ khóa, trả về danh sách rỗng (hoặc tất cả tùy ý)
                 result = Page.empty();
             } else {
-                result = productService.searchByName(keyword.trim(), pageable);
+                result = productService.searchByName(keyword.trim(), pageable); // Tìm kiếm sản phẩm theo tên
             }
 
+            // Truyền dữ liệu sang view
             model.addAttribute("page", result);
             model.addAttribute("productCategories", productCategoryService.findAll());
             model.addAttribute("categogies", ca_Service.findAll());
-            model.addAttribute("searchKeyword", keyword);
-            model.addAttribute("pro_ca", null);
-            model.addAttribute("view", "product");
+            model.addAttribute("searchKeyword", keyword); // Giữ lại từ khóa trên giao diện
+            model.addAttribute("pro_ca", null); // Không truyền danh mục cụ thể
+            model.addAttribute("view", "product"); // Giao diện dùng chung với trang sản phẩm
 
-            return "layouts/layout";
+            return "layouts/layout"; // Trả về layout chính có nhúng view "product"
         } catch (Exception e) {
             e.printStackTrace();
-            return "error";
+            return "error"; // Trả về trang lỗi nếu có exception
         }
     }
 }
