@@ -43,7 +43,7 @@
         th:action="@{/search}"
         method="get"
         class="search-form"
-        style="display: flex; gap: 8px; align-items: center"
+        style="display: flex; gap: 8px; align-items: center; position: relative"
       >
         <input
           type="text"
@@ -54,7 +54,19 @@
           id="searchInput"
           style="min-width: 180px"
         />
-        <!-- Đã loại bỏ select, chỉ còn input từ khóa -->
+
+        <div
+          id="search-suggestions"
+          class="suggestions-dropdown"
+          style="
+            position: absolute;
+            z-index: 999;
+            top: 100%;
+            left: 0;
+            width: 100%;
+          "
+        ></div>
+
         <button type="submit" id="searchBtn">
           <i class="fa-solid fa-magnifying-glass"></i>
         </button>
@@ -148,6 +160,48 @@
         }
       });
     }
+
+    // --- Autocomplete Search Suggestions ---
+    const searchInput = document.getElementById("searchInput");
+    const suggestionsBox = document.getElementById("search-suggestions");
+
+    searchInput.addEventListener("input", function () {
+      const keyword = searchInput.value.trim();
+      if (keyword.length < 2) {
+        suggestionsBox.style.display = "none";
+        return;
+      }
+      fetch(`/api/search-suggestions?keyword=${encodeURIComponent(keyword)}`)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data); // kiểm tra dữ liệu trả về
+          if (data.length === 0) {
+            suggestionsBox.style.display = "none";
+            return;
+          }
+          suggestionsBox.innerHTML = data
+            .map((item) => `<div class="suggestion-item">${item}</div>`)
+            .join("");
+          suggestionsBox.style.display = "block";
+        });
+    });
+
+    suggestionsBox.addEventListener("click", function (e) {
+      if (e.target.classList.contains("suggestion-item")) {
+        searchInput.value = e.target.textContent;
+        suggestionsBox.style.display = "none";
+        searchInput.form.submit();
+      }
+    });
+
+    document.addEventListener("click", function (e) {
+      if (
+        !searchInput.contains(e.target) &&
+        !suggestionsBox.contains(e.target)
+      ) {
+        suggestionsBox.style.display = "none";
+      }
+    });
 
     function updateCartCount() {
       fetch("/cart/count")

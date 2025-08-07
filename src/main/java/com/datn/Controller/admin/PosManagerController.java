@@ -29,11 +29,6 @@ public class PosManagerController {
         LocalDate from = (fromDate != null && !fromDate.isEmpty()) ? LocalDate.parse(fromDate) : null;
         LocalDate to = (toDate != null && !toDate.isEmpty()) ? LocalDate.parse(toDate) : null;
 
-        // Bắt lỗi: từ ngày phải nhỏ hơn hoặc bằng đến ngày
-        if (from != null && to != null && from.isAfter(to)) {
-            model.addAttribute("warningMessage", "'Từ ngày' phải nhỏ hơn hoặc bằng 'Đến ngày'!");
-        }
-
         // Luôn dùng phân trang JPA cho cả trường hợp không lọc ngày
         Page<Order> orders = orderService.getPosOrdersByType("Offline", from, to, PageRequest.of(page, size));
         model.addAttribute("orders", orders);
