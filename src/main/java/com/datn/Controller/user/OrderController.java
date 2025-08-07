@@ -1,6 +1,6 @@
 package com.datn.Controller.user;
 
-
+// Các import cần thiết cho controller
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,17 +35,13 @@ import com.datn.utils.AuthService;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-
 import org.springframework.web.bind.annotation.PostMapping;
-
-
-
 
 @Controller
 @RequestMapping("/order")
-
 public class OrderController {
 
+    // Inject các service cần thiết
     @Autowired
     ProductCategoryService pro_ca_service;
     @Autowired
@@ -56,24 +52,26 @@ public class OrderController {
     private OrderService orderService;
     @Autowired
     private CartItemService cartItemService;
-
     @Autowired
     private PromotionService promotionService;
 
+    // Hiển thị trang đặt hàng (form)
     @GetMapping("/index")
-        public String index(Model model ) {
+    public String index(Model model ) {
         int cartCount = 0;
         User user = authService.getUser();
         if (user != null) {
-            Integer userId = user.getId(); // Sửa lại nếu getter id khác
+            Integer userId = user.getId();
             cartCount = cartItemService.getCartItemsByUserId(userId).size();
         }
         model.addAttribute("cartCount", cartCount);
-        OrderRequest orderRequest=new OrderRequest();
+
+        OrderRequest orderRequest = new OrderRequest();
         model.addAttribute("orderRequest", orderRequest);
         return showForm(model);
     }
 
+    // Áp dụng mã giảm giá
     @PostMapping("/apply-voucher")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> applyVoucher(@RequestParam("voucher") String code, HttpSession session) {
@@ -82,61 +80,65 @@ public class OrderController {
         double totalAmount = cartItemService.getTotalAmount(user.getId());
         Promotion promotion = promotionService.findPromotionByName(code.trim());
 
-
+        // Kiểm tra tính hợp lệ của mã giảm giá
         if (promotion == null || promotion.getStatus() == false) {
             response.put("error", "Mã giảm giá không hợp lệ hoặc đã bị vô hiệu hóa.");
             return ResponseEntity.ok(response);
         }
 
+        // Kiểm tra xem thử ngày hiện tại có nằm trong khoảng còn hạn sử dụng không
         LocalDate today = LocalDate.now();
         if (promotion.getStartDate().isAfter(today) || promotion.getEndDate().isBefore(today)) {
             response.put("error", "Mã giảm giá đã hết hạn.");
             return ResponseEntity.ok(response);
         }
+
+        // Kiểm tra số lượng sử dụng, nếu <= 0 thì thông báo lỗi
         if (promotion.getUseCount() <= 0) {
             response.put("error", "Mã giảm giá đã hết lượt sử dụng.");
             return ResponseEntity.ok(response);
-            
         }
-        
+
+        // Tính toán giảm giá
         double discountValue;
         double finalAmount;
 
+        // Kiểm tra nếu là percent(phần trăm) thì lấy tổng đơn hàng * giá trị giảm giá và / 100
         if ("percent".equalsIgnoreCase(promotion.getDiscountType())) {
             discountValue = totalAmount * promotion.getDiscountValue() / 100;
         } else {
-            discountValue = promotion.getDiscountValue(); // fixed value
+            discountValue = promotion.getDiscountValue(); // cố định
         }
-         
-        finalAmount = Math.max(totalAmount - discountValue, 0); // tránh âm
-       
+
+        finalAmount = Math.max(totalAmount - discountValue, 0); // tránh tổng tiền âm
+
+        // Gửi dữ liệu phản hồi về client
         response.put("success", "Áp dụng mã thành công! Giảm " + (int) discountValue + " VNĐ");
         session.setAttribute("finalAmount", finalAmount);
-        session.setAttribute("promotionId", promotion.getId()); 
+        session.setAttribute("promotionId", promotion.getId());
 
         response.put("discountValue", discountValue);
         response.put("formattedOriginalTotal", String.format("%,.0f", totalAmount));
         response.put("formattedDiscount", String.format("%,.0f", discountValue));
         response.put("formattedTotal", String.format("%,.0f", finalAmount));
 
-
         return ResponseEntity.ok(response);
     }
 
-
-   @PostMapping("/checkout")
+    // Xử lý đặt hàng khi người dùng submit form
+    @PostMapping("/checkout")
     public String checkout(@Valid @ModelAttribute("orderRequest") OrderRequest orderRequest, BindingResult result, Model model, HttpSession session) {
-    if (result.hasErrors()) {
-        return showForm(model);
-    }
+        // Nếu có lỗi validate thì hiển thị lại form
+        if (result.hasErrors()) {
+            return showForm(model);
+        }
 
-
-    User user= authService.getUser();
-    List<CartItem> cartItems = cartItemService.getCartItemsByUserId(user.getId());
-    if (cartItems.isEmpty()) {
-        model.addAttribute("message", "Giỏ hàng trống, không thể đặt hàng.");
-        return showForm(model);
-    }
+        User user = authService.getUser();
+        List<CartItem> cartItems = cartItemService.getCartItemsByUserId(user.getId());
+        if (cartItems.isEmpty()) {
+            model.addAttribute("message", "Giỏ hàng trống, không thể đặt hàng.");
+            return showForm(model);
+        }
 
     Order order = new Order();
     order.setUser(user);
@@ -153,59 +155,63 @@ public class OrderController {
         finalAmount = cartItemService.getTotalAmount(user.getId());
     }
     order.setTotalAmount(finalAmount);
-    List<OrderDetail> orderDetails = new ArrayList<>();
 
-    Order savedOrder = orderService.saveOrder(order, orderDetails);
 
-    for (CartItem cartItem : cartItems) {
-        OrderDetail detail = new OrderDetail();
-        detail.setOrder(savedOrder);
-        detail.setProduct(cartItem.getProduct());
-        detail.setQuantity(cartItem.getQuantity());
-        detail.setPrice(cartItem.getProduct().getPrice());
-        orderDetails.add(detail);
-    }
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        Order savedOrder = orderService.saveOrder(order, orderDetails);
 
-    orderService.saveOrder(savedOrder, orderDetails);
+        // Tạo chi tiết đơn hàng từ giỏ hàng
+        for (CartItem cartItem : cartItems) {
+            OrderDetail detail = new OrderDetail();
+            detail.setOrder(savedOrder);
+            detail.setProduct(cartItem.getProduct());
+            detail.setQuantity(cartItem.getQuantity());
+            detail.setPrice(cartItem.getProduct().getPrice());
+            orderDetails.add(detail);
+        }
 
-    cartItemService.clearCartByUserId(user.getId());
-    
-    model.addAttribute("success", "Đặt hàng thành công");
-  
-    Long promotionId = (Long) session.getAttribute("promotionId");
-    if (promotionId != null) {
-        Promotion appliedPromotion = promotionService.findByID(promotionId);
-        if (appliedPromotion != null) {
-            order.setPromotion(appliedPromotion);
+        // Lưu lại chi tiết đơn hàng
+        orderService.saveOrder(savedOrder, orderDetails);
 
-            int currentCount = appliedPromotion.getUseCount();
-            if (currentCount > 0) {
-                promotionService.updateUseCount(promotionId, currentCount - 1);
+        // Xóa giỏ hàng sau khi đặt hàng
+        cartItemService.clearCartByUserId(user.getId());
+
+        model.addAttribute("success", "Đặt hàng thành công");
+
+        // Nếu có mã giảm giá, cập nhật số lượt sử dụng
+        Long promotionId = (Long) session.getAttribute("promotionId");
+        if (promotionId != null) {
+            Promotion appliedPromotion = promotionService.findByID(promotionId);
+            if (appliedPromotion != null) {
+                order.setPromotion(appliedPromotion);
+
+                int currentCount = appliedPromotion.getUseCount();
+                if (currentCount > 0) {
+                    promotionService.updateUseCount(promotionId, currentCount - 1);
+                }
             }
         }
+
+        // Xóa session sau khi dùng xong
+        session.removeAttribute("finalAmount");
+        session.removeAttribute("totalAmount");
+        session.removeAttribute("appliedPromotion");
+
+        return showForm(model);
     }
 
-
-
-    session.removeAttribute("finalAmount");
-    session.removeAttribute("totalAmount");
-    session.removeAttribute("appliedPromotion");
-
-    return showForm(model);
-}
-
+    // Hiển thị lại form đặt hàng với thông tin cần thiết
     public String showForm(Model model ) {
-        User user= authService.getUser();
-        model.addAttribute("user",user);
+        User user = authService.getUser();
+        model.addAttribute("user", user);
 
-        List<CartItem>  cartItems= cartItemService.getCartItemsByUserId(user.getId());
+        List<CartItem> cartItems = cartItemService.getCartItemsByUserId(user.getId());
         model.addAttribute("cartItems", cartItems);
-       
+
         model.addAttribute("totalAmount", cartItemService.getTotalAmount(user.getId()));
 
         model.addAttribute("productCategories", pro_ca_service.findAll());
         model.addAttribute("view", "order");
         return "layouts/layout";
     }
-    
 }
