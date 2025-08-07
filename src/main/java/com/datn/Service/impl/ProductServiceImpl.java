@@ -1,15 +1,21 @@
 package com.datn.Service.impl;
 
+
 import com.datn.utils.StringUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +23,8 @@ import com.datn.Service.ProductService;
 import com.datn.dao.ProductDAO;
 import com.datn.model.Product;
 import com.datn.utils.ParamService;
+import com.datn.Service.CategoryService;
+import com.datn.Service.ProductCategoryService;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -25,6 +33,12 @@ public class ProductServiceImpl implements ProductService {
     private ProductDAO dao;
     @Autowired
     ParamService param;
+
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private ProductCategoryService productCategoryService;
 
     @Override
     public List<Product> findAll() {
@@ -228,10 +242,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> findTop4ByDiscountPercentGreaterThanAndAvailableIsTrueOrderByDiscountPercentDesc(
             int minDiscount) {
-        List<Product> products = dao
-                .findTop4ByDiscountPercentGreaterThanAndAvailableIsTrueOrderByDiscountPercentDesc(minDiscount);
+        // Lấy tất cả sản phẩm giảm giá, filter trong Java rồi limit 4
+        List<Product> allDiscountProducts = dao
+                .findAllByDiscountPercentGreaterThanAndAvailableIsTrueOrderByDiscountPercentDesc(minDiscount);
         java.time.LocalDate now = java.time.LocalDate.now();
-        return products.stream()
+        return allDiscountProducts.stream()
                 .filter(p -> p.getDiscountPercent() != null && p.getDiscountPercent() > 0
                         && (p.getDiscountStart() == null || !now.isBefore(p.getDiscountStart()))
                         && (p.getDiscountEnd() == null || !now.isAfter(p.getDiscountEnd())))
@@ -251,6 +266,52 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Map<String, Object>> getTop6SellingProductsByYear(int year) {
         return dao.getTop6SellingProductsByYear(year);
+    }
+
+    @Override
+    public List<String> findProductNamesByKeyword(String keyword, int limit) {
+        Page<Product> page = dao.searchByName(keyword, PageRequest.of(0, limit));
+        List<Product> products = page.getContent();
+        List<String> names = new ArrayList<>();
+        for (Product p : products) {
+            names.add(p.getName());
+        }
+        return names;
+    }
+
+    @Override
+    public List<String> findSearchSuggestionsByKeyword(String keyword, int limit) {
+        // Gợi ý tên sản phẩm
+        List<String> productNames = findProductNamesByKeyword(keyword, limit);
+
+        // Gợi ý loại hoa (productCategory)
+        List<String> categoryNames = productCategoryService.findAll().stream()
+                .filter(pc -> pc.getName().toLowerCase().contains(keyword.toLowerCase()))
+                .map(pc -> pc.getName())
+                .collect(Collectors.toList());
+
+        // Gợi ý danh mục (category)
+        List<String> mainCategoryNames = categoryService.findAll().stream()
+                .filter(c -> c.getName().toLowerCase().contains(keyword.toLowerCase()))
+                .map(c -> c.getName())
+                .collect(Collectors.toList());
+
+        // Gộp tất cả, ưu tiên tên sản phẩm trước, loại bỏ trùng lặp
+        List<String> suggestions = new ArrayList<>();
+        Set<String> existed = new HashSet<>();
+        for (String name : productNames) {
+            if (existed.add(name))
+                suggestions.add(name);
+        }
+        for (String name : categoryNames) {
+            if (existed.add(name))
+                suggestions.add(name);
+        }
+        for (String name : mainCategoryNames) {
+            if (existed.add(name))
+                suggestions.add(name);
+        }
+        return suggestions.size() > limit ? suggestions.subList(0, limit) : suggestions;
     }
 
 }
