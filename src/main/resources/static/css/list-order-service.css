@@ -208,7 +208,6 @@ body {
 #createOrderModal .modal-dialog,
 #orderDetailsModal .modal-dialog {
   max-width: 800px;
-  /* Set both modals to 800px width */
 }
 
 .modal-form-row {
@@ -222,7 +221,6 @@ body {
   min-width: 250px;
 }
 
-/* Ensure full-width inputs and selects in both modals */
 #createOrderModal .form-control,
 #createOrderModal .form-select,
 #orderDetailsModal .form-control,
@@ -230,13 +228,11 @@ body {
   width: 100%;
 }
 
-/* Full-width description field for orderDetailsModal */
 #orderDetailsModal .description-field {
   flex: 0 0 100%;
   max-width: 100%;
 }
 
-/* Description field in createOrderModal shares row with execution time */
 #createOrderModal .description-field {
   flex: 1;
   min-width: 250px;

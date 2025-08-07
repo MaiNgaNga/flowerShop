@@ -1,6 +1,5 @@
 package com.datn.Controller.user;
 
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,9 +37,6 @@ import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
 
-
-
-
 @Controller
 @RequestMapping("/order")
 
@@ -61,7 +57,7 @@ public class OrderController {
     private PromotionService promotionService;
 
     @GetMapping("/index")
-        public String index(Model model ) {
+    public String index(Model model) {
         int cartCount = 0;
         User user = authService.getUser();
         if (user != null) {
@@ -69,7 +65,7 @@ public class OrderController {
             cartCount = cartItemService.getCartItemsByUserId(userId).size();
         }
         model.addAttribute("cartCount", cartCount);
-        OrderRequest orderRequest=new OrderRequest();
+        OrderRequest orderRequest = new OrderRequest();
         model.addAttribute("orderRequest", orderRequest);
         return showForm(model);
     }
@@ -81,7 +77,6 @@ public class OrderController {
         User user = authService.getUser();
         double totalAmount = cartItemService.getTotalAmount(user.getId());
         Promotion promotion = promotionService.findPromotionByName(code.trim());
-
 
         if (promotion == null || promotion.getStatus() == false) {
             response.put("error", "Mã giảm giá không hợp lệ hoặc đã bị vô hiệu hóa.");
@@ -96,9 +91,9 @@ public class OrderController {
         if (promotion.getUseCount() <= 0) {
             response.put("error", "Mã giảm giá đã hết lượt sử dụng.");
             return ResponseEntity.ok(response);
-            
+
         }
-        
+
         double discountValue;
         double finalAmount;
 
@@ -107,103 +102,99 @@ public class OrderController {
         } else {
             discountValue = promotion.getDiscountValue(); // fixed value
         }
-         
+
         finalAmount = Math.max(totalAmount - discountValue, 0); // tránh âm
-       
+
         response.put("success", "Áp dụng mã thành công! Giảm " + (int) discountValue + " VNĐ");
         session.setAttribute("finalAmount", finalAmount);
-        session.setAttribute("promotionId", promotion.getId()); 
+        session.setAttribute("promotionId", promotion.getId());
 
         response.put("discountValue", discountValue);
         response.put("formattedOriginalTotal", String.format("%,.0f", totalAmount));
         response.put("formattedDiscount", String.format("%,.0f", discountValue));
         response.put("formattedTotal", String.format("%,.0f", finalAmount));
 
-
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/checkout")
+    public String checkout(@Valid @ModelAttribute("orderRequest") OrderRequest orderRequest, BindingResult result,
+            Model model, HttpSession session) {
+        if (result.hasErrors()) {
+            return showForm(model);
+        }
 
-   @PostMapping("/checkout")
-    public String checkout(@Valid @ModelAttribute("orderRequest") OrderRequest orderRequest, BindingResult result, Model model, HttpSession session) {
-    if (result.hasErrors()) {
-        return showForm(model);
-    }
+        User user = authService.getUser();
+        List<CartItem> cartItems = cartItemService.getCartItemsByUserId(user.getId());
+        if (cartItems.isEmpty()) {
+            model.addAttribute("message", "Giỏ hàng trống, không thể đặt hàng.");
+            return showForm(model);
+        }
 
+        Order order = new Order();
+        order.setUser(user);
+        order.setCreateDate(new Date());
+        order.setSdt(orderRequest.getSdt());
+        order.setAddress(orderRequest.getAddress());
+        order.setStatus("Chưa xác nhận");
+        // Kiểm tra xem có mã giảm không
+        Double finalAmount = (Double) session.getAttribute("finalAmount");
+        if (finalAmount == null) {
+            // Nếu không có, lấy giá gốc
+            finalAmount = cartItemService.getTotalAmount(user.getId());
+        }
+        order.setTotalAmount(finalAmount);
+        List<OrderDetail> orderDetails = new ArrayList<>();
 
-    User user= authService.getUser();
-    List<CartItem> cartItems = cartItemService.getCartItemsByUserId(user.getId());
-    if (cartItems.isEmpty()) {
-        model.addAttribute("message", "Giỏ hàng trống, không thể đặt hàng.");
-        return showForm(model);
-    }
+        Order savedOrder = orderService.saveOrder(order, orderDetails);
 
-    Order order = new Order();
-    order.setUser(user);
-    order.setCreateDate(new Date());
-    order.setSdt(orderRequest.getSdt());
-    order.setAddress(orderRequest.getAddress());
-    order.setStatus("Chưa xác nhận");
-     // Kiểm tra xem có mã giảm không
-    Double finalAmount = (Double) session.getAttribute("finalAmount");
-    if (finalAmount == null) {
-        // Nếu không có, lấy giá gốc
-        finalAmount = cartItemService.getTotalAmount(user.getId());
-    }
-    order.setTotalAmount(finalAmount);
-    List<OrderDetail> orderDetails = new ArrayList<>();
+        for (CartItem cartItem : cartItems) {
+            OrderDetail detail = new OrderDetail();
+            detail.setOrder(savedOrder);
+            detail.setProduct(cartItem.getProduct());
+            detail.setQuantity(cartItem.getQuantity());
+            detail.setPrice(cartItem.getProduct().getPrice());
+            orderDetails.add(detail);
+        }
 
-    Order savedOrder = orderService.saveOrder(order, orderDetails);
+        orderService.saveOrder(savedOrder, orderDetails);
 
-    for (CartItem cartItem : cartItems) {
-        OrderDetail detail = new OrderDetail();
-        detail.setOrder(savedOrder);
-        detail.setProduct(cartItem.getProduct());
-        detail.setQuantity(cartItem.getQuantity());
-        detail.setPrice(cartItem.getProduct().getPrice());
-        orderDetails.add(detail);
-    }
+        cartItemService.clearCartByUserId(user.getId());
 
-    orderService.saveOrder(savedOrder, orderDetails);
+        model.addAttribute("success", "Đặt hàng thành công");
 
-    cartItemService.clearCartByUserId(user.getId());
-    
-    model.addAttribute("success", "Đặt hàng thành công");
-  
-    Long promotionId = (Long) session.getAttribute("promotionId");
-    if (promotionId != null) {
-        Promotion appliedPromotion = promotionService.findByID(promotionId);
-        if (appliedPromotion != null) {
-            order.setPromotion(appliedPromotion);
+        Long promotionId = (Long) session.getAttribute("promotionId");
+        if (promotionId != null) {
+            Promotion appliedPromotion = promotionService.findByID(promotionId);
+            if (appliedPromotion != null) {
+                order.setPromotion(appliedPromotion);
 
-            int currentCount = appliedPromotion.getUseCount();
-            if (currentCount > 0) {
-                promotionService.updateUseCount(promotionId, currentCount - 1);
+                int currentCount = appliedPromotion.getUseCount();
+                if (currentCount > 0) {
+                    promotionService.updateUseCount(promotionId, currentCount - 1);
+                }
             }
         }
+
+        session.removeAttribute("finalAmount");
+        session.removeAttribute("totalAmount");
+        session.removeAttribute("appliedPromotion");
+
+        return showForm(model);
     }
 
+    public String showForm(Model model) {
+        User user = authService.getUser();
+        model.addAttribute("user", user);
 
-
-    session.removeAttribute("finalAmount");
-    session.removeAttribute("totalAmount");
-    session.removeAttribute("appliedPromotion");
-
-    return showForm(model);
-}
-
-    public String showForm(Model model ) {
-        User user= authService.getUser();
-        model.addAttribute("user",user);
-
-        List<CartItem>  cartItems= cartItemService.getCartItemsByUserId(user.getId());
+        List<CartItem> cartItems = cartItemService.getCartItemsByUserId(user.getId());
         model.addAttribute("cartItems", cartItems);
-       
+
         model.addAttribute("totalAmount", cartItemService.getTotalAmount(user.getId()));
 
         model.addAttribute("productCategories", pro_ca_service.findAll());
         model.addAttribute("view", "order");
         return "layouts/layout";
     }
-    
+
 }

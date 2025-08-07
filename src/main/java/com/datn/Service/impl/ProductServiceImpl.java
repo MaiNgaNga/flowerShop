@@ -1,8 +1,6 @@
 
 package com.datn.Service.impl;
 
-import com.datn.utils.StringUtils;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -24,8 +22,6 @@ public class ProductServiceImpl implements ProductService {
     private ProductDAO dao;
     @Autowired
     ParamService param;
-
-
 
     @Override
     public List<Product> findAll() {
@@ -244,6 +240,7 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> findTop10ByProductCategoryName(String productCategoryName) {
         return dao.findTop10ByProductCategoryName(productCategoryName);
     }
+
     public List<Product> findBestSeller() {
         return dao.findSellingProducts();
     }

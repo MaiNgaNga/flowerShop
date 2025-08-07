@@ -25,15 +25,14 @@ public class ServiceEntity {
     @Column(columnDefinition = "NVARCHAR(1000)")
     private String description;
 
-    @NotBlank(message = "Ảnh chính không được để trống")
-    @Column(name = "image_url", columnDefinition = "NVARCHAR(255)")
-    private String imageUrl;
+    @Column(columnDefinition = "NVARCHAR(255)")
+    private String image_url;
 
-    @Column(name = "image_url2", columnDefinition = "NVARCHAR(255)")
-    private String imageUrl2;
+    @Column(columnDefinition = "NVARCHAR(255)")
+    private String image_url2;
 
-    @Column(name = "image_url3", columnDefinition = "NVARCHAR(255)")
-    private String imageUrl3;
+    @Column(columnDefinition = "NVARCHAR(255)")
+    private String image_url3;
 
     @Column(nullable = false)
     private boolean available = true;

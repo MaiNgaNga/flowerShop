@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -17,6 +16,13 @@ import com.datn.Service.ServiceService;
 import com.datn.model.ServiceEntity;
 
 import jakarta.validation.Valid;
+
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 @RequestMapping("/Service")
@@ -64,10 +70,24 @@ public class ServiceCRUDController {
             @RequestParam("image3") MultipartFile image3,
             @RequestParam(value = "tab", defaultValue = "edit") String tab,
             RedirectAttributes redirectAttributes) {
+
+        System.out.println("da vao create");
+
+        // Check validate từ entity (tên, mô tả,...)
         if (errors.hasErrors()) {
             model.addAttribute("view", "admin/ServiceCRUD");
+            model.addAttribute("activeTab", tab);
             return "admin/layout";
         }
+
+        // ✅ Kiểm tra ảnh chính có rỗng không
+        if (image1 == null || image1.isEmpty()) {
+            model.addAttribute("error", "Ảnh chính không được để trống!");
+            model.addAttribute("view", "admin/ServiceCRUD");
+            model.addAttribute("activeTab", tab);
+            return "admin/layout";
+        }
+
         try {
             serviceService.create(service, image1, image2, image3);
             redirectAttributes.addFlashAttribute("success", "Thêm dịch vụ thành công!");

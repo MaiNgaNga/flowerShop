@@ -254,20 +254,6 @@ body {
   box-shadow: 0 0 3px rgba(160, 174, 192, 0.3);
 }
 
-/* Style cho input readonly (Số lượng bán ra) */
-.readonly-quantity {
-  background-color: #f8f9fa;
-  border-color: #e2e8f0;
-  cursor: default;
-  opacity: 0.8;
-  font-size: 0.85rem;
-  padding: 5px 8px;
-  border-radius: 5px;
-}
-.readonly-quantity:hover {
-  cursor: default;
-}
-
 /* Style cho form trong tab Chỉnh sửa */
 .edit-form {
   background-color: #fff;
