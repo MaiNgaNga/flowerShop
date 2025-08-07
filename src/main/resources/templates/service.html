@@ -48,21 +48,21 @@
               data-bs-ride="carousel"
             >
               <div class="carousel-inner">
-                <div class="carousel-item active" th:if="${service.imageUrl}">
+                <div class="carousel-item active" th:if="${service.image_url}">
                   <img
-                    th:src="@{/images/{image}(image=${service.imageUrl})}"
+                    th:src="@{/images/{image}(image=${service.image_url})}"
                     alt="Ảnh 1"
                   />
                 </div>
-                <div class="carousel-item" th:if="${service.imageUrl2}">
+                <div class="carousel-item" th:if="${service.image_url2}">
                   <img
-                    th:src="@{/images/{image}(image=${service.imageUrl2})}"
+                    th:src="@{/images/{image}(image=${service.image_url2})}"
                     alt="Ảnh 2"
                   />
                 </div>
-                <div class="carousel-item" th:if="${service.imageUrl3}">
+                <div class="carousel-item" th:if="${service.image_url3}">
                   <img
-                    th:src="@{/images/{image}(image=${service.imageUrl3})}"
+                    th:src="@{/images/{image}(image=${service.image_url3})}"
                     alt="Ảnh 3"
                   />
                 </div>

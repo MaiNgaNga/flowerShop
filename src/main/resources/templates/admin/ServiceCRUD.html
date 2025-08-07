@@ -50,7 +50,6 @@
       aria-labelledby="edit-tab"
     >
       <form
-        action="/Service/index"
         th:object="${service}"
         method="post"
         enctype="multipart/form-data"
@@ -108,7 +107,6 @@
               placeholder="Mô tả dịch vụ"
               rows="4"
             ></textarea>
-            <div class="error" th:errors="*{description}"></div>
           </div>
         </div>
 
@@ -116,16 +114,15 @@
         <div class="image-upload-row form-group">
           <div class="image-upload-box">
             <label class="image-title">Hình Ảnh 1</label>
-            <div th:if="${service.imageUrl != null}">
+            <div th:if="${service.image_url != null}">
               <input
                 type="hidden"
                 name="oldImages"
-                th:value="${service.imageUrl}"
+                th:value="${service.image_url}"
               />
               <img
-                th:src="@{/images/{img}(img=${service.imageUrl})}"
+                th:src="@{/images/{img}(img=${service.image_url})}"
                 class="img-thumbnail"
-                alt="Hình ảnh 1"
               />
             </div>
             <label
@@ -134,24 +131,19 @@
               >Chọn ảnh</label
             >
             <input type="file" id="image1" name="image1" />
-            <div
-              class="error"
-              th:if="${imageError1 != null}"
-              th:text="${imageError1}"
-            ></div>
+            <!-- <div class="error" th:errors="*{image_url}"></div> -->
           </div>
           <div class="image-upload-box">
             <label class="image-title">Hình Ảnh 2</label>
-            <div th:if="${service.imageUrl2 != null}">
+            <div th:if="${service.image_url2 != null}">
               <input
                 type="hidden"
                 name="oldImages"
-                th:value="${service.imageUrl2}"
+                th:value="${service.image_url2}"
               />
               <img
-                th:src="@{/images/{img}(img=${service.imageUrl2})}"
+                th:src="@{/images/{img}(img=${service.image_url2})}"
                 class="img-thumbnail"
-                alt="Hình ảnh 2"
               />
             </div>
             <label
@@ -163,14 +155,14 @@
           </div>
           <div class="image-upload-box">
             <label class="image-title">Hình Ảnh 3</label>
-            <div th:if="${service.imageUrl3 != null}">
+            <div th:if="${service.image_url3 != null}">
               <input
                 type="hidden"
                 name="oldImages"
-                th:value="${service.imageUrl3}"
+                th:value="${service.image_url3}"
               />
               <img
-                th:src="@{/images/{img}(img=${service.imageUrl3})}"
+                th:src="@{/images/{img}(img=${service.image_url3})}"
                 class="img-thumbnail"
                 alt="Hình ảnh 3"
               />
@@ -274,11 +266,11 @@
               <td th:text="${item.name}"></td>
               <td>
                 <img
-                  th:src="@{/images/{image}(image=${item.imageUrl})}"
+                  th:src="@{/images/{image}(image=${item.image_url})}"
                   alt="Hình ảnh"
                   class="img-thumbnail"
                   width="50"
-                  th:if="${item.imageUrl != null}"
+                  th:if="${item.image_url != null}"
                 />
               </td>
               <td

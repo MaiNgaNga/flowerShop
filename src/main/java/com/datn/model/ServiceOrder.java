@@ -64,5 +64,8 @@ public class ServiceOrder {
     @Column(nullable = false, length = 20, columnDefinition = "NVARCHAR(20)")
     private ServiceOrderStatus status = ServiceOrderStatus.UNPAID;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
     // Có thể thêm paymentType hoặc user xác nhận nếu cần
 }
