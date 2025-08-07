@@ -1,4 +1,3 @@
-
 package com.datn.Service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.time.LocalDate;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+=======
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -70,7 +75,6 @@ public class OrderServiceImpl implements OrderService {
             detail.setOrder(savedOrder);
             orderDetailDAO.save(detail);
         }
-
         return savedOrder;
     }
 
@@ -140,10 +144,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order updateToDangGiao(Long orderId, int shipperId) {
         Order order = dao.findById(orderId).orElse(null);
-        User shipper = userDAO.findById(shipperId).orElse(null); // lấy shipper theo ID
+        User shipper = userDAO.findById(shipperId).orElse(null);
         if (order != null && "Đã xác nhận".equals(order.getStatus())) {
             order.setStatus("Đang giao");
-            order.setShipper(shipper); // nếu bạn có trường này
+            order.setShipper(shipper);
             return dao.save(order);
         }
         return null;
@@ -157,7 +161,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> getHistoryOrders(int shipperId) {
         return dao.findByStatusInAndShipperId(List.of("Đã giao"), shipperId);
-
     }
 
     @Override
@@ -165,12 +168,14 @@ public class OrderServiceImpl implements OrderService {
         return dao.findByStatusInAndShipperId(statuses, shipperId);
     }
 
+    @Override
     public void updateToCompleted(Long orderId, int shipperId) {
         Order order = dao.findById(orderId).orElse(null);
         User shipper = userDAO.findById(shipperId).orElse(null);
         if (order != null && shipper != null && "Đang giao".equals(order.getStatus())) {
             order.setStatus("Đã giao");
             order.setShipper(shipper);
+            order.setDeliveryDate(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
             dao.save(order);
         }
     }
@@ -185,34 +190,42 @@ public class OrderServiceImpl implements OrderService {
         return null;
     }
 
+    @Override
     public List<Order> findReturnedOrdersByShipper(int shipperId) {
         return dao.findByStatusAndShipperId("Hoàn hàng", shipperId);
     }
 
     @Override
-    public Order cancelByShipper(Long orderId, int shipperId) {
-        Order order = dao.findById(orderId).orElse(null);
-        if (order != null && order.getShipper() != null && order.getShipper().getId() == shipperId) {
-            order.setStatus("Đã xác nhận");
-            return dao.save(order);
+    @Transactional
+    public Order cancelByShipper(Long orderId, int shipperId, String cancelReason, String cancelDetails) {
+        Order order = dao.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Đơn hàng không tồn tại"));
+
+        if (order.getShipper() == null || order.getShipper().getId() != shipperId) {
+            throw new IllegalArgumentException("Bạn không được phép hủy đơn hàng này");
         }
-        return null;
+
+        order.setReason(cancelReason); // Lưu lý do hủy vào cột reason
+        order.setDescription(cancelDetails); // Lưu chi tiết lý do vào cột description
+        order.setStatus("Thất bại");
+        return dao.save(order);
     }
 
+    @Override
     public Double getTotalCompletedOrdersAmount(int shipperId) {
         Double result = dao.getTotalCompletedAmountByShipperId(shipperId);
         System.out.println("Total Amount (before null check): " + result);
         return result != null ? result : 0.0;
-
     }
 
+    @Override
     public List<Order> getOrdersByShipperAndDate(int shipperId, java.util.Date date) {
         return dao.getOrdersByShipperAndDate(shipperId, date);
     }
 
+    @Override
     public Double getTotalAmountByShipperAndDate(int shipperId, java.util.Date date) {
         return dao.getTotalCompletedAmountByShipperIdAndDateNative(shipperId, date);
-
     }
 
     @Override
@@ -224,4 +237,5 @@ public class OrderServiceImpl implements OrderService {
     public Page<Order> getPosOrdersByType(String orderType, LocalDate fromDate, LocalDate toDate, Pageable pageable) {
         return dao.findPosOrders(orderType, fromDate, toDate, pageable);
     }
+
 }
