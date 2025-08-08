@@ -2,6 +2,7 @@ package com.datn.Service;
 
 import java.util.List;
 
+
 import com.datn.model.User;
 
 public interface UserService {
@@ -23,5 +24,4 @@ public interface UserService {
 
     List<User> findAllNonShipper();
     User findBySdt(String sdt);
-
 }

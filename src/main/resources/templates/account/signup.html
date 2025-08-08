@@ -242,6 +242,16 @@
         margin-bottom: 50px;
       }
     </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(function () {
+          let successMessage = document.querySelector(".success");
+          if (successMessage) {
+            successMessage.style.display = "none";
+          }
+        }, 2000); // 3 giây
+      });
+    </script>
   </head>
   <body>
     <div class="signup-container">
@@ -250,11 +260,14 @@
         <h4 class="text-center" style="color: #6b4e71; margin-bottom: 30px">
           Sign Up for Flower Shop
         </h4>
+
         <div
           class="success alert alert-success"
           th:if="${success}"
           th:text="${success}"
         ></div>
+        <i class="text-danger" th:if="${error}" th:text="${error}"></i>
+
         <form th:action="@{/signup}" th:object="${User}" method="post">
           <input
             type="text"
@@ -272,14 +285,7 @@
               placeholder="Enter your full name"
             />
             <i class="fas fa-user input-icon"></i>
-            <div class="error" th:if="${#fields.hasErrors('name')}">
-              <ul>
-                <li
-                  th:each="err : ${#fields.errors('name')}"
-                  th:text="${err}"
-                ></li>
-              </ul>
-            </div>
+            <i class="error" th:errors="*{name}"></i>
           </div>
           <div class="input-container">
             <input
@@ -290,19 +296,18 @@
               placeholder="Enter your email"
             />
             <i class="fas fa-envelope input-icon"></i>
-            <div class="error" th:if="${#fields.hasErrors('email')}">
-              <ul>
-                <li
-                  th:each="err : ${#fields.errors('email')}"
-                  th:text="${err}"
-                ></li>
-              </ul>
-            </div>
-            <i
-              class="error text-danger"
-              th:if="${error}"
-              th:text="${error}"
-            ></i>
+            <i class="error" th:errors="*{email}"></i>
+          </div>
+          <div class="input-container">
+            <input
+              type="tel"
+              th:field="*{sdt}"
+              id="sdt"
+              class="form-control"
+              placeholder="Enter your phone"
+            />
+            <i class="fas fa-envelope input-icon"></i>
+            <i class="error" th:errors="*{sdt}"></i>
           </div>
           <div class="password-container">
             <input
@@ -317,16 +322,15 @@
               class="fa-solid fa-eye toggle-password"
               onclick="togglePassword()"
             ></i>
-            <div class="error" th:if="${#fields.hasErrors('password')}">
-              <ul>
-                <li
-                  th:each="err : ${#fields.errors('password')}"
-                  th:text="${err}"
-                ></li>
-              </ul>
-            </div>
+            <i
+              class="error text-danger"
+              th:if="${errorPassword}"
+              th:text="${errorPassword}"
+            ></i>
           </div>
-          <input th:field="*{role}" hidden value="false" id="roleUser" />
+          <input th:field="*{role}" hidden value="0" id="roleUser" />
+          <input th:field="*{status}" hidden value="true" id="status" />
+
           <button type="submit" class="btn btn-primary" id="signUpBtn">
             Sign Up
           </button>

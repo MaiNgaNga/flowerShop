@@ -38,7 +38,7 @@
       <tr th:each="order : ${orders}">
         <td th:text="${order.id}"></td>
         <td th:text="${order.user.name}"></td>
-        <td th:text="${#dates.format(order.createDate, 'dd-MM-yyyy')}"></td>
+        <td th:text="${#dates.format(order.deliveryDate, 'dd-MM-yyyy')}"></td>
         <td th:text="${order.status}"></td>
         <td  th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT') + ' VND'}"></td>
       </tr>
