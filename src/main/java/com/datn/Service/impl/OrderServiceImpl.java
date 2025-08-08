@@ -21,7 +21,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-=======
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -236,6 +235,12 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Page<Order> getPosOrdersByType(String orderType, LocalDate fromDate, LocalDate toDate, Pageable pageable) {
         return dao.findPosOrders(orderType, fromDate, toDate, pageable);
+    }
+
+    @Override
+    public Page<Order> searchPosOrdersByOrderCode(String orderType, String orderCode, LocalDate fromDate,
+            LocalDate toDate, Pageable pageable) {
+        return dao.searchPosOrdersByOrderCode(orderType, orderCode, fromDate, toDate, pageable);
     }
 
 }

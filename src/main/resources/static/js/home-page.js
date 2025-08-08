@@ -224,6 +224,10 @@ document.addEventListener("DOMContentLoaded", function () {
       product.image_url && product.image_url !== ""
         ? `/images/${product.image_url}`
         : "/images/logo.png";
+    const imageUrl2 =
+      product.image_url2 && product.image_url2 !== ""
+        ? `/images/${product.image_url2}`
+        : "/images/logo.png";
 
     const priceHTML =
       product.discountPercent && product.discountPercent > 0
@@ -241,13 +245,13 @@ document.addEventListener("DOMContentLoaded", function () {
       imageBlock = `
         <a href="/detail?id=${product.id}" class="text-decoration-none">
           <img src="${imageUrl}" class="default-img" alt="${product.name}" onerror="this.src='/images/logo.png'"/>
-          <img src="${imageUrl}" class="hover-img" alt="${product.name}" onerror="this.src='/images/logo.png'"/>
+          <img src="${imageUrl2}" class="hover-img" alt="${product.name}" onerror="this.src='/images/logo.png'"/>
         </a>
       `;
     } else {
       imageBlock = `
         <img src="${imageUrl}" class="default-img" alt="${product.name}" onerror="this.src='/images/logo.png'"/>
-        <img src="${imageUrl}" class="hover-img" alt="${product.name}" onerror="this.src='/images/logo.png'"/>
+        <img src="${imageUrl2}" class="hover-img" alt="${product.name}" onerror="this.src='/images/logo.png'"/>
         <span style="color:red;">ID NULL</span>
       `;
     }
@@ -267,10 +271,7 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="product-info">
         <div class="product-name">${product.name}</div>
         ${priceHTML}
-        <div class="product-size">Số lượng: ${product.quantity}</div>
-        <div class="product-size">${
-          product.color ? product.color.name : "N/A"
-        }</div>
+        
       </div>
     `;
 
