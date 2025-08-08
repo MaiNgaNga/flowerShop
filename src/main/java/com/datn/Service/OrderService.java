@@ -76,5 +76,7 @@ public interface OrderService {
 
     Page<Order> getPosOrdersByType(String orderType, LocalDate fromDate, LocalDate toDate, Pageable pageable);
 
-    
+    Order recreateOrder(Long canceledOrderId); // Thêm phương thức tạo lại đơn hàng
+
+  
 }

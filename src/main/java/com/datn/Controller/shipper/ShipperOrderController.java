@@ -19,6 +19,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Date;
 
 @Controller
@@ -31,7 +32,13 @@ public class ShipperOrderController {
 
     @GetMapping("/pending-orders")
     public String pendingOrders(Model model) {
-        List<Order> pendingOrders = orderService.getOrdersByStatus("Đã xác nhận");
+        List<Order> confirmedOrders = orderService.getOrdersByStatus("Đã xác nhận");
+        List<Order> deliveringOrders = orderService.getOrdersByStatus("Đang giao lại");
+
+        List<Order> pendingOrders = new ArrayList<>();
+        pendingOrders.addAll(confirmedOrders);
+        pendingOrders.addAll(deliveringOrders);
+
         model.addAttribute("orders", pendingOrders);
         model.addAttribute("view", "shipper/pending-orders");
         return "shipper/layout";
