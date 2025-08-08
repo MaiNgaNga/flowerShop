@@ -11,6 +11,17 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.net.URL;
+import java.io.BufferedReader;
+import java.net.HttpURLConnection;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Base64;
+import java.io.OutputStream;    
+
+
+
 
 @Service
 public class QRCodeService {
@@ -71,12 +82,12 @@ public class QRCodeService {
                     amount,
                     safeAddInfo);
 
-            java.net.URL url = new java.net.URL(apiUrl);
-            java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
+            URL url = new URL(apiUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);
-            try (java.io.OutputStream os = conn.getOutputStream()) {
+            try (OutputStream os = conn.getOutputStream()) {
                 byte[] input = jsonBody.getBytes("utf-8");
                 os.write(input, 0, input.length);
             }
@@ -89,8 +100,8 @@ public class QRCodeService {
 
             // Read response JSON
             StringBuilder response = new StringBuilder();
-            try (java.io.BufferedReader br = new java.io.BufferedReader(
-                    new java.io.InputStreamReader(conn.getInputStream(), "utf-8"))) {
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream(), "utf-8"))) {
                 String line;
                 while ((line = br.readLine()) != null) {
                     response.append(line.trim());
@@ -125,10 +136,10 @@ public class QRCodeService {
             }
 
             // Decode base64 and save to file
-            byte[] imageBytes = java.util.Base64.getDecoder().decode(base64);
+            byte[] imageBytes = Base64.getDecoder().decode(base64);
             String fileName = "transfer_" + orderCode + ".png";
-            java.nio.file.Path path = java.nio.file.Paths.get(QR_CODE_IMAGE_PATH + fileName);
-            java.nio.file.Files.write(path, imageBytes);
+            Path path = Paths.get(QR_CODE_IMAGE_PATH + fileName);
+            Files.write(path, imageBytes);
 
             return "/images/qr/" + fileName;
         } catch (Exception e) {

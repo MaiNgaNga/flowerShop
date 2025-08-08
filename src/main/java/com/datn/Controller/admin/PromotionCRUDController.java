@@ -33,11 +33,13 @@ public class PromotionCRUDController {
     @Autowired
     private PromotionDAO promotionDAO;
 
+    // Gán danh sách tất cả khuyến mãi vào model với key là 'promotions'
     @ModelAttribute("promotions")
     public Iterable<Promotion> getAllPromotions() {
         return promotionService.findAll();
     }
 
+    // Hiển thị trang danh sách khuyến mãi (kèm theo form thêm mới)
     @GetMapping("/index")
     public String index(Model model,
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -54,21 +56,24 @@ public class PromotionCRUDController {
         // Nếu là thêm mới, set ngày hiện tại
         promotion.setCreatedDate(LocalDateTime.now());
         promotion.setUpdatedDate(LocalDateTime.now());
-        // ... các dòng khác ...
         model.addAttribute("promotion", promotion);
 
         model.addAttribute("view", "admin/promotionCRUD");
         return "admin/layout";
     }
 
+    // Xử lý thêm mới khuyến mãi
     @PostMapping("/create")
     public String create(Model model, @Valid @ModelAttribute("promotion") Promotion promotion, Errors errors,
             RedirectAttributes redirectAttributes) {
+
+        // Kiểm tra lỗi ràng buộc từ form
         if (errors.hasErrors()) {
             model.addAttribute("view", "admin/promotionCRUD");
             return "admin/layout";
         }
 
+        // Kiểm tra ngày kết thúc phải sau ngày bắt đầu
         if (promotion.getEndDate() != null && promotion.getStartDate() != null
                 && promotion.getEndDate().isBefore(promotion.getStartDate())) {
             model.addAttribute("errorEndDate", "Ngày kết thúc phải trước ngày bắt đầu!");
@@ -76,6 +81,7 @@ public class PromotionCRUDController {
             return "admin/layout";
         }
 
+        // Kiểm tra loại giảm giá và giá trị giảm giá hợp lệ
         String type = promotion.getDiscountType();
         Double value = promotion.getDiscountValue();
         if ("percent".equalsIgnoreCase(type)) {
@@ -84,7 +90,6 @@ public class PromotionCRUDController {
                 model.addAttribute("view", "admin/promotionCRUD");
                 return "admin/layout";
             }
-
         } else if ("amount".equalsIgnoreCase(type)) {
             if (value <= 0) {
                 model.addAttribute("errorDiscount", "Giá trị giảm giá tiền tệ phải lớn hơn 0!");
@@ -96,28 +101,33 @@ public class PromotionCRUDController {
             model.addAttribute("view", "admin/promotionCRUD");
             return "admin/layout";
         }
+
         try {
-            // gán ngày hiện tại cho createDate
+            // Gán ngày tạo hiện tại
             promotion.setCreatedDate(LocalDateTime.now());
+            // Lưu khuyến mãi vào DB
             promotionService.create(promotion);
+            // Gửi thông báo thành công
             redirectAttributes.addFlashAttribute("success", "Thêm khuyến mãi thành công!");
             return "redirect:/Promotion/index";
         } catch (IllegalArgumentException e) {
+            // Xử lý lỗi nếu xảy ra ngoại lệ
             model.addAttribute("error", e.getMessage());
             model.addAttribute("view", "admin/promotionCRUD");
             return "admin/layout";
         }
-
     }
 
+    // Truy cập form chỉnh sửa khuyến mãi theo ID
     @GetMapping("/edit/{id}")
-
     public String edit(@PathVariable("id") Long id,
             @RequestParam(value = "page", defaultValue = "0") int page,
             Model model) {
+
         Promotion promotion = promotionService.findByID(id);
         Pageable pageable = PageRequest.of(page, 10);
         Page<Promotion> result = promotionDAO.findAll(pageable);
+
         model.addAttribute("promotion", promotion);
         model.addAttribute("promotions", result.getContent());
         model.addAttribute("currentPage", result.getNumber());
@@ -126,21 +136,28 @@ public class PromotionCRUDController {
         return "admin/layout";
     }
 
+    // Xử lý cập nhật khuyến mãi
     @PostMapping("/update")
     public String update(Model model,
             @Valid @ModelAttribute("promotion") Promotion promotion,
             Errors errors,
             RedirectAttributes redirectAttributes) {
+
+        // Kiểm tra lỗi form
         if (errors.hasErrors()) {
             model.addAttribute("view", "admin/promotionCRUD");
             return "admin/layout";
         }
+
+        // Kiểm tra logic ngày
         if (promotion.getEndDate() != null && promotion.getStartDate() != null
                 && promotion.getEndDate().isBefore(promotion.getStartDate())) {
             model.addAttribute("errorEndDate", "Ngày kết thúc phải trước ngày bắt đầu!");
             model.addAttribute("view", "admin/promotionCRUD");
             return "admin/layout";
         }
+
+        // Kiểm tra loại và giá trị giảm giá hợp lệ
         String type = promotion.getDiscountType();
         Double value = promotion.getDiscountValue();
         if ("percent".equalsIgnoreCase(type)) {
@@ -149,7 +166,6 @@ public class PromotionCRUDController {
                 model.addAttribute("view", "admin/promotionCRUD");
                 return "admin/layout";
             }
-
         } else if ("amount".equalsIgnoreCase(type)) {
             if (value <= 0) {
                 model.addAttribute("errorDiscount", "Giá trị giảm giá tiền tệ phải lớn hơn 0!");
@@ -161,20 +177,24 @@ public class PromotionCRUDController {
             model.addAttribute("view", "admin/promotionCRUD");
             return "admin/layout";
         }
+
         try {
-            // Lấy bản ghi cũ từ DB
+            // Lấy bản ghi hiện tại từ DB
             Promotion existing = promotionService.findByID(promotion.getId());
             if (existing == null) {
                 throw new IllegalArgumentException("Không tìm thấy khuyến mãi để cập nhật");
             }
-            // Giữ lại ngày tạo gốc
+
+            // Giữ nguyên ngày tạo cũ
             promotion.setCreatedDate(existing.getCreatedDate());
 
             // Cập nhật ngày hiện tại cho updatedDate
             promotion.setUpdatedDate(LocalDateTime.now());
 
+            // Cập nhật DB
             promotionService.update(promotion);
 
+            // Gửi thông báo thành công
             redirectAttributes.addFlashAttribute("success", "Cập nhật khuyến mãi thành công!");
             return "redirect:/Promotion/edit/" + promotion.getId();
         } catch (IllegalArgumentException e) {
@@ -184,9 +204,9 @@ public class PromotionCRUDController {
         }
     }
 
+    // Xử lý xóa khuyến mãi theo ID
     @RequestMapping("/delete/{id}")
     public String delete(Model model, @ModelAttribute("promotion") Promotion promotion,
-
             Errors errors, @PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
 
         try {
@@ -199,20 +219,18 @@ public class PromotionCRUDController {
         }
     }
 
+    // Tìm kiếm khuyến mãi theo khoảng ngày
     @GetMapping("/search")
     public String search(
             @RequestParam(value = "fromDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
-
             @RequestParam(value = "toDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
-
             @RequestParam(value = "page", defaultValue = "0") int page,
             Model model) {
 
-        // Nếu thiếu ngày => thông báo lỗi + quay lại trang hiện tại
+        // Nếu thiếu ngày => báo lỗi + load lại trang
         if (fromDate == null || toDate == null) {
             model.addAttribute("error", "Vui lòng chọn đầy đủ ngày bắt đầu và ngày kết thúc!");
 
-            // Load danh sách khuyến mãi như mặc định
             Pageable pageable = PageRequest.of(page, 10);
             Page<Promotion> result = promotionService.findByAllPromotion(pageable);
 
@@ -224,7 +242,7 @@ public class PromotionCRUDController {
             return "admin/layout";
         }
 
-        // Nếu đã chọn đủ ngày => thực hiện lọc
+        // Đủ ngày thì lọc theo ngày
         Pageable pageable = PageRequest.of(page, 10);
         Page<Promotion> result = promotionService.searchByDate(fromDate, toDate, pageable);
 
@@ -238,6 +256,7 @@ public class PromotionCRUDController {
         return "admin/layout";
     }
 
+    // Tìm kiếm khuyến mãi theo tiêu đề
     @GetMapping("/searchByTitle")
     public String searchByTitle(
             @RequestParam("title") String title,

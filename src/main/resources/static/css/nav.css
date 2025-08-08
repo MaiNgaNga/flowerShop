@@ -142,7 +142,7 @@
   align-items: center;
   border: 1px solid #ddd;
   border-radius: 25px;
-  overflow: hidden;
+  overflow: visible;
   background: #fafafa;
   transition: box-shadow 0.3s ease;
 }
@@ -173,6 +173,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 0 25px 25px 0;
 }
 
 .search-box button:hover {
@@ -355,7 +356,6 @@ main {
 .dropdown-columns li {
   list-style: none;
   min-width: 180px;
-
 }
 
 .dropdown-columns li a {
@@ -442,4 +442,23 @@ main {
     height: 40px;
     max-height: 40px;
   }
+}
+
+.suggestions-dropdown {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  max-height: 220px;
+  overflow-y: auto;
+  width: 100%;
+  display: none;
+  position: absolute;
+}
+.suggestions-dropdown .suggestion-item {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.suggestions-dropdown .suggestion-item:hover {
+  background: #f0f0f0;
 }

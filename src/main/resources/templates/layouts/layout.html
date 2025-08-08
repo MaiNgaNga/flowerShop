@@ -56,8 +56,23 @@
       </div>
     </div>
     <div th:insert="~{/layouts/header}"></div>
-    <!-- Toast Thông báo (Error, Warning, Success) đặt ngay dưới header, sát góc phải -->
     <div style="position: relative; z-index: 9999">
+      <div
+        id="customToast"
+        class="toast align-items-center border-0 position-fixed top-0 start-50 translate-middle-x mt-3"
+        style="
+          z-index: 99999;
+          min-width: 300px;
+          display: none;
+          opacity: 0;
+          transform: translateX(120%);
+          background: #fffbe6;
+          color: #856404;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        "
+      >
+        <div class="toast-body">&nbsp;</div>
+      </div>
       <div
         id="errorToast"
         th:if="${errorMessage != null}"
@@ -160,6 +175,7 @@
     function showToast(id) {
       var toast = document.getElementById(id);
       if (toast) {
+        toast.style.display = "block";
         toast.style.transform = "translateX(0)";
         toast.style.opacity = "1";
         setTimeout(function () {
@@ -172,16 +188,38 @@
       if (toast) {
         toast.style.transform = "translateX(120%)";
         toast.style.opacity = "0";
+        setTimeout(function () {
+          toast.style.display = "none";
+        }, 500);
       }
     }
     window.addEventListener("DOMContentLoaded", function () {
-      if (document.getElementById("errorToast")) showToast("errorToast");
-      if (document.getElementById("warningToast")) showToast("warningToast");
-      if (document.getElementById("successToast")) showToast("successToast");
+      if (
+        document.getElementById("errorToast") &&
+        document
+          .getElementById("errorToast")
+          .querySelector(".toast-body span")
+          .textContent.trim() !== ""
+      )
+        showToast("errorToast");
+      if (
+        document.getElementById("warningToast") &&
+        document
+          .getElementById("warningToast")
+          .querySelector(".toast-body span")
+          .textContent.trim() !== ""
+      )
+        showToast("warningToast");
+      if (
+        document.getElementById("successToast") &&
+        document
+          .getElementById("successToast")
+          .querySelector(".toast-body span")
+          .textContent.trim() !== ""
+      )
+        showToast("successToast");
     });
   </script>
-  <!-- Bootstrap JS and Popper.js -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- AOS JS -->
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 </html>

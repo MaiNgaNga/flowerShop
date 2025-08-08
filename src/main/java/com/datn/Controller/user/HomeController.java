@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.datn.Service.CartItemService;
 import com.datn.Service.CategoryService;
 import com.datn.Service.ProductService;
 import com.datn.Service.PromotionService;
@@ -23,13 +24,19 @@ import com.datn.Service.CommentService;
 import com.datn.model.Post;
 import com.datn.utils.AuthService;
 import com.datn.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 
 @Controller
 public class HomeController {
+
     @Autowired
     CategoryService categoryService;
+
     @Autowired
     ProductService productService;
+
     @Autowired
     ProductCategoryService productCategoryService;
 
@@ -41,12 +48,12 @@ public class HomeController {
 
     @Autowired
     private AuthService authService;
+
     @Autowired
-    private com.datn.Service.CartItemService cartItemService;
+    private CartItemService cartItemService;
 
     @Autowired
     private CommentService commentService;
-
     @GetMapping("/home")
     public String home(Model model) {
         List<ProductCategory> productCategories = productCategoryService.findAll();
@@ -56,11 +63,9 @@ public class HomeController {
         List<Product> bestSellingProducts = productService.findBestSellingProductPerCategory();
         List<Post> posts = postService.findAll();
         List<Product> top10PhuKien = productService.findTop10ByProductCategoryName("Phụ kiện đi kèm");
-
         List<Comment> comments = commentService.getTop3Comments();
         List<Product> discountProducts = productService
                 .findTop4ByDiscountPercentGreaterThanAndAvailableIsTrueOrderByDiscountPercentDesc(0);
-
         int cartCount = 0;
         User user = authService.getUser();
         if (user != null) {
@@ -75,7 +80,7 @@ public class HomeController {
         model.addAttribute("latestProducts", latestProducts);
         model.addAttribute("promotionsCode", promotionservice.findValidPromotion());
         model.addAttribute("bestSellingProducts", bestSellingProducts);
-        model.addAttribute("defaultBestSeller", productService.findBestSellerByCategory("Hoa khai trương"));
+        model.addAttribute("defaultBestSeller", productService.findBestSellerByCategory("Lãng hoa tươi "));
         model.addAttribute("posts", posts);
         model.addAttribute("discountProducts", discountProducts);
         model.addAttribute("top10PhuKien", top10PhuKien);
@@ -83,13 +88,12 @@ public class HomeController {
 
         return "layouts/layout";
     }
-
     @GetMapping("/api/best-seller")
     @ResponseBody
     public List<Product> getBestSellerByType(@RequestParam String type) {
         switch (type.toLowerCase()) {
             case "lang":
-                return productService.findBestSellerByCategory("Hoa khai trương");
+                return productService.findBestSellerByCategory("Lãng hoa tươi");
             case "gio":
                 return productService.findBestSellerByCategory("Giỏ hoa tươi");
             case "bo":
@@ -105,23 +109,37 @@ public class HomeController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size,
             Model model) {
+
         List<ProductCategory> productCategories = productCategoryService.findAll();
-        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+
+        Pageable pageable = PageRequest.of(page, size);
 
         if (keyword != null && !keyword.isEmpty()) {
-            org.springframework.data.domain.Page<Product> resultPage = org.springframework.data.domain.Page.empty();
-            // Ưu tiên tìm theo danh mục (category)
+            Page<Product> resultPage = Page.empty();
+    
+
             resultPage = productService.searchByCategoryName(keyword, pageable);
-            // Nếu không có kết quả, thử tìm theo loại hoa (productCategory)
+
             if (resultPage.isEmpty()) {
                 resultPage = productService.searchByProductCategoryName(keyword, pageable);
             }
+            if (resultPage.isEmpty()) {
+                resultPage = productService.searchByName(keyword, pageable);
+            }
+
             model.addAttribute("products", resultPage.getContent());
         }
+
         model.addAttribute("searchKeyword", keyword);
         model.addAttribute("productCategories", productCategories);
         model.addAttribute("view", "search");
+
         return "layouts/layout";
+    }
+    @GetMapping("/api/search-suggestions")
+    @ResponseBody
+    public List<String> getSearchSuggestions(@RequestParam String keyword) {
+        return productService.findSearchSuggestionsByKeyword(keyword, 10);
     }
 
     @GetMapping("/cart/count")
@@ -133,5 +151,4 @@ public class HomeController {
         }
         return 0;
     }
-
 }
