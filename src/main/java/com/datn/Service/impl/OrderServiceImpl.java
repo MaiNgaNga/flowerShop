@@ -243,11 +243,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-
     public Page<Order> searchPosOrdersByOrderCode(String orderType, String orderCode, LocalDate fromDate,
             LocalDate toDate, Pageable pageable) {
         return dao.searchPosOrdersByOrderCode(orderType, orderCode, fromDate, toDate, pageable);
 
+    }
     public Order recreateOrder(Long canceledOrderId) {
         // Tìm đơn hàng bị hủy
         Order canceledOrder = getOrderById(canceledOrderId);
