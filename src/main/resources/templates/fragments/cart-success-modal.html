@@ -1,0 +1,191 @@
+<!-- Modal Thêm vào giỏ hàng thành công -->
+<style>
+  #cartSuccessModal .modal-content {
+    background: #fffbe6 !important;
+    border-radius: 18px !important;
+    border: none !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18) !important;
+    color: #856404 !important;
+    font-family: "Poppins", Arial, sans-serif !important;
+    animation: modalPop 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  #cartSuccessModal .modal-header {
+    border-bottom: none !important;
+    background: #fffbe6 !important;
+    border-radius: 18px 18px 0 0 !important;
+  }
+  #cartSuccessModal .modal-title {
+    font-weight: 700 !important;
+    color: #7b2cbf !important;
+    font-size: 1.25rem !important;
+  }
+  #cartSuccessModal .modal-body {
+    font-size: 1.1rem !important;
+    color: #856404 !important;
+    background: #fffbe6 !important;
+    border-radius: 0 0 18px 18px !important;
+    text-align: center !important;
+    padding: 18px 12px 10px 12px !important;
+  }
+  #cartSuccessModal .modal-footer {
+    border-top: none !important;
+    background: #fffbe6 !important;
+    border-radius: 0 0 18px 18px !important;
+    display: flex !important;
+    justify-content: center !important;
+    gap: 16px !important;
+    padding-bottom: 20px !important;
+  }
+  #cartSuccessModal .btn-primary {
+    background: #7b2cbf !important;
+    border: none !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    padding: 8px 22px !important;
+    transition: background 0.2s !important;
+  }
+  #cartSuccessModal .btn-primary:hover {
+    background: #5a189a !important;
+  }
+  #cartSuccessModal .btn-secondary {
+    background: #fff !important;
+    color: #7b2cbf !important;
+    border: 1.5px solid #7b2cbf !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    padding: 8px 22px !important;
+    transition: background 0.2s, color 0.2s !important;
+  }
+  #cartSuccessModal .btn-secondary:hover {
+    background: #f3e8ff !important;
+    color: #5a189a !important;
+  }
+  @keyframes modalPop {
+    0% {
+      transform: scale(0.85);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+</style>
+<div
+  class="modal fade"
+  id="cartSuccessModal"
+  tabindex="-1"
+  aria-labelledby="cartSuccessModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div
+      class="modal-content"
+      style="
+        background: #fffbe6;
+        border-radius: 18px;
+        border: none;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+        color: #856404;
+        font-family: 'Poppins', Arial, sans-serif;
+        max-width: 420px;
+        margin: auto;
+      "
+    >
+      <div
+        class="modal-header"
+        style="
+          border-bottom: none;
+          background: #fffbe6;
+          border-radius: 18px 18px 0 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        "
+      >
+        <div style="font-size: 3rem; line-height: 1; margin-bottom: 8px">
+          <span style="color: #38b000">&#10004;</span>
+        </div>
+        <h5
+          class="modal-title"
+          id="cartSuccessModalLabel"
+          style="
+            font-weight: 700;
+            color: #7b2cbf;
+            font-size: 1.35rem;
+            text-align: center;
+            width: 100%;
+          "
+        >
+          Thêm vào giỏ hàng thành công!
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          style="position: absolute; right: 18px; top: 18px"
+        ></button>
+      </div>
+      <div
+        class="modal-body"
+        style="
+          font-size: 1.1rem;
+          color: #856404;
+          background: #fffbe6;
+          border-radius: 0 0 18px 18px;
+          text-align: center;
+          padding: 18px 12px 10px 12px;
+        "
+      >
+        Sản phẩm đã được thêm vào giỏ hàng.
+      </div>
+      <div
+        class="modal-footer"
+        style="
+          border-top: none;
+          background: #fffbe6;
+          border-radius: 0 0 18px 18px;
+          display: flex;
+          justify-content: center;
+          gap: 16px;
+          padding-bottom: 20px;
+        "
+      >
+        <button
+          type="button"
+          class="btn"
+          data-bs-dismiss="modal"
+          id="continueShoppingBtn"
+          style="
+            background: #fff;
+            color: #7b2cbf;
+            border: 1.5px solid #7b2cbf;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 8px 22px;
+            transition: background 0.2s, color 0.2s;
+          "
+        >
+          Mua tiếp
+        </button>
+        <a
+          href="/cart"
+          class="btn"
+          id="viewCartBtn"
+          style="
+            background: #7b2cbf;
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 8px 22px;
+            transition: background 0.2s;
+          "
+          >Xem giỏ hàng</a
+        >
+      </div>
+    </div>
+  </div>
+</div>

@@ -111,32 +111,24 @@
       <button class="btn btn-info" id="printQRBtn">
         <i class="fas fa-print"></i> In mã QR
       </button>
-      <button
-        class="btn btn-warning"
-        id="refreshQRBtn"
-        type="button"
-        th:attr="data-ordercode=${orderCode}"
+      <form
+        th:action="@{/pos/cancel-order}"
+        method="post"
+        style="display: inline"
       >
-        <i class="fas fa-redo"></i> Làm mới QR
-      </button>
-      <a href="/pos" class="btn btn-outline-danger">
-        <i class="fas fa-times"></i> Hủy & Quay lại POS
-      </a>
+        <input type="hidden" name="orderCode" th:value="${orderCode}" />
+        <button type="submit" class="btn btn-outline-danger">
+          <i class="fas fa-times"></i> Hủy & Quay lại POS
+        </button>
+      </form>
     </div>
   </div>
 </div>
 
 <script src="/js/pos-payment-qr.js"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    var refreshBtn = document.getElementById("refreshQRBtn");
-    if (refreshBtn) {
-      refreshBtn.onclick = function () {
-        var orderCode = this.getAttribute("data-ordercode");
-        if (orderCode) {
-          window.location.href = "/pos/payment-qr?orderCode=" + orderCode;
-        }
-      };
-    }
+  window.addEventListener('beforeunload', function (e) {
+    e.preventDefault();
+    e.returnValue = 'Nếu bạn reload, đơn hàng hiện tại sẽ bị xóa và bạn sẽ phải tạo lại đơn khác. Bạn có chắc chắn muốn tiếp tục?';
   });
 </script>

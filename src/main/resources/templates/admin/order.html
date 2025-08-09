@@ -30,6 +30,9 @@
       <option value="Hoàn hàng" th:selected="${orderStatus == 'Hoàn hàng'}">
         Hoàn hàng
       </option>
+      <option value="Đang giao lại" th:selected="${orderStatus == 'Đang giao lại'}">
+        Đang giao lại
+      </option>
     </select>
   </form>
   <i class="m-3 p-3" th:text="${totalOrders} +' Đơn hàng'"></i>
@@ -55,7 +58,11 @@
           style="font-weight: 500; color: #333"
         >
           🆔 Đơn hàng <span th:text="${order.id}" class="fw-bold"></span>
-
+          <span
+            th:if="${order.originalId != null}"
+            class="ms-2 text-muted"
+            th:text="'(Gốc: ' + ${order.originalId} + ')'"
+          ></span>
           <span
             class="badge bg-dark ms-3"
             th:text="${order.status}"
@@ -150,13 +157,28 @@
               Xác nhận
             </button>
           </form>
+          <form
+            th:action="@{/orderAdmin/recreate/{orderId}(orderId=${order.id})}"
+            method="post"
+            style="display: inline; margin-top: 1rem; margin-left: 1rem"
+            onsubmit="return confirm('Bạn có chắc chắn muốn tạo lại đơn hàng này không?');"
+          >
+            <input type="hidden" name="status" value="Đang giao lại" />
+            <button
+              type="submit"
+              class="btn btn-success btn-sm mt-3"
+              th:if="${order.status == 'Đã hủy'}"
+              style="padding: 0.25rem 1rem"
+            >
+              Tạo lại đơn hàng
+            </button>
+          </form>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Toast Notification -->
 <!-- Toast Notification -->
 <div
   th:if="${toastSuccess}"

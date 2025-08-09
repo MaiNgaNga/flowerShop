@@ -5,16 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Date;
 
-
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 
 import com.datn.model.Order;
 import com.datn.model.OrderDetail;
@@ -46,7 +42,7 @@ public interface OrderService {
 
     List<Order> getOrdersByStatus(String status);
 
-    public Order updateToDangGiao(Long orderId, int shipperId);
+    Order updateToDangGiao(Long orderId, int shipperId);
 
     List<Order> getOrdersByStatusAndShipper(String status, int shipperId);
 
@@ -56,18 +52,17 @@ public interface OrderService {
 
     void updateToCompleted(Long orderId, int shipperId);
 
-    public Order updateToReturned(Long orderId, int shipperId);
+    Order updateToReturned(Long orderId, int shipperId);
 
     List<Order> findReturnedOrdersByShipper(int shipperId);
 
-    Order cancelByShipper(Long orderId, int shipperId);
+ Order cancelByShipper(Long orderId, int shipperId, String cancelReason, String cancelDetails);
 
     Double getTotalCompletedOrdersAmount(int shipperId);
 
     List<Order> getOrdersByShipperAndDate(int shipperId, Date date);
 
     Double getTotalAmountByShipperAndDate(int shipperId, Date date);
-
 
     Long countCancelledOrdersByMonthAndYear(int month, int year);
 
@@ -77,9 +72,19 @@ public interface OrderService {
 
     Map<Integer, Double> getMonthlyRevenueByYear(int year);
 
-
     List<Order> getAllOfflineOrders();
 
+
     Page<Order> getPosOrdersByType(String orderType, LocalDate fromDate, LocalDate toDate, Pageable pageable);
+
+
+    // Tìm kiếm đơn hàng POS theo mã đơn hàng, có phân trang, lọc ngày, loại đơn
+    Page<Order> searchPosOrdersByOrderCode(String orderType, String orderCode, LocalDate fromDate, LocalDate toDate, Pageable pageable);
+
+    
+
+    Order recreateOrder(Long canceledOrderId); // Thêm phương thức tạo lại đơn hàng
+
+  
 
 }

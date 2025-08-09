@@ -134,7 +134,9 @@ if (printQRBtn) {
 setInterval(() => {
   const orderCode =
     document.querySelector(".info-value")?.textContent.trim() || "";
-  if (!orderCode) return;
+  if (!orderCode) {
+    return;
+  }
   fetch("/pos/check-payment-status", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

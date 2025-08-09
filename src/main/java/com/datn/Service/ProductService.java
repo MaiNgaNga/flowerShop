@@ -86,4 +86,11 @@ public interface ProductService {
 
         List<Map<String, Object>> getTop6SellingProductsByYear(int year);
 
+        List<String> findProductNamesByKeyword(String keyword, int limit);
+
+        /**
+         * Trả về danh sách gợi ý tìm kiếm kết hợp: tên sản phẩm, loại hoa, danh mục
+         */
+        List<String> findSearchSuggestionsByKeyword(String keyword, int limit);
+
 }

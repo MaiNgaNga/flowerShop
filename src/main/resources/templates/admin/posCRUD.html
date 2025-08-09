@@ -11,6 +11,10 @@
         <label for="toDate" class="form-label">Đến ngày:</label>
         <input type="date" class="form-control" id="toDate" name="toDate" th:value="${toDate}" />
       </div>
+      <div class="col-md-3">
+        <label for="orderCode" class="form-label">Tìm theo mã đơn:</label>
+        <input type="text" class="form-control" id="orderCode" name="orderCode" placeholder="Nhập mã đơn hàng" th:value="${orderCode}" />
+      </div>
       <div class="col-md-2">
         <button type="submit" class="btn btn-primary">Lọc</button>
         <a href="/admin/pos/index" class="btn btn-secondary ms-2">Làm mới</a>
@@ -62,23 +66,35 @@
                 </table>
                 <!-- Pagination: chỉ hiển thị một lần sau bảng -->
                 <div class="d-flex justify-content-center mt-3">
-                  <nav th:if="${orders.totalPages > 1}">
-                    <ul class="pagination">
-                      <li class="page-item" th:classappend="${orders.first} ? 'disabled'">
-                        <a class="page-link" th:href="@{/admin/pos/index(page=${orders.number - 1}, size=${orders.size}, fromDate=${fromDate}, toDate=${toDate})}" aria-label="Previous">
-                          <span aria-hidden="true">&laquo;</span>
-                        </a>
-                      </li>
-                      <li class="page-item" th:each="i : ${#numbers.sequence(0, orders.totalPages - 1)}" th:classappend="${i == orders.number} ? 'active'">
-                        <a class="page-link" th:href="@{/admin/pos/index(page=${i}, size=${orders.size}, fromDate=${fromDate}, toDate=${toDate})}" th:text="${i + 1}"></a>
-                      </li>
-                      <li class="page-item" th:classappend="${orders.last} ? 'disabled'">
-                        <a class="page-link" th:href="@{/admin/pos/index(page=${orders.number + 1}, size=${orders.size}, fromDate=${fromDate}, toDate=${toDate})}" aria-label="Next">
-                          <span aria-hidden="true">&raquo;</span>
-                        </a>
-                      </li>
-                    </ul>
-                  </nav>
+      <div class="d-flex justify-content-center mt-3" th:if="${totalPages > 0}">
+        <nav>
+          <ul class="pagination custom-pagination">
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+              <a class="page-link" th:href="@{/admin/pos/index(page=0, size=${size}, productCategoryId=${productCategoryId}, keyword=${keyword}, tab='list')}">
+                <i class="fa fa-angle-double-left"></i>
+              </a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+              <a class="page-link" th:href="@{/admin/pos/index(page=${currentPage - 1}, size=${size}, productCategoryId=${productCategoryId}, keyword=${keyword}, tab='list')}">
+                <i class="fa fa-angle-left"></i>
+              </a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i} ? 'active'">
+              <a class="page-link" th:href="@{/admin/pos/index(page=${i}, size=${size}, productCategoryId=${productCategoryId}, keyword=${keyword}, tab='list')}" th:text="${i + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
+              <a class="page-link" th:href="@{/admin/pos/index(page=${currentPage + 1}, size=${size}, productCategoryId=${productCategoryId}, keyword=${keyword}, tab='list')}">
+                <i class="fa fa-angle-right"></i>
+              </a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
+              <a class="page-link" th:href="@{/admin/pos/index(page=${totalPages - 1}, size=${size}, productCategoryId=${productCategoryId}, keyword=${keyword}, tab='list')}">
+                <i class="fa fa-angle-double-right"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
                 </div>
                         <!-- Đã có vòng lặp th:each ở trên, các dòng này bị dư thừa và gây lỗi nếu không có biến order. Đã xóa để tránh lỗi. -->
                       </tr>

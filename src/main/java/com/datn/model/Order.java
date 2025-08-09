@@ -4,11 +4,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
 import lombok.Data;
 import lombok.ToString;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
 @Data
-@ToString(exclude = { "orderDetails" }) 
+@ToString(exclude = { "orderDetails" })
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -47,16 +49,23 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetail> orderDetails;
-    
+
     @ManyToOne
     @JoinColumn(name = "promotion_id", referencedColumnName = "id")
     private Promotion promotion;
-    
+
     @Temporal(TemporalType.DATE)
     @Column(name = "delivery_date")
     private Date deliveryDate;
 
     @Column(name = "description", columnDefinition = "NVARCHAR(500)")
     private String description;
+
+    @Column(name = "reason", columnDefinition = "NVARCHAR(500)")
+    private String reason;
+
+    @Column(name = "original_id")
+    private Long originalId;
+
 }
  

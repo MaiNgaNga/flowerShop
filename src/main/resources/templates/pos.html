@@ -13,6 +13,7 @@
               placeholder="Tìm kiếm sản phẩm..."
               th:value="${keyword}"
               autocomplete="off"
+              id="filterKeyword"
             />
           </div>
           <div class="mb-2">
@@ -71,6 +72,23 @@
                 th:selected="${category == cat.name}"
               ></option>
             </select>
+          </div>
+          <div class="mb-2" style="text-align: right">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              style="
+                padding: 6px 18px;
+                border-radius: 8px;
+                background: linear-gradient(135deg, #d4a5e6, #b2e0e0);
+                color: #fff;
+                border: none;
+                font-weight: 600;
+              "
+              onclick="resetFilterForm()"
+            >
+              Làm mới
+            </button>
           </div>
         </form>
       </div>
@@ -148,34 +166,68 @@
           </div>
         </div>
         <div
-          class="pagination"
-          style="
-            margin-top: 16px;
-            display: flex;
-            justify-content: center;
-            gap: 4px;
-          "
+          class="d-flex justify-content-center mt-5"
+          th:if="${totalPages > 0}"
         >
-          <a
-            th:if="${currentPage > 0}"
-            th:href="@{/pos(page=${currentPage - 1}, color=${color}, type=${type}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
-            class="btn btn-light btn-sm"
-            >&lt;</a
-          >
-          <span th:each="i : ${#numbers.sequence(0, totalPages-1)}">
-            <a
-              th:href="@{/pos(page=${i}, color=${color}, type=${type}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
-              th:text="${i+1}"
-              th:classappend="${i == currentPage} ? ' active btn-primary' : ' btn-light'"
-              class="btn btn-sm mx-1"
-            ></a>
-          </span>
-          <a
-            th:if="${currentPage < totalPages-1}"
-            th:href="@{/pos(page=${currentPage + 1}, color=${color}, type=${type}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
-            class="btn btn-light btn-sm"
-            >&gt;</a
-          >
+          <nav>
+            <ul class="pagination custom-pagination">
+              <li
+                class="page-item"
+                th:classappend="${currentPage == 0} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/pos(page=0, color=${color}, type=${type}, category=${category}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
+                >
+                  <i class="fa fa-angle-double-left"></i>
+                </a>
+              </li>
+              <li
+                class="page-item"
+                th:classappend="${currentPage == 0} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/pos(page=${currentPage - 1}, color=${color}, type=${type}, category=${category}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
+                >
+                  <i class="fa fa-angle-left"></i>
+                </a>
+              </li>
+              <li
+                class="page-item"
+                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${currentPage == i} ? 'active'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/pos(page=${i}, color=${color}, type=${type}, category=${category}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
+                  th:text="${i + 1}"
+                ></a>
+              </li>
+              <li
+                class="page-item"
+                th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/pos(page=${currentPage + 1}, color=${color}, type=${type}, category=${category}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
+                >
+                  <i class="fa fa-angle-right"></i>
+                </a>
+              </li>
+              <li
+                class="page-item"
+                th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/pos(page=${totalPages - 1}, color=${color}, type=${type}, category=${category}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
+                >
+                  <i class="fa fa-angle-double-right"></i>
+                </a>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </div>
@@ -217,5 +269,48 @@
     </div>
   </div>
 </div>
+<style>
+  .custom-pagination .page-link {
+    margin: 0 10px;
+    color: #333 !important;
+    border: 1.5px solid #d4a5e6 !important;
+    background-color: #fff !important;
+    border-radius: 50% !important;
+    transition: all 0.2s ease-in-out;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: none !important;
+    outline: none !important;
+    padding: 0;
+  }
+  .custom-pagination .page-item.active .page-link {
+    background-color: #d4a5e6 !important;
+    color: #fff !important;
+    border-color: #d4a5e6 !important;
+  }
+  .custom-pagination .page-item.disabled .page-link {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #fff !important;
+    color: #bbb !important;
+    border-color: #d4a5e6 !important;
+  }
+  .custom-pagination .page-link:hover {
+    background: #e0f7f7 !important;
+    color: #333 !important;
+    border-color: #d4a5e6 !important;
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(212, 165, 230, 0.3);
+  }
+</style>
 <script src="/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/pos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init();
+</script>
