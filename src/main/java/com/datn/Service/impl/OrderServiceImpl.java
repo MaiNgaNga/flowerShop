@@ -20,6 +20,7 @@ import java.time.LocalDate;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.springframework.data.domain.Page;
@@ -142,14 +143,18 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order updateToDangGiao(Long orderId, int shipperId) {
-        Order order = dao.findById(orderId).orElse(null);
-        User shipper = userDAO.findById(shipperId).orElse(null);
-        if (order != null && "Đã xác nhận".equals(order.getStatus())) {
-            order.setStatus("Đang giao");
-            order.setShipper(shipper);
-            return dao.save(order);
+        Order order = dao.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Đơn hàng không tồn tại"));
+        User shipper = userDAO.findById(shipperId)
+                .orElseThrow(() -> new IllegalArgumentException("Shipper không tồn tại"));
+
+        // Kiểm tra trạng thái hợp lệ
+        if (!order.getStatus().equals("Đã xác nhận") && !order.getStatus().equals("Đang giao lại")) {
+            throw new IllegalStateException("Chỉ có thể nhận đơn hàng ở trạng thái 'Đã xác nhận' hoặc 'Đang giao lại'");
         }
-        return null;
+
+        order.setStatus("Đang giao");
+        order.setShipper(shipper);
+        return dao.save(order);
     }
 
     @Override
@@ -206,7 +211,7 @@ public class OrderServiceImpl implements OrderService {
 
         order.setReason(cancelReason); // Lưu lý do hủy vào cột reason
         order.setDescription(cancelDetails); // Lưu chi tiết lý do vào cột description
-        order.setStatus("Thất bại");
+        order.setStatus("Đã hủy");
         return dao.save(order);
     }
 
@@ -235,6 +240,43 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Page<Order> getPosOrdersByType(String orderType, LocalDate fromDate, LocalDate toDate, Pageable pageable) {
         return dao.findPosOrders(orderType, fromDate, toDate, pageable);
+    }
+
+    @Override
+    public Order recreateOrder(Long canceledOrderId) {
+        // Tìm đơn hàng bị hủy
+        Order canceledOrder = getOrderById(canceledOrderId);
+        if (!canceledOrder.getStatus().equals("Đã hủy")) {
+            throw new IllegalStateException("Chỉ có thể tạo lại đơn hàng đã hủy");
+        }
+
+        // Tạo đơn hàng mới
+        Order newOrder = new Order();
+        newOrder.setStatus("Đang giao lại");
+        newOrder.setOriginalId(canceledOrder.getId()); // Gán ID đơn hàng gốc
+        newOrder.setTotalAmount(canceledOrder.getTotalAmount());
+        newOrder.setAddress(canceledOrder.getAddress());
+        newOrder.setSdt(canceledOrder.getSdt());
+        newOrder.setDescription(canceledOrder.getDescription());
+        newOrder.setCreateDate(new Date());
+        newOrder.setDeliveryDate(canceledOrder.getDeliveryDate());
+        newOrder.setUser(canceledOrder.getUser());
+        newOrder.setShipper(canceledOrder.getShipper());
+
+        // Sao chép chi tiết đơn hàng
+        List<OrderDetail> newOrderDetails = new ArrayList<>();
+        for (OrderDetail detail : canceledOrder.getOrderDetails()) {
+            OrderDetail newDetail = new OrderDetail();
+            newDetail.setOrder(newOrder);
+            newDetail.setProduct(detail.getProduct());
+            newDetail.setQuantity(detail.getQuantity());
+            newDetail.setPrice(detail.getPrice());
+            newOrderDetails.add(newDetail);
+        }
+        newOrder.setOrderDetails(newOrderDetails);
+
+        // Lưu đơn hàng mới
+        return dao.save(newOrder);
     }
 
 }
