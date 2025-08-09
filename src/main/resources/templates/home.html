@@ -646,6 +646,8 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <!-- Modal thêm vào giỏ hàng thành công -->
-    <div th:replace="fragments/cart-success-modal :: #cartSuccessModal"></div>
+    <div
+      th:replace="~{fragments/cart-success-modal :: #cartSuccessModal}"
+    ></div>
   </body>
 </html>
