@@ -9,6 +9,10 @@ import com.datn.model.ServiceRequestDraft;
 import com.datn.model.enums.ServiceOrderStatus;
 import com.datn.model.enums.ServiceRequestStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -36,49 +40,61 @@ public class List_Order_Service {
     @Autowired
     private ServiceRequestDraftDAO draftDAO;
 
-    // Hiển thị cả 2 danh sách: yêu cầu và đơn hàng
+    // Hiển thị cả 2 danh sách: yêu cầu và đơn hàng với phân trang
     @GetMapping
     public String listRequests(
             Model model,
             @RequestParam(value = "status", required = false) ServiceRequestStatus status,
-            @RequestParam(value = "keyword", required = false) String keyword) {
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "requestMonth", required = false) String requestMonth,
+            @RequestParam(value = "orderStatus", required = false) ServiceOrderStatus orderStatus,
+            @RequestParam(value = "orderKeyword", required = false) String orderKeyword,
+            @RequestParam(value = "month", required = false) String month,
+            @RequestParam(value = "requestPage", defaultValue = "0") int requestPage,
+            @RequestParam(value = "orderPage", defaultValue = "0") int orderPage) {
 
-        // Lấy tất cả yêu cầu dịch vụ
-        List<ServiceRequest> allRequests = requestService.findAll();
+        // Tạo Pageable cho requests (10 items per page, sắp xếp theo ngày tạo mới nhất)
+        Pageable requestPageable = PageRequest.of(requestPage, 10, 
+            Sort.by(Sort.Direction.DESC, "createdAt").and(Sort.by(Sort.Direction.DESC, "id")));
+        
+        // Tạo Pageable cho orders (10 items per page, sắp xếp theo ngày xác nhận mới nhất)
+        Pageable orderPageable = PageRequest.of(orderPage, 10, 
+            Sort.by(Sort.Direction.DESC, "confirmedAt").and(Sort.by(Sort.Direction.DESC, "id")));
 
-        // Lọc theo trạng thái và từ khóa (tên, email, số điện thoại)
-        List<ServiceRequest> filteredRequests = allRequests.stream()
-                .filter(req -> status == null || req.getStatus() == status)
-                .filter(req -> {
-                    if (keyword == null || keyword.isBlank())
-                        return true;
-                    String kw = keyword.toLowerCase();
-                    return req.getFullName().toLowerCase().contains(kw)
-                            || req.getEmail().toLowerCase().contains(kw)
-                            || req.getPhone().contains(kw);
-                })
-                .collect(Collectors.toList());
+        // Lấy danh sách yêu cầu với phân trang và lọc (bao gồm tất cả trạng thái)
+        Page<ServiceRequest> requestsPage = requestService.findByFilters(status, keyword, requestMonth, requestPageable);
+        List<ServiceRequest> requestList = requestsPage.getContent();
 
-        // Danh sách yêu cầu chưa chốt đơn (PENDING, CONTACTED)
-        List<ServiceRequest> requestList = filteredRequests.stream()
-                .filter(req -> req.getStatus() != ServiceRequestStatus.CONFIRMED)
-                .collect(Collectors.toList());
-
-        // Danh sách yêu cầu đã chốt đơn (CONFIRMED)
-        List<ServiceRequest> confirmedOrders = filteredRequests.stream()
-                .filter(req -> req.getStatus() == ServiceRequestStatus.CONFIRMED)
-                .collect(Collectors.toList());
-
-        // Lấy danh sách đơn hàng thực
-        List<ServiceOrder> orderList = serviceOrderService.findAll();
+        // Lấy danh sách đơn hàng với phân trang và lọc
+        Page<ServiceOrder> orderListPage = serviceOrderService.findByFilters(orderStatus, orderKeyword, month, orderPageable);
 
         // Đẩy dữ liệu sang view
         model.addAttribute("requests", requestList); // Yêu cầu chưa xác nhận
-        model.addAttribute("orders", confirmedOrders); // Yêu cầu đã xác nhận
-        model.addAttribute("orderList", orderList); // Đơn hàng thật
-        model.addAttribute("statuses", ServiceRequestStatus.values()); // Dùng cho dropdown filter
-        model.addAttribute("selectedStatus", status); // Trạng thái đang lọc
-        model.addAttribute("keyword", keyword); // Từ khóa đang lọc
+        model.addAttribute("orderList", orderListPage.getContent()); // Đơn hàng đã lọc
+        
+        // Thông tin phân trang cho requests (sử dụng dữ liệu từ Page object)
+        model.addAttribute("requestCurrentPage", requestsPage.getNumber());
+        model.addAttribute("requestTotalPages", requestsPage.getTotalPages());
+        model.addAttribute("requestTotalElements", requestsPage.getTotalElements());
+        model.addAttribute("requestHasNext", requestsPage.hasNext());
+        model.addAttribute("requestHasPrevious", requestsPage.hasPrevious());
+        
+        // Thông tin phân trang cho orders
+        model.addAttribute("orderCurrentPage", orderPage);
+        model.addAttribute("orderTotalPages", orderListPage.getTotalPages());
+        model.addAttribute("orderTotalElements", orderListPage.getTotalElements());
+        model.addAttribute("orderHasNext", orderListPage.hasNext());
+        model.addAttribute("orderHasPrevious", orderListPage.hasPrevious());
+        
+        // Dropdown và filter data
+        model.addAttribute("statuses", ServiceRequestStatus.values());
+        model.addAttribute("orderStatuses", ServiceOrderStatus.values());
+        model.addAttribute("selectedStatus", status);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("selectedRequestMonth", requestMonth);
+        model.addAttribute("selectedOrderStatus", orderStatus);
+        model.addAttribute("orderKeyword", orderKeyword);
+        model.addAttribute("selectedMonth", month);
         model.addAttribute("view", "admin/list-order-service");
 
         return "admin/layout";
@@ -202,6 +218,43 @@ public class List_Order_Service {
 
             Map<String, String> response = new HashMap<>();
             response.put("success", "Đã huỷ yêu cầu thành công.");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Có lỗi xảy ra: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(error);
+        }
+    }
+
+    // Khôi phục yêu cầu đã hủy
+    @PostMapping("/{id}/restore")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> restoreRequest(@PathVariable("id") Long id) {
+        try {
+            ServiceRequest request = requestService.findById(id);
+            if (request == null || request.getStatus() != ServiceRequestStatus.CANCELLED) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Chỉ có thể khôi phục yêu cầu đã hủy.");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            // Kiểm tra xem có thông tin draft không để quyết định trạng thái khôi phục
+            ServiceRequestDraft draft = draftDAO.findByRequestId(id).orElse(null);
+            
+            if (draft != null) {
+                // Nếu có thông tin đã liên hệ trước đó, khôi phục về CONTACTED
+                request.setStatus(ServiceRequestStatus.CONTACTED);
+            } else {
+                // Nếu chưa có thông tin, khôi phục về PENDING
+                request.setStatus(ServiceRequestStatus.PENDING);
+            }
+            
+            requestService.save(request);
+
+            Map<String, String> response = new HashMap<>();
+            String statusText = draft != null ? "đã liên hệ" : "đang chờ";
+            response.put("success", "Đã khôi phục yêu cầu về trạng thái " + statusText + " thành công.");
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
