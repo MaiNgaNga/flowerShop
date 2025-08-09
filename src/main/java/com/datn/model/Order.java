@@ -59,3 +59,4 @@ public class Order {
     @Column(name = "description", columnDefinition = "NVARCHAR(500)")
     private String description;
 }
+ 

@@ -99,4 +99,9 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public Optional<User> findByRememberToken(String token) {
+        return dao.findByRememberToken(token);
+    }
+
 }
