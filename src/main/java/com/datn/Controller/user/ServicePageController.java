@@ -1,7 +1,10 @@
 package com.datn.Controller.user;
 
+import com.datn.Service.ProductCategoryService;
 import com.datn.Service.ServiceRequestService;
+
 import com.datn.Service.ServiceService;
+import com.datn.model.ProductCategory;
 import com.datn.model.ServiceEntity;
 import com.datn.model.ServiceRequest;
 import com.datn.model.User;
@@ -31,6 +34,9 @@ public class ServicePageController {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    ProductCategoryService productCategoryService;
+
     // ------------------- HIỂN THỊ TRANG DỊCH VỤ -------------------
     @GetMapping
     public String index(
@@ -41,7 +47,7 @@ public class ServicePageController {
         // Phân trang dịch vụ
         Page<ServiceEntity> servicePage = serviceService.findAvailableServices(PageRequest.of(page, size));
         List<ServiceEntity> activeServices = serviceService.findAllAvailable();
-
+        List<ProductCategory> productCategories = productCategoryService.findAll();
         // Tạo ServiceRequest và điền sẵn thông tin người dùng
         ServiceRequest request = new ServiceRequest();
         User user = authService.getUser();
@@ -49,8 +55,9 @@ public class ServicePageController {
             request.setFullName(user.getName());
             request.setEmail(user.getEmail());
             request.setPhone(user.getSdt());
-        }
+        }   
 
+        model.addAttribute("productCategories", productCategories);
         model.addAttribute("services", servicePage.getContent());
         model.addAttribute("activeServices", activeServices);
         model.addAttribute("currentPage", page);

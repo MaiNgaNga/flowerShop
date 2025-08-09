@@ -374,9 +374,9 @@
                           data-bs-toggle="modal"
                           data-bs-target="#createOrderModal"
                           th:attr="data-request-id=${request.id}, 
-                                    data-service-name=${request.service.name}, 
-                                    data-status=${request.status.name()},
-                                    disabled=${request.status.name() == 'CANCELLED'}"
+                                  data-service-name=${request.service.name}, 
+                                  data-status=${request.status.name()}"
+                          th:disabled="${request.status.name() == 'CANCELLED'}"
                         >
                           <i class="bi bi-pencil"></i>
                         </button>
@@ -431,11 +431,9 @@
                   </thead>
                   <tbody>
                     <tr th:each="order : ${orderList}">
-                      <td th:text="${order.id}">#DH001</td>
-                      <td th:text="${order.request.fullName}">Trần Thị B</td>
-                      <td th:text="${order.request.service.name}">
-                        Dịch vụ sửa chữa
-                      </td>
+                      <td th:text="${order.id}"></td>
+                      <td th:text="${order.request.fullName}"></td>
+                      <td th:text="${order.request.service.name}"></td>
                       <td
                         th:text="${#numbers.formatDecimal(order.quotedPrice, 0, 'POINT', 0, 'COMMA') + ' VNĐ'}"
                       ></td>
@@ -566,22 +564,37 @@
             <button
               type="button"
               class="btn btn-primary btn-action btn-contact"
+              title="Liên hệ lần đầu"
             >
               <i class="bi bi-telephone"></i>
             </button>
             <button
               type="button"
+              class="btn btn-info btn-action btn-update"
+              title="Cập nhật thông tin"
+              style="display: none;"
+            >
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <button
+              type="button"
               class="btn btn-success btn-action btn-confirm"
+              title="Xác nhận tạo đơn"
             >
               <i class="bi bi-check-circle"></i>
             </button>
-            <button type="button" class="btn btn-danger btn-action btn-cancel">
+            <button 
+              type="button" 
+              class="btn btn-danger btn-action btn-cancel"
+              title="Hủy yêu cầu"
+            >
               <i class="bi bi-x-circle"></i>
             </button>
             <button
               type="button"
               class="btn btn-secondary btn-action"
               data-bs-dismiss="modal"
+              title="Đóng"
             >
               <i class="bi bi-box-arrow-right"></i>
             </button>
@@ -724,45 +737,180 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
+        // Kiểm tra nếu cần chuyển sang tab đơn hàng sau reload
+        if (localStorage.getItem('switchToOrdersTab') === 'true') {
+          localStorage.removeItem('switchToOrdersTab');
+          setTimeout(() => {
+            document.getElementById('orders-tab').click();
+          }, 500);
+        }
+        
         const modal = document.getElementById("createOrderModal");
         const form = document.getElementById("createOrderForm");
+        
+        // Biến để tránh multiple event handling
+        let isModalLoading = false;
 
         modal.addEventListener("show.bs.modal", function (event) {
+          // Tránh xử lý multiple events - đơn giản hóa
+          if (isModalLoading) {
+            return;
+          }
+          isModalLoading = true;
           const button = event.relatedTarget;
           const requestId = button.getAttribute("data-request-id");
           const serviceName = button.getAttribute("data-service-name");
           const status = button.getAttribute("data-status");
 
-          // Gán giá trị
+          // Gán giá trị vào form
           document.getElementById("requestIdInput").value = requestId;
           document.getElementById("serviceNameInput").value = serviceName;
           form.setAttribute("data-request-id", requestId);
 
-          // Hiện/ẩn nút theo trạng thái
           const btnContact = modal.querySelector(".btn-contact");
+          const btnUpdate = modal.querySelector(".btn-update");
           const btnConfirm = modal.querySelector(".btn-confirm");
           const btnCancel = modal.querySelector(".btn-cancel");
 
-          if (status === "PENDING") {
-            btnContact.style.display = "inline-flex";
-            btnConfirm.style.display = "none";
-            btnCancel.style.display = "none";
-          } else if (status === "CONTACTED") {
-            btnContact.style.display = "none";
-            btnConfirm.style.display = "inline-flex";
-            btnCancel.style.display = "inline-flex";
-          } else {
-            // Nếu đã xác nhận/hủy -> ẩn toàn bộ
-            btnContact.style.display = "none";
-            btnConfirm.style.display = "none";
-            btnCancel.style.display = "none";
-          }
+          // Reset form trước
+          form.reset();
+          document.getElementById("serviceNameInput").value = serviceName;
+
+          // Load dữ liệu từ server
+          fetch(`/admin/service-requests/${requestId}/draft`)
+            .then((res) => res.json())
+            .then((data) => {
+              console.log("Dữ liệu nhận được:", data);
+              
+              // Hiển thị nút dựa trên trạng thái
+              if (data.status === "PENDING") {
+                // Chưa liên hệ: hiển thị Liên hệ + Xác nhận + Hủy
+                btnContact.style.display = "inline-flex";
+                btnUpdate.style.display = "none";
+                btnConfirm.style.display = "inline-flex";
+                btnCancel.style.display = "inline-flex";
+              } else if (data.status === "CONTACTED") {
+                // Đã liên hệ: hiển thị Cập nhật + Xác nhận + Hủy
+                btnContact.style.display = "none";
+                btnUpdate.style.display = "inline-flex";
+                btnConfirm.style.display = "inline-flex";
+                btnCancel.style.display = "inline-flex";
+
+                // Load dữ liệu bản nháp - LUÔN LUÔN load nếu có
+                console.log("Loading draft data:", data);
+                
+                // Load dữ liệu ngay lập tức
+                if (data.quotedPrice !== undefined && data.quotedPrice !== null) {
+                  form.querySelector("input[name='quotedPrice']").value = data.quotedPrice;
+                }
+                if (data.addressDetail) {
+                  form.querySelector("input[name='addressDetail']").value = data.addressDetail;
+                }
+                if (data.executionTime) {
+                  form.querySelector("input[name='executionTime']").value = data.executionTime;
+                }
+                if (data.description) {
+                  form.querySelector("textarea[name='description']").value = data.description;
+                }
+                
+                // Load district sau khi district select đã sẵn sàng
+                if (data.district) {
+                  let retryCount = 0;
+                  const maxRetries = 20; // Tối đa 2 giây
+                  
+                  const loadDistrict = () => {
+                    const districtSelect = form.querySelector("select[name='district']");
+                    if (districtSelect && districtSelect.options.length > 1) {
+                      districtSelect.value = data.district;
+                      console.log("District loaded:", data.district);
+                    } else if (retryCount < maxRetries) {
+                      retryCount++;
+                      setTimeout(loadDistrict, 100);
+                    } else {
+                      console.warn("Could not load district after", maxRetries, "retries");
+                    }
+                  };
+                  
+                  // Delay initial load để tránh conflict
+                  setTimeout(loadDistrict, 200);
+                }
+              } else {
+                // Đã xác nhận hoặc đã hủy: chỉ hiển thị nút đóng
+                btnContact.style.display = "none";
+                btnUpdate.style.display = "none";
+                btnConfirm.style.display = "none";
+                btnCancel.style.display = "none";
+              }
+            })
+            .catch((err) => {
+              console.error("Lỗi load dữ liệu:", err);
+              // Fallback: hiển thị nút mặc định cho PENDING
+              btnContact.style.display = "inline-flex";
+              btnUpdate.style.display = "none";
+              btnConfirm.style.display = "inline-flex";
+              btnCancel.style.display = "inline-flex";
+            })
+            .finally(() => {
+              // Reset loading state
+              isModalLoading = false;
+            });
+        });
+        
+        // Reset loading state khi modal đóng
+        modal.addEventListener("hidden.bs.modal", function () {
+          isModalLoading = false;
         });
 
-        // Xử lý từng nút
+        // Hàm cập nhật UI sau khi thực hiện action
+        const updateUIAfterAction = (requestId, actionType) => {
+          // Tìm button tương ứng với requestId
+          const button = document.querySelector(`[data-request-id="${requestId}"]`);
+          if (!button) return;
+          
+          // Tìm row chứa button này
+          const row = button.closest('tr');
+          if (!row) return;
+          
+          // Tìm badge trạng thái trong row
+          const statusBadge = row.querySelector('.badge');
+          if (!statusBadge) return;
+          
+          // Cập nhật trạng thái dựa trên action
+          if (actionType === 'contact' || actionType === 'update') {
+            // Cập nhật thành CONTACTED
+            statusBadge.className = 'badge bg-primary';
+            statusBadge.textContent = 'Đã liên hệ';
+            button.setAttribute('data-status', 'CONTACTED');
+          } else if (actionType === 'confirm') {
+            // Cập nhật thành CONFIRMED - Ẩn row khỏi tab "Danh sách yêu cầu"
+            statusBadge.className = 'badge bg-success';
+            statusBadge.textContent = 'Đã xác nhận';
+            button.setAttribute('data-status', 'CONFIRMED');
+            
+            // Ẩn row này khỏi tab hiện tại vì đã chuyển thành đơn hàng
+            row.style.display = 'none';
+            
+            // Hiển thị thông báo và gợi ý chuyển tab
+            setTimeout(() => {
+              if (confirm('Đơn hàng đã được tạo thành công! Bạn có muốn chuyển sang tab "Đơn hàng dịch vụ" để xem không?')) {
+                // Lưu trạng thái tab để chuyển sau khi reload
+                localStorage.setItem('switchToOrdersTab', 'true');
+                // Reload trang để cập nhật dữ liệu mới nhất
+                window.location.reload();
+              }
+            }, 500);
+          } else if (actionType === 'cancel') {
+            // Cập nhật thành CANCELLED
+            statusBadge.className = 'badge bg-secondary';
+            statusBadge.textContent = 'Đã hủy';
+            button.setAttribute('data-status', 'CANCELLED');
+            button.disabled = true;
+          }
+        };
+
+        // Hàm xử lý hành động
         const requestAction = (type) => {
           const id = form.getAttribute("data-request-id");
-
           if (!id) {
             alert("Thiếu ID yêu cầu");
             return;
@@ -771,8 +919,7 @@
           const url = `/admin/service-requests/${id}/${type}`;
           const formData = new FormData();
 
-          // Với "confirm", phải validate
-          if (type === "confirm") {
+          if (type === "confirm" || type === "contact" || type === "update") {
             const price = form.querySelector("input[name='quotedPrice']").value;
             const district = form.querySelector(
               "select[name='district']"
@@ -783,9 +930,12 @@
             const time = form.querySelector(
               "input[name='executionTime']"
             ).value;
+            const desc = form.querySelector(
+              "textarea[name='description']"
+            ).value;
 
             if (!price || !district || !address || !time) {
-              alert("Vui lòng nhập đầy đủ thông tin để tạo đơn.");
+              alert("Vui lòng nhập đầy đủ thông tin.");
               return;
             }
 
@@ -793,40 +943,62 @@
             formData.append("district", district);
             formData.append("addressDetail", address);
             formData.append("executionTime", time);
-            formData.append(
-              "description",
-              form.querySelector("textarea[name='description']").value
-            );
+            formData.append("description", desc);
           }
 
           fetch(url, {
             method: "POST",
             body: formData,
           })
-            .then((res) => {
-              if (res.redirected) {
-                window.location.href = res.url;
-              } else {
-                alert("Thao tác không thành công.");
+            .then((res) => res.json())
+            .then((data) => {
+              console.log("Response data:", data);
+              
+              if (data.success) {
+                // Đóng modal trước khi cập nhật UI
+                const bsModal = bootstrap.Modal.getInstance(modal);
+                if (bsModal) {
+                  bsModal.hide();
+                }
+                
+                // Đợi modal đóng hoàn toàn rồi mới cập nhật UI
+                setTimeout(() => {
+                  // Cập nhật trạng thái trên giao diện
+                  updateUIAfterAction(id, type);
+                  
+                  // Hiển thị thông báo sau khi UI đã cập nhật
+                  if (type !== 'confirm') {
+                    alert(data.success);
+                  }
+                }, 150);
+                
+              } else if (data.error) {
+                alert("Lỗi: " + data.error);
               }
             })
             .catch((err) => {
               console.error("Lỗi:", err);
+              alert("Có lỗi xảy ra.");
             });
         };
 
+        // Gắn sự kiện click vào các nút
         modal.querySelector(".btn-contact").addEventListener("click", () => {
           requestAction("contact");
+        });
+
+        modal.querySelector(".btn-update").addEventListener("click", () => {
+          requestAction("update");
+        });
+
+        modal.querySelector(".btn-confirm").addEventListener("click", () => {
+          requestAction("confirm");
         });
 
         modal.querySelector(".btn-cancel").addEventListener("click", () => {
           if (confirm("Bạn có chắc muốn hủy yêu cầu này không?")) {
             requestAction("cancel");
           }
-        });
-
-        modal.querySelector(".btn-confirm").addEventListener("click", () => {
-          requestAction("confirm");
         });
       });
     </script>
@@ -867,80 +1039,115 @@
     </script>
 
     <script>
-      let currentRequestId = null;
+      let currentOrderId = null;
+
+      function loadOrderDetail(orderId) {
+        currentOrderId = orderId;
+        
+        // Reset form
+        $("#modal-id").val("");
+        $("#modal-name").val("");
+        $("#modal-service").val("");
+        $("#modal-request-date").val("");
+        $("#modal-perform-date").val("");
+        $("#modal-province").val("");
+        $("#modal-address").val("");
+        $("#modal-note").val("");
+        $("#modal-quoted-price").val("");
+
+        // Load dữ liệu
+        $.ajax({
+          url: `/admin/service-requests/order/${orderId}/detail`,
+          method: "GET",
+          success: function (data) {
+            $("#modal-id").val(data.orderId);
+            $("#modal-name").val(data.fullName);
+            $("#modal-service").val(data.serviceName);
+            $("#modal-request-date").val(data.requestDate.substring(0, 10));
+            $("#modal-perform-date").val(data.performDate);
+            $("#modal-province").val(data.province);
+            $("#modal-address").val(data.address);
+            $("#modal-note").val(data.note || "(Không có)");
+            $("#modal-quoted-price").val(
+              data.quotedPrice.toLocaleString("vi-VN") + " VNĐ"
+            );
+
+            // Hiển thị nút dựa trên trạng thái
+            if (data.status === "Chưa thanh toán") {
+              $("#btn-confirm").hide();
+              $("#btn-cancel").show();
+            } else if (data.status === "Đã thanh toán") {
+              $("#btn-confirm").show();
+              $("#btn-cancel").hide();
+            } else if (data.status === "Đã hoàn tất" || data.status === "Đã hủy") {
+              $("#btn-confirm").hide();
+              $("#btn-cancel").hide();
+            } else {
+              $("#btn-confirm").hide();
+              $("#btn-cancel").show();
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error("Lỗi:", error);
+            alert("Không thể tải dữ liệu đơn hàng.");
+          }
+        });
+      }
+
+      function updateOrderStatus(orderId, newStatus) {
+        // Cập nhật trạng thái trong bảng
+        const row = $(`button[data-id="${orderId}"]`).closest('tr');
+        const statusBadge = row.find('.badge');
+        
+        // Cập nhật class và text - dùng màu xám cho đã hủy
+        statusBadge.removeClass().addClass('badge');
+        if (newStatus === 'CANCELLED') {
+          statusBadge.addClass('bg-secondary').text('Đã hủy');
+        } else if (newStatus === 'DONE') {
+          statusBadge.addClass('bg-success').text('Đã hoàn tất');
+        }
+      }
 
       $(document).ready(function () {
-        $(document).on("click", ".btn-detail", function () {
-          const id = $(this).data("id");
-          currentRequestId = id;
-
-          $.ajax({
-            url: `/admin/service-requests/service-request/${id}/detail`,
-            method: "GET",
-            success: function (data) {
-              // DEBUG xem có dữ liệu không
-              console.log("Chi tiết nhận được:", data);
-
-              $("#modal-id").val(data.id);
-              $("#modal-name").val(data.fullName);
-              $("#modal-service").val(data.serviceName);
-              $("#modal-request-date").val(data.requestDate.substring(0, 10));
-              $("#modal-perform-date").val(data.performDate);
-              $("#modal-province").val(data.province);
-              $("#modal-address").val(data.address);
-              $("#modal-note").val(data.note || "(Không có)");
-              $("#modal-quoted-price").val(
-                data.quotedPrice.toLocaleString("vi-VN") + " VNĐ"
-              );
-
-              $("#modal-status").text(data.status);
-
-              if (data.status === "Chưa thanh toán") {
-                $("#btn-confirm").hide();
-                $("#btn-cancel").show();
-              } else if (data.status === "Đã thanh toán") {
-                $("#btn-confirm").show();
-                $("#btn-cancel").hide();
-              } else {
-                $("#btn-confirm").hide();
-                $("#btn-cancel").hide();
-              }
-
-              // Mở modal
-              const modal = new bootstrap.Modal(
-                document.getElementById("orderDetailsModal")
-              );
-              modal.show();
-            },
-            error: function (xhr, status, error) {
-              console.error("Lỗi khi lấy chi tiết yêu cầu:", error);
-              alert("Không thể tải dữ liệu yêu cầu dịch vụ.");
-            },
-          });
+        // Xử lý khi modal được mở
+        $('#orderDetailsModal').on('show.bs.modal', function (event) {
+          const button = $(event.relatedTarget);
+          const orderId = button.data("id");
+          loadOrderDetail(orderId);
         });
 
-        $("#btn-confirm").click(function () {
-          if (!currentRequestId) return;
-          $.post(`/admin/service-requests/${currentRequestId}/complete`)
+        // Xử lý nút hoàn thành
+        $(document).on("click", "#btn-confirm", function () {
+          if (!currentOrderId) return;
+          
+          $.post(`/admin/service-requests/order/${currentOrderId}/complete`)
             .done(function () {
               alert("Đã xác nhận hoàn thành đơn.");
-              location.reload();
+              updateOrderStatus(currentOrderId, 'DONE');
+              $('#orderDetailsModal').modal('hide');
             })
-            .fail(function () {
-              alert("Lỗi khi xác nhận hoàn thành.");
+            .fail(function (xhr, status, error) {
+              console.error("Lỗi:", error);
+              alert("Lỗi khi xác nhận hoàn thành: " + (xhr.responseText || error));
             });
         });
 
-        $("#btn-cancel").click(function () {
-          if (!currentRequestId) return;
-          $.post(`/admin/service-requests/${currentRequestId}/cancel`)
-            .done(function () {
-              alert("Đã hủy đơn thành công.");
-              location.reload();
-            })
-            .fail(function () {
-              alert("Lỗi khi hủy đơn.");
-            });
+        // Xử lý nút hủy
+        $(document).on("click", "#btn-cancel", function () {
+          if (!currentOrderId) return;
+          
+          if (confirm("Bạn có chắc muốn hủy đơn hàng này không?")) {
+            $.post(`/admin/service-requests/order/${currentOrderId}/cancel`)
+              .done(function () {
+                alert("Đã hủy đơn thành công.");
+                updateOrderStatus(currentOrderId, 'CANCELLED');
+                $('#orderDetailsModal').modal('hide');
+              })
+              .fail(function (xhr, status, error) {
+                console.error("Lỗi:", error);
+                alert("Lỗi khi hủy đơn: " + (xhr.responseText || error));
+              });
+          }
         });
       });
 
