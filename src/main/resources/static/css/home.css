@@ -821,6 +821,7 @@ button {
   position: relative;
   z-index: var(--z-overlay);
 }
+
 .post-slider-section {
   max-width: 1000px;
   margin: auto;

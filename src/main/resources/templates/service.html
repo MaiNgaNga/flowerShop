@@ -255,7 +255,23 @@
         form.addEventListener("submit", function (e) {
           e.preventDefault(); // Ngăn reload trang
 
-          // Kiểm tra validation trước khi gửi
+          // Kiểm tra đăng nhập trước
+          const fullNameInput = form.querySelector('input[name="fullName"]');
+          const emailInput = form.querySelector('input[name="email"]');
+          const phoneInput = form.querySelector('input[name="phone"]');
+          
+          // Nếu các trường thông tin cá nhân trống, có thể chưa đăng nhập
+          if (!fullNameInput || !fullNameInput.value.trim() || 
+              !emailInput || !emailInput.value.trim() || 
+              !phoneInput || !phoneInput.value.trim()) {
+            showErrorToast("🔐 Vui lòng đăng nhập để sử dụng dịch vụ!");
+            setTimeout(() => {
+              window.location.href = "/login?redirect=/services&loginRequired=true";
+            }, 2000);
+            return;
+          }
+
+          // Kiểm tra validation dịch vụ
           const serviceSelect = form.querySelector('select[name="service"]');
           if (!serviceSelect || !serviceSelect.value) {
             showErrorToast("⚠️ Vui lòng chọn dịch vụ trước khi gửi yêu cầu!");
@@ -263,7 +279,7 @@
             return;
           }
 
-          // Chỉ disable nút để tránh double click, không thay đổi text
+          // Chỉ disable nút để tránh double click
           submitBtn.disabled = true;
           
           const formData = new FormData(form);
@@ -273,22 +289,33 @@
             body: formData,
           })
             .then((response) => {
+              // Kiểm tra nếu server redirect đến login
+              if (response.url.includes('/login')) {
+                showErrorToast("🔐 Vui lòng đăng nhập để sử dụng dịch vụ!");
+                setTimeout(() => {
+                  window.location.href = "/login?redirect=/services&loginRequired=true";
+                }, 2000);
+                return;
+              }
+              
               if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
               }
               return response.text();
             })
             .then((data) => {
-              // Hiển thị thông báo thành công
-              showSuccessToast(
-                "🌸 Cảm ơn bạn đã đặt dịch vụ! Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất."
-              );
-              
-              // Reset form nhưng giữ lại thông tin người dùng
-              resetFormKeepUserInfo();
-              
-              // Scroll to form để người dùng thấy form đã reset
-              form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              if (data) { // Chỉ xử lý nếu có data (không phải redirect)
+                // Hiển thị thông báo thành công
+                showSuccessToast(
+                  "🌸 Cảm ơn bạn đã đặt dịch vụ! Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất."
+                );
+                
+                // Reset form nhưng giữ lại thông tin người dùng
+                resetFormKeepUserInfo();
+                
+                // Scroll to form để người dùng thấy form đã reset
+                form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
             })
             .catch((error) => {
               console.error("Error occurred:", error);
