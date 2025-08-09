@@ -220,6 +220,92 @@
         gap: 10px;
       }
 
+      .filter-active {
+        background: #dbeafe !important;
+        border: 2px solid #3b82f6 !important;
+      }
+
+      .no-results {
+        text-align: center;
+        padding: 40px 20px;
+        color: #6b7280;
+        font-style: italic;
+      }
+
+      .filter-summary {
+        background: #f0f9ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 8px;
+        padding: 10px 15px;
+        margin-bottom: 15px;
+        font-size: 0.9rem;
+        color: #1e40af;
+      }
+
+      .filter-tag {
+        display: inline-block;
+        background: #3b82f6;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        margin: 2px;
+      }
+
+      /* Pagination Styles */
+      .pagination-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding: 15px 0;
+        border-top: 1px solid #e5e7eb;
+      }
+
+      .pagination-info {
+        color: #6b7280;
+        font-size: 0.9rem;
+      }
+
+      .pagination {
+        margin: 0;
+      }
+
+      .page-link {
+        color: #3b82f6;
+        border: 1px solid #d1d5db;
+        padding: 8px 12px;
+        margin: 0 2px;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+
+      .page-link:hover {
+        background-color: #f3f4f6;
+        border-color: #3b82f6;
+        color: #1d4ed8;
+      }
+
+      .page-item.active .page-link {
+        background-color: #3b82f6;
+        border-color: #3b82f6;
+        color: white;
+      }
+
+      .page-item.disabled .page-link {
+        color: #9ca3af;
+        background-color: #f9fafb;
+        border-color: #e5e7eb;
+        cursor: not-allowed;
+      }
+
+      .page-item.disabled .page-link:hover {
+        background-color: #f9fafb;
+        border-color: #e5e7eb;
+        color: #9ca3af;
+      }
+
       .modal-dialog {
         max-width: 600px;
       }
@@ -306,16 +392,22 @@
               role="tabpanel"
             >
               <div class="filter-section">
-                <form>
+                <form
+                  method="get"
+                  action="/admin/service-requests"
+                  id="requestFilterForm"
+                >
                   <div class="row g-3 align-items-end">
                     <div class="col-md-3">
                       <label class="form-label">Trạng thái</label>
-                      <select class="form-select">
+                      <select class="form-select" name="status">
                         <option value="">Tất cả</option>
-                        <option value="pending">Đang chờ</option>
-                        <option value="contacted">Đã liên hệ</option>
-                        <option value="confirmed">Đã xác nhận</option>
-                        <option value="cancelled">Đã hủy</option>
+                        <option
+                          th:each="status : ${statuses}"
+                          th:value="${status.name()}"
+                          th:text="${status.displayName}"
+                          th:selected="${selectedStatus != null && selectedStatus.name() == status.name()}"
+                        ></option>
                       </select>
                     </div>
                     <div class="col-md-3">
@@ -323,26 +415,73 @@
                       <input
                         type="text"
                         class="form-control"
-                        placeholder="Tên/Email/SĐT"
+                        name="keyword"
+                        th:value="${keyword}"
+                        placeholder="Tên/SĐT"
                       />
                     </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Tháng</label>
+                      <input type="month" class="form-control" name="requestMonth" th:value="${selectedRequestMonth}" />
+                    </div>
                     <div class="col-md-3 filter-buttons">
-                      <button type="submit" class="btn btn-primary btn-action">
+                      <button
+                        type="submit"
+                        class="btn btn-primary btn-action"
+                        title="Lọc"
+                      >
                         <i class="bi bi-funnel"></i>
                       </button>
-                      <button type="reset" class="btn btn-secondary btn-action">
+                      <button
+                        type="button"
+                        class="btn btn-secondary btn-action"
+                        title="Xóa lọc"
+                        onclick="clearRequestFilter()"
+                      >
                         <i class="bi bi-x-circle"></i>
                       </button>
                     </div>
                   </div>
+                  <!-- Hidden fields để giữ các filter của tab khác và phân trang -->
+                  <input
+                    type="hidden"
+                    name="orderStatus"
+                    th:value="${selectedOrderStatus?.name()}"
+                  />
+                  <input
+                    type="hidden"
+                    name="orderKeyword"
+                    th:value="${orderKeyword}"
+                  />
+                  <input
+                    type="hidden"
+                    name="month"
+                    th:value="${selectedMonth}"
+                  />
+                  <input type="hidden" name="requestPage" value="0" />
+                  <input
+                    type="hidden"
+                    name="orderPage"
+                    th:value="${orderCurrentPage}"
+                  />
                 </form>
               </div>
+
+              <!-- Filter Summary for Requests -->
+              <div
+                class="filter-summary"
+                id="requestFilterSummary"
+                style="display: none"
+              >
+                <strong>Đang lọc:</strong>
+                <span id="requestFilterTags"></span>
+              </div>
+
               <div class="table-responsive">
                 <table class="table table-hover">
                   <thead>
                     <tr>
                       <th>Tên khách hàng</th>
-                      <th>Email</th>
                       <th>Số điện thoại</th>
                       <th>Dịch vụ</th>
                       <th>Ngày tạo</th>
@@ -351,10 +490,14 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr></tr>
+                    <tr th:if="${#lists.isEmpty(requests)}" class="no-results">
+                      <td colspan="6">
+                        <i class="bi bi-search"></i><br />
+                        Không tìm thấy yêu cầu nào phù hợp với bộ lọc hiện tại
+                      </td>
+                    </tr>
                     <tr th:each="request : ${requests}">
                       <td th:text="${request.fullName}"></td>
-                      <td th:text="${request.email}"></td>
                       <td th:text="${request.phone}"></td>
                       <td th:text="${request.service.name}"></td>
                       <td
@@ -369,6 +512,7 @@
                         </span>
                       </td>
                       <td>
+                        <!-- Nút tạo đơn cho PENDING và CONTACTED -->
                         <button
                           class="btn btn-success btn-action"
                           data-bs-toggle="modal"
@@ -376,46 +520,208 @@
                           th:attr="data-request-id=${request.id}, 
                                   data-service-name=${request.service.name}, 
                                   data-status=${request.status.name()}"
-                          th:disabled="${request.status.name() == 'CANCELLED'}"
+                          th:if="${request.status.name() == 'PENDING' || request.status.name() == 'CONTACTED'}"
+                          title="Tạo đơn hàng"
                         >
                           <i class="bi bi-pencil"></i>
+                        </button>
+
+                        <!-- Nút khôi phục cho CANCELLED -->
+                        <button
+                          class="btn btn-warning btn-action btn-restore"
+                          th:attr="data-request-id=${request.id}, data-service-name=${request.service.name}"
+                          th:if="${request.status.name() == 'CANCELLED'}"
+                          title="Khôi phục yêu cầu"
+                        >
+                          <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+
+                        <!-- Vô hiệu hóa cho CONFIRMED -->
+                        <button
+                          class="btn btn-secondary btn-action"
+                          th:if="${request.status.name() == 'CONFIRMED'}"
+                          disabled
+                          title="Đã chốt đơn - không thể thao tác"
+                        >
+                          <i class="bi bi-lock"></i>
                         </button>
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
+
+              <!-- Pagination for Requests -->
+              <div
+                class="pagination-container"
+                th:if="${requestTotalElements > 0}"
+              >
+                <div class="pagination-info">
+                  Hiển thị
+                  <strong th:text="${#lists.size(requests)}"></strong> trong
+                  tổng số
+                  <strong th:text="${requestTotalElements}"></strong> yêu cầu
+                </div>
+                <nav aria-label="Request pagination">
+                  <ul class="pagination">
+                    <li
+                      class="page-item"
+                      th:classappend="${!requestHasPrevious} ? 'disabled'"
+                    >
+                      <a
+                        class="page-link"
+                        th:href="@{/admin/service-requests(
+                        status=${selectedStatus?.name()},
+                        keyword=${keyword},
+                        orderStatus=${selectedOrderStatus?.name()},
+                        orderKeyword=${orderKeyword},
+                        month=${selectedMonth},
+                        requestPage=${requestCurrentPage - 1},
+                        orderPage=${orderCurrentPage}
+                      )}"
+                        th:if="${requestHasPrevious}"
+                      >
+                        <i class="bi bi-chevron-left"></i> Trước
+                      </a>
+                      <span class="page-link" th:unless="${requestHasPrevious}">
+                        <i class="bi bi-chevron-left"></i> Trước
+                      </span>
+                    </li>
+
+                    <li
+                      class="page-item"
+                      th:each="pageNum : ${#numbers.sequence(0, requestTotalPages - 1)}"
+                      th:if="${pageNum >= requestCurrentPage - 2 && pageNum <= requestCurrentPage + 2}"
+                      th:classappend="${pageNum == requestCurrentPage} ? 'active'"
+                    >
+                      <a
+                        class="page-link"
+                        th:href="@{/admin/service-requests(
+                           status=${selectedStatus?.name()},
+                           keyword=${keyword},
+                           orderStatus=${selectedOrderStatus?.name()},
+                           orderKeyword=${orderKeyword},
+                           month=${selectedMonth},
+                           requestPage=${pageNum},
+                           orderPage=${orderCurrentPage}
+                         )}"
+                        th:text="${pageNum + 1}"
+                        >1</a
+                      >
+                    </li>
+
+                    <li
+                      class="page-item"
+                      th:classappend="${!requestHasNext} ? 'disabled'"
+                    >
+                      <a
+                        class="page-link"
+                        th:href="@{/admin/service-requests(
+                        status=${selectedStatus?.name()},
+                        keyword=${keyword},
+                        orderStatus=${selectedOrderStatus?.name()},
+                        orderKeyword=${orderKeyword},
+                        month=${selectedMonth},
+                        requestPage=${requestCurrentPage + 1},
+                        orderPage=${orderCurrentPage}
+                      )}"
+                        th:if="${requestHasNext}"
+                      >
+                        Sau <i class="bi bi-chevron-right"></i>
+                      </a>
+                      <span class="page-link" th:unless="${requestHasNext}">
+                        Sau <i class="bi bi-chevron-right"></i>
+                      </span>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
             </div>
             <!-- Service Orders Tab -->
             <div class="tab-pane fade" id="orders" role="tabpanel">
               <div class="filter-section">
-                <form>
+                <form
+                  method="get"
+                  action="/admin/service-requests"
+                  id="orderFilterForm"
+                >
                   <div class="row g-3 align-items-end">
                     <div class="col-md-3">
                       <label class="form-label">Trạng thái</label>
-                      <select class="form-select">
+                      <select class="form-select" name="orderStatus">
                         <option value="">Tất cả</option>
-                        <option value="unpaid">Chưa thanh toán</option>
-                        <option value="paid">Đã thanh toán</option>
-                        <option value="done">Đã hoàn tất</option>
-                        <option value="cancelled">Đã hủy</option>
+                        <option
+                          th:each="orderStatus : ${orderStatuses}"
+                          th:value="${orderStatus.name()}"
+                          th:text="${orderStatus.displayName}"
+                          th:selected="${selectedOrderStatus != null && selectedOrderStatus.name() == orderStatus.name()}"
+                        ></option>
                       </select>
                     </div>
                     <div class="col-md-3">
+                      <label class="form-label">Tìm kiếm</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="orderKeyword"
+                        th:value="${orderKeyword}"
+                        placeholder="Tên/SĐT/Dịch vụ"
+                      />
+                    </div>
+                    <div class="col-md-3">
                       <label class="form-label">Tháng</label>
-                      <input type="month" class="form-control" />
+                      <input
+                        type="month"
+                        class="form-control"
+                        name="month"
+                        th:value="${selectedMonth}"
+                      />
                     </div>
                     <div class="col-md-3 filter-buttons">
-                      <button type="submit" class="btn btn-primary btn-action">
+                      <button
+                        type="submit"
+                        class="btn btn-primary btn-action"
+                        title="Lọc"
+                      >
                         <i class="bi bi-funnel"></i>
                       </button>
-                      <button type="reset" class="btn btn-secondary btn-action">
+                      <button
+                        type="button"
+                        class="btn btn-secondary btn-action"
+                        title="Xóa lọc"
+                        onclick="clearOrderFilter()"
+                      >
                         <i class="bi bi-x-circle"></i>
                       </button>
                     </div>
                   </div>
+                  <!-- Hidden fields để giữ các filter của tab khác và phân trang -->
+                  <input
+                    type="hidden"
+                    name="status"
+                    th:value="${selectedStatus?.name()}"
+                  />
+                  <input type="hidden" name="keyword" th:value="${keyword}" />
+                  <input type="hidden" name="requestMonth" th:value="${selectedRequestMonth}" />
+                  <input
+                    type="hidden"
+                    name="requestPage"
+                    th:value="${requestCurrentPage}"
+                  />
+                  <input type="hidden" name="orderPage" value="0" />
                 </form>
               </div>
+
+              <!-- Filter Summary for Orders -->
+              <div
+                class="filter-summary"
+                id="orderFilterSummary"
+                style="display: none"
+              >
+                <strong>Đang lọc:</strong>
+                <span id="orderFilterTags"></span>
+              </div>
+
               <div class="table-responsive">
                 <table class="table table-hover">
                   <thead>
@@ -430,6 +736,12 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <tr th:if="${#lists.isEmpty(orderList)}" class="no-results">
+                      <td colspan="7">
+                        <i class="bi bi-search"></i><br />
+                        Không tìm thấy đơn hàng nào phù hợp với bộ lọc hiện tại
+                      </td>
+                    </tr>
                     <tr th:each="order : ${orderList}">
                       <td th:text="${order.id}"></td>
                       <td th:text="${order.request.fullName}"></td>
@@ -461,6 +773,92 @@
                     </tr>
                   </tbody>
                 </table>
+              </div>
+
+              <!-- Pagination for Orders -->
+              <div
+                class="pagination-container"
+                th:if="${orderTotalElements > 0}"
+              >
+                <div class="pagination-info">
+                  Hiển thị
+                  <strong th:text="${#lists.size(orderList)}"></strong> trong
+                  tổng số <strong th:text="${orderTotalElements}"></strong> đơn
+                  hàng
+                </div>
+                <nav aria-label="Order pagination">
+                  <ul class="pagination">
+                    <li
+                      class="page-item"
+                      th:classappend="${!orderHasPrevious} ? 'disabled'"
+                    >
+                      <a
+                        class="page-link"
+                        th:href="@{/admin/service-requests(
+                        status=${selectedStatus?.name()},
+                        keyword=${keyword},
+                        orderStatus=${selectedOrderStatus?.name()},
+                        orderKeyword=${orderKeyword},
+                        month=${selectedMonth},
+                        requestPage=${requestCurrentPage},
+                        orderPage=${orderCurrentPage - 1}
+                      )}"
+                        th:if="${orderHasPrevious}"
+                      >
+                        <i class="bi bi-chevron-left"></i> Trước
+                      </a>
+                      <span class="page-link" th:unless="${orderHasPrevious}">
+                        <i class="bi bi-chevron-left"></i> Trước
+                      </span>
+                    </li>
+
+                    <li
+                      class="page-item"
+                      th:each="pageNum : ${#numbers.sequence(0, orderTotalPages - 1)}"
+                      th:if="${pageNum >= orderCurrentPage - 2 && pageNum <= orderCurrentPage + 2}"
+                      th:classappend="${pageNum == orderCurrentPage} ? 'active'"
+                    >
+                      <a
+                        class="page-link"
+                        th:href="@{/admin/service-requests(
+                           status=${selectedStatus?.name()},
+                           keyword=${keyword},
+                           orderStatus=${selectedOrderStatus?.name()},
+                           orderKeyword=${orderKeyword},
+                           month=${selectedMonth},
+                           requestPage=${requestCurrentPage},
+                           orderPage=${pageNum}
+                         )}"
+                        th:text="${pageNum + 1}"
+                        >1</a
+                      >
+                    </li>
+
+                    <li
+                      class="page-item"
+                      th:classappend="${!orderHasNext} ? 'disabled'"
+                    >
+                      <a
+                        class="page-link"
+                        th:href="@{/admin/service-requests(
+                        status=${selectedStatus?.name()},
+                        keyword=${keyword},
+                        orderStatus=${selectedOrderStatus?.name()},
+                        orderKeyword=${orderKeyword},
+                        month=${selectedMonth},
+                        requestPage=${requestCurrentPage},
+                        orderPage=${orderCurrentPage + 1}
+                      )}"
+                        th:if="${orderHasNext}"
+                      >
+                        Sau <i class="bi bi-chevron-right"></i>
+                      </a>
+                      <span class="page-link" th:unless="${orderHasNext}">
+                        Sau <i class="bi bi-chevron-right"></i>
+                      </span>
+                    </li>
+                  </ul>
+                </nav>
               </div>
             </div>
           </div>
@@ -521,7 +919,99 @@
                       class="form-select"
                       name="district"
                     >
-                      <option value="">Chọn quận/huyện</option>
+                      <option value="">Chọn xã/phường</option>
+                      <option value="An Hai">An Hải</option>
+                      <option value="An Khe">An Khê</option>
+                      <option value="An Thang">An Thắng</option>
+                      <option value="Avuong">Avương</option>
+                      <option value="Ba">Ba</option>
+                      <option value="Ba Na">Bà Nà</option>
+                      <option value="Ban Thach">Bàn Thạch</option>
+                      <option value="Ben Giang">Bến Giằng</option>
+                      <option value="Ben Hien">Bến Hiên</option>
+                      <option value="Cam Le">Cẩm Lệ</option>
+                      <option value="Chien Dan">Chiên Đàn</option>
+                      <option value="Dac Pring">Đắc Pring</option>
+                      <option value="Dai Loc">Đại Lộc</option>
+                      <option value="Dien Ban">Điện Bàn</option>
+                      <option value="Dien Ban Bac">Điện Bàn Bắc</option>
+                      <option value="Dien Ban Dong">Điện Bàn Đông</option>
+                      <option value="Dong Duong">Đồng Dương</option>
+                      <option value="Dong Giang">Prao</option>
+                      <option value="Duc Phu">Đức Phú</option>
+                      <option value="Duy Nghia">Duy Nghĩa</option>
+                      <option value="Duy Xuyen">Duy Xuyên</option>
+                      <option value="Hai Chau">Hải Châu</option>
+                      <option value="Hai Van">Hải Vân</option>
+                      <option value="Ha Nha">Hà Nha</option>
+                      <option value="Hiep Duc">Tân Bình</option>
+                      <option value="Hoa Cuong">Hòa Cường</option>
+                      <option value="Hoa Khanh">Hòa Khánh</option>
+                      <option value="Hoa Tien">Hòa Tiến</option>
+                      <option value="Hoa Vang">Hòa Vang</option>
+                      <option value="Hoa Xuan">Hòa Xuân</option>
+                      <option value="Hoi An">Hội An</option>
+                      <option value="Hoi An Dong">Hội An Đông</option>
+                      <option value="Hoi An Tay">Hội An Tây</option>
+                      <option value="Hoang Sa">Hoàng Sa</option>
+                      <option value="Huong Tra">Hương Trà</option>
+                      <option value="Hung Son">Hùng Sơn</option>
+                      <option value="Kham Duc">Khâm Đức</option>
+                      <option value="La Dee">La Dêê</option>
+                      <option value="La Eee">La Êê</option>
+                      <option value="Lanh Ngoc">Lãnh Ngọc</option>
+                      <option value="Lien Chieu">Liên Chiểu</option>
+                      <option value="Nam Giang">Nam Giang</option>
+                      <option value="Nam Phuoc">Nam Phước</option>
+                      <option value="Nam Tra My">Nam Trà My</option>
+                      <option value="Ngu Hanh Son">Ngũ Hành Sơn</option>
+                      <option value="Nong Son">Nông Sơn</option>
+                      <option value="Nui Thanh">Núi Thành</option>
+                      <option value="Phu Ninh">Phú Ninh</option>
+                      <option value="Phu Thuan">Phú Thuận</option>
+                      <option value="Phuoc Chanh">Phước Chánh</option>
+                      <option value="Phuoc Hiep">Phước Hiệp</option>
+                      <option value="Phuoc Nang">Phước Năng</option>
+                      <option value="Phuoc Thanh">Phước Thành</option>
+                      <option value="Phuoc Tra">Phước Trà</option>
+                      <option value="Quang Phu">Quảng Phú</option>
+                      <option value="Que Phuoc">Quế Phước</option>
+                      <option value="Que Son">Quế Sơn</option>
+                      <option value="Que Son Trung">Quế Sơn Trung</option>
+                      <option value="Son Cam Ha">Sơn Cẩm Hà</option>
+                      <option value="Son Tra">Sơn Trà</option>
+                      <option value="Song Kon">Sông Kôn</option>
+                      <option value="Tam Anh">Tam Anh</option>
+                      <option value="Tam Hai">Tam Hải</option>
+                      <option value="Tam Ky">Tam Kỳ</option>
+                      <option value="Tam My">Tam Mỹ</option>
+                      <option value="Tam Xuan">Tam Xuân</option>
+                      <option value="Tan Hiep">Tân Hiệp</option>
+                      <option value="Tay Giang">Tây Giang</option>
+                      <option value="Tay Ho">Tây Hồ</option>
+                      <option value="Thanh Binh">Thanh Bình</option>
+                      <option value="Thanh Khe">Thanh Khê</option>
+                      <option value="Thanh My">Thạnh Mỹ</option>
+                      <option value="Thang An">Thăng An</option>
+                      <option value="Thang Binh">Thăng Bình</option>
+                      <option value="Thang Dien">Thăng Điền</option>
+                      <option value="Thang Phu">Thăng Phú</option>
+                      <option value="Thang Truong">Thăng Trường</option>
+                      <option value="Thu Bon">Thu Bồn</option>
+                      <option value="Thuong Duc">Thượng Đức</option>
+                      <option value="Tien Phuoc">Tiên Phước</option>
+                      <option value="Tra Doc">Trà Đốc</option>
+                      <option value="Tra Giap">Trà Giáp</option>
+                      <option value="Tra Leng">Trà Leng</option>
+                      <option value="Tra Lien">Trà Liên</option>
+                      <option value="Tra Linh">Trà Linh</option>
+                      <option value="Tra My">Trà My</option>
+                      <option value="Tra Tan">Trà Tân</option>
+                      <option value="Tra Tap">Trà Tập</option>
+                      <option value="Tra Van">Trà Vân</option>
+                      <option value="Vu Gia">Vu Gia</option>
+                      <option value="Viet An">Việt An</option>
+                      <option value="Xuan Phu">Xuân Phú</option>
                     </select>
                   </div>
                   <div class="mb-3">
@@ -572,7 +1062,7 @@
               type="button"
               class="btn btn-info btn-action btn-update"
               title="Cập nhật thông tin"
-              style="display: none;"
+              style="display: none"
             >
               <i class="bi bi-pencil-square"></i>
             </button>
@@ -583,8 +1073,8 @@
             >
               <i class="bi bi-check-circle"></i>
             </button>
-            <button 
-              type="button" 
+            <button
+              type="button"
               class="btn btn-danger btn-action btn-cancel"
               title="Hủy yêu cầu"
             >
@@ -735,19 +1225,191 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Filter Functions Script -->
+    <script>
+      // Hàm xóa lọc cho tab yêu cầu
+      function clearRequestFilter() {
+        const form = document.getElementById("requestFilterForm");
+        form.querySelector('select[name="status"]').value = "";
+        form.querySelector('input[name="keyword"]').value = "";
+        form.querySelector('input[name="requestMonth"]').value = "";
+        form.submit();
+      }
+
+      // Hàm xóa lọc cho tab đơn hàng
+      function clearOrderFilter() {
+        const form = document.getElementById("orderFilterForm");
+        form.querySelector('select[name="orderStatus"]').value = "";
+        form.querySelector('input[name="orderKeyword"]').value = "";
+        form.querySelector('input[name="month"]').value = "";
+        form.submit();
+      }
+
+      // Xử lý chuyển tab và giữ nguyên filter
+      document.addEventListener("DOMContentLoaded", function () {
+        // Xử lý sự kiện khi chuyển tab
+        const tabs = document.querySelectorAll(
+          '#adminTabs button[data-bs-toggle="tab"]'
+        );
+        tabs.forEach((tab) => {
+          tab.addEventListener("shown.bs.tab", function (event) {
+            const targetTab = event.target.getAttribute("data-bs-target");
+
+            // Lưu tab hiện tại vào localStorage
+            if (targetTab === "#orders") {
+              localStorage.setItem("currentTab", "orders");
+            } else {
+              localStorage.setItem("currentTab", "requests");
+            }
+          });
+        });
+
+        // Chỉ khôi phục tab từ localStorage nếu có switchToOrdersTab flag
+        if (localStorage.getItem("switchToOrdersTab") === "true") {
+          localStorage.removeItem("switchToOrdersTab");
+          setTimeout(() => {
+            document.getElementById("orders-tab").click();
+          }, 100);
+        } else {
+          // Khôi phục tab cuối cùng được chọn
+          const currentTab = localStorage.getItem("currentTab");
+          if (currentTab === "orders") {
+            setTimeout(() => {
+              document.getElementById("orders-tab").click();
+            }, 100);
+          }
+        }
+      });
+
+      // Hàm hiển thị số lượng kết quả lọc
+      function updateFilterResults() {
+        // Lấy số lượng từ backend thay vì đếm DOM elements
+        const requestTotalElements = /*[[${requestTotalElements}]]*/ 0;
+        const orderTotalElements = /*[[${orderTotalElements}]]*/ 0;
+
+        // Cập nhật số lượng cho tab yêu cầu
+        const requestTab = document.getElementById("requests-tab");
+        if (requestTotalElements > 0) {
+          requestTab.innerHTML = `Danh sách yêu cầu (${requestTotalElements})`;
+        } else {
+          requestTab.innerHTML = "Danh sách yêu cầu";
+        }
+
+        // Cập nhật số lượng cho tab đơn hàng
+        const orderTab = document.getElementById("orders-tab");
+        if (orderTotalElements > 0) {
+          orderTab.innerHTML = `Đơn hàng dịch vụ (${orderTotalElements})`;
+        } else {
+          orderTab.innerHTML = "Đơn hàng dịch vụ";
+        }
+      }
+
+      // Hàm hiển thị filter summary
+      function updateFilterSummary() {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Update Request Filter Summary
+        const requestStatus = urlParams.get("status");
+        const requestKeyword = urlParams.get("keyword");
+        const requestFilterSummary = document.getElementById(
+          "requestFilterSummary"
+        );
+        const requestFilterTags = document.getElementById("requestFilterTags");
+        const requestFilterSection = document.querySelector(
+          "#requests .filter-section"
+        );
+
+        let requestTags = [];
+        if (requestStatus) {
+          const statusText =
+            document.querySelector(
+              `#requests select[name="status"] option[value="${requestStatus}"]`
+            )?.textContent || requestStatus;
+          requestTags.push(
+            `<span class="filter-tag">Trạng thái: ${statusText}</span>`
+          );
+        }
+        if (requestKeyword) {
+          requestTags.push(
+            `<span class="filter-tag">Tìm kiếm: ${requestKeyword}</span>`
+          );
+        }
+
+        if (requestTags.length > 0) {
+          requestFilterTags.innerHTML = requestTags.join("");
+          requestFilterSummary.style.display = "block";
+          requestFilterSection.classList.add("filter-active");
+        } else {
+          requestFilterSummary.style.display = "none";
+          requestFilterSection.classList.remove("filter-active");
+        }
+
+        // Update Order Filter Summary
+        const orderStatus = urlParams.get("orderStatus");
+        const orderKeyword = urlParams.get("orderKeyword");
+        const month = urlParams.get("month");
+        const orderFilterSummary =
+          document.getElementById("orderFilterSummary");
+        const orderFilterTags = document.getElementById("orderFilterTags");
+        const orderFilterSection = document.querySelector(
+          "#orders .filter-section"
+        );
+
+        let orderTags = [];
+        if (orderStatus) {
+          const statusText =
+            document.querySelector(
+              `#orders select[name="orderStatus"] option[value="${orderStatus}"]`
+            )?.textContent || orderStatus;
+          orderTags.push(
+            `<span class="filter-tag">Trạng thái: ${statusText}</span>`
+          );
+        }
+        if (orderKeyword) {
+          orderTags.push(
+            `<span class="filter-tag">Tìm kiếm: ${orderKeyword}</span>`
+          );
+        }
+        if (month) {
+          const monthText = new Date(month + "-01").toLocaleDateString(
+            "vi-VN",
+            { year: "numeric", month: "long" }
+          );
+          orderTags.push(`<span class="filter-tag">Tháng: ${monthText}</span>`);
+        }
+
+        if (orderTags.length > 0) {
+          orderFilterTags.innerHTML = orderTags.join("");
+          orderFilterSummary.style.display = "block";
+          orderFilterSection.classList.add("filter-active");
+        } else {
+          orderFilterSummary.style.display = "none";
+          orderFilterSection.classList.remove("filter-active");
+        }
+      }
+
+      // Gọi hàm cập nhật khi trang load
+      document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(() => {
+          updateFilterResults();
+          updateFilterSummary();
+        }, 200);
+      });
+    </script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         // Kiểm tra nếu cần chuyển sang tab đơn hàng sau reload
-        if (localStorage.getItem('switchToOrdersTab') === 'true') {
-          localStorage.removeItem('switchToOrdersTab');
+        if (localStorage.getItem("switchToOrdersTab") === "true") {
+          localStorage.removeItem("switchToOrdersTab");
           setTimeout(() => {
-            document.getElementById('orders-tab').click();
+            document.getElementById("orders-tab").click();
           }, 500);
         }
-        
+
         const modal = document.getElementById("createOrderModal");
         const form = document.getElementById("createOrderForm");
-        
+
         // Biến để tránh multiple event handling
         let isModalLoading = false;
 
@@ -781,7 +1443,7 @@
             .then((res) => res.json())
             .then((data) => {
               console.log("Dữ liệu nhận được:", data);
-              
+
               // Hiển thị nút dựa trên trạng thái
               if (data.status === "PENDING") {
                 // Chưa liên hệ: hiển thị Liên hệ + Xác nhận + Hủy
@@ -798,28 +1460,37 @@
 
                 // Load dữ liệu bản nháp - LUÔN LUÔN load nếu có
                 console.log("Loading draft data:", data);
-                
+
                 // Load dữ liệu ngay lập tức
-                if (data.quotedPrice !== undefined && data.quotedPrice !== null) {
-                  form.querySelector("input[name='quotedPrice']").value = data.quotedPrice;
+                if (
+                  data.quotedPrice !== undefined &&
+                  data.quotedPrice !== null
+                ) {
+                  form.querySelector("input[name='quotedPrice']").value =
+                    data.quotedPrice;
                 }
                 if (data.addressDetail) {
-                  form.querySelector("input[name='addressDetail']").value = data.addressDetail;
+                  form.querySelector("input[name='addressDetail']").value =
+                    data.addressDetail;
                 }
                 if (data.executionTime) {
-                  form.querySelector("input[name='executionTime']").value = data.executionTime;
+                  form.querySelector("input[name='executionTime']").value =
+                    data.executionTime;
                 }
                 if (data.description) {
-                  form.querySelector("textarea[name='description']").value = data.description;
+                  form.querySelector("textarea[name='description']").value =
+                    data.description;
                 }
-                
+
                 // Load district sau khi district select đã sẵn sàng
                 if (data.district) {
                   let retryCount = 0;
                   const maxRetries = 20; // Tối đa 2 giây
-                  
+
                   const loadDistrict = () => {
-                    const districtSelect = form.querySelector("select[name='district']");
+                    const districtSelect = form.querySelector(
+                      "select[name='district']"
+                    );
                     if (districtSelect && districtSelect.options.length > 1) {
                       districtSelect.value = data.district;
                       console.log("District loaded:", data.district);
@@ -827,10 +1498,14 @@
                       retryCount++;
                       setTimeout(loadDistrict, 100);
                     } else {
-                      console.warn("Could not load district after", maxRetries, "retries");
+                      console.warn(
+                        "Could not load district after",
+                        maxRetries,
+                        "retries"
+                      );
                     }
                   };
-                  
+
                   // Delay initial load để tránh conflict
                   setTimeout(loadDistrict, 200);
                 }
@@ -855,7 +1530,7 @@
               isModalLoading = false;
             });
         });
-        
+
         // Reset loading state khi modal đóng
         modal.addEventListener("hidden.bs.modal", function () {
           isModalLoading = false;
@@ -864,47 +1539,74 @@
         // Hàm cập nhật UI sau khi thực hiện action
         const updateUIAfterAction = (requestId, actionType) => {
           // Tìm button tương ứng với requestId
-          const button = document.querySelector(`[data-request-id="${requestId}"]`);
+          const button = document.querySelector(
+            `[data-request-id="${requestId}"]`
+          );
           if (!button) return;
-          
+
           // Tìm row chứa button này
-          const row = button.closest('tr');
+          const row = button.closest("tr");
           if (!row) return;
-          
+
           // Tìm badge trạng thái trong row
-          const statusBadge = row.querySelector('.badge');
+          const statusBadge = row.querySelector(".badge");
           if (!statusBadge) return;
-          
+
+          // Tìm cell chứa nút thao tác
+          const actionCell = button.closest("td");
+          if (!actionCell) return;
+
           // Cập nhật trạng thái dựa trên action
-          if (actionType === 'contact' || actionType === 'update') {
+          if (actionType === "contact" || actionType === "update") {
             // Cập nhật thành CONTACTED
-            statusBadge.className = 'badge bg-primary';
-            statusBadge.textContent = 'Đã liên hệ';
-            button.setAttribute('data-status', 'CONTACTED');
-          } else if (actionType === 'confirm') {
-            // Cập nhật thành CONFIRMED - Ẩn row khỏi tab "Danh sách yêu cầu"
-            statusBadge.className = 'badge bg-success';
-            statusBadge.textContent = 'Đã xác nhận';
-            button.setAttribute('data-status', 'CONFIRMED');
-            
-            // Ẩn row này khỏi tab hiện tại vì đã chuyển thành đơn hàng
-            row.style.display = 'none';
-            
+            statusBadge.className = "badge bg-primary";
+            statusBadge.textContent = "Đã liên hệ";
+            button.setAttribute("data-status", "CONTACTED");
+          } else if (actionType === "confirm") {
+            // Cập nhật thành CONFIRMED
+            statusBadge.className = "badge bg-success";
+            statusBadge.textContent = "Đã xác nhận";
+
+            // Thay thế nút tạo đơn bằng nút khóa (vô hiệu hóa)
+            actionCell.innerHTML = `
+              <button
+                class="btn btn-secondary btn-action"
+                disabled
+                title="Đã chốt đơn - không thể thao tác"
+              >
+                <i class="bi bi-lock"></i>
+              </button>
+            `;
+
             // Hiển thị thông báo và gợi ý chuyển tab
             setTimeout(() => {
-              if (confirm('Đơn hàng đã được tạo thành công! Bạn có muốn chuyển sang tab "Đơn hàng dịch vụ" để xem không?')) {
-                // Lưu trạng thái tab để chuyển sau khi reload
-                localStorage.setItem('switchToOrdersTab', 'true');
-                // Reload trang để cập nhật dữ liệu mới nhất
+              if (
+                confirm(
+                  'Đơn hàng đã được tạo thành công! Bạn có muốn chuyển sang tab "Đơn hàng dịch vụ" để xem không?'
+                )
+              ) {
+                localStorage.setItem("switchToOrdersTab", "true");
                 window.location.reload();
               }
             }, 500);
-          } else if (actionType === 'cancel') {
+          } else if (actionType === "cancel") {
             // Cập nhật thành CANCELLED
-            statusBadge.className = 'badge bg-secondary';
-            statusBadge.textContent = 'Đã hủy';
-            button.setAttribute('data-status', 'CANCELLED');
-            button.disabled = true;
+            statusBadge.className = "badge bg-secondary";
+            statusBadge.textContent = "Đã hủy";
+
+            // Lấy thông tin dịch vụ từ button hiện tại
+            const serviceName = button.getAttribute("data-service-name");
+
+            // Tạo nút khôi phục mới
+            const restoreButton = document.createElement("button");
+            restoreButton.className = "btn btn-warning btn-action btn-restore";
+            restoreButton.setAttribute("data-request-id", requestId);
+            restoreButton.setAttribute("data-service-name", serviceName);
+            restoreButton.setAttribute("title", "Khôi phục yêu cầu");
+            restoreButton.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
+
+            // Thay thế nút tạo đơn bằng nút khôi phục
+            button.parentNode.replaceChild(restoreButton, button);
           }
         };
 
@@ -953,25 +1655,24 @@
             .then((res) => res.json())
             .then((data) => {
               console.log("Response data:", data);
-              
+
               if (data.success) {
                 // Đóng modal trước khi cập nhật UI
                 const bsModal = bootstrap.Modal.getInstance(modal);
                 if (bsModal) {
                   bsModal.hide();
                 }
-                
+
                 // Đợi modal đóng hoàn toàn rồi mới cập nhật UI
                 setTimeout(() => {
                   // Cập nhật trạng thái trên giao diện
                   updateUIAfterAction(id, type);
-                  
+
                   // Hiển thị thông báo sau khi UI đã cập nhật
-                  if (type !== 'confirm') {
+                  if (type !== "confirm") {
                     alert(data.success);
                   }
                 }, 150);
-                
               } else if (data.error) {
                 alert("Lỗi: " + data.error);
               }
@@ -1000,41 +1701,63 @@
             requestAction("cancel");
           }
         });
-      });
-    </script>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const districtSelect = document.getElementById("districtSelect");
+        // Xử lý nút khôi phục yêu cầu đã hủy
+        document.addEventListener("click", function (event) {
+          if (event.target.closest(".btn-restore")) {
+            const button = event.target.closest(".btn-restore");
+            const requestId = button.getAttribute("data-request-id");
+            const serviceName = button.getAttribute("data-service-name");
 
-        // Lấy danh sách phường/xã trực thuộc TP. Đà Nẵng (mã tỉnh: 48), depth=3
-        fetch("https://provinces.open-api.vn/api/p/48?depth=3")
-          .then((response) => response.json())
-          .then((data) => {
-            const allWards = [];
+            if (confirm("Bạn có chắc muốn khôi phục yêu cầu này không?")) {
+              fetch(`/admin/service-requests/${requestId}/restore`, {
+                method: "POST",
+              })
+                .then((res) => res.json())
+                .then((data) => {
+                  if (data.success) {
+                    alert(data.success);
 
-            data.districts.forEach((district) => {
-              district.wards.forEach((ward) => {
-                allWards.push({
-                  name: ward.name,
-                  parentDistrict: district.name,
+                    // Cập nhật UI: thay đổi trạng thái dựa trên response
+                    const row = button.closest("tr");
+                    const statusBadge = row.querySelector(".badge");
+                    
+                    // Xác định trạng thái dựa trên message response
+                    if (data.success.includes("đã liên hệ")) {
+                      statusBadge.className = "badge bg-primary";
+                      statusBadge.textContent = "Đã liên hệ";
+                    } else {
+                      statusBadge.className = "badge bg-warning text-dark";
+                      statusBadge.textContent = "Đang chờ";
+                    }
+
+                    // Tạo nút mới thay thế nút khôi phục
+                    const newButton = document.createElement("button");
+                    newButton.className = "btn btn-success btn-action";
+                    newButton.setAttribute("data-bs-toggle", "modal");
+                    newButton.setAttribute(
+                      "data-bs-target",
+                      "#createOrderModal"
+                    );
+                    newButton.setAttribute("data-request-id", requestId);
+                    newButton.setAttribute("data-service-name", serviceName);
+                    newButton.setAttribute("data-status", data.success.includes("đã liên hệ") ? "CONTACTED" : "PENDING");
+                    newButton.setAttribute("title", "Tạo đơn hàng");
+                    newButton.innerHTML = '<i class="bi bi-pencil"></i>';
+
+                    // Thay thế nút khôi phục bằng nút tạo đơn
+                    button.parentNode.replaceChild(newButton, button);
+                  } else if (data.error) {
+                    alert("Lỗi: " + data.error);
+                  }
+                })
+                .catch((err) => {
+                  console.error("Lỗi:", err);
+                  alert("Có lỗi xảy ra khi khôi phục yêu cầu.");
                 });
-              });
-            });
-
-            // Sắp xếp tên tăng dần
-            allWards.sort((a, b) => a.name.localeCompare(b.name));
-
-            allWards.forEach((ward) => {
-              const option = document.createElement("option");
-              option.value = ward.name;
-              option.textContent = `${ward.name} (${ward.parentDistrict})`;
-              districtSelect.appendChild(option);
-            });
-          })
-          .catch((error) => {
-            console.error("Không thể tải danh sách địa điểm:", error);
-          });
+            }
+          }
+        });
       });
     </script>
 
@@ -1043,7 +1766,7 @@
 
       function loadOrderDetail(orderId) {
         currentOrderId = orderId;
-        
+
         // Reset form
         $("#modal-id").val("");
         $("#modal-name").val("");
@@ -1079,7 +1802,10 @@
             } else if (data.status === "Đã thanh toán") {
               $("#btn-confirm").show();
               $("#btn-cancel").hide();
-            } else if (data.status === "Đã hoàn tất" || data.status === "Đã hủy") {
+            } else if (
+              data.status === "Đã hoàn tất" ||
+              data.status === "Đã hủy"
+            ) {
               $("#btn-confirm").hide();
               $("#btn-cancel").hide();
             } else {
@@ -1090,27 +1816,27 @@
           error: function (xhr, status, error) {
             console.error("Lỗi:", error);
             alert("Không thể tải dữ liệu đơn hàng.");
-          }
+          },
         });
       }
 
       function updateOrderStatus(orderId, newStatus) {
         // Cập nhật trạng thái trong bảng
-        const row = $(`button[data-id="${orderId}"]`).closest('tr');
-        const statusBadge = row.find('.badge');
-        
+        const row = $(`button[data-id="${orderId}"]`).closest("tr");
+        const statusBadge = row.find(".badge");
+
         // Cập nhật class và text - dùng màu xám cho đã hủy
-        statusBadge.removeClass().addClass('badge');
-        if (newStatus === 'CANCELLED') {
-          statusBadge.addClass('bg-secondary').text('Đã hủy');
-        } else if (newStatus === 'DONE') {
-          statusBadge.addClass('bg-success').text('Đã hoàn tất');
+        statusBadge.removeClass().addClass("badge");
+        if (newStatus === "CANCELLED") {
+          statusBadge.addClass("bg-secondary").text("Đã hủy");
+        } else if (newStatus === "DONE") {
+          statusBadge.addClass("bg-success").text("Đã hoàn tất");
         }
       }
 
       $(document).ready(function () {
         // Xử lý khi modal được mở
-        $('#orderDetailsModal').on('show.bs.modal', function (event) {
+        $("#orderDetailsModal").on("show.bs.modal", function (event) {
           const button = $(event.relatedTarget);
           const orderId = button.data("id");
           loadOrderDetail(orderId);
@@ -1119,29 +1845,31 @@
         // Xử lý nút hoàn thành
         $(document).on("click", "#btn-confirm", function () {
           if (!currentOrderId) return;
-          
+
           $.post(`/admin/service-requests/order/${currentOrderId}/complete`)
             .done(function () {
               alert("Đã xác nhận hoàn thành đơn.");
-              updateOrderStatus(currentOrderId, 'DONE');
-              $('#orderDetailsModal').modal('hide');
+              updateOrderStatus(currentOrderId, "DONE");
+              $("#orderDetailsModal").modal("hide");
             })
             .fail(function (xhr, status, error) {
               console.error("Lỗi:", error);
-              alert("Lỗi khi xác nhận hoàn thành: " + (xhr.responseText || error));
+              alert(
+                "Lỗi khi xác nhận hoàn thành: " + (xhr.responseText || error)
+              );
             });
         });
 
         // Xử lý nút hủy
         $(document).on("click", "#btn-cancel", function () {
           if (!currentOrderId) return;
-          
+
           if (confirm("Bạn có chắc muốn hủy đơn hàng này không?")) {
             $.post(`/admin/service-requests/order/${currentOrderId}/cancel`)
               .done(function () {
                 alert("Đã hủy đơn thành công.");
-                updateOrderStatus(currentOrderId, 'CANCELLED');
-                $('#orderDetailsModal').modal('hide');
+                updateOrderStatus(currentOrderId, "CANCELLED");
+                $("#orderDetailsModal").modal("hide");
               })
               .fail(function (xhr, status, error) {
                 console.error("Lỗi:", error);

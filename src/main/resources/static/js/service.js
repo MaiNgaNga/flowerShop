@@ -25,18 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // Xử lý nút submit loading
-  const form = document.getElementById("contact-form");
-  if (form) {
-    const submitBtn = form.querySelector(".btn-submit");
-    form.addEventListener("submit", function () {
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        Đang gửi...
-      `;
-    });
-  }
+  // Form submission được xử lý trong HTML inline script
 
   // Tự động ẩn alert sau 5 giây
   const alert = document.getElementById("successAlert");
