@@ -31,6 +31,8 @@ import java.util.Map;
 import java.util.HashMap;
 import com.datn.utils.AuthService;
 import com.datn.model.User;
+import java.io.File;
+import java.util.Date;
 
 @Controller
 @RequestMapping("/pos")
@@ -57,6 +59,12 @@ public class PosController {
     @Autowired
     private com.datn.Service.CartItemService cartItemService;
 
+    /**
+     * Trang POS chính: hiển thị danh sách sản phẩm, bộ lọc, giỏ hàng, phân trang.
+     * - Endpoint: GET /pos
+     * - Nhận các tham số filter, phân trang qua query string.
+     * - Trả về view layouts/layout với dữ liệu sản phẩm, bộ lọc, giỏ hàng.
+     */
     @GetMapping("")
     public String showPosPage(
             Model model,
@@ -73,26 +81,24 @@ public class PosController {
         Pageable pageable = PageRequest.of(page, pageSize);
         double min = (minPrice != null) ? minPrice : 0;
         double max = (maxPrice != null) ? maxPrice : Double.MAX_VALUE;
-
         String searchKeyword = (keyword != null && !keyword.trim().isEmpty()) ? keyword.trim() : null;
-
         Page<Product> productPage = posService.filterProducts(color, type, category, searchKeyword, min, max, pageable);
-
         int cartCount = 0;
         User user = authService.getUser();
         if (user != null) {
-            Integer userId = user.getId(); // Sửa lại nếu getter id khác
+            Integer userId = user.getId();
             cartCount = cartItemService.getCartItemsByUserId(userId).size();
         }
         model.addAttribute("cartCount", cartCount);
-
-        // Hiển thị toast thành công nếu có param success
         if (success != null && success.equals("payment_completed")) {
             model.addAttribute("successMessage", "Thanh toán thành công!");
         }
-        // Hiển thị toast lỗi nếu có param error
+
         if (error != null && error.equals("empty_cart")) {
             model.addAttribute("errorMessage", "Giỏ hàng trống! Vui lòng chọn sản phẩm trước khi thanh toán.");
+        }
+        if ("qr_generation_failed".equals(error)) {
+            model.addAttribute("errorMessage", "Không thể tạo mã QR thanh toán. Vui lòng thử lại hoặc liên hệ hỗ trợ.");
         }
 
         model.addAttribute("productCategories", productCategoryService.findAll());
@@ -112,6 +118,13 @@ public class PosController {
     }
 
     @SuppressWarnings("unchecked")
+    /**
+     * API thêm sản phẩm vào giỏ hàng POS (lưu trên session).
+     * - Endpoint: POST /pos/cart/add
+     * - Tham số: productId (Long)
+     * - Trả về: danh sách sản phẩm trong giỏ (List<CartItemDTO>)
+     * - Nếu sản phẩm đã có trong giỏ thì tăng số lượng, chưa có thì thêm mới.
+     */
     @PostMapping("/cart/add")
     @ResponseBody
     public List<CartItemDTO> addToCart(@RequestParam Long productId, HttpSession session) {
@@ -148,6 +161,11 @@ public class PosController {
     }
 
     @SuppressWarnings("unchecked")
+    /**
+     * API lấy danh sách sản phẩm trong giỏ hàng POS (session).
+     * - Endpoint: GET /pos/cart
+     * - Trả về: danh sách sản phẩm trong giỏ (List<CartItemDTO>)
+     */
     @GetMapping("/cart")
     @ResponseBody
     public List<CartItemDTO> getCart(HttpSession session) {
@@ -158,6 +176,14 @@ public class PosController {
     }
 
     @SuppressWarnings("unchecked")
+    /**
+     * API xử lý thanh toán đơn hàng POS.
+     * - Endpoint: POST /pos/checkout
+     * - Tham số: paymentMethod (String: cash, qr_code, card)
+     * - Lấy giỏ hàng từ session, tạo đơn hàng, sinh mã QR nếu cần.
+     * - Trả về: redirect tới trang POS hoặc trang QR code thanh toán.
+     * - Nếu giỏ hàng rỗng hoặc chưa đăng nhập sẽ redirect về trang phù hợp.
+     */
     @PostMapping("/checkout")
     public String checkout(
             @RequestParam String paymentMethod,
@@ -172,14 +198,14 @@ public class PosController {
             }
 
             Order order = new Order();
-            com.datn.model.User user = (com.datn.model.User) session.getAttribute("user");
+            User user = (User) session.getAttribute("user");
 
             if (user == null) {
                 return "redirect:/login";
             }
 
             order.setUser(user);
-            order.setCreateDate(new java.util.Date());
+            order.setCreateDate(new Date());
             order.setStatus("Chờ thanh toán");
             order.setOrderType("offline");
 
@@ -207,49 +233,26 @@ public class PosController {
             savedOrder = orderDAO.save(savedOrder);
             // Xử lý theo phương thức thanh toán
             if ("qr_code".equalsIgnoreCase(paymentMethod) || "card".equalsIgnoreCase(paymentMethod)) {
-
                 String qrCodePath = null;
-
                 try {
                     if ("card".equalsIgnoreCase(paymentMethod)) {
-                        // Sinh QR cho thanh toán thẻ (VietQR)
                         qrCodePath = qrCodeService.generatePaymentQRCode(orderCode, total, "1234567890");
                     } else if ("qr_code".equalsIgnoreCase(paymentMethod)) {
-                        // Sinh QR cho chuyển khoản ngân hàng
                         String bankAccount = "19039778212018";
                         String bankCode = "TCB";
                         String accountName = "BUI ANH THIEN";
-                        // Đảm bảo thư mục lưu QR tồn tại
                         java.io.File qrDir = new java.io.File("target/classes/static/images/qr/");
                         if (!qrDir.exists())
                             qrDir.mkdirs();
                         qrCodePath = qrCodeService.generateBankTransferQR(orderCode, total, bankAccount, bankCode,
                                 accountName);
-                        if (qrCodePath == null) {
-                            System.err.println(
-                                    "LỖI: Không thể sinh mã QR chuyển khoản. Kiểm tra lại tham số hoặc kết nối mạng/API!");
-                        }
                     }
-
                     if (qrCodePath != null) {
-                        // DEBUG: Kiểm tra xem file QR có tồn tại không
-                        String fullPath = "src/main/resources/static" + qrCodePath;
-                        java.io.File qrFile = new java.io.File(fullPath);
-                        if (!qrFile.exists()) {
-                            System.err.println("LỖI: File QR không tồn tại tại " + fullPath);
-                        }
-                        model.addAttribute("qrCodePath", qrCodePath);
-                        model.addAttribute("orderCode", orderCode);
-                        model.addAttribute("totalAmount", total);
-                        model.addAttribute("paymentMethod", paymentMethod);
-                        // Truyền danh sách chi tiết đơn hàng sang view
-                        model.addAttribute("orderDetails", details);
-
                         session.setAttribute("pendingOrder", orderCode);
-                        session.removeAttribute("cart"); // Clear cart
-
-                        model.addAttribute("view", "pos-payment-qr");
-                        return "layouts/qr-layout"; // Sử dụng layout riêng cho QR payment
+                        session.removeAttribute("cart");
+                        // Lưu đường dẫn QR vào session để GET dùng lại
+                        session.setAttribute("qrCodePath", qrCodePath);
+                        return "redirect:/pos/payment-qr?orderCode=" + orderCode;
                     } else {
                         return "redirect:/pos?error=qr_generation_failed";
                     }
@@ -274,13 +277,76 @@ public class PosController {
         }
     }
 
+    /**
+     * Trang hiển thị QR code thanh toán (GET, an toàn reload, không lặp đơn hàng)
+     * - Endpoint: GET /pos/payment-qr?orderCode=...
+     * - Nếu đơn hàng không còn hoặc đã bị xóa, thông báo và chuyển về POS
+     */
+    @GetMapping("/payment-qr")
+    public String showPaymentQR(@RequestParam String orderCode, Model model, HttpSession session) {
+        Optional<Order> orderOpt = orderDAO.findByOrderCode(orderCode);
+        if (orderOpt.isEmpty()) {
+            model.addAttribute("errorMessage", "Đơn hàng đã bị xóa hoặc không tồn tại. Vui lòng tạo lại đơn mới!");
+            return "redirect:/pos";
+        }
+        Order order = orderOpt.get();
+        // Nếu trạng thái không phải 'Chờ thanh toán', không cho xem QR nữa
+        if (!"Chờ thanh toán".equals(order.getStatus())) {
+            model.addAttribute("errorMessage", "Đơn hàng đã được xử lý hoặc không còn hiệu lực. Vui lòng tạo đơn mới!");
+            return "redirect:/pos";
+        }
+        // Lấy lại đường dẫn QR từ session hoặc DB
+        String qrCodePath = (String) session.getAttribute("qrCodePath");
+        if (qrCodePath == null) {
+            model.addAttribute("errorMessage", "Không tìm thấy mã QR cho đơn hàng này. Vui lòng tạo lại đơn mới!");
+            return "redirect:/pos";
+        }
+        model.addAttribute("qrCodePath", qrCodePath);
+        model.addAttribute("orderCode", orderCode);
+        model.addAttribute("totalAmount", order.getTotalAmount());
+        model.addAttribute("paymentMethod", order.getOrderType());
+        model.addAttribute("orderDetails", order.getOrderDetails());
+        model.addAttribute("view", "pos-payment-qr");
+        return "layouts/qr-layout";
+    }
+
+    /**
+     * API huỷ đơn hàng chờ thanh toán POS.
+     * - Endpoint: POST /pos/cancel-order
+     * - Tham số: orderCode (String)
+     * - Nếu đơn hàng ở trạng thái "Chờ thanh toán" thì xoá khỏi database.
+     * - Sau đó redirect về trang POS.
+     */
+    @PostMapping("/cancel-order")
+    public String cancelOrder(@RequestParam String orderCode, HttpSession session) {
+        Optional<Order> orderOpt = orderDAO.findByOrderCode(orderCode);
+        if (orderOpt.isPresent()) {
+            Order order = orderOpt.get();
+            if ("Chờ thanh toán".equals(order.getStatus())) {
+                orderDAO.delete(order);
+            }
+        }
+        session.removeAttribute("pendingOrder");
+        return "redirect:/pos";
+    }
+
+    /**
+     * Chặn truy cập GET vào /pos/checkout, luôn redirect về trang POS.
+     * - Endpoint: GET /pos/checkout
+     * - Trả về: redirect với thông báo lỗi.
+     */
     @GetMapping("/checkout")
     public String checkoutGet() {
-        // Redirect GET requests to the main POS page
         return "redirect:/pos?error=invalid_request";
     }
 
     @SuppressWarnings("unchecked")
+    /**
+     * API xóa sản phẩm khỏi giỏ hàng POS (giảm số lượng hoặc xóa hẳn nếu còn 1).
+     * - Endpoint: POST /pos/cart/remove
+     * - Tham số: productId (Long)
+     * - Trả về: danh sách sản phẩm còn lại trong giỏ (List<CartItemDTO>)
+     */
     @PostMapping("/cart/remove")
     @ResponseBody
     public List<CartItemDTO> removeFromCart(@RequestParam Long productId, HttpSession session) {
@@ -302,47 +368,42 @@ public class PosController {
         return cart;
     }
 
-    // API endpoint để check payment status
-    // @PostMapping("/check-payment-status")
-    // @ResponseBody
-    // public Map<String, Object> checkPaymentStatus(@RequestBody Map<String,
-    // String> requestBody) {
-    // Map<String, Object> response = new HashMap<>();
-    // try {
-    // String orderCode = requestBody.get("orderCode");
-    // System.out.println("Checking payment status for orderCode: " + orderCode);
-
-    // if (orderCode == null || orderCode.isEmpty()) {
-    // response.put("success", false);
-    // response.put("status", "missing_order_code");
-    // response.put("message", "Order code is required");
-    // return response;
-    // }
-
-    // // Kiểm tra trạng thái thanh toán trong database
-    // Optional<Order> orderOpt = orderDAO.findByOrderCode(orderCode);
-    // if (orderOpt.isPresent()) {
-    // Order order = orderOpt.get();
-    // response.put("success", true);
-    // response.put("status", order.getStatus()); // "pending", "paid", "failed"
-    // response.put("message", "Payment status retrieved successfully");
-    // System.out.println("Order found. Status: " + order.getStatus());
-    // } else {
-    // response.put("success", false);
-    // response.put("status", "not_found");
-    // response.put("message", "Order not found");
-    // System.out.println("Order not found for orderCode: " + orderCode);
-    // }
-    // } catch (Exception e) {
-    // System.out.println("Error checking payment status: " + e.getMessage());
-    // response.put("success", false);
-    // response.put("status", "error");
-    // response.put("message", "Error checking payment status");
-    // }
-    // return response;
-    // }
-
     @PostMapping("/manual-confirm-payment")
+    /**
+     * API xác nhận thanh toán thủ công cho đơn hàng POS.
+     * <p>
+     * - Endpoint: POST /pos/manual-confirm-payment
+     * - Nhận vào JSON body với key "orderCode" (mã đơn hàng cần xác nhận thanh
+     * toán)
+     * - Trả về JSON thông báo thành công/thất bại và thông điệp tiếng Việt
+     * <p>
+     * Luồng xử lý:
+     * 1. Lấy mã đơn hàng từ request body.
+     * 2. Nếu không có mã đơn hàng, trả về lỗi yêu cầu nhập mã.
+     * 3. Tìm đơn hàng theo mã. Nếu tìm thấy:
+     * - Đổi trạng thái đơn hàng thành "Đã thanh toán" và lưu lại.
+     * - Trả về thành công và thông báo xác nhận.
+     * Nếu không tìm thấy:
+     * - Trả về lỗi không tìm thấy đơn hàng.
+     * 4. Nếu có lỗi hệ thống, trả về thông báo lỗi chi tiết.
+     *
+     * Ví dụ request:
+     * {
+     * "orderCode": "POS12345"
+     * }
+     *
+     * Ví dụ response thành công:
+     * {
+     * "success": true,
+     * "message": "Đã xác nhận thanh toán cho đơn hàng"
+     * }
+     *
+     * Ví dụ response lỗi:
+     * {
+     * "success": false,
+     * "message": "Không tìm thấy đơn hàng"
+     * }
+     */
     @ResponseBody
     public Map<String, Object> manualConfirmPayment(@RequestBody Map<String, String> requestBody) {
         Map<String, Object> response = new HashMap<>();
@@ -350,7 +411,7 @@ public class PosController {
             String orderCode = requestBody.get("orderCode");
             if (orderCode == null || orderCode.isEmpty()) {
                 response.put("success", false);
-                response.put("message", "Order code is required");
+                response.put("message", "Vui lòng nhập mã đơn hàng");
                 return response;
             }
             Optional<Order> orderOpt = orderDAO.findByOrderCode(orderCode);
@@ -359,14 +420,14 @@ public class PosController {
                 order.setStatus("Đã thanh toán");
                 orderDAO.save(order);
                 response.put("success", true);
-                response.put("message", "Order marked as paid");
+                response.put("message", "Đã xác nhận thanh toán cho đơn hàng");
             } else {
                 response.put("success", false);
-                response.put("message", "Order not found");
+                response.put("message", "Không tìm thấy đơn hàng");
             }
         } catch (Exception e) {
             response.put("success", false);
-            response.put("message", "Error: " + e.getMessage());
+            response.put("message", "Lỗi: " + e.getMessage());
         }
         return response;
     }

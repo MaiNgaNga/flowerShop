@@ -31,7 +31,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(User entity) {
+        
+        if(dao.existsByEmail(entity.getEmail())){
 
+            throw new IllegalArgumentException("Email này đã tồn tại!");
+        }
+        if(dao.existsBySdt(entity.getSdt())){
+
+            throw new IllegalArgumentException("Số điện thoại này đã tồn tại!");
+        }
         System.out.println("Mật khẩu sau khi mã hóa: " + entity.getPassword());
 
         return dao.save(entity);

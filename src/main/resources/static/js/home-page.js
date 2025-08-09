@@ -1,4 +1,13 @@
 document.addEventListener("DOMContentLoaded", function () {
+  // Hàm cập nhật số lượng giỏ hàng trên header (dùng chung với header.html)
+  function updateCartCount() {
+    fetch("/cart/count")
+      .then((response) => response.json())
+      .then((count) => {
+        const cartCountSpan = document.getElementById("cart-count");
+        if (cartCountSpan) cartCountSpan.textContent = count;
+      });
+  }
   AOS.init({ duration: 1000, once: true });
 
   const particleContainer = document.getElementById("flower-particles");
@@ -82,6 +91,44 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  // Gắn sự kiện cho form thêm giỏ hàng ở lần load đầu (render Thymeleaf), chỉ gắn 1 lần cho cả best-seller và phụ kiện
+  const cartFormsInit = document.querySelectorAll(
+    '#best-seller-grid form[action="/cart/add"], .accessory-section .product-grid form[action="/cart/add"]'
+  );
+  cartFormsInit.forEach((form) => {
+    if (!form.dataset.listener) {
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const formData = new FormData(form);
+        try {
+          const response = await fetch("/cart/add", {
+            method: "POST",
+            body: formData,
+          });
+          if (response.ok) {
+            updateCartCount(); // Cập nhật số lượng trên icon header
+            const modal = new bootstrap.Modal(
+              document.getElementById("cartSuccessModal")
+            );
+            modal.show();
+            document.getElementById("continueShoppingBtn").onclick =
+              function () {
+                modal.hide();
+              };
+            document.getElementById("viewCartBtn").onclick = function () {
+              window.location.href = "/cart";
+            };
+          } else {
+            alert("Có lỗi khi thêm vào giỏ hàng!");
+          }
+        } catch (err) {
+          alert("Có lỗi khi thêm vào giỏ hàng!");
+        }
+      });
+      form.dataset.listener = "true";
+    }
+  });
+
   function updateProductGrid(products) {
     if (!productGrid) return;
 
@@ -91,7 +138,81 @@ document.addEventListener("DOMContentLoaded", function () {
       const productCard = createProductCard(product, index);
       productGrid.appendChild(productCard);
     });
+
+    // Gắn lại sự kiện cho form thêm giỏ hàng (sau khi render lại), chỉ gắn 1 lần
+    const cartForms = productGrid.querySelectorAll('form[action="/cart/add"]');
+    cartForms.forEach((form) => {
+      if (!form.dataset.listener) {
+        form.addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const formData = new FormData(form);
+          try {
+            const response = await fetch("/cart/add", {
+              method: "POST",
+              body: formData,
+            });
+            if (response.ok) {
+              const modal = new bootstrap.Modal(
+                document.getElementById("cartSuccessModal")
+              );
+              modal.show();
+              document.getElementById("continueShoppingBtn").onclick =
+                function () {
+                  modal.hide();
+                };
+              document.getElementById("viewCartBtn").onclick = function () {
+                window.location.href = "/cart";
+              };
+            } else {
+              alert("Có lỗi khi thêm vào giỏ hàng!");
+            }
+          } catch (err) {
+            alert("Có lỗi khi thêm vào giỏ hàng!");
+          }
+        });
+        form.dataset.listener = "true";
+      }
+    });
   }
+
+  // Gắn sự kiện cho form thêm giỏ hàng ở lần load đầu (render Thymeleaf), chỉ gắn 1 lần
+  document.addEventListener("DOMContentLoaded", function () {
+    const cartFormsInit = document.querySelectorAll(
+      '#best-seller-grid form[action="/cart/add"]'
+    );
+    cartFormsInit.forEach((form) => {
+      if (!form.dataset.listener) {
+        form.addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const formData = new FormData(form);
+          try {
+            const response = await fetch("/cart/add", {
+              method: "POST",
+              body: formData,
+            });
+            if (response.ok) {
+              const modal = new bootstrap.Modal(
+                document.getElementById("cartSuccessModal")
+              );
+              modal.show();
+              document.getElementById("continueShoppingBtn").onclick =
+                function () {
+                  modal.hide();
+                };
+              document.getElementById("viewCartBtn").onclick = function () {
+                window.location.href = "/cart";
+              };
+            } else {
+              alert("Có lỗi khi thêm vào giỏ hàng!");
+            }
+          } catch (err) {
+            alert("Có lỗi khi thêm vào giỏ hàng!");
+          }
+        });
+        form.dataset.listener = "true";
+      }
+    });
+  });
 
   function createProductCard(product, index) {
     const productCard = document.createElement("div");
@@ -102,6 +223,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const imageUrl =
       product.image_url && product.image_url !== ""
         ? `/images/${product.image_url}`
+        : "/images/logo.png";
+    const imageUrl2 =
+      product.image_url2 && product.image_url2 !== ""
+        ? `/images/${product.image_url2}`
         : "/images/logo.png";
 
     const priceHTML =
@@ -120,13 +245,13 @@ document.addEventListener("DOMContentLoaded", function () {
       imageBlock = `
         <a href="/detail?id=${product.id}" class="text-decoration-none">
           <img src="${imageUrl}" class="default-img" alt="${product.name}" onerror="this.src='/images/logo.png'"/>
-          <img src="${imageUrl}" class="hover-img" alt="${product.name}" onerror="this.src='/images/logo.png'"/>
+          <img src="${imageUrl2}" class="hover-img" alt="${product.name}" onerror="this.src='/images/logo.png'"/>
         </a>
       `;
     } else {
       imageBlock = `
         <img src="${imageUrl}" class="default-img" alt="${product.name}" onerror="this.src='/images/logo.png'"/>
-        <img src="${imageUrl}" class="hover-img" alt="${product.name}" onerror="this.src='/images/logo.png'"/>
+        <img src="${imageUrl2}" class="hover-img" alt="${product.name}" onerror="this.src='/images/logo.png'"/>
         <span style="color:red;">ID NULL</span>
       `;
     }
@@ -134,18 +259,19 @@ document.addEventListener("DOMContentLoaded", function () {
     productCard.innerHTML = `
       <div class="product-image">
         ${imageBlock}
-        <div class="cart-icon-wrapper">
-          <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
-          <div class="add-to-cart-text">Add To Cart</div>
-        </div>
+        <form action="/cart/add" method="post" style="display: inline">
+          <input type="hidden" name="productId" value="${product.id}" />
+          <input type="hidden" name="quantity" value="1" />
+          <button type="submit" class="cart-icon-wrapper" style="border: none; background: none; padding: 0">
+            <div class="cart-icon"><i class="fas fa-shopping-cart"></i></div>
+            <div class="add-to-cart-text">Add To Cart</div>
+          </button>
+        </form>
       </div>
       <div class="product-info">
         <div class="product-name">${product.name}</div>
         ${priceHTML}
-        <div class="product-size">Số lượng: ${product.quantity}</div>
-        <div class="product-size">${
-          product.color ? product.color.name : "N/A"
-        }</div>
+        
       </div>
     `;
 

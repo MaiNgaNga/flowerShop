@@ -27,27 +27,22 @@ public class ServiceOrder {
     private ServiceRequest request;
 
     // Giá đã báo
-    @Column(name = "quoted_price", nullable = false)
-    @NotNull(message = "Giá báo không được để trống")
+    @Column(name = "quoted_price")
     @DecimalMin(value = "0.0", inclusive = false, message = "Giá phải lớn hơn 0")
     private BigDecimal quotedPrice;
 
     // Quận/Huyện
     @Column(length = 100, columnDefinition = "NVARCHAR(100)")
-    @NotBlank(message = "Địa chỉ quận/huyện không được để trống")
     @Size(max = 100, message = "Tên quận/huyện tối đa 100 ký tự")
     private String district;
 
     // Địa chỉ chi tiết
     @Column(name = "address_detail", length = 255, columnDefinition = "NVARCHAR(255)")
-    @NotBlank(message = "Địa chỉ chi tiết không được để trống")
     @Size(max = 255, message = "Địa chỉ chi tiết tối đa 255 ký tự")
     private String addressDetail;
 
     // Ngày thực hiện (không cần giờ)
-    @Column(name = "execution_time", nullable = false)
-    @NotNull(message = "Ngày thực hiện không được để trống")
-    @Future(message = "Ngày thực hiện phải ở tương lai")
+    @Column(name = "execution_time")
     private LocalDate executionTime;
 
     // Mô tả
@@ -64,5 +59,8 @@ public class ServiceOrder {
     @Column(nullable = false, length = 20, columnDefinition = "NVARCHAR(20)")
     private ServiceOrderStatus status = ServiceOrderStatus.UNPAID;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
     // Có thể thêm paymentType hoặc user xác nhận nếu cần
 }

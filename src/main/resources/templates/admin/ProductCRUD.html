@@ -102,7 +102,9 @@
               type="number"
               id="quantity"
               th:field="*{quantity}"
+
               class="form-control form-control-sm readonly-quantity"
+
               step="1"
             />
             <i class="error" th:errors="*{quantity}"></i>
@@ -385,7 +387,7 @@
           <thead class="table-dark">
             <tr>
               <th>ID</th>
-              <th class="text-start">Tên sản phẩm</th>
+              <th>Tên sản phẩm</th>
               <th>Loại hoa</th>
               <th>Hình ảnh</th>
               <th>Số lượng</th>
@@ -402,7 +404,7 @@
             </tr>
             <tr th:each="item : ${products}">
               <td th:text="${item.id}"></td>
-              <td class="text-start" th:text="${item.name}"></td>
+              <td th:text="${item.name}"></td>
               <td th:text="${item.category.name}"></td>
               <td>
                 <img

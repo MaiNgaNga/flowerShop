@@ -1,4 +1,3 @@
-<!-- shipper/view/my-orders.html -->
 <div class="container" th:fragment="content">
   <h2 class="mb-4">Đơn hàng đang giao</h2>
   <table class="table table-hover">
@@ -45,21 +44,173 @@
                 <i class="bi bi-arrow-return-left"></i> Hoàn hàng
               </button>
             </form>
-            <form
-              th:action="@{'/shipper/orders/cancel/' + ${order.id}}"
-              method="post"
+            <!-- <button
+              type="button"
+              class="btn btn-danger btn-sm ms-1"
+              title="Giao hàng thất bại"
+              data-bs-toggle="modal"
+              data-bs-target="#failedDeliveryModal"
+              th:attr="data-order-id=${order.id}"
             >
-              <button
-                type="submit"
-                class="btn btn-danger btn-sm ms-1"
-                title="Hủy đơn"
-              >
-                <i class="bi bi-x-circle"></i> Hủy đơn
-              </button>
-            </form>
+              <i class="bi bi-x-circle"></i> Giao thất bại
+            </button> -->
+            <button
+              type="button"
+              class="btn btn-danger btn-sm ms-1"
+              title="Hủy đơn hàng"
+              data-bs-toggle="modal"
+              data-bs-target="#cancelOrderModal"
+              th:attr="data-order-id=${order.id}"
+            >
+              <i class="bi bi-x-circle"></i> Hủy đơn
+            </button>
           </div>
         </td>
       </tr>
     </tbody>
   </table>
+
+  <!-- Modal for Failed Delivery Reason -->
+  <div
+    class="modal fade"
+    id="failedDeliveryModal"
+    tabindex="-1"
+    aria-labelledby="failedDeliveryModalLabel"
+    aria-hidden="true"
+  >
+    <!-- <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="failedDeliveryModalLabel">Lý do giao hàng thất bại</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form id="failedDeliveryForm" method="post" th:action="@{/shipper/orders/failed}">
+            <input type="hidden" name="orderId" id="orderId" />
+            <div class="mb-3">
+              <label for="failureReason" class="form-label">Chọn lý do giao hàng thất bại</label>
+              <select
+                class="form-select" 
+                id="failureReason"
+                name="failureReason"
+                required
+              >
+                <option value="" disabled selected>Chọn lý do</option>
+                <option value="Khách hàng không có mặt">Khách hàng không có mặt</option>
+                <option value="Địa chỉ sai">Địa chỉ sai</option>
+                <option value="Khách hàng từ chối nhận hàng">Khách hàng từ chối nhận hàng</option>
+                <option value="Lỗi vận chuyển">Lỗi vận chuyển</option>
+                <option value="Khác">Khác</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="failureDetails" class="form-label">Chi tiết lý do</label>
+              <textarea
+                class="form-control"
+                id="failureDetails"
+                name="failureDetails"
+                rows="4"
+                required
+              ></textarea>
+            </div>
+            <button type="submit" class="btn btn-danger">Xác nhận giao thất bại</button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Đóng
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>     -->
+  </div>
+
+  <!-- Modal for Cancel Order -->
+  <div
+    class="modal fade"
+    id="cancelOrderModal"
+    tabindex="-1"
+    aria-labelledby="cancelOrderModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="cancelOrderModalLabel">Lý do hủy đơn hàng</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form id="cancelOrderForm" method="post" th:action="@{/shipper/orders/cancel}">
+            <input type="hidden" name="orderId" id="cancelOrderId" />
+            <div class="mb-3">
+              <label for="cancelReason" class="form-label">Chọn lý do hủy</label>
+              <select
+                class="form-select"
+                id="cancelReason"
+                name="cancelReason"
+                required
+              >
+                <option value="" disabled selected>Chọn lý do</option>
+                <option value="Khách hàng yêu cầu hủy">Khách hàng yêu cầu hủy</option>
+                <option value="Không liên lạc được với khách hàng">Không liên lạc được với khách hàng</option>
+                <option value="Lỗi hệ thống">Lỗi hệ thống</option>
+                <option value="Khác">Khác</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="cancelDetails" class="form-label">Chi tiết lý do</label>
+              <textarea
+                class="form-control"
+                id="cancelDetails"
+                name="cancelDetails"
+                rows="4"
+              ></textarea>
+            </div>
+            <button type="submit" class="btn btn-danger">Xác nhận hủy</button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Đóng
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // JavaScript cho modal giao hàng thất bại
+    const failedDeliveryModal = document.getElementById("failedDeliveryModal");
+    failedDeliveryModal.addEventListener("show.bs.modal", function (event) {
+      const button = event.relatedTarget;
+      const orderId = button.getAttribute("data-order-id");
+      const orderIdInput = failedDeliveryModal.querySelector("#orderId");
+      orderIdInput.value = orderId;
+    });
+
+    // JavaScript cho modal hủy đơn hàng
+    const cancelOrderModal = document.getElementById("cancelOrderModal");
+    cancelOrderModal.addEventListener("show.bs.modal", function (event) {
+      const button = event.relatedTarget;
+      const orderId = button.getAttribute("data-order-id");
+      const orderIdInput = cancelOrderModal.querySelector("#cancelOrderId");
+      orderIdInput.value = orderId;
+    });
+  });
+</script>

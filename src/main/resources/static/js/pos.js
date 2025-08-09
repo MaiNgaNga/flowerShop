@@ -92,6 +92,17 @@ function removeFromCart(productId) {
     });
 }
 
+function resetFilterForm() {
+  const form = document.getElementById("filterForm");
+  form.reset();
+  // Đặt lại tất cả select về option đầu tiên (Tất cả)
+  form.querySelectorAll("select").forEach((sel) => (sel.selectedIndex = 0));
+  // Xóa trắng ô tìm kiếm
+  document.getElementById("filterKeyword").value = "";
+  // Submit lại form
+  form.submit();
+}
+
 window.onload = function () {
   fetch("/pos/cart")
     .then((res) => {

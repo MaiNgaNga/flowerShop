@@ -37,26 +37,28 @@ public class ServiceServiceImpl implements ServiceService {
     @Override
     public ServiceEntity create(ServiceEntity entity, MultipartFile image1, MultipartFile image2,
             MultipartFile image3) {
-                
-        // if (entity.getId() != null && dao.existsById(entity.getId())) {
-        // throw new IllegalArgumentException("ID dịch vụ đã tồn tại.");
-        // }
-        if (dao.existsById(entity.getId())) {
+
+        // Nếu đang thêm mới thì không được kiểm tra ID null
+        if (entity.getId() != null && dao.existsById(entity.getId())) {
             throw new IllegalArgumentException("ID dịch vụ đã tồn tại!");
         }
 
+        // XỬ LÝ ẢNH CHÍNH (BẮT BUỘC)
         if (image1 != null && !image1.isEmpty()) {
-            entity.setImageUrl(
+            entity.setImage_url(
                     param.save(image1, "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
+        } else {
+            throw new IllegalArgumentException("Ảnh chính không được để trống!");
         }
 
+        // ẢNH PHỤ (KHÔNG BẮT BUỘC)
         if (image2 != null && !image2.isEmpty()) {
-            entity.setImageUrl2(
+            entity.setImage_url2(
                     param.save(image2, "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
         }
 
         if (image3 != null && !image3.isEmpty()) {
-            entity.setImageUrl3(
+            entity.setImage_url3(
                     param.save(image3, "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
         }
 
@@ -70,28 +72,25 @@ public class ServiceServiceImpl implements ServiceService {
             throw new IllegalArgumentException("Không tìm thấy dịch vụ để cập nhật.");
         }
 
-        // Xử lý ảnh 1
         if (image1 != null && !image1.isEmpty()) {
-            entity.setImageUrl(
+            entity.setImage_url(
                     param.save(image1, "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
         } else {
-            entity.setImageUrl(oldImages.length > 0 ? oldImages[0] : null);
+            entity.setImage_url(oldImages.length > 0 ? oldImages[0] : null);
         }
 
-        // Xử lý ảnh 2
         if (image2 != null && !image2.isEmpty()) {
-            entity.setImageUrl2(
+            entity.setImage_url2(
                     param.save(image2, "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
         } else {
-            entity.setImageUrl2(oldImages.length > 1 ? oldImages[1] : null);
+            entity.setImage_url2(oldImages.length > 1 ? oldImages[1] : null);
         }
 
-        // Xử lý ảnh 3
         if (image3 != null && !image3.isEmpty()) {
-            entity.setImageUrl3(
+            entity.setImage_url3(
                     param.save(image3, "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
         } else {
-            entity.setImageUrl3(oldImages.length > 2 ? oldImages[2] : null);
+            entity.setImage_url3(oldImages.length > 2 ? oldImages[2] : null);
         }
 
         dao.save(entity);
@@ -129,5 +128,4 @@ public class ServiceServiceImpl implements ServiceService {
     public List<ServiceEntity> findAllAvailable() {
         return dao.findByAvailableTrue();
     }
-
 }
