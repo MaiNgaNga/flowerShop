@@ -638,7 +638,7 @@ button {
 
 .product-card:hover .hover-img {
   opacity: 1;
-  transform: scaleX(1.2);
+  transform: none;
 }
 
 .product-card:hover .default-img {
@@ -849,7 +849,11 @@ button {
   filter: grayscale(20%);
   padding: 30px 20px;
   max-width: 300px;
-  height: auto;
+  min-height: 400px; /* Đảm bảo chiều cao tối thiểu đồng đều */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .swiper-slide.swiper-slide-active {
@@ -872,6 +876,10 @@ button {
   font-size: 16px;
   color: var(--text-muted);
   padding: 0 10px;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .read-more-btn {
@@ -974,24 +982,22 @@ button {
     grid-template-columns: 1fr;
   }
 }
-=======
 /* .. */
-    .image-card {
-      position: relative;
-      overflow: hidden;
-      border-radius: 20px;
-    }
-    .always-show-content.centered {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 2;
-      color: #fff;
-      text-align: center;
-      width: 200px;
-    }
-
+.image-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+}
+.always-show-content.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  color: #fff;
+  text-align: center;
+  width: 200px;
+}
 
 /*  */
 
@@ -1011,7 +1017,7 @@ button {
   font-weight: 600;
   color: #ffffff;
   margin: 0 0 8px;
-  text-shadow: 0 0 5px rgba(0,0,0,0.6);
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
 }
 
 .code-box {
@@ -1030,7 +1036,7 @@ button {
 
 .code-box:hover {
   transform: scale(1.08);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.35);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
 }
 
 .code-description {
@@ -1039,4 +1045,3 @@ button {
   margin: 0;
   text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
 }
-

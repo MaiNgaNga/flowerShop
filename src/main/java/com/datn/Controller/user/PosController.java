@@ -32,6 +32,7 @@ import java.util.HashMap;
 import com.datn.utils.AuthService;
 import com.datn.model.User;
 import java.io.File;
+import java.util.Date;
 
 @Controller
 @RequestMapping("/pos")
@@ -95,6 +96,9 @@ public class PosController {
 
         if (error != null && error.equals("empty_cart")) {
             model.addAttribute("errorMessage", "Giỏ hàng trống! Vui lòng chọn sản phẩm trước khi thanh toán.");
+        }
+        if ("qr_generation_failed".equals(error)) {
+            model.addAttribute("errorMessage", "Không thể tạo mã QR thanh toán. Vui lòng thử lại hoặc liên hệ hỗ trợ.");
         }
 
         model.addAttribute("productCategories", productCategoryService.findAll());
@@ -194,14 +198,14 @@ public class PosController {
             }
 
             Order order = new Order();
-            com.datn.model.User user = (com.datn.model.User) session.getAttribute("user");
+            User user = (User) session.getAttribute("user");
 
             if (user == null) {
                 return "redirect:/login";
             }
 
             order.setUser(user);
-            order.setCreateDate(new java.util.Date());
+            order.setCreateDate(new Date());
             order.setStatus("Chờ thanh toán");
             order.setOrderType("offline");
 
@@ -224,77 +228,107 @@ public class PosController {
             Order savedOrder = orderDAO.save(order);
             String orderCode = "POS" + savedOrder.getId();
 
-                // Update order với orderCode
-                savedOrder.setOrderCode(orderCode);
-                savedOrder = orderDAO.save(savedOrder);
-                // Xử lý theo phương thức thanh toán
-                if ("qr_code".equalsIgnoreCase(paymentMethod) || "card".equalsIgnoreCase(paymentMethod)) {
-
-                    String qrCodePath = null;
-
-                    try {
-                        if ("card".equalsIgnoreCase(paymentMethod)) {
-                            // Sinh QR cho thanh toán thẻ (VietQR)
-                            qrCodePath = qrCodeService.generatePaymentQRCode(orderCode, total, "1234567890");
-                        } else if ("qr_code".equalsIgnoreCase(paymentMethod)) {
-                            // Sinh QR cho chuyển khoản ngân hàng
-                            String bankAccount = "19039778212018";
-                            String bankCode = "TCB";
-                            String accountName = "BUI ANH THIEN";
-                            // Đảm bảo thư mục lưu QR tồn tại
-                            java.io.File qrDir = new java.io.File("target/classes/static/images/qr/");
-                            if (!qrDir.exists())
-                                qrDir.mkdirs();
-                            qrCodePath = qrCodeService.generateBankTransferQR(orderCode, total, bankAccount, bankCode,
-                                    accountName);
-                            if (qrCodePath == null) {
-                                System.err.println(
-                                        "LỖI: Không thể sinh mã QR chuyển khoản. Kiểm tra lại tham số hoặc kết nối mạng/API!");
-                            }
-                        }
-
-                        if (qrCodePath != null) {
-
-                            String fullPath = "src/main/resources/static" + qrCodePath;
-                            File qrFile = new File(fullPath);
-                            if (!qrFile.exists()) {
-                                System.err.println("LỖI: File QR không tồn tại tại " + fullPath);
-                            }
-                            model.addAttribute("qrCodePath", qrCodePath);
-                            model.addAttribute("orderCode", orderCode);
-                            model.addAttribute("totalAmount", total);
-                            model.addAttribute("paymentMethod", paymentMethod);
-
-                            model.addAttribute("orderDetails", details);
-
-                            session.setAttribute("pendingOrder", orderCode);
-                            session.removeAttribute("cart");
-
-                            model.addAttribute("view", "pos-payment-qr");
-                            return "layouts/qr-layout";
-                        } else {
-                            return "redirect:/pos?error=qr_generation_failed";
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+            // Update order với orderCode
+            savedOrder.setOrderCode(orderCode);
+            savedOrder = orderDAO.save(savedOrder);
+            // Xử lý theo phương thức thanh toán
+            if ("qr_code".equalsIgnoreCase(paymentMethod) || "card".equalsIgnoreCase(paymentMethod)) {
+                String qrCodePath = null;
+                try {
+                    if ("card".equalsIgnoreCase(paymentMethod)) {
+                        qrCodePath = qrCodeService.generatePaymentQRCode(orderCode, total, "1234567890");
+                    } else if ("qr_code".equalsIgnoreCase(paymentMethod)) {
+                        String bankAccount = "19039778212018";
+                        String bankCode = "TCB";
+                        String accountName = "BUI ANH THIEN";
+                        java.io.File qrDir = new java.io.File("target/classes/static/images/qr/");
+                        if (!qrDir.exists())
+                            qrDir.mkdirs();
+                        qrCodePath = qrCodeService.generateBankTransferQR(orderCode, total, bankAccount, bankCode,
+                                accountName);
+                    }
+                    if (qrCodePath != null) {
+                        session.setAttribute("pendingOrder", orderCode);
+                        session.removeAttribute("cart");
+                        // Lưu đường dẫn QR vào session để GET dùng lại
+                        session.setAttribute("qrCodePath", qrCodePath);
+                        return "redirect:/pos/payment-qr?orderCode=" + orderCode;
+                    } else {
                         return "redirect:/pos?error=qr_generation_failed";
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return "redirect:/pos?error=qr_generation_failed";
                 }
+            }
 
-                // Thanh toán tiền mặt
-                if ("cash".equalsIgnoreCase(paymentMethod)) {
-                    savedOrder.setStatus("Đã thanh toán");
-                    orderDAO.save(savedOrder);
-                }
+            // Thanh toán tiền mặt
+            if ("cash".equalsIgnoreCase(paymentMethod)) {
+                savedOrder.setStatus("Đã thanh toán");
+                orderDAO.save(savedOrder);
+            }
 
-                session.removeAttribute("cart");
-                return "redirect:/pos?success=payment_completed";
+            session.removeAttribute("cart");
+            return "redirect:/pos?success=payment_completed";
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                return "redirect:/pos?error=system_error";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/pos?error=system_error";
+        }
+    }
+
+    /**
+     * Trang hiển thị QR code thanh toán (GET, an toàn reload, không lặp đơn hàng)
+     * - Endpoint: GET /pos/payment-qr?orderCode=...
+     * - Nếu đơn hàng không còn hoặc đã bị xóa, thông báo và chuyển về POS
+     */
+    @GetMapping("/payment-qr")
+    public String showPaymentQR(@RequestParam String orderCode, Model model, HttpSession session) {
+        Optional<Order> orderOpt = orderDAO.findByOrderCode(orderCode);
+        if (orderOpt.isEmpty()) {
+            model.addAttribute("errorMessage", "Đơn hàng đã bị xóa hoặc không tồn tại. Vui lòng tạo lại đơn mới!");
+            return "redirect:/pos";
+        }
+        Order order = orderOpt.get();
+        // Nếu trạng thái không phải 'Chờ thanh toán', không cho xem QR nữa
+        if (!"Chờ thanh toán".equals(order.getStatus())) {
+            model.addAttribute("errorMessage", "Đơn hàng đã được xử lý hoặc không còn hiệu lực. Vui lòng tạo đơn mới!");
+            return "redirect:/pos";
+        }
+        // Lấy lại đường dẫn QR từ session hoặc DB
+        String qrCodePath = (String) session.getAttribute("qrCodePath");
+        if (qrCodePath == null) {
+            model.addAttribute("errorMessage", "Không tìm thấy mã QR cho đơn hàng này. Vui lòng tạo lại đơn mới!");
+            return "redirect:/pos";
+        }
+        model.addAttribute("qrCodePath", qrCodePath);
+        model.addAttribute("orderCode", orderCode);
+        model.addAttribute("totalAmount", order.getTotalAmount());
+        model.addAttribute("paymentMethod", order.getOrderType());
+        model.addAttribute("orderDetails", order.getOrderDetails());
+        model.addAttribute("view", "pos-payment-qr");
+        return "layouts/qr-layout";
+    }
+
+    /**
+     * API huỷ đơn hàng chờ thanh toán POS.
+     * - Endpoint: POST /pos/cancel-order
+     * - Tham số: orderCode (String)
+     * - Nếu đơn hàng ở trạng thái "Chờ thanh toán" thì xoá khỏi database.
+     * - Sau đó redirect về trang POS.
+     */
+    @PostMapping("/cancel-order")
+    public String cancelOrder(@RequestParam String orderCode, HttpSession session) {
+        Optional<Order> orderOpt = orderDAO.findByOrderCode(orderCode);
+        if (orderOpt.isPresent()) {
+            Order order = orderOpt.get();
+            if ("Chờ thanh toán".equals(order.getStatus())) {
+                orderDAO.delete(order);
             }
         }
+        session.removeAttribute("pendingOrder");
+        return "redirect:/pos";
+    }
 
     /**
      * Chặn truy cập GET vào /pos/checkout, luôn redirect về trang POS.

@@ -17,6 +17,18 @@ import org.springframework.data.domain.Pageable;
 import com.datn.model.Order;
 
 public interface OrderDAO extends JpaRepository<Order, Long> {
+    // Tìm kiếm đơn hàng POS theo mã đơn hàng, có phân trang, lọc ngày, loại đơn
+    @Query("SELECT o FROM Order o WHERE o.orderType = :orderType "
+            + "AND (:fromDate IS NULL OR o.createDate >= :fromDate) "
+            + "AND (:toDate IS NULL OR o.createDate <= :toDate) "
+            + "AND o.orderCode LIKE %:orderCode%")
+    Page<Order> searchPosOrdersByOrderCode(@Param("orderType") String orderType,
+                                           @Param("orderCode") String orderCode,
+                                           @Param("fromDate") LocalDate fromDate,
+                                           @Param("toDate") LocalDate toDate,
+                                           Pageable pageable);
+
+                                           
         List<Order> findByUserIdOrderByIdDesc(int userId);
 
         List<Order> findByStatusOrderByIdDesc(String status);
@@ -98,5 +110,6 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
                         "FROM Order o WHERE YEAR(o.createDate) = :year " +
                         "GROUP BY MONTH(o.createDate) ORDER BY MONTH(o.createDate)")
         List<Object[]> getMonthlyRevenueByYear(@Param("year") int year);
+
 
 }

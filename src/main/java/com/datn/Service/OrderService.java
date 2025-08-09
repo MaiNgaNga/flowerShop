@@ -74,9 +74,17 @@ public interface OrderService {
 
     List<Order> getAllOfflineOrders();
 
+
     Page<Order> getPosOrdersByType(String orderType, LocalDate fromDate, LocalDate toDate, Pageable pageable);
+
+
+    // Tìm kiếm đơn hàng POS theo mã đơn hàng, có phân trang, lọc ngày, loại đơn
+    Page<Order> searchPosOrdersByOrderCode(String orderType, String orderCode, LocalDate fromDate, LocalDate toDate, Pageable pageable);
+
+    
 
     Order recreateOrder(Long canceledOrderId); // Thêm phương thức tạo lại đơn hàng
 
   
+
 }
