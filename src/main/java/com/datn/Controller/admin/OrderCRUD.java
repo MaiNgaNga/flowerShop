@@ -27,11 +27,6 @@ public class OrderCRUD {
     @Autowired
     ProductCategoryDAO pro_ca_dao;
 
-=======
-    // Inject DAO cho danh mục sản phẩm
-    @Autowired
-    ProductCategoryDAO pro_ca_dao;
-
     // Inject service xử lý đơn hàng
 
     @Autowired
@@ -66,9 +61,7 @@ public class OrderCRUD {
     // Cập nhật trạng thái đơn hàng từ admin
     @PostMapping("/update/{orderId}")
 
-    public String checkout(@PathVariable("orderId") Long orderId, @RequestParam("status") String status,
-            RedirectAttributes redirectAttributes) {
-=======
+
     public String checkout(
         @PathVariable("orderId") Long orderId, 
         @RequestParam("status") String status,
@@ -86,7 +79,7 @@ public class OrderCRUD {
                     if (order.getStatus().equals("Chưa xác nhận")) {
                         orderService.updateStatus(orderId, "Đã xác nhận");
 
-=======
+
                         // Thêm thông báo flash để hiển thị sau redirect
 
                         redirectAttributes.addFlashAttribute("toastSuccess", "Xác nhận đơn hàng thành công!");
@@ -125,12 +118,6 @@ public class OrderCRUD {
             String encodedStatus = URLEncoder.encode("Đã hủy", StandardCharsets.UTF_8);
             return "redirect:/orderAdmin?orderStatus=" + encodedStatus;
         }
-    }
-}
-=======
-
-        // Sau khi cập nhật xong, chuyển hướng lại trang danh sách đơn hàng
-        return "redirect:/orderAdmin";
     }
 }
 
