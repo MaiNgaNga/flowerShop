@@ -61,7 +61,6 @@ public class OrderCRUD {
     // Cập nhật trạng thái đơn hàng từ admin
     @PostMapping("/update/{orderId}")
 
-
     public String checkout(
         @PathVariable("orderId") Long orderId, 
         @RequestParam("status") String status,
