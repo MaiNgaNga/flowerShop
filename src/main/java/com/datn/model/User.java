@@ -1,5 +1,7 @@
 package com.datn.model;
 
+import java.security.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -43,6 +45,16 @@ public class User {
     @NotNull(message = "Trạng thái không được để trống")
     @Column(nullable = false)
     private Boolean status = true;
+
+    
+    private String rememberToken;
+    private LocalDateTime rememberTokenExpiry;
+
+    // Nếu có quan hệ Lazy thì tránh override toString() truy cập vào đó
+    @Override
+    public String toString() {
+        return "User{id=" + id + ", name='" + name + "'}";
+    }
 
 
 }
