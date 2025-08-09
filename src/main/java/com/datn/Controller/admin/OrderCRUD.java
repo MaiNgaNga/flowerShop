@@ -23,7 +23,7 @@ import com.datn.model.ProductCategory;
 @RequestMapping("/orderAdmin")
 public class OrderCRUD {
 
-    // Inject DAO cho danh mục sản phẩm
+
     @Autowired
     ProductCategoryDAO pro_ca_dao;
 
@@ -60,6 +60,7 @@ public class OrderCRUD {
 
     // Cập nhật trạng thái đơn hàng từ admin
     @PostMapping("/update/{orderId}")
+
     public String checkout(
         @PathVariable("orderId") Long orderId, 
         @RequestParam("status") String status,
@@ -76,6 +77,7 @@ public class OrderCRUD {
                     // Nếu đơn hàng đang ở trạng thái "Chưa xác nhận", cho phép cập nhật sang "Đã xác nhận"
                     if (order.getStatus().equals("Chưa xác nhận")) {
                         orderService.updateStatus(orderId, "Đã xác nhận");
+
 
                         // Thêm thông báo flash để hiển thị sau redirect
 
