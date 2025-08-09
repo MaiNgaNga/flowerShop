@@ -409,12 +409,14 @@ public class PosController {
         Map<String, Object> response = new HashMap<>();
         try {
             String orderCode = requestBody.get("orderCode");
+            System.out.println("orderCode nhận được: '" + orderCode + "'");
             if (orderCode == null || orderCode.isEmpty()) {
                 response.put("success", false);
                 response.put("message", "Vui lòng nhập mã đơn hàng");
                 return response;
             }
             Optional<Order> orderOpt = orderDAO.findByOrderCode(orderCode);
+            System.out.println("Tìm thấy đơn hàng: " + orderOpt.isPresent());
             if (orderOpt.isPresent()) {
                 Order order = orderOpt.get();
                 order.setStatus("Đã thanh toán");

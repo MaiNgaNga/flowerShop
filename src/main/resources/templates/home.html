@@ -494,9 +494,9 @@
           <h2>Dịch vụ</h2>
           <p>
             <strong>Karina Hana shop</strong> là một trong những tiệm hoa tươi
-            uy tín nhất tại Đà Nẵng, Việt Nam. Karina Hana cung cấp dịch vụ đặt hoa
-            online giao tận nơi toàn quốc, với chất lượng cao, giá tốt và phục
-            vụ tận tâm.<br /><br />
+            uy tín nhất tại Đà Nẵng, Việt Nam. Karina Hana cung cấp dịch vụ đặt
+            hoa online giao tận nơi toàn quốc, với chất lượng cao, giá tốt và
+            phục vụ tận tâm.<br /><br />
             Gửi tặng yêu thương thật dễ dàng cùng Karina Hana shop – nơi mỗi bó
             hoa là một câu chuyện.
           </p>
@@ -629,6 +629,8 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <!-- Modal thêm vào giỏ hàng thành công -->
-    <div th:replace="fragments/cart-success-modal :: #cartSuccessModal"></div>
+    <div
+      th:replace="~{fragments/cart-success-modal :: #cartSuccessModal}"
+    ></div>
   </body>
 </html>
