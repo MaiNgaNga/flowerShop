@@ -12,11 +12,9 @@ import lombok.*;
 @Table(name = "services")
 public class ServiceEntity {
 
-   @Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
-
 
     @NotBlank(message = "Tên dịch vụ không được để trống")
     @Size(max = 100, message = "Tên dịch vụ tối đa 100 ký tự")
