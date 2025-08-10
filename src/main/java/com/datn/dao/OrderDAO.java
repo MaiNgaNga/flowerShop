@@ -9,8 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -21,14 +19,18 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         @Query("SELECT o FROM Order o WHERE o.orderType = :orderType "
                         + "AND (:fromDate IS NULL OR o.createDate >= :fromDate) "
                         + "AND (:toDate IS NULL OR o.createDate <= :toDate) "
-                        + "AND o.orderCode LIKE %:orderCode%")
-        Page<Order> searchPosOrdersByOrderCode(@Param("orderType") String orderType,
+                        + "AND o.orderCode LIKE %:orderCode% "
+                        + "ORDER BY o.createDate DESC")
+        Page<Order> searchPosOrdersByOrderCode(
+                        @Param("orderType") String orderType,
                         @Param("orderCode") String orderCode,
                         @Param("fromDate") LocalDate fromDate,
                         @Param("toDate") LocalDate toDate,
                         Pageable pageable);
 
         List<Order> findByUserIdOrderByIdDesc(int userId);
+
+        List<Order> findByStatus(String status);
 
         List<Order> findByStatusOrderByIdDesc(String status);
 
@@ -87,7 +89,8 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         // Lấy đơn hàng tại quầy, lọc theo ngày bán và loại đơn hàng
         @Query("SELECT o FROM Order o WHERE o.orderType = :orderType "
                         + "AND (:fromDate IS NULL OR o.createDate >= :fromDate) "
-                        + "AND (:toDate IS NULL OR o.createDate <= :toDate)")
+                        + "AND (:toDate IS NULL OR o.createDate <= :toDate) "
+                        + "ORDER BY o.createDate DESC")
         Page<Order> findPosOrders(@Param("orderType") String orderType,
                         @Param("fromDate") LocalDate fromDate,
                         @Param("toDate") LocalDate toDate,
