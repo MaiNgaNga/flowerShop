@@ -35,4 +35,7 @@ public interface ServiceService {
 
     // Lấy 1 dịch vụ mới nhất (theo ID giảm dần)
     List<ServiceEntity> findTop1ByOrderByIdDesc();
+
+    // Lấy 1 dịch vụ mới nhất có trạng thái hoạt động (theo ID giảm dần)
+    List<ServiceEntity> findTop1ByAvailableTrueOrderByIdDesc();
 }

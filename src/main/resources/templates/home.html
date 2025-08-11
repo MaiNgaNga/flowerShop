@@ -462,38 +462,30 @@
         <!-- Hình ảnh trình chiếu -->
         <div class="service-carousel" data-aos="zoom-in" data-aos-delay="100">
           <div class="carousel-images">
-            <img
-              th:src="@{/images/image1.jpg}"
-              alt="Slide 1"
-              class="carousel-img active"
-            />
-            <img
-              th:src="@{/images/image2.jpeg}"
-              alt="Slide 2"
-              class="carousel-img"
-            />
-            <img
-              th:src="@{/images/image3.jpg}"
-              alt="Slide 3"
-              class="carousel-img"
-            />
-            <img
-              th:src="@{/images/image4.jpeg}"
-              alt="Slide 4"
-              class="carousel-img"
-            />
-            <img
-              th:src="@{/images/image5.jpg}"
-              alt="Slide 5"
-              class="carousel-img"
-            />
+            <th:block th:each="service, iterStat : ${latestServices}">
+              <img
+                th:src="@{/images/{image}(image=${service.image_url})}"
+                th:alt="${service.name}"
+                th:class="${iterStat.index == 0} ? 'carousel-img active' : 'carousel-img'"
+              />
+              <img
+                th:src="@{/images/{image}(image=${service.image_url2})}"
+                th:alt="${service.name}"
+                class="carousel-img"
+              />
+              <img
+                th:src="@{/images/{image}(image=${service.image_url3})}"
+                th:alt="${service.name}"
+                class="carousel-img"
+              />
+            </th:block>
           </div>
         </div>
         <!-- Nội dung dịch vụ -->
         <div class="service-content" data-aos="fade-left" data-aos-delay="300">
           <h2>Dịch vụ</h2>
 
-          <!-- Hiển thị dịch vụ mới nhất hoặc text mặc định -->
+          <!-- Hiển thị dịch vụ mới nhất có trạng thái hoạt động -->
           <div th:if="${latestServices != null and !latestServices.empty}">
             <div th:each="service : ${latestServices}">
               <p>
