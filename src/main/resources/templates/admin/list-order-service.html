@@ -16,7 +16,7 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
       rel="stylesheet"
     />
-
+    <!-- <link rel="stylesheet" th:href="@{/css/list_order_service.css}" /> -->
     <style>
       body {
         font-family: "Roboto", sans-serif;
@@ -1461,7 +1461,6 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
     <!-- Filter Functions Script -->
     <script>
       // Hàm xóa lọc cho tab yêu cầu
@@ -1548,6 +1547,7 @@
         // Update Request Filter Summary
         const requestStatus = urlParams.get("status");
         const requestKeyword = urlParams.get("keyword");
+        const requestMonth = urlParams.get("requestMonth");
         const requestFilterSummary = document.getElementById(
           "requestFilterSummary"
         );
@@ -1569,6 +1569,15 @@
         if (requestKeyword) {
           requestTags.push(
             `<span class="filter-tag">Tìm kiếm: ${requestKeyword}</span>`
+          );
+        }
+        if (requestMonth) {
+          const monthText = new Date(requestMonth + "-01").toLocaleDateString(
+            "vi-VN",
+            { year: "numeric", month: "long" }
+          );
+          requestTags.push(
+            `<span class="filter-tag">Tháng: ${monthText}</span>`
           );
         }
 
@@ -1646,13 +1655,12 @@
         const modal = document.getElementById("createOrderModal");
         const form = document.getElementById("createOrderForm");
 
-        // Hệ thống quản lý modal tối ưu - Instant Open
+        // Hệ thống quản lý modal đơn giản
         let modalManager = {
           isProcessing: false,
           currentRequestId: null,
           loadingPromise: null,
-          lastActionTime: 0,
-          actionCooldown: 300, // Giảm xuống 300ms
+          isRestoreAction: false,
 
           // Force cleanup modal hoàn toàn
           forceCleanupModal: function () {
@@ -1695,36 +1703,51 @@
 
           // Kiểm tra có thể mở modal không
           canOpenModal: function () {
+            // Nếu vừa thực hiện restore action, luôn cho phép mở modal
+            if (this.isRestoreAction) {
+              console.log(
+                "✅ Restore action detected, allowing immediate modal open"
+              );
+              return true;
+            }
+
             // Chỉ block nếu đang xử lý request
             if (this.isProcessing) {
               console.log("❌ Modal đang xử lý, không thể mở");
               return false;
             }
 
-            // Luôn cho phép mở modal, không có cooldown cứng
             return true;
-          },
-
-          // Kiểm tra có cần đợi không
-          needsWait: function () {
-            const now = Date.now();
-            const timeSinceLastAction = now - this.lastActionTime;
-            return timeSinceLastAction < this.actionCooldown;
           },
 
           // Đánh dấu action hoàn thành
           markActionCompleted: function () {
-            this.lastActionTime = Date.now();
+            this.isRestoreAction = false;
             this.forceCleanupModal();
           },
 
-          // Reset hoàn toàn (dùng khi cần mở modal ngay lập tức)
+          // Đánh dấu restore action hoàn thành
+          markRestoreCompleted: function () {
+            console.log("🔄 Restore action completed");
+            this.isRestoreAction = true;
+            this.isProcessing = false;
+            this.currentRequestId = null;
+            this.loadingPromise = null;
+
+            // Auto reset sau 3 giây
+            setTimeout(() => {
+              this.isRestoreAction = false;
+              console.log("🔄 Restore flag auto-reset");
+            }, 3000);
+          },
+
+          // Reset hoàn toàn
           reset: function () {
             console.log("🔄 Reset modal manager");
             this.isProcessing = false;
             this.currentRequestId = null;
             this.loadingPromise = null;
-            this.lastActionTime = 0; // Reset thời gian để không có cooldown
+            this.isRestoreAction = false;
           },
         };
 
@@ -1738,31 +1761,13 @@
             return;
           }
 
-          // Force cleanup trước khi mở
-          modalManager.forceCleanupModal();
+          // Force cleanup trước khi mở (trừ khi là restore action)
+          if (!modalManager.isRestoreAction) {
+            modalManager.forceCleanupModal();
+          }
 
           // Set processing state
           modalManager.isProcessing = true;
-
-          // Kiểm tra có cần đợi không
-          if (modalManager.needsWait()) {
-            const now = Date.now();
-            const timeSinceLastAction = now - modalManager.lastActionTime;
-            const remainingTime =
-              modalManager.actionCooldown - timeSinceLastAction;
-
-            console.log(`⏳ Đợi ${remainingTime}ms để đảm bảo data fresh...`);
-
-            // Hiển thị loading ngay và đợi
-            showModalLoading(modal, true);
-
-            setTimeout(() => {
-              console.log("✅ Wait completed, loading fresh data...");
-              loadModalData(event);
-            }, remainingTime);
-
-            return;
-          }
 
           // Load data ngay lập tức
           loadModalData(event);
@@ -1806,9 +1811,18 @@
           // Tạo AbortController để hủy request cũ
           const abortController = new AbortController();
 
-          // Load dữ liệu từ server với abort signal và cache busting mạnh
-          const fetchUrl = `/admin/service-requests/${requestId}/draft?t=${Date.now()}&r=${Math.random()}`;
+          // Load dữ liệu từ server với cache busting cực mạnh (đặc biệt sau restore)
+          const cacheParam = modalManager.isRestoreAction
+            ? `t=${Date.now()}&r=${Math.random()}&restore=1&force=${Date.now()}`
+            : `t=${Date.now()}&r=${Math.random()}`;
+          const fetchUrl = `/admin/service-requests/${requestId}/draft?${cacheParam}`;
           console.log("📡 Fetching fresh data from:", fetchUrl);
+
+          if (modalManager.isRestoreAction) {
+            console.log(
+              "🔄 Loading data after restore action - using aggressive cache busting"
+            );
+          }
 
           const fetchPromise = fetch(fetchUrl, {
             method: "GET",
@@ -1816,6 +1830,7 @@
               "Cache-Control": "no-cache, no-store, must-revalidate",
               Pragma: "no-cache",
               Expires: "0",
+              "X-Requested-With": "XMLHttpRequest", // Thêm header để server biết đây là AJAX
             },
             signal: abortController.signal,
           });
@@ -1996,15 +2011,9 @@
               </button>
             `;
 
-            // Hiển thị thông báo và gợi ý chuyển tab
+            // Hiển thị thông báo thành công
             setTimeout(() => {
-              showCustomConfirm(
-                'Đơn hàng đã được tạo thành công! Bạn có muốn chuyển sang tab "Đơn hàng dịch vụ" để xem không?',
-                () => {
-                  localStorage.setItem("switchToOrdersTab", "true");
-                  window.location.reload();
-                }
-              );
+              showCustomAlert("Đơn hàng đã được tạo thành công!", "success");
             }, 500);
           } else if (actionType === "cancel") {
             // Cập nhật thành CANCELLED
@@ -2024,6 +2033,10 @@
 
             // Thay thế nút tạo đơn bằng nút khôi phục
             button.parentNode.replaceChild(restoreButton, button);
+
+            // *** QUAN TRỌNG: Reset modal manager sau khi hủy ***
+            modalManager.reset();
+            console.log("🔄 Modal manager reset after cancel action");
           }
         };
 
@@ -2095,9 +2108,22 @@
                   // Cập nhật trạng thái trên giao diện
                   updateUIAfterAction(id, type);
 
-                  // Hiển thị thông báo sau khi UI đã cập nhật
+                  // *** XỬ LÝ THÔNG BÁO THÀNH CÔNG ***
                   if (type !== "confirm") {
-                    showCustomAlert(data.success, "success");
+                    // Sửa triệt để text thông báo từ server
+                    let message = data.success;
+                    if (message) {
+                      // Thay thế tất cả các biến thể thông báo liên hệ
+                      if (
+                        message.includes("liên hệ") &&
+                        (message.includes("lưu") || message.includes("tạm"))
+                      ) {
+                        message = "Đã liên hệ thành công!";
+                      } else if (message.includes("đã liên hệ")) {
+                        message = "Đã liên hệ thành công!";
+                      }
+                    }
+                    showCustomAlert(message, "success");
                   }
                 }, 200);
               } else if (data.error) {
@@ -2156,12 +2182,18 @@
             showCustomConfirm(
               "Bạn có chắc muốn khôi phục yêu cầu này không?",
               () => {
+                console.log(
+                  "🔄 Starting restore action for request:",
+                  requestId
+                );
+
                 fetch(`/admin/service-requests/${requestId}/restore`, {
                   method: "POST",
                 })
                   .then((res) => res.json())
                   .then((data) => {
                     if (data.success) {
+                      console.log("✅ Restore successful:", data.success);
                       showCustomAlert(data.success, "success");
 
                       // Cập nhật UI: thay đổi trạng thái dựa trên response
@@ -2169,12 +2201,15 @@
                       const statusBadge = row.querySelector(".badge");
 
                       // Xác định trạng thái dựa trên message response
+                      let newStatus;
                       if (data.success.includes("đã liên hệ")) {
                         statusBadge.className = "badge bg-primary";
                         statusBadge.textContent = "Đã liên hệ";
+                        newStatus = "CONTACTED";
                       } else {
                         statusBadge.className = "badge bg-warning text-dark";
                         statusBadge.textContent = "Đang chờ";
+                        newStatus = "PENDING";
                       }
 
                       // Tạo nút mới thay thế nút khôi phục
@@ -2187,23 +2222,25 @@
                       );
                       newButton.setAttribute("data-request-id", requestId);
                       newButton.setAttribute("data-service-name", serviceName);
-                      newButton.setAttribute(
-                        "data-status",
-                        data.success.includes("đã liên hệ")
-                          ? "CONTACTED"
-                          : "PENDING"
-                      );
+                      newButton.setAttribute("data-status", newStatus);
                       newButton.setAttribute("title", "Tạo đơn hàng");
                       newButton.innerHTML = '<i class="bi bi-pencil"></i>';
 
                       // Thay thế nút khôi phục bằng nút tạo đơn
                       button.parentNode.replaceChild(newButton, button);
+
+                      // *** QUAN TRỌNG: Đánh dấu restore action hoàn thành ***
+                      modalManager.markRestoreCompleted();
+                      console.log(
+                        "🎯 Modal manager marked restore completed - modal can now open immediately"
+                      );
                     } else if (data.error) {
+                      console.log("❌ Restore failed:", data.error);
                       showCustomAlert("Lỗi: " + data.error, "error");
                     }
                   })
                   .catch((err) => {
-                    console.error("Lỗi:", err);
+                    console.error("❌ Restore error:", err);
                     showCustomAlert(
                       "Có lỗi xảy ra khi khôi phục yêu cầu.",
                       "error"
@@ -2721,12 +2758,14 @@
         const row = $(`button[data-id="${orderId}"]`).closest("tr");
         const statusBadge = row.find(".badge");
 
-        // Cập nhật class và text - dùng màu xám cho đã hủy
+        // Cập nhật class và text với màu đúng theo thiết kế
         statusBadge.removeClass().addClass("badge");
         if (newStatus === "CANCELLED") {
           statusBadge.addClass("bg-secondary").text("Đã hủy");
         } else if (newStatus === "DONE") {
-          statusBadge.addClass("bg-success").text("Đã hoàn tất");
+          statusBadge.addClass("bg-primary").text("Đã hoàn tất"); // Dùng bg-primary (xanh dương) thay vì bg-success (xanh lá)
+        } else if (newStatus === "PAID") {
+          statusBadge.addClass("bg-success").text("Đã thanh toán"); // Xanh lá cho đã thanh toán
         }
       }
 
@@ -2753,19 +2792,46 @@
         $(document).on("click", "#btn-confirm", function () {
           if (!currentOrderId) return;
 
-          $.post(`/admin/service-requests/order/${currentOrderId}/complete`)
-            .done(function () {
-              showCustomAlert("Đã xác nhận hoàn thành đơn.", "success");
-              updateOrderStatus(currentOrderId, "DONE");
-              $("#orderDetailsModal").modal("hide");
-            })
-            .fail(function (xhr, status, error) {
-              console.error("Lỗi:", error);
-              showCustomAlert(
-                "Lỗi khi xác nhận hoàn thành: " + (xhr.responseText || error),
-                "error"
-              );
-            });
+          showCustomConfirm(
+            "Bạn có chắc muốn hoàn thành đơn hàng này không?",
+            () => {
+              $.post(`/admin/service-requests/order/${currentOrderId}/complete`)
+                .done(function () {
+                  // Force cleanup tất cả modal và backdrop
+                  $(".modal").modal("hide");
+                  $(".modal-backdrop").remove();
+                  $("body")
+                    .removeClass("modal-open")
+                    .css({ overflow: "auto", "padding-right": "" });
+
+                  // Delay để cleanup hoàn toàn
+                  setTimeout(() => {
+                    showCustomAlert(
+                      "Đơn hàng đã được hoàn thành thành công!",
+                      "success"
+                    );
+                    updateOrderStatus(currentOrderId, "DONE");
+                  }, 500);
+                })
+                .fail(function (xhr, status, error) {
+                  console.error("Lỗi:", error);
+                  // Cleanup modal khi có lỗi
+                  $(".modal").modal("hide");
+                  $(".modal-backdrop").remove();
+                  $("body")
+                    .removeClass("modal-open")
+                    .css({ overflow: "auto", "padding-right": "" });
+
+                  setTimeout(() => {
+                    showCustomAlert(
+                      "Lỗi khi hoàn thành đơn hàng: " +
+                        (xhr.responseText || error),
+                      "error"
+                    );
+                  }, 300);
+                });
+            }
+          );
         });
 
         // Xử lý nút hủy
@@ -2775,16 +2841,37 @@
           showCustomConfirm("Bạn có chắc muốn hủy đơn hàng này không?", () => {
             $.post(`/admin/service-requests/order/${currentOrderId}/cancel`)
               .done(function () {
-                showCustomAlert("Đã hủy đơn thành công.", "success");
-                updateOrderStatus(currentOrderId, "CANCELLED");
-                $("#orderDetailsModal").modal("hide");
+                // Force cleanup tất cả modal và backdrop
+                $(".modal").modal("hide");
+                $(".modal-backdrop").remove();
+                $("body")
+                  .removeClass("modal-open")
+                  .css({ overflow: "auto", "padding-right": "" });
+
+                // Delay để cleanup hoàn toàn
+                setTimeout(() => {
+                  showCustomAlert(
+                    "Đơn hàng đã được hủy thành công!",
+                    "success"
+                  );
+                  updateOrderStatus(currentOrderId, "CANCELLED");
+                }, 500);
               })
               .fail(function (xhr, status, error) {
                 console.error("Lỗi:", error);
-                showCustomAlert(
-                  "Lỗi khi hủy đơn: " + (xhr.responseText || error),
-                  "error"
-                );
+                // Cleanup modal khi có lỗi
+                $(".modal").modal("hide");
+                $(".modal-backdrop").remove();
+                $("body")
+                  .removeClass("modal-open")
+                  .css({ overflow: "auto", "padding-right": "" });
+
+                setTimeout(() => {
+                  showCustomAlert(
+                    "Lỗi khi hủy đơn hàng: " + (xhr.responseText || error),
+                    "error"
+                  );
+                }, 300);
               });
           });
         });
@@ -2941,30 +3028,49 @@
           if (!currentOrderId) return;
 
           showCustomConfirm(
-            "Bạn có chắc muốn đánh dấu đơn hàng này đã thanh toán không?",
+            "Bạn có chắc muốn xác nhận đơn hàng này đã thanh toán không?",
             () => {
               $.post(
                 `/admin/service-requests/order/${currentOrderId}/mark-paid`
               )
                 .done(function () {
-                  showCustomAlert(
-                    "Đã đánh dấu đơn hàng đã thanh toán thành công!",
-                    "success"
-                  );
-                  $("#orderDetailsModal").modal("hide");
+                  // Force cleanup tất cả modal và backdrop
+                  $(".modal").modal("hide");
+                  $(".modal-backdrop").remove();
+                  $("body")
+                    .removeClass("modal-open")
+                    .css({ overflow: "auto", "padding-right": "" });
 
-                  // Delay trước khi reload để người dùng thấy thông báo
+                  // Delay để cleanup hoàn toàn
                   setTimeout(() => {
-                    location.reload();
-                  }, 1500); // Delay 1.5 giây để thấy thông báo
+                    showCustomAlert(
+                      "Đơn hàng đã được xác nhận thanh toán thành công!",
+                      "success"
+                    );
+                    updateOrderStatus(currentOrderId, "PAID");
+
+                    // Delay trước khi reload để người dùng thấy thông báo
+                    setTimeout(() => {
+                      location.reload();
+                    }, 1500); // Delay 1.5 giây để thấy thông báo
+                  }, 500);
                 })
                 .fail(function (xhr, status, error) {
                   console.error("Lỗi:", error);
-                  showCustomAlert(
-                    "Lỗi khi đánh dấu đã thanh toán: " +
-                      (xhr.responseText || error),
-                    "error"
-                  );
+                  // Cleanup modal khi có lỗi
+                  $(".modal").modal("hide");
+                  $(".modal-backdrop").remove();
+                  $("body")
+                    .removeClass("modal-open")
+                    .css({ overflow: "auto", "padding-right": "" });
+
+                  setTimeout(() => {
+                    showCustomAlert(
+                      "Lỗi khi xác nhận thanh toán: " +
+                        (xhr.responseText || error),
+                      "error"
+                    );
+                  }, 300);
                 });
             }
           );
@@ -3011,24 +3117,8 @@
           document.body.style.overflow = "auto";
           document.body.style.paddingRight = "";
         };
-
-        // Reset modal manager (dành cho admin khi cần)
-        window.resetModalManager = function () {
-          if (typeof modalManager !== "undefined") {
-            modalManager.reset();
-            console.log("✅ Modal manager đã được reset");
-          }
-        };
-
-        // Phím tắt Ctrl+Shift+R để reset modal manager
-        document.addEventListener("keydown", function (e) {
-          if (e.ctrlKey && e.shiftKey && e.key === "R") {
-            e.preventDefault();
-            window.resetModalManager();
-            showCustomAlert("Modal manager đã được reset!", "success");
-          }
-        });
       });
     </script>
+    <!-- <script th:src="@{/js/list-order-service.js}"></script> -->
   </body>
 </html>
