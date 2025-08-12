@@ -1,0 +1,218 @@
+<style>
+  @media print {
+    .bill-actions,
+    .btn,
+    #closeBtn {
+      display: none !important;
+    }
+  }
+</style>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hóa đơn bán hàng</title>
+    <link rel="stylesheet" th:href="@{/css/pos-bill.css}" />
+    <style>
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #f7f7fa;
+      }
+      .bill-container {
+        max-width: 520px;
+        margin: 40px auto;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 6px 32px rgba(120, 80, 180, 0.1), 0 1.5px 6px #e9e9f3;
+        padding: 32px 32px 18px 32px;
+        border: 1.5px solid #e0d7f3;
+      }
+      .bill-header {
+        text-align: center;
+        margin-bottom: 22px;
+      }
+      .bill-header .bill-logo {
+        font-size: 2.2em;
+        margin-bottom: 6px;
+        color: #c77dff;
+        display: inline-block;
+      }
+      .bill-header h2 {
+        font-size: 1.7em;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: #6c3483;
+        margin-bottom: 7px;
+      }
+      .bill-header .contact-info {
+        margin-bottom: 10px;
+        font-size: 15px;
+        color: #444;
+        line-height: 1.5;
+      }
+      .bill-header .contact-info a {
+        color: #7c3aed;
+        text-decoration: none;
+      }
+      .bill-header .contact-info a:hover {
+        text-decoration: underline;
+      }
+      .bill-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-bottom: 20px;
+        background: #faf8ff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 1px 4px #f3eaff;
+      }
+      .bill-table th,
+      .bill-table td {
+        border: none;
+        padding: 10px 8px;
+        text-align: left;
+      }
+      .bill-table th {
+        background: #e9e3f7;
+        color: #6c3483;
+        font-weight: 600;
+        font-size: 1em;
+      }
+      .bill-table tr:not(:last-child) td {
+        border-bottom: 1px solid #e0d7f3;
+      }
+      .bill-table tbody tr:hover {
+        background: #f3eaff;
+      }
+      .bill-total {
+        text-align: right;
+        font-size: 1.18em;
+        font-weight: bold;
+        color: #1b5e20;
+        margin-bottom: 10px;
+      }
+      .bill-actions {
+        text-align: center;
+        margin-top: 18px;
+      }
+      .btn {
+        padding: 10px 28px;
+        border: none;
+        border-radius: 6px;
+        margin: 0 8px;
+        cursor: pointer;
+        font-size: 1.08em;
+        font-weight: 500;
+        box-shadow: 0 2px 8px #e9e9f3;
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+      }
+      .btn-print {
+        background: linear-gradient(90deg, #7c3aed 0%, #c77dff 100%);
+        color: #fff;
+      }
+      .btn-print:hover {
+        background: linear-gradient(90deg, #c77dff 0%, #7c3aed 100%);
+        color: #fff;
+        box-shadow: 0 4px 16px #e9e9f3;
+      }
+      .btn-close {
+        background: #e57373;
+        color: #fff;
+      }
+      .btn-close:hover {
+        background: #c62828;
+        color: #fff;
+      }
+      .bill-footer {
+        text-align: center;
+        margin-top: 30px;
+        color: #6c3483;
+        font-size: 1.08em;
+        font-style: italic;
+        letter-spacing: 0.5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bill-container">
+      <div class="bill-header">
+        <div class="bill-logo">&#127800;</div>
+        <h2>HÓA ĐƠN BÁN HÀNG</h2>
+        <div style="margin-bottom: 2px">
+          <b>Mã đơn:</b> <span th:text="${orderCode}"></span>
+        </div>
+        <div style="margin-bottom: 2px">
+          <b>Ngày:</b>
+          <span
+            th:text="${#dates.format(order.createDate, 'dd/MM/yyyy HH:mm')}"
+          ></span>
+        </div>
+        <div><b>Nhân viên:</b> <span th:text="${order.user.name}"></span></div>
+      </div>
+      <table class="bill-table">
+        <thead>
+          <tr>
+            <th>Sản phẩm</th>
+            <th>Số lượng</th>
+            <th>Đơn giá</th>
+            <th>Thành tiền</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="detail : ${orderDetails}">
+            <td th:text="${detail.product.name}"></td>
+            <td th:text="${detail.quantity}"></td>
+            <td
+              th:text="${#numbers.formatDecimal(detail.price, 0, 'COMMA', 0, 'POINT')}"
+            ></td>
+            <td
+              th:text="${#numbers.formatDecimal(detail.price * detail.quantity, 0, 'COMMA', 0, 'POINT')}"
+            ></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="bill-total">
+        Tổng cộng:
+        <span
+          th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')}"
+        ></span>
+        VNĐ
+      </div>
+      <div class="bill-actions">
+        <button class="btn btn-print" onclick="window.print()">
+          In hóa đơn
+        </button>
+        <button class="btn btn-close" id="closeBtn" onclick="closeAndBack()">
+          Đóng
+        </button>
+      </div>
+      <div
+        class="contact-info"
+        style="
+          text-align: center;
+          margin-top: 16px;
+          font-size: 0.98em;
+          color: #111;
+        "
+      >
+        116, Nguyễn Huy Tưởng, Hòa Minh, Liên Chiểu, Đà Nẵng.<br />
+        ĐT: 0123456789 | Email: foflowershop@gmail.com<br />
+        Website:
+        <a href="http://www.foflowershop.com" target="_blank"
+          >www.foflowershop.com</a
+        >
+      </div>
+      <div class="bill-footer">Xin cảm ơn quý khách và hẹn gặp lại!</div>
+    </div>
+    <script>
+      function closeAndBack() {
+        window.location.href = "/pos?success=payment_completed";
+      }
+      // Ẩn nút Đóng nếu bill được mở ở cửa sổ popup
+      if (window.opener) {
+        document.getElementById("closeBtn").style.display = "none";
+      }
+    </script>
+  </body>
+</html>

@@ -1,3 +1,45 @@
+// Xử lý mở bill ở cửa sổ mới khi thanh toán tiền mặt
+document.addEventListener("DOMContentLoaded", function () {
+  const posForm = document.getElementById("posForm");
+  if (posForm) {
+    posForm.addEventListener("submit", function (e) {
+      const paymentMethod = posForm.querySelector(
+        'select[name="paymentMethod"]'
+      ).value;
+      if (paymentMethod === "cash") {
+        e.preventDefault();
+        const formData = new FormData(posForm);
+        fetch(posForm.action, {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => {
+            if (
+              response.redirected &&
+              response.url.includes("/pos/bill?orderCode=")
+            ) {
+              const { url } = response;
+              const w = 700,
+                h = 600;
+              const left = window.screenX + (window.outerWidth - w) / 2;
+              const top = window.screenY + (window.outerHeight - h) / 2;
+              window.open(
+                url,
+                "_blank",
+                `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes`
+              );
+              window.location.href = "/pos?success=payment_completed";
+            } else {
+              window.location.href = response.url;
+            }
+          })
+          .catch(() => {
+            alert("Có lỗi khi xác nhận bán hàng!");
+          });
+      }
+    });
+  }
+});
 function setColorFilter(color) {
   document.getElementById("colorInput").value = color;
   document.getElementById("filterForm").submit();
@@ -95,11 +137,8 @@ function removeFromCart(productId) {
 function resetFilterForm() {
   const form = document.getElementById("filterForm");
   form.reset();
-  // Đặt lại tất cả select về option đầu tiên (Tất cả)
   form.querySelectorAll("select").forEach((sel) => (sel.selectedIndex = 0));
-  // Xóa trắng ô tìm kiếm
   document.getElementById("filterKeyword").value = "";
-  // Submit lại form
   form.submit();
 }
 
