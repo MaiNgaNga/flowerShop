@@ -164,7 +164,6 @@ if (modal) {
     if (confirmBtn) {
       confirmBtn.onclick = function () {
         let orderCode = this.getAttribute("data-ordercode");
-        console.log("orderCode lấy được:", orderCode);
         if (!orderCode) {
           alert("Không tìm thấy mã đơn hàng!");
           return;
@@ -181,7 +180,21 @@ if (modal) {
                 document.getElementById("confirmPaymentModal")
               );
               if (modal) modal.hide();
-              window.location.href = "/pos?success=payment_completed";
+              if (data.redirectUrl) {
+                // Tính toán để cửa sổ nằm giữa màn hình
+                const w = 700,
+                  h = 600;
+                const left = window.screenX + (window.outerWidth - w) / 2;
+                const top = window.screenY + (window.outerHeight - h) / 2;
+                window.open(
+                  data.redirectUrl,
+                  "_blank",
+                  `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes`
+                );
+                window.location.href = "/pos?success=payment_completed";
+              } else {
+                window.location.href = "/pos?success=payment_completed";
+              }
             } else {
               alert("Lỗi: " + data.message);
             }

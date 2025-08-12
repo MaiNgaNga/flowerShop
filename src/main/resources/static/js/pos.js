@@ -1,3 +1,48 @@
+// Xử lý mở bill ở cửa sổ mới khi thanh toán tiền mặt
+document.addEventListener("DOMContentLoaded", function () {
+  const posForm = document.getElementById("posForm");
+  if (posForm) {
+    posForm.addEventListener("submit", function (e) {
+      const paymentMethod = posForm.querySelector(
+        'select[name="paymentMethod"]'
+      ).value;
+      if (paymentMethod === "cash") {
+        e.preventDefault();
+        const formData = new FormData(posForm);
+        fetch(posForm.action, {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => {
+            // Nếu server trả về redirect, lấy url từ response.url
+            if (
+              response.redirected &&
+              response.url.includes("/pos/bill?orderCode=")
+            ) {
+              const url = response.url;
+              // Tính toán để cửa sổ nằm giữa màn hình
+              const w = 700,
+                h = 600;
+              const left = window.screenX + (window.outerWidth - w) / 2;
+              const top = window.screenY + (window.outerHeight - h) / 2;
+              window.open(
+                url,
+                "_blank",
+                `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes`
+              );
+              window.location.href = "/pos?success=payment_completed";
+            } else {
+              // Nếu không phải redirect bill, chuyển hướng như bình thường
+              window.location.href = response.url;
+            }
+          })
+          .catch(() => {
+            alert("Có lỗi khi xác nhận bán hàng!");
+          });
+      }
+    });
+  }
+});
 function setColorFilter(color) {
   document.getElementById("colorInput").value = color;
   document.getElementById("filterForm").submit();
