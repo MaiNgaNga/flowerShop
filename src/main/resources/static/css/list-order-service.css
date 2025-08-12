@@ -1,9 +1,112 @@
-/* List Order Service Styles */
 body {
   font-family: "Roboto", sans-serif;
   background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
   min-height: 100vh;
   margin: 0;
+}
+
+/* Custom Alert Styles */
+.custom-alert {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  min-width: 300px;
+  max-width: 500px;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideInRight 0.3s ease-out;
+  font-weight: 500;
+}
+
+.custom-alert.alert-success {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+}
+
+.custom-alert.alert-error {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+}
+
+.custom-alert.alert-warning {
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  color: #856404;
+}
+
+.alert-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.alert-message {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.alert-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.alert-close:hover {
+  opacity: 1;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Validation Error Styles */
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.invalid-feedback {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #dc3545;
 }
 
 .content {
@@ -192,22 +295,56 @@ body {
   border-bottom: none;
 }
 
-.modal-form-row {
+.modal-footer {
+  border-top: none;
+}
+
+.filter-buttons {
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+  align-items: flex-end;
+  gap: 10px;
 }
 
-.description-field {
-  width: 100%;
+.filter-active {
+  background: #dbeafe !important;
+  border: 2px solid #3b82f6 !important;
 }
 
+.no-results {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.filter-summary {
+  background: #f0f9ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+  color: #1e40af;
+}
+
+.filter-tag {
+  display: inline-block;
+  background: #3b82f6;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  margin: 2px;
+}
+
+/* Pagination Styles */
 .pagination-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: 20px;
   padding: 15px 0;
+  border-top: 1px solid #e5e7eb;
 }
 
 .pagination-info {
@@ -220,153 +357,77 @@ body {
 }
 
 .page-link {
-  color: #4b5563;
+  color: #3b82f6;
   border: 1px solid #d1d5db;
   padding: 8px 12px;
   margin: 0 2px;
   border-radius: 6px;
+  text-decoration: none;
   transition: all 0.2s ease;
 }
 
 .page-link:hover {
   background-color: #f3f4f6;
-  color: #1f2937;
+  border-color: #3b82f6;
+  color: #1d4ed8;
 }
 
 .page-item.active .page-link {
-  background-color: #60a5fa;
-  border-color: #60a5fa;
+  background-color: #3b82f6;
+  border-color: #3b82f6;
   color: white;
 }
 
 .page-item.disabled .page-link {
   color: #9ca3af;
   background-color: #f9fafb;
+  border-color: #e5e7eb;
+  cursor: not-allowed;
 }
 
-.no-results {
-  text-align: center;
-  color: #6b7280;
-  font-style: italic;
-  padding: 40px 0;
+.page-item.disabled .page-link:hover {
+  background-color: #f9fafb;
+  border-color: #e5e7eb;
+  color: #9ca3af;
 }
 
-.no-results i {
-  font-size: 2rem;
-  margin-bottom: 10px;
-  opacity: 0.5;
+.modal-dialog {
+  max-width: 600px;
 }
 
-.filter-summary {
-  background: #fef3c7;
-  border: 1px solid #f59e0b;
-  border-radius: 8px;
-  padding: 10px 15px;
-  margin-bottom: 15px;
-  font-size: 0.9rem;
+#createOrderModal .modal-dialog,
+#orderDetailsModal .modal-dialog {
+  max-width: 800px;
+  /* Set both modals to 800px width */
 }
 
-.filter-tag {
-  background: #60a5fa;
-  color: white;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  margin: 0 5px;
-}
-
-/* Custom Alert Styles */
-.custom-alert {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 9999;
-  min-width: 300px;
-  max-width: 500px;
-  padding: 15px 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.modal-form-row {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  animation: slideInRight 0.3s ease-out;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
-.custom-alert.alert-success {
-  background-color: #d1fae5;
-  border-left: 4px solid #10b981;
-  color: #065f46;
-}
-
-.custom-alert.alert-error {
-  background-color: #fee2e2;
-  border-left: 4px solid #ef4444;
-  color: #991b1b;
-}
-
-.custom-alert.alert-warning {
-  background-color: #fef3c7;
-  border-left: 4px solid #f59e0b;
-  color: #92400e;
-}
-
-.custom-alert .alert-icon {
-  font-size: 1.2rem;
-  flex-shrink: 0;
-}
-
-.custom-alert .alert-message {
+.modal-form-row .col-md-6 {
   flex: 1;
-  font-weight: 500;
+  min-width: 250px;
 }
 
-.custom-alert .alert-close {
-  background: none;
-  border: none;
-  font-size: 1.1rem;
-  cursor: pointer;
-  opacity: 0.7;
-  padding: 0;
-  margin-left: 10px;
-}
-
-.custom-alert .alert-close:hover {
-  opacity: 1;
-}
-
-@keyframes slideInRight {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideOutRight {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-}
-
-/* Validation Error Styles */
-.form-control.is-invalid,
-.form-select.is-invalid {
-  border-color: #dc3545;
-  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
-}
-
-.invalid-feedback {
-  display: block;
+/* Ensure full-width inputs and selects in both modals */
+#createOrderModal .form-control,
+#createOrderModal .form-select,
+#orderDetailsModal .form-control,
+#orderDetailsModal .form-select {
   width: 100%;
-  margin-top: 0.25rem;
-  font-size: 0.875rem;
-  color: #dc3545;
+}
+
+/* Full-width description field for orderDetailsModal */
+#orderDetailsModal .description-field {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+
+/* Description field in createOrderModal shares row with execution time */
+#createOrderModal .description-field {
+  flex: 1;
+  min-width: 250px;
 }
