@@ -27,8 +27,14 @@
       <i class="fa-solid fa-clock-rotate-left me-2"></i> Lịch sử giao hàng
     </a>
 
-    <a class="nav-link text-dark py-3 menu-item" href="/logout"
-      ><i class="fa-solid fa-right-from-bracket me-2"></i> Đăng xuất</a
-    >
+    <a class="nav-link text-dark py-3 menu-item"
+      >
+
+        <form action="/logout" method="post">
+          <button type="submit" class="dropdown-item text-danger">
+          <i class="fa-solid fa-right-from-bracket me-2"></i> Đăng xuất
+          </button>
+        </form>
+      </a>
   </nav>
 </aside>
