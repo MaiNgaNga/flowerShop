@@ -14,13 +14,11 @@ document.addEventListener("DOMContentLoaded", function () {
           body: formData,
         })
           .then((response) => {
-            // Nếu server trả về redirect, lấy url từ response.url
             if (
               response.redirected &&
               response.url.includes("/pos/bill?orderCode=")
             ) {
-              const url = response.url;
-              // Tính toán để cửa sổ nằm giữa màn hình
+              const { url } = response;
               const w = 700,
                 h = 600;
               const left = window.screenX + (window.outerWidth - w) / 2;
@@ -32,7 +30,6 @@ document.addEventListener("DOMContentLoaded", function () {
               );
               window.location.href = "/pos?success=payment_completed";
             } else {
-              // Nếu không phải redirect bill, chuyển hướng như bình thường
               window.location.href = response.url;
             }
           })
@@ -140,11 +137,8 @@ function removeFromCart(productId) {
 function resetFilterForm() {
   const form = document.getElementById("filterForm");
   form.reset();
-  // Đặt lại tất cả select về option đầu tiên (Tất cả)
   form.querySelectorAll("select").forEach((sel) => (sel.selectedIndex = 0));
-  // Xóa trắng ô tìm kiếm
   document.getElementById("filterKeyword").value = "";
-  // Submit lại form
   form.submit();
 }
 

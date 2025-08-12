@@ -30,47 +30,6 @@ function updateCountdown() {
 
 setInterval(updateCountdown, 1000);
 
-// const checkPaymentBtn = document.getElementById("checkPaymentBtn");
-// if (checkPaymentBtn) {
-//   checkPaymentBtn.addEventListener("click", function () {
-//     const btn = this;
-//     const originalText = btn.innerHTML;
-//     btn.disabled = true;
-//     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang kiểm tra...';
-
-//     setTimeout(() => {
-//       if (Math.random() > 0.7) {
-//         document.getElementById("statusAlert").innerHTML =
-//           '<i class="fas fa-check-circle"></i> ✅ Thanh toán thành công!';
-//         document.getElementById("statusAlert").className =
-//           "alert alert-success";
-
-//         try {
-//           new Audio("/sounds/success.mp3").play();
-//         } catch (e) {}
-
-//         setTimeout(() => {
-//           alert("🎉 Thanh toán thành công! Đơn hàng đã được xử lý.");
-//           window.location.href = "/pos?success=payment_completed";
-//         }, 2000);
-//       } else {
-//         btn.disabled = false;
-//         btn.innerHTML = originalText;
-
-//         const tempAlert = document.createElement("div");
-//         tempAlert.className = "alert alert-warning mt-2";
-//         tempAlert.innerHTML =
-//           "<small>⏳ Chưa nhận được thanh toán. Vui lòng thử lại.</small>";
-//         btn.parentNode.appendChild(tempAlert);
-
-//         setTimeout(() => {
-//           tempAlert.remove();
-//         }, 3000);
-//       }
-//     }, 1500);
-//   });
-// }
-
 const printQRBtn = document.getElementById("printQRBtn");
 if (printQRBtn) {
   printQRBtn.addEventListener("click", function () {
@@ -131,31 +90,6 @@ if (printQRBtn) {
   });
 }
 
-// setInterval(() => {
-//   const orderCode =
-//     document.querySelector(".info-value")?.textContent.trim() || "";
-//   if (!orderCode) {
-//     return;
-//   }
-//   fetch("/pos/check-payment-status", {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify({ orderCode: orderCode }),
-//   })
-//     .then((response) => response.json())
-//     .then((data) => {
-//       if (data.success && data.status === "Đã thanh toán") {
-//         document.getElementById("statusAlert").innerHTML =
-//           '<i class="fas fa-check-circle"></i> ✅ Thanh toán thành công!';
-//         document.getElementById("statusAlert").className =
-//           "alert alert-success";
-//         setTimeout(() => {
-//           window.location.href = "/pos?success=payment_completed";
-//         }, 2000);
-//       }
-//     })
-//     .catch((error) => {});
-// }, 20000);
 
 const modal = document.getElementById("confirmPaymentModal");
 if (modal) {
@@ -179,9 +113,10 @@ if (modal) {
               var modal = bootstrap.Modal.getInstance(
                 document.getElementById("confirmPaymentModal")
               );
-              if (modal) modal.hide();
+              if (modal) {
+                modal.hide();
+              }
               if (data.redirectUrl) {
-                // Tính toán để cửa sổ nằm giữa màn hình
                 const w = 700,
                   h = 600;
                 const left = window.screenX + (window.outerWidth - w) / 2;
