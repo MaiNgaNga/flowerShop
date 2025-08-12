@@ -19,12 +19,11 @@ public class Ward {
     @Column(name = "ward_id")
     private Long id;
 
-    @NotBlank(message = "Tên xã/phường không được để trống")
     @Column(name = "ward_name", nullable = false, columnDefinition = "NVARCHAR(100)")
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "zone_id")
+    @JoinColumn(name = "zone_id" , nullable = true)
     private Zone zone;
 }
 

@@ -1,0 +1,277 @@
+<main class="container mt-3">
+  <h3>Quản Lý Xã/Phường</h3>
+  <hr />
+  <div
+    class="success alert alert-success"
+    th:if="${success}"
+    th:text="${success}"
+  ></div>
+  <!-- Tab Navigation -->
+  <ul class="nav nav-tabs" id="wardTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link active"
+        id="edit-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#edit"
+        type="button"
+        role="tab"
+        aria-controls="edit"
+        aria-selected="true"
+      >
+        Chỉnh sửa
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link"
+        id="list-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#list"
+        type="button"
+        role="tab"
+        aria-controls="list"
+        aria-selected="false"
+      >
+        Danh sách
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content" id="wardTabContent">
+    <i class="error" th:if="${error}" th:text="${error}"></i>
+
+    <!-- Tab: Chỉnh sửa -->
+    <div
+      class="tab-pane fade show active"
+      id="edit"
+      role="tabpanel"
+      aria-labelledby="edit-tab"
+    >
+      <form
+        action="/Ward/index"
+        th:object="${ward}"
+        method="post"
+        class="p-4 bg-white border rounded shadow-sm"
+      >
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="id" class="form-label fw-medium text-muted">ID</label>
+              <input
+                type="text"
+                id="id"
+                th:field="*{id}"
+                readonly
+                class="form-control form-control-sm bg-light"
+              />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="name" class="form-label fw-medium text-muted"
+                >Tên Xã/Phường</label
+              >
+              <input
+                type="text"
+                th:field="*{name}"
+                id="name"
+                class="form-control form-control-sm"
+                readonly
+              />
+              <small class="text-danger" th:errors="*{name}"></small>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="zone" class="form-label fw-medium text-muted"
+                >Khu Vực</label
+              >
+              <select
+                id="zone"
+                th:field="*{zone}"
+                class="form-select form-select-sm"
+              >
+                <option
+                  th:each="z : ${zones}"
+                  th:value="${z.id}"
+                  th:text="${z.name}"
+                  th:selected="${ward.zone != null and z.id == ward.zone.id}"
+                ></option>
+              </select>
+              <small class="text-danger" th:errors="*{zone}"></small>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-4 text-end">
+          <div class="col">
+            <button
+              type="submit"
+              class="btn btn-warning btn-sm me-2"
+              th:formaction="@{'/Ward/update?tab=edit'}"
+            >
+              <i class="fa fa-edit me-1"></i> Cập Nhật
+            </button>
+
+            <a
+              class="btn btn-success btn-sm"
+              th:href="@{/Ward/index(tab='edit')}"
+            >
+              <i class="fa fa-sync me-1"></i> Làm Mới
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Tab: Danh sách -->
+    <div
+      class="tab-pane fade"
+      id="list"
+      role="tabpanel"
+      aria-labelledby="list-tab"
+    >
+      <div
+        style="display: flex; gap: 20px; margin-left: 50px; align-items: center"
+      >
+        <form
+          action="/Ward/index"
+          method="get"
+          class="search-filter-row"
+          style="gap: 10px; align-items: center; display: flex"
+        >
+          <input type="hidden" name="tab" value="list" />
+          <div class="search-box d-flex align-items-center">
+            <i class="fa fa-search me-2"></i>
+            <input
+              type="text"
+              name="keyword"
+              th:value="${keyword}"
+              class="form-control form-control-sm custom-search-input"
+              placeholder="Tìm kiếm"
+              oninput="this.form.submit()"
+            />
+          </div>
+        </form>
+
+        <form method="get" th:action="@{/Ward/index}">
+          <div class="mb-0 d-flex align-items-center">
+            <select
+              id="zoneSelect"
+              name="zoneId"
+              class="form-select"
+              onchange="this.form.submit()"
+              style="min-width: 200px"
+            >
+              <th:block th:each="zone : ${zones}">
+                <option
+                  th:value="${zone.id}"
+                  th:text="${zone.name}"
+                  th:selected="${zone.id == zoneId}"
+                ></option>
+              </th:block>
+            </select>
+          </div>
+        </form>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th>ID</th>
+              <th class="text-start">Tên Xã/Phường</th>
+              <th>Khu Vực</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <th:block th:each="item : ${wards}">
+              <tr>
+                <td th:text="${item.id}"></td>
+                <td class="text-start" th:text="${item.name}"></td>
+                <td
+                  th:text="${item.zone != null ? item.zone.name : 'Chưa chọn'}"
+                ></td>
+                <td class="action-icons">
+                  <a
+                    th:href="@{'/Ward/edit/' + ${item.id} + '?tab=edit'}"
+                    class="edit-icon"
+                    title="Sửa xã/phường"
+                  >
+                    <i class="fa fa-edit"></i>
+                  </a>
+                </td>
+              </tr>
+            </th:block>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex justify-content-center mt-3" th:if="${totalPages > 0}">
+        <nav>
+          <ul class="pagination custom-pagination">
+            <li
+              class="page-item"
+              th:classappend="${currentPage == 0} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/Ward/index(page=0, size=10, keyword=${keyword},zoneId=${zoneId}, tab='list')}"
+              >
+                <i class="fa fa-angle-double-left"></i>
+              </a>
+            </li>
+            <li
+              class="page-item"
+              th:classappend="${currentPage == 0} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/Ward/index(page=${currentPage - 1}, size=10, keyword=${keyword},zoneId=${zoneId}, tab='list')}"
+              >
+                <i class="fa fa-angle-left"></i>
+              </a>
+            </li>
+            <li
+              class="page-item"
+              th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+              th:classappend="${currentPage == i} ? 'active'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/Ward/index(page=${i}, size=10, keyword=${keyword},zoneId=${zoneId}, tab='list')}"
+                th:text="${i + 1}"
+              ></a>
+            </li>
+            <li
+              class="page-item"
+              th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/Ward/index(page=${currentPage + 1}, size=10, keyword=${keyword},zoneId=${zoneId}, tab='list')}"
+              >
+                <i class="fa fa-angle-right"></i>
+              </a>
+            </li>
+            <li
+              class="page-item"
+              th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/Ward/index(page=${totalPages - 1}, size=10, keyword=${keyword},zoneId=${zoneId}, tab='list')}"
+              >
+                <i class="fa fa-angle-double-right"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</main>
