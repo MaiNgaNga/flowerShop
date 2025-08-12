@@ -1,5 +1,6 @@
 package com.datn.Controller.user;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,12 +25,16 @@ import com.datn.Service.OrderService;
 import com.datn.Service.ProductCategoryService;
 import com.datn.Service.ProductService;
 import com.datn.Service.PromotionService;
+import com.datn.Service.WardService;
+import com.datn.dao.ZoneDAO;
 import com.datn.model.CartItem;
 import com.datn.model.Order;
 import com.datn.model.OrderDetail;
 import com.datn.model.OrderRequest;
 import com.datn.model.Promotion;
 import com.datn.model.User;
+import com.datn.model.Ward;
+import com.datn.model.Zone;
 import com.datn.utils.AuthService;
 
 import jakarta.servlet.http.HttpSession;
@@ -55,6 +60,11 @@ public class OrderController {
 
     @Autowired
     private PromotionService promotionService;
+    @Autowired
+    private WardService wardService;
+    @Autowired
+    private ZoneDAO zoneDAO;
+
 
     @GetMapping("/index")
     public String index(Model model) {
@@ -69,6 +79,8 @@ public class OrderController {
         model.addAttribute("orderRequest", orderRequest);
         return showForm(model);
     }
+ 
+
 
     @PostMapping("/apply-voucher")
     @ResponseBody
@@ -119,9 +131,13 @@ public class OrderController {
 
     @PostMapping("/checkout")
     public String checkout(@Valid @ModelAttribute("orderRequest") OrderRequest orderRequest, BindingResult result,
-            Model model, HttpSession session) {
+            Model model, HttpSession session, @RequestParam("wardID") Long wardId,
+            @RequestParam(value = "specific", required = false) String specific) {
         if (result.hasErrors()) {
+             model.addAttribute("selectedWardId", wardId);
+             model.addAttribute("specific", specific);
             return showForm(model);
+             
         }
 
         User user = authService.getUser();
@@ -130,7 +146,7 @@ public class OrderController {
             model.addAttribute("message", "Giỏ hàng trống, không thể đặt hàng.");
             return showForm(model);
         }
-
+       
         Order order = new Order();
         order.setUser(user);
         order.setCreateDate(new Date());
@@ -175,7 +191,7 @@ public class OrderController {
                 }
             }
         }
-
+      
         session.removeAttribute("finalAmount");
         session.removeAttribute("totalAmount");
         session.removeAttribute("appliedPromotion");
@@ -186,10 +202,13 @@ public class OrderController {
     public String showForm(Model model) {
         User user = authService.getUser();
         model.addAttribute("user", user);
-
+        List<Ward> wards= wardService.getAllWards();
+        model.addAttribute("wards", wards);
+        List<Zone> zones= zoneDAO.findAll();
+        model.addAttribute("zones", zones);
         List<CartItem> cartItems = cartItemService.getCartItemsByUserId(user.getId());
         model.addAttribute("cartItems", cartItems);
-
+        
         model.addAttribute("totalAmount", cartItemService.getTotalAmount(user.getId()));
 
         model.addAttribute("productCategories", pro_ca_service.findAll());
