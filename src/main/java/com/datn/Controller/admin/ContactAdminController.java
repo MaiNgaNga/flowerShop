@@ -21,7 +21,7 @@ import com.datn.model.Contact;
 @Controller
 @RequestMapping("/Contact")
 public class ContactAdminController {
-    
+
     @Autowired
     private ContactService contactService;
 
@@ -29,12 +29,12 @@ public class ContactAdminController {
     public List<Contact> getAllContacts() {
         return contactService.findAll(Pageable.unpaged()).getContent();
     }
-    
+
     @RequestMapping("/index/admin")
     public String index(Model model,
-                        @RequestParam(value = "status", required = false) String status,
-                        @RequestParam(value = "page", defaultValue = "0") int page,
-                        @RequestParam(value = "size", defaultValue = "10") int size) {
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
         Page<Contact> contactPage;
@@ -58,11 +58,10 @@ public class ContactAdminController {
         return "admin/layout";
     }
 
-
     @GetMapping("/markProcessed/{id}")
     public String markProcessed(@PathVariable("id") int id,
-                                @RequestParam(value = "status", required = false) String status,
-                                @RequestParam(value = "page", defaultValue = "0") int page, Model model) {
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "page", defaultValue = "0") int page, Model model) {
         Contact contact = contactService.findById(id);
         if (contact != null) {
             contact.setStatus(true);
@@ -72,8 +71,7 @@ public class ContactAdminController {
 
         }
         // Quay lại trang hiện tại và giữ trạng thái lọc
-    return "redirect:/Contact/index/admin?status=" + status + "&page=" + page;
+        return "redirect:/Contact/index/admin?status=" + status + "&page=" + page;
     }
-
 
 }

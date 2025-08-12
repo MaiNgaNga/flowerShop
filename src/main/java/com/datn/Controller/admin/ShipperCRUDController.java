@@ -1,6 +1,5 @@
 package com.datn.Controller.admin;
 
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +36,7 @@ public class ShipperCRUDController {
         return userService.findAllNonShipper();
 
     }
+
     @ModelAttribute("shippers")
     public List<Shipper> getAllShippers() {
         return shipperService.findAll();
@@ -44,12 +44,11 @@ public class ShipperCRUDController {
 
     @GetMapping("/index")
     public String index(Model model,
-                        @RequestParam(value = "page", defaultValue = "0") int page,
-                        @RequestParam(value = "size", defaultValue = "10") int size) {
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
         Page<Shipper> shipperPage = shipperService.findByAllShippers(pageable);
-
 
         Shipper shipper = new Shipper();
         shipper.setUser(new User()); // Khởi tạo user để tránh NullPointerException
@@ -65,10 +64,9 @@ public class ShipperCRUDController {
 
     @PostMapping("/create")
     public String create(@Valid @ModelAttribute("shipper") Shipper shipper,
-                         Errors errors,
-                         Model model,
-                         RedirectAttributes redirectAttributes
-                        ) {
+            Errors errors,
+            Model model,
+            RedirectAttributes redirectAttributes) {
         if (errors.hasErrors()) {
             model.addAttribute("view", "admin/shipperCRUD");
             return "admin/layout";
@@ -87,28 +85,28 @@ public class ShipperCRUDController {
         }
         // kiểm tra xem user đã có vai trò shipper chưa
         if (shipperService.existsByUserId(shipper.getUser().getId())) {
-        model.addAttribute("error", "Người dùng này đã là shipper!");
+            model.addAttribute("error", "Người dùng này đã là shipper!");
 
-        model.addAttribute("view", "admin/shipperCRUD");
-        return "admin/layout";
-    }
+            model.addAttribute("view", "admin/shipperCRUD");
+            return "admin/layout";
+        }
 
-    User user = userService.findByID(shipper.getUser().getId());
-    if (user != null) {
-        user.setRole(2); // hoặc true nếu bạn dùng boolean
+        User user = userService.findByID(shipper.getUser().getId());
+        if (user != null) {
+            user.setRole(2); // hoặc true nếu bạn dùng boolean
             userService.update(user); // Cập nhật lại user
         }
-      
+
         shipperService.save(shipper);
-      
+
         redirectAttributes.addFlashAttribute("success", "Thêm shipper thành công!");
         return "redirect:/Shipper/index";
     }
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Integer id,
-                       @RequestParam(value = "page", defaultValue = "0") int page,
-                       Model model) {
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            Model model) {
         Shipper shipper = shipperService.findById(id);
         Pageable pageable = PageRequest.of(page, 10);
         Page<Shipper> result = shipperService.findByAllShippers(pageable);
@@ -123,9 +121,9 @@ public class ShipperCRUDController {
 
     @PostMapping("/update")
     public String update(@Valid @ModelAttribute("shipper") Shipper shipper,
-                         Errors errors,
-                         Model model,
-                         RedirectAttributes redirectAttributes) {
+            Errors errors,
+            Model model,
+            RedirectAttributes redirectAttributes) {
         if (errors.hasErrors()) {
             model.addAttribute("shippers", shipperService.findAll());
             model.addAttribute("view", "admin/shipperCRUD");
@@ -137,25 +135,25 @@ public class ShipperCRUDController {
             model.addAttribute("error", "Không tìm thấy shipper để cập nhật");
             model.addAttribute("view", "admin/shipperCRUD");
             return "admin/layout";
-        }; 
+        }
+        ;
 
-        if ( !CCCDValidator.isValidCCCD(shipper.getCccd()) ) {
+        if (!CCCDValidator.isValidCCCD(shipper.getCccd())) {
             model.addAttribute("errorCCCD", "CCCD không hợp lệ! Phải gồm 12 chữ số và mã tỉnh hợp lệ.");
             model.addAttribute("view", "admin/shipperCRUD");
             return "admin/layout";
-            
+
         }
-        
+
         // nếu không thay đổi trạng thái, giữ nguyên
         if (shipper.getStatus() == null) {
             shipper.setStatus(existing.getStatus());
-            } else {
-                // nếu có thay đổi trạng thái, cập nhật lại
-                existing.setStatus(shipper.getStatus());
-            }
-         // Lấy lại User từ DB nếu form không gửi đủ dữ liệu
+        } else {
+            // nếu có thay đổi trạng thái, cập nhật lại
+            existing.setStatus(shipper.getStatus());
+        }
+        // Lấy lại User từ DB nếu form không gửi đủ dữ liệu
         shipper.setUser(existing.getUser()); // Giữ nguyên User đã có
-
 
         shipperService.update(shipper);
         redirectAttributes.addFlashAttribute("success", "Cập nhật shipper thành công!");
@@ -163,36 +161,35 @@ public class ShipperCRUDController {
     }
 
     @RequestMapping("/delete/{id}")
-public String delete(@PathVariable("id") Integer id,
-                     RedirectAttributes redirectAttributes) {
-    try {
-        Shipper shipper = shipperService.findById(id);
-        if (shipper != null) {
-            // Cập nhật trạng thái nếu cần
-            // Cập nhật lại shipper
-            shipperService.save(shipper);
+    public String delete(@PathVariable("id") Integer id,
+            RedirectAttributes redirectAttributes) {
+        try {
+            Shipper shipper = shipperService.findById(id);
+            if (shipper != null) {
+                // Cập nhật trạng thái nếu cần
+                // Cập nhật lại shipper
+                shipperService.save(shipper);
 
-            redirectAttributes.addFlashAttribute("success", "Đã gỡ shipper thành công!");
-            // Cập nhật vai trò của User về "user thường" 
-            User user = userService.findByID(shipper.getUser().getId());
-            if (user != null) {
-                user.setRole(0); // hoặc giá trị tương ứng với "user thường"
-                userService.update(user);
+                redirectAttributes.addFlashAttribute("success", "Đã gỡ shipper thành công!");
+                // Cập nhật vai trò của User về "user thường"
+                User user = userService.findByID(shipper.getUser().getId());
+                if (user != null) {
+                    user.setRole(0); // hoặc giá trị tương ứng với "user thường"
+                    userService.update(user);
+                }
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Không tìm thấy shipper để xóa.");
             }
-        } else {
-            redirectAttributes.addFlashAttribute("error", "Không tìm thấy shipper để xóa.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Xóa thất bại: " + e.getMessage());
         }
-    } catch (Exception e) {
-        redirectAttributes.addFlashAttribute("error", "Xóa thất bại: " + e.getMessage());
+        return "redirect:/Shipper/index";
     }
-    return "redirect:/Shipper/index";
-}
-
 
     @GetMapping("/searchByName")
     public String searchByName(@RequestParam("name") String name,
-                               @RequestParam(value = "page", defaultValue = "0") int page,
-                               Model model) {
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            Model model) {
         Pageable pageable = PageRequest.of(page, 10);
         Page<Shipper> result = shipperService.searchByName(name, pageable);
 
@@ -207,8 +204,8 @@ public String delete(@PathVariable("id") Integer id,
 
     @GetMapping("/searchByStatus")
     public String searchByStatus(@RequestParam("status") Boolean status,
-                                 @RequestParam(value = "page", defaultValue = "0") int page,
-                                 Model model) {
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            Model model) {
         Pageable pageable = PageRequest.of(page, 10);
         Page<Shipper> result = shipperService.searchByStatus(status, pageable);
 

@@ -59,6 +59,7 @@ public class HomeController {
 
     @Autowired
     private ServiceService serviceService;
+
     @GetMapping("/home")
     public String home(Model model) {
         List<ProductCategory> productCategories = productCategoryService.findAll();
@@ -71,10 +72,10 @@ public class HomeController {
         List<Comment> comments = commentService.getTop3Comments();
         List<Product> discountProducts = productService
                 .findTop4ByDiscountPercentGreaterThanAndAvailableIsTrueOrderByDiscountPercentDesc(0);
-        
-        // Lấy 1 dịch vụ mới nhất (theo ID giảm dần)
-        List<ServiceEntity> latestServices = serviceService.findTop1ByOrderByIdDesc();
-        
+
+        // Lấy 1 dịch vụ mới nhất có trạng thái hoạt động
+        List<ServiceEntity> latestServices = serviceService.findTop1ByAvailableTrueOrderByIdDesc();
+
         int cartCount = 0;
         User user = authService.getUser();
         if (user != null) {
@@ -98,6 +99,7 @@ public class HomeController {
 
         return "layouts/layout";
     }
+
     @GetMapping("/api/best-seller")
     @ResponseBody
     public List<Product> getBestSellerByType(@RequestParam String type) {
@@ -126,7 +128,6 @@ public class HomeController {
 
         if (keyword != null && !keyword.isEmpty()) {
             Page<Product> resultPage = Page.empty();
-    
 
             resultPage = productService.searchByCategoryName(keyword, pageable);
 
@@ -146,6 +147,7 @@ public class HomeController {
 
         return "layouts/layout";
     }
+
     @GetMapping("/api/search-suggestions")
     @ResponseBody
     public List<String> getSearchSuggestions(@RequestParam String keyword) {
