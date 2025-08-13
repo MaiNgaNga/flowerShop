@@ -1,71 +1,812 @@
-<div class="row">
-  <!-- Sidebar (Aside) -->
-  <aside class="col-md-2 pt-4 nenindex asidemana">
-    <a href="/home">
-      <img
-        th:src="@{/images/2.png}"
-        alt="Trạm Hoa"
-        height="100"
-        style="text-align: center"
-      />
-    </a>
+<!-- Ultra Clean Admin Dashboard - Zero Conflicts -->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  
+  /* Namespace tất cả CSS trong .admin-layout để tránh xung đột */
+  .admin-layout {
+    --admin-primary: #6366f1;
+    --admin-primary-dark: #4f46e5;
+    --admin-gray-50: #f9fafb;
+    --admin-gray-100: #f3f4f6;
+    --admin-gray-200: #e5e7eb;
+    --admin-gray-600: #4b5563;
+    --admin-gray-700: #374151;
+    --admin-gray-800: #1f2937;
+    --admin-gray-900: #111827;
+    --admin-sidebar-width: 280px;
+    --admin-sidebar-collapsed: 70px;
+    --admin-header-height: 60px;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    isolation: isolate;
+  }
 
-    <nav class="nav flex-column pt-2">
-      <a href="/statistical" class="nav-link text-dark py-3 menu-item">
-        <i class="fa-solid fa-file-lines me-2"></i> Thống kê
+  /* Đảm bảo không xung đột với CSS khác */
+  .admin-layout * {
+    box-sizing: border-box;
+  }
+
+  /* Header - Namespace */
+  .admin-layout .admin-header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: var(--admin-sidebar-width);
+    height: var(--admin-header-height);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--admin-gray-200);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 2rem;
+    z-index: 1000;
+    transition: left 0.3s ease;
+  }
+
+  .admin-layout .admin-header.collapsed {
+    left: var(--admin-sidebar-collapsed);
+  }
+
+  .admin-layout .admin-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .admin-layout .admin-theme-toggle {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    background: var(--admin-gray-100);
+    color: var(--admin-gray-600);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .admin-layout .admin-theme-toggle:hover {
+    background: var(--admin-primary);
+    color: white;
+    transform: scale(1.05);
+  }
+
+  .admin-layout .admin-user-menu {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    background: var(--admin-gray-100);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .admin-layout .admin-user-menu:hover {
+    background: var(--admin-primary);
+    color: white;
+  }
+
+  .admin-layout .admin-user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--admin-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .admin-layout .admin-user-info h6 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .admin-layout .admin-user-info span {
+    font-size: 12px;
+    opacity: 0.7;
+  }
+
+  /* Sidebar - Namespace */
+  .admin-layout .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--admin-sidebar-width);
+    height: 100vh;
+    background: #ffffff;
+    border-right: 1px solid var(--admin-gray-200);
+    z-index: 1001;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .admin-layout .admin-sidebar.collapsed {
+    width: var(--admin-sidebar-collapsed);
+  }
+
+  /* Đảm bảo sidebar collapsed luôn hiển thị đúng */
+  .admin-layout .admin-sidebar.collapsed {
+    overflow: visible;
+  }
+
+  .admin-layout .admin-sidebar.collapsed:hover {
+    width: var(--admin-sidebar-width);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    z-index: 1002;
+  }
+
+  /* Dark theme cho sidebar */
+  .admin-layout[data-theme="dark"] .admin-sidebar {
+    background: #1f2937;
+    border-right-color: #374151;
+  }
+
+  .admin-layout .admin-sidebar-header {
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--admin-header-height);
+    position: relative;
+  }
+
+  .admin-layout .admin-sidebar.collapsed .admin-sidebar-header {
+    padding: 0 1rem;
+    justify-content: center;
+  }
+
+  .admin-layout .admin-sidebar.collapsed:hover .admin-sidebar-header {
+    padding: 0 1.5rem;
+    justify-content: space-between;
+  }
+
+  .admin-layout .admin-logo-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: var(--admin-gray-900);
+    transition: all 0.3s ease;
+  }
+
+  .admin-layout[data-theme="dark"] .admin-logo-container {
+    color: #ffffff;
+  }
+
+  .admin-layout .admin-sidebar.collapsed .admin-logo-container {
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    transition: all 0.3s ease;
+  }
+
+  .admin-layout .admin-sidebar.collapsed:hover .admin-logo-container {
+    opacity: 1;
+    pointer-events: auto;
+    position: static;
+    display: flex;
+  }
+
+  .admin-layout .admin-logo-container img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+  }
+
+  .admin-layout .admin-sidebar-toggle {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    background: var(--admin-gray-100);
+    color: var(--admin-gray-600);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    position: absolute;
+    right: 1.5rem;
+    z-index: 10;
+  }
+
+  .admin-layout[data-theme="dark"] .admin-sidebar-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+
+  .admin-layout .admin-sidebar.collapsed .admin-sidebar-toggle {
+    position: static;
+    right: auto;
+    margin: 0 auto;
+  }
+
+  .admin-layout .admin-sidebar.collapsed:hover .admin-sidebar-toggle {
+    position: absolute;
+    right: 1.5rem;
+    margin: 0;
+  }
+
+  .admin-layout .admin-sidebar-toggle:hover {
+    background: var(--admin-primary);
+    color: white;
+    transform: scale(1.1);
+  }
+
+  /* Navigation - Namespace */
+  .admin-layout .admin-sidebar-nav {
+    padding: 2rem 0 1rem 0;
+    height: calc(100vh - var(--admin-header-height));
+    overflow-y: auto;
+  }
+
+  .admin-layout .admin-nav-group {
+    margin-bottom: 0.5rem;
+  }
+
+  .admin-layout .admin-nav-group-header {
+    padding: 0.75rem 1.5rem;
+    color: var(--admin-gray-600);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.2s ease;
+  }
+
+  /* Đảm bảo menu standalone có cùng layout với nav-group-header */
+  .admin-layout .admin-nav-item.standalone {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--admin-gray-700);
+    text-transform: none;
+    letter-spacing: normal;
+  }
+
+  .admin-layout[data-theme="dark"] .admin-nav-group-header {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .admin-layout .admin-sidebar.collapsed .admin-nav-group-header {
+    padding: 0.75rem;
+    justify-content: center;
+  }
+
+  .admin-layout .admin-nav-group-header:hover {
+    color: var(--admin-primary);
+    background: var(--admin-gray-50);
+  }
+
+  .admin-layout[data-theme="dark"] .admin-nav-group-header:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  /* Menu items riêng lẻ - không có dấu chấm */
+  .admin-layout .admin-nav-item.standalone {
+    margin-left: 0 !important;
+    padding: 0.75rem 1.5rem !important;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .admin-layout .admin-nav-item.standalone i {
+    width: 18px;
+    text-align: center;
+    font-size: 16px;
+    margin-right: 0;
+  }
+
+  .admin-layout .admin-nav-item.standalone::before {
+    display: none !important;
+  }
+
+  .admin-layout .admin-sidebar.collapsed .admin-nav-item.standalone {
+    padding: 0.75rem !important;
+    justify-content: center;
+    margin-left: 0 !important;
+  }
+
+  .admin-layout .admin-sidebar.collapsed .admin-nav-item.standalone i {
+    width: auto;
+    font-size: 20px;
+  }
+
+  .admin-layout .admin-sidebar.collapsed:hover .admin-nav-item.standalone {
+    padding: 0.75rem 1.5rem !important;
+    justify-content: flex-start;
+    margin-left: 0 !important;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .admin-layout .admin-sidebar.collapsed:hover .admin-nav-item.standalone i {
+    width: 18px;
+    text-align: center;
+    font-size: 16px;
+    margin-right: 0;
+  }
+
+  .admin-layout .admin-nav-group-header .group-icon {
+    width: 18px;
+    text-align: center;
+    font-size: 16px;
+  }
+
+  .admin-layout .admin-sidebar.collapsed .admin-nav-group-header .group-icon {
+    font-size: 20px;
+  }
+
+  .admin-layout .admin-nav-group-header .group-text {
+    flex: 1;
+  }
+
+  .admin-layout .admin-sidebar.collapsed .admin-nav-group-header .group-text,
+  .admin-layout .admin-sidebar.collapsed .admin-nav-group-header .fa-chevron-down {
+    display: none;
+  }
+
+  .admin-layout .admin-sidebar.collapsed:hover .admin-nav-group-header .group-text,
+  .admin-layout .admin-sidebar.collapsed:hover .admin-nav-group-header .fa-chevron-down {
+    display: block;
+  }
+
+  .admin-layout .admin-nav-group.expanded .admin-nav-group-header .fa-chevron-down {
+    transform: rotate(180deg);
+  }
+
+  .admin-layout .admin-nav-group-items {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    margin-left: 0;
+  }
+
+  .admin-layout .admin-nav-group.expanded .admin-nav-group-items {
+    max-height: 500px;
+  }
+
+  .admin-layout .admin-sidebar.collapsed .admin-nav-group-items {
+    max-height: 0 !important;
+  }
+
+  .admin-layout .admin-sidebar.collapsed:hover .admin-nav-group.expanded .admin-nav-group-items {
+    max-height: 500px !important;
+    margin-left: 0;
+  }
+
+  .admin-layout .admin-nav-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    color: var(--admin-gray-700);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    position: relative;
+    margin-left: 1rem;
+  }
+
+  .admin-layout .admin-sidebar.collapsed:hover .admin-nav-item {
+    margin-left: 1rem;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .admin-layout[data-theme="dark"] .admin-nav-item {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .admin-layout .admin-sidebar.collapsed .admin-nav-item {
+    padding: 0.75rem;
+    justify-content: center;
+    margin-left: 0;
+  }
+
+  .admin-layout .admin-nav-item:hover {
+    background: var(--admin-gray-50);
+    color: var(--admin-primary);
+  }
+
+  .admin-layout[data-theme="dark"] .admin-nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+
+  .admin-layout .admin-nav-item.active {
+    background: #e0e7ff;
+    color: var(--admin-primary);
+  }
+
+  .admin-layout[data-theme="dark"] .admin-nav-item.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+  }
+
+  .admin-layout .admin-nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--admin-primary);
+  }
+
+  .admin-layout .admin-nav-item::before {
+    content: '•';
+    margin-right: 0.75rem;
+    color: var(--admin-gray-400);
+    font-size: 16px;
+  }
+
+  .admin-layout .admin-nav-item:hover::before,
+  .admin-layout .admin-nav-item.active::before {
+    color: var(--admin-primary);
+  }
+
+  .admin-layout[data-theme="dark"] .admin-nav-item::before {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .admin-layout[data-theme="dark"] .admin-nav-item:hover::before,
+  .admin-layout[data-theme="dark"] .admin-nav-item.active::before {
+    color: white;
+  }
+
+  .admin-layout .admin-sidebar.collapsed .admin-nav-item::before {
+    margin-right: 0;
+  }
+
+  .admin-layout .admin-nav-item-text {
+    transition: all 0.3s ease;
+  }
+
+  .admin-layout .admin-sidebar.collapsed .admin-nav-item-text {
+    display: none;
+  }
+
+  .admin-layout .admin-sidebar.collapsed:hover .admin-nav-item-text {
+    display: block;
+  }
+
+  /* Main Content - Namespace */
+  .admin-layout .admin-main-content {
+    margin-left: var(--admin-sidebar-width);
+    margin-top: var(--admin-header-height);
+    padding: 2rem;
+    min-height: calc(100vh - var(--admin-header-height));
+    transition: margin-left 0.3s ease;
+    background: var(--admin-gray-50);
+    position: relative;
+    z-index: 1;
+    overflow-x: auto; /* Thêm scroll ngang khi cần */
+  }
+
+  .admin-layout .admin-main-content.collapsed {
+    margin-left: var(--admin-sidebar-collapsed);
+  }
+
+  /* Đảm bảo bảng luôn hiển thị đầy đủ */
+  .admin-layout .admin-main-content table {
+    min-width: 800px; /* Đảm bảo bảng có độ rộng tối thiểu */
+    width: 100%;
+  }
+
+  /* Đảm bảo các modal, dropdown trong nội dung chính có z-index cao */
+  .admin-layout .admin-main-content .modal,
+  .admin-layout .admin-main-content .dropdown-menu,
+  .admin-layout .admin-main-content .popover,
+  .admin-layout .admin-main-content .tooltip {
+    z-index: 1050 !important;
+  }
+
+  /* Scrollbar - Namespace */
+  .admin-layout .admin-sidebar-nav::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .admin-layout .admin-sidebar-nav::-webkit-scrollbar-track {
+    background: var(--admin-gray-100);
+  }
+
+  .admin-layout .admin-sidebar-nav::-webkit-scrollbar-thumb {
+    background: var(--admin-gray-300);
+    border-radius: 2px;
+  }
+
+  .admin-layout[data-theme="dark"] .admin-sidebar-nav::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .admin-layout[data-theme="dark"] .admin-sidebar-nav::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Tooltip - Namespace */
+  .admin-layout .admin-sidebar.collapsed .admin-nav-item[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: calc(100% + 10px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+  }
+</style>
+
+<!-- Admin Layout Container -->
+<div class="admin-layout" id="adminLayout">
+  <!-- Header -->
+  <header class="admin-header" id="adminHeader">
+    <div class="admin-header-actions">
+      <button class="admin-theme-toggle" id="adminThemeToggle">
+        <i class="fas fa-sun" id="adminThemeIcon"></i>
+      </button>
+      <div class="admin-user-menu">
+        <div class="admin-user-avatar">A</div>
+        <div class="admin-user-info">
+          <h6>Admin</h6>
+          <span>Quản trị viên</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="admin-sidebar-header">
+      <a href="/home" class="admin-logo-container">
+        <img th:src="@{/images/2.png}" alt="Logo" />
       </a>
-      <!-- <a href="/dashboard" class="nav-link text-dark py-3 menu-item">
-        <i class="fa-solid fa-file-lines me-2"></i> Dashboard
-      </a> -->
-      <a href="/User/index" class="nav-link text-dark py-3 menu-item">
-        <i class="fa-solid fa-user"></i>
-        Người dùng
-      </a>
-      <a
-        href="/ProductCategory/index"
-        class="nav-link text-dark py-3 menu-item"
-      >
-        <i class="fa-solid fa-comments me-2"></i> Danh mục sản phẩm
+      <button class="admin-sidebar-toggle" id="adminSidebarToggle">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <nav class="admin-sidebar-nav">
+      <!-- Tổng quan -->
+      <div class="admin-nav-group">
+        <div class="admin-nav-group-header">
+          <i class="fas fa-chart-line group-icon"></i>
+          <span class="group-text">Tổng quan</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="admin-nav-group-items">
+          <a href="/statistical" class="admin-nav-item" data-tooltip="Thống kê">
+            <span class="admin-nav-item-text">Thống kê</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Sản phẩm -->
+      <div class="admin-nav-group">
+        <div class="admin-nav-group-header">
+          <i class="fas fa-seedling group-icon"></i>
+          <span class="group-text">Sản phẩm</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="admin-nav-group-items">
+          <a href="/ProductCategory/index" class="admin-nav-item" data-tooltip="Danh mục sản phẩm">
+            <span class="admin-nav-item-text">Danh mục sản phẩm</span>
+          </a>
+          <a href="/Product/index" class="admin-nav-item" data-tooltip="Sản phẩm">
+            <span class="admin-nav-item-text">Sản phẩm</span>
+          </a>
+          <a href="/Category/index" class="admin-nav-item" data-tooltip="Loại hoa">
+            <span class="admin-nav-item-text">Loại hoa</span>
+          </a>
+          <a href="/Service/index" class="admin-nav-item" data-tooltip="Dịch vụ">
+            <span class="admin-nav-item-text">Dịch vụ</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Bán hàng -->
+      <div class="admin-nav-group">
+        <div class="admin-nav-group-header">
+          <i class="fas fa-shopping-cart group-icon"></i>
+          <span class="group-text">Bán hàng</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="admin-nav-group-items">
+          <a href="/orderAdmin" class="admin-nav-item" data-tooltip="Đơn hàng">
+            <span class="admin-nav-item-text">Đơn hàng</span>
+          </a>
+          <a href="/admin/service-requests" class="admin-nav-item" data-tooltip="Đơn dịch vụ">
+            <span class="admin-nav-item-text">Đơn dịch vụ</span>
+          </a>
+          <a href="/admin/pos/index" class="admin-nav-item" data-tooltip="Quản lý POS">
+            <span class="admin-nav-item-text">Quản lý POS</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Người dùng -->
+      <div class="admin-nav-group">
+        <div class="admin-nav-group-header">
+          <i class="fas fa-users group-icon"></i>
+          <span class="group-text">Người dùng</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="admin-nav-group-items">
+          <a href="/User/index" class="admin-nav-item" data-tooltip="Người dùng">
+            <span class="admin-nav-item-text">Người dùng</span>
+          </a>
+          <a href="/Shipper/index" class="admin-nav-item" data-tooltip="Shipper">
+            <span class="admin-nav-item-text">Shipper</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Bài viết -->
+      <a href="/Post/index" class="admin-nav-item standalone" data-tooltip="Bài viết">
+        <i class="fas fa-newspaper"></i>
+        <span class="admin-nav-item-text">Bài viết</span>
       </a>
 
-      <a href="/Product/index" class="nav-link text-dark py-3 menu-item">
-        <i class="fa-solid fa-heart me-2"></i> Sản phẩm
+      <!-- Khuyến mãi -->
+      <a href="/Promotion/index" class="admin-nav-item standalone" data-tooltip="Khuyến mãi">
+        <i class="fas fa-tags"></i>
+        <span class="admin-nav-item-text">Khuyến mãi</span>
       </a>
-      <a href="/Category/index" class="nav-link text-dark py-3 menu-item">
-        <i class="fa-solid fa-comments me-2"></i> Loại hoa
-      </a>
-      <a href="/Service/index" class="nav-link text-dark py-3 menu-item">
-        <i class="fa-solid fa-comments me-2"></i> Dịch vụ
-      </a>
-      <a href="/orderAdmin" class="nav-link text-dark py-3 menu-item">
-        <i class="fa-solid fa-chart-bar me-2"></i> Đơn hàng
-      </a>
-      <a
-        href="/admin/service-requests"
-        class="nav-link text-dark py-3 menu-item"
-      >
-        <i class="fa-solid fa-clipboard-list me-2"></i> Đơn dịch vụ
-      </a>
-      <a href="/admin/pos/index" class="nav-link text-dark py-3 menu-item">
-        <i class="fa-solid fa-cash-register me-2"></i> Quản lý POS
-      </a>
-      <a href="/Post/index" class="nav-link text-dark py-3 menu-item">
-        <i class="fa-solid fa-comments me-2"></i> Bài viết</a
-      >
 
-      <a href="/Promotion/index" class="nav-link text-dark py-3 menu-item">
-        <i class="fa-solid fa-tags me-2"></i> Khuyến mãi
+      <!-- Phân vùng -->
+      <a href="/Zone/index" class="admin-nav-item standalone" data-tooltip="Phân vùng">
+        <i class="fas fa-map-marked-alt"></i>
+        <span class="admin-nav-item-text">Phân vùng</span>
       </a>
-      <a href="/Shipper/index" class="nav-link text-dark py-3 menu-item">
-        <i class="fa-solid fa-truck me-2"></i> Shipper
+
+      <!-- Xã -->
+      <a href="/Ward/index" class="admin-nav-item standalone" data-tooltip="Xã">
+        <i class="fas fa-map-marker-alt"></i>
+        <span class="admin-nav-item-text">Xã</span>
       </a>
-      <a href="/Contact/index/admin" class="nav-link text-dark py-3 menu-item">
-        <i class="fa-solid fa-envelope me-2"></i> Liên hệ
+
+      <!-- Liên hệ -->
+      <a href="/Contact/index/admin" class="admin-nav-item standalone" data-tooltip="Liên hệ">
+        <i class="fas fa-envelope"></i>
+        <span class="admin-nav-item-text">Liên hệ</span>
       </a>
     </nav>
   </aside>
-  <article id="content" class="col-md-10 articlemana">
-    <main style="min-height: 110vh" th:insert="~{${view}}"></main>
-    <footer th:insert="~{/admin/footer}"></footer>
-  </article>
+
+  <!-- Main Content -->
+  <main class="admin-main-content" id="adminMainContent">
+    <div th:insert="~{${view}}"></div>
+  </main>
 </div>
+
+<script>
+// Namespace JavaScript để tránh xung đột
+(function() {
+  'use strict';
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    const adminLayout = document.getElementById('adminLayout');
+    const themeToggle = document.getElementById('adminThemeToggle');
+    const themeIcon = document.getElementById('adminThemeIcon');
+    const sidebar = document.getElementById('adminSidebar');
+    const sidebarToggle = document.getElementById('adminSidebarToggle');
+    const header = document.getElementById('adminHeader');
+    const mainContent = document.getElementById('adminMainContent');
+
+    // Theme toggle
+    const savedTheme = localStorage.getItem('admin-theme') || 'light';
+    adminLayout.setAttribute('data-theme', savedTheme);
+    themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = adminLayout.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      adminLayout.setAttribute('data-theme', newTheme);
+      localStorage.setItem('admin-theme', newTheme);
+      themeIcon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    });
+
+    // Sidebar toggle - giữ trạng thái theo localStorage
+    const savedSidebarState = localStorage.getItem('admin-sidebar-collapsed');
+    // Nếu chưa có setting thì mặc định là expanded (false)
+    const shouldCollapse = savedSidebarState === 'true';
+    if (shouldCollapse) {
+      sidebar.classList.add('collapsed');
+      header.classList.add('collapsed');
+      mainContent.classList.add('collapsed');
+    } else {
+      // Đảm bảo remove class collapsed nếu có
+      sidebar.classList.remove('collapsed');
+      header.classList.remove('collapsed');
+      mainContent.classList.remove('collapsed');
+      if (savedSidebarState === null) {
+        localStorage.setItem('admin-sidebar-collapsed', 'false');
+      }
+    }
+
+    sidebarToggle.addEventListener('click', () => {
+      const isCollapsed = sidebar.classList.contains('collapsed');
+      if (isCollapsed) {
+        sidebar.classList.remove('collapsed');
+        header.classList.remove('collapsed');
+        mainContent.classList.remove('collapsed');
+        localStorage.setItem('admin-sidebar-collapsed', 'false');
+      } else {
+        // Đóng tất cả nav groups
+        const navGroups = document.querySelectorAll('.admin-nav-group');
+        navGroups.forEach(group => {
+          group.classList.remove('expanded');
+        });
+        
+        sidebar.classList.add('collapsed');
+        header.classList.add('collapsed');
+        mainContent.classList.add('collapsed');
+        localStorage.setItem('admin-sidebar-collapsed', 'true');
+      }
+    });
+
+    // Navigation groups
+    const navGroups = document.querySelectorAll('.admin-nav-group');
+    navGroups.forEach(group => {
+      const header = group.querySelector('.admin-nav-group-header');
+      header.addEventListener('click', () => {
+        // Đóng các groups khác
+        navGroups.forEach(otherGroup => {
+          if (otherGroup !== group) {
+            otherGroup.classList.remove('expanded');
+          }
+        });
+        
+        // Toggle group hiện tại
+        group.classList.toggle('expanded');
+      });
+    });
+
+    // Set active nav item - chỉ mở 1 nhóm duy nhất
+    const currentPath = window.location.pathname;
+    const navItems = document.querySelectorAll('.admin-nav-item');
+    let activeGroupFound = false;
+    
+    navItems.forEach(item => {
+      if (item.getAttribute('href') === currentPath && !activeGroupFound) {
+        item.classList.add('active');
+        const parentGroup = item.closest('.admin-nav-group');
+        if (parentGroup) {
+          // Đóng tất cả các nhóm khác trước
+          navGroups.forEach(group => group.classList.remove('expanded'));
+          // Mở nhóm hiện tại
+          parentGroup.classList.add('expanded');
+          activeGroupFound = true;
+        }
+      }
+    });
+    
+    // Nếu không tìm thấy trang nào khớp, mặc định mở Tổng quan
+    if (!activeGroupFound) {
+      const overviewGroup = document.querySelector('.admin-nav-group');
+      if (overviewGroup) {
+        navGroups.forEach(group => group.classList.remove('expanded'));
+        overviewGroup.classList.add('expanded');
+      }
+    }
+  });
+})();
+</script>

@@ -39,5 +39,5 @@ public class Shipper {
 
     Boolean status ; // Trạng thái shipper, mặc định là true (hoạt động)
 
-    
+
 }

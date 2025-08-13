@@ -231,6 +231,7 @@ public class PosController {
             // Update order với orderCode
             savedOrder.setOrderCode(orderCode);
             savedOrder = orderDAO.save(savedOrder);
+
             // Xử lý theo phương thức thanh toán
             if ("qr_code".equalsIgnoreCase(paymentMethod) || "card".equalsIgnoreCase(paymentMethod)) {
                 String qrCodePath = null;
@@ -266,15 +267,32 @@ public class PosController {
             if ("cash".equalsIgnoreCase(paymentMethod)) {
                 savedOrder.setStatus("Đã thanh toán");
                 orderDAO.save(savedOrder);
+                session.removeAttribute("cart");
+                // Hiển thị bill để in
+                return "redirect:/pos/bill?orderCode=" + orderCode;
             }
 
             session.removeAttribute("cart");
             return "redirect:/pos?success=payment_completed";
-
         } catch (Exception e) {
             e.printStackTrace();
             return "redirect:/pos?error=system_error";
         }
+    }
+
+    @GetMapping("/bill")
+    public String showBill(@RequestParam String orderCode, Model model) {
+        Optional<Order> orderOpt = orderDAO.findByOrderCode(orderCode);
+        if (orderOpt.isEmpty()) {
+            model.addAttribute("errorMessage", "Không tìm thấy đơn hàng!");
+            return "redirect:/pos";
+        }
+        Order order = orderOpt.get();
+        model.addAttribute("order", order);
+        model.addAttribute("orderDetails", order.getOrderDetails());
+        model.addAttribute("totalAmount", order.getTotalAmount());
+        model.addAttribute("orderCode", order.getOrderCode());
+        return "bill";
     }
 
     /**
@@ -421,6 +439,7 @@ public class PosController {
                 orderDAO.save(order);
                 response.put("success", true);
                 response.put("message", "Đã xác nhận thanh toán cho đơn hàng");
+                response.put("redirectUrl", "/pos/bill?orderCode=" + orderCode);
             } else {
                 response.put("success", false);
                 response.put("message", "Không tìm thấy đơn hàng");

@@ -30,47 +30,6 @@ function updateCountdown() {
 
 setInterval(updateCountdown, 1000);
 
-// const checkPaymentBtn = document.getElementById("checkPaymentBtn");
-// if (checkPaymentBtn) {
-//   checkPaymentBtn.addEventListener("click", function () {
-//     const btn = this;
-//     const originalText = btn.innerHTML;
-//     btn.disabled = true;
-//     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang kiểm tra...';
-
-//     setTimeout(() => {
-//       if (Math.random() > 0.7) {
-//         document.getElementById("statusAlert").innerHTML =
-//           '<i class="fas fa-check-circle"></i> ✅ Thanh toán thành công!';
-//         document.getElementById("statusAlert").className =
-//           "alert alert-success";
-
-//         try {
-//           new Audio("/sounds/success.mp3").play();
-//         } catch (e) {}
-
-//         setTimeout(() => {
-//           alert("🎉 Thanh toán thành công! Đơn hàng đã được xử lý.");
-//           window.location.href = "/pos?success=payment_completed";
-//         }, 2000);
-//       } else {
-//         btn.disabled = false;
-//         btn.innerHTML = originalText;
-
-//         const tempAlert = document.createElement("div");
-//         tempAlert.className = "alert alert-warning mt-2";
-//         tempAlert.innerHTML =
-//           "<small>⏳ Chưa nhận được thanh toán. Vui lòng thử lại.</small>";
-//         btn.parentNode.appendChild(tempAlert);
-
-//         setTimeout(() => {
-//           tempAlert.remove();
-//         }, 3000);
-//       }
-//     }, 1500);
-//   });
-// }
-
 const printQRBtn = document.getElementById("printQRBtn");
 if (printQRBtn) {
   printQRBtn.addEventListener("click", function () {
@@ -131,55 +90,54 @@ if (printQRBtn) {
   });
 }
 
-setInterval(() => {
-  const orderCode =
-    document.querySelector(".info-value")?.textContent.trim() || "";
-  if (!orderCode) {
-    return;
-  }
-  fetch("/pos/check-payment-status", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ orderCode: orderCode }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success && data.status === "Đã thanh toán") {
-        document.getElementById("statusAlert").innerHTML =
-          '<i class="fas fa-check-circle"></i> ✅ Thanh toán thành công!';
-        document.getElementById("statusAlert").className =
-          "alert alert-success";
-        setTimeout(() => {
-          window.location.href = "/pos?success=payment_completed";
-        }, 2000);
-      }
-    })
-    .catch((error) => {});
-}, 20000);
 
-// Đã chuyển sang dùng modal xác nhận, xử lý xác nhận ở nút trong modal
-var confirmBtn = document.getElementById("confirmPaymentActionBtn");
-if (confirmBtn) {
-  confirmBtn.onclick = function () {
-    var orderCode = document
-      .getElementById("refreshQRBtn")
-      .getAttribute("data-ordercode");
-    fetch("/pos/manual-confirm-payment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ orderCode: orderCode }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          var modal = bootstrap.Modal.getInstance(
-            document.getElementById("confirmPaymentModal")
-          );
-          if (modal) modal.hide();
-          window.location.href = "/pos?success=payment_completed";
-        } else {
-          alert("Lỗi: " + data.message);
+const modal = document.getElementById("confirmPaymentModal");
+if (modal) {
+  modal.addEventListener("show.bs.modal", function () {
+    let confirmBtn = document.getElementById("confirmPaymentActionBtn");
+    if (confirmBtn) {
+      confirmBtn.onclick = function () {
+        let orderCode = this.getAttribute("data-ordercode");
+        if (!orderCode) {
+          alert("Không tìm thấy mã đơn hàng!");
+          return;
         }
-      });
-  };
+        fetch("/pos/manual-confirm-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orderCode: orderCode }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              var modal = bootstrap.Modal.getInstance(
+                document.getElementById("confirmPaymentModal")
+              );
+              if (modal) {
+                modal.hide();
+              }
+              if (data.redirectUrl) {
+                const w = 700,
+                  h = 600;
+                const left = window.screenX + (window.outerWidth - w) / 2;
+                const top = window.screenY + (window.outerHeight - h) / 2;
+                window.open(
+                  data.redirectUrl,
+                  "_blank",
+                  `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes`
+                );
+                window.location.href = "/pos?success=payment_completed";
+              } else {
+                window.location.href = "/pos?success=payment_completed";
+              }
+            } else {
+              alert("Lỗi: " + data.message);
+            }
+          })
+          .catch((err) => {
+            alert("Lỗi kết nối tới máy chủ!");
+          });
+      };
+    }
+  });
 }

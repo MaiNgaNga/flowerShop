@@ -34,6 +34,9 @@ public class Order {
 
     @Column(name = "address", columnDefinition = "NVARCHAR(255)")
     private String address;
+    
+    @Column
+    private Double shipFee;
 
     @Column
     private Double totalAmount;
