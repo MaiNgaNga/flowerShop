@@ -1,5 +1,3 @@
-// ========================== PACKAGE & IMPORT ==========================
-
 package com.datn.Controller.admin;
 
 import java.util.List;
@@ -29,14 +27,11 @@ import com.datn.model.Category;
 import com.datn.model.Color;
 import com.datn.model.Product;
 import com.datn.model.ProductCategory;
-
-// ========================== CONTROLLER ==========================
+import com.datn.validation.DiscountValidator;
 
 @Controller
 @RequestMapping("/Product")
 public class ProductCRUDController {
-
-    // ========================== INJECTION SERVICE ==========================
 
     @Autowired
     private ProductService productService;
@@ -50,7 +45,8 @@ public class ProductCRUDController {
     @Autowired
     private ProductCategoryService productCategoryService;
 
-    // ========================== MODEL ATTRIBUTES ==========================
+    @Autowired
+    private DiscountValidator discountValidator;
 
     // Cung cấp danh sách tất cả sản phẩm để sử dụng trong view
     @ModelAttribute("products")
@@ -75,8 +71,6 @@ public class ProductCRUDController {
     public List<ProductCategory> getAllProductCategories() {
         return productCategoryService.findAll();
     }
-
-    // ========================== INDEX - HIỂN THỊ DANH SÁCH ==========================
 
     @RequestMapping("/index")
     public String index(Model model,
@@ -130,8 +124,6 @@ public class ProductCRUDController {
         return "admin/layout";
     }
 
-    // ========================== CREATE - THÊM MỚI SẢN PHẨM ==========================
-
     @PostMapping("/create")
     public String create(Model model,
             @Valid @ModelAttribute("product") Product product, Errors errors,
@@ -141,9 +133,33 @@ public class ProductCRUDController {
             @RequestParam(value = "tab", defaultValue = "edit") String tab,
             RedirectAttributes redirectAttributes) {
 
-        // Nếu có lỗi validate thì quay lại form
-        if (errors.hasErrors()) {
+        try {
+            // Validate logic giảm giá tùy chỉnh
+            discountValidator.validate(product, errors);
+
+            // Debug: In ra thông tin lỗi nếu có
+            if (errors.hasErrors()) {
+                System.out.println("=== VALIDATION ERRORS ===");
+                errors.getAllErrors().forEach(error -> {
+                    System.out.println("Error: " + error.getDefaultMessage());
+                    if (error instanceof org.springframework.validation.FieldError) {
+                        org.springframework.validation.FieldError fieldError = (org.springframework.validation.FieldError) error;
+                        System.out.println(
+                                "Field: " + fieldError.getField() + ", Value: " + fieldError.getRejectedValue());
+                    }
+                });
+                System.out.println("========================");
+
+                model.addAttribute("view", "admin/ProductCRUD");
+                model.addAttribute("activeTab", tab);
+                return "admin/layout";
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi trong quá trình validation: " + e.getMessage());
+            e.printStackTrace();
+            model.addAttribute("error", "Có lỗi xảy ra trong quá trình kiểm tra dữ liệu: " + e.getMessage());
             model.addAttribute("view", "admin/ProductCRUD");
+            model.addAttribute("activeTab", tab);
             return "admin/layout";
         }
         try {
@@ -160,8 +176,6 @@ public class ProductCRUDController {
             return "admin/layout";
         }
     }
-
-    // ========================== EDIT - HIỂN THỊ FORM CẬP NHẬT ==========================
 
     @GetMapping("/edit/{id}")
     public String edit(Model model, @PathVariable("id") long id,
@@ -183,8 +197,6 @@ public class ProductCRUDController {
         return "admin/layout";
     }
 
-    // ========================== UPDATE - CẬP NHẬT SẢN PHẨM ==========================
-
     @PostMapping("/update")
     public String update(Model model, @Valid @ModelAttribute("product") Product product, Errors errors,
             @RequestParam(value = "image1", required = false) MultipartFile image1,
@@ -194,8 +206,33 @@ public class ProductCRUDController {
             @RequestParam(value = "tab", defaultValue = "edit") String tab,
             RedirectAttributes redirectAttributes) {
 
-        if (errors.hasErrors()) {
+        try {
+            // Validate logic giảm giá tùy chỉnh
+            discountValidator.validate(product, errors);
+
+            // Debug: In ra thông tin lỗi nếu có
+            if (errors.hasErrors()) {
+                System.out.println("=== UPDATE VALIDATION ERRORS ===");
+                errors.getAllErrors().forEach(error -> {
+                    System.out.println("Error: " + error.getDefaultMessage());
+                    if (error instanceof org.springframework.validation.FieldError) {
+                        org.springframework.validation.FieldError fieldError = (org.springframework.validation.FieldError) error;
+                        System.out.println(
+                                "Field: " + fieldError.getField() + ", Value: " + fieldError.getRejectedValue());
+                    }
+                });
+                System.out.println("================================");
+
+                model.addAttribute("view", "admin/ProductCRUD");
+                model.addAttribute("activeTab", tab);
+                return "admin/layout";
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi trong quá trình validation update: " + e.getMessage());
+            e.printStackTrace();
+            model.addAttribute("error", "Có lỗi xảy ra trong quá trình kiểm tra dữ liệu: " + e.getMessage());
             model.addAttribute("view", "admin/ProductCRUD");
+            model.addAttribute("activeTab", tab);
             return "admin/layout";
         }
         try {
@@ -220,8 +257,6 @@ public class ProductCRUDController {
             return "admin/layout";
         }
     }
-
-    // ========================== DELETE - XÓA SẢN PHẨM ==========================
 
     @RequestMapping("/delete/{id}")
     public String delete(Model model,
