@@ -48,4 +48,7 @@ private String content;
 @CreationTimestamp
 private LocalDateTime createdAt;
 
+@Column(name = "status")
+private Boolean status = false;
+
 }
