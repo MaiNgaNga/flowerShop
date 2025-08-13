@@ -54,11 +54,10 @@ public class Product {
     private Color color;
 
     @ManyToOne
-    @JoinColumn(name = "product_Category_Id", referencedColumnName = "id") // Tạo FK
+    @JoinColumn(name = "product_Category_Id", referencedColumnName = "id")
     private ProductCategory productCategory;
 
-    // Thêm các trường giảm giá
-    @Min(value = 0, message = "Phần trăm giảm giá không được nhỏ hơn 0%")
+    @Min(value = 1, message = "Phần trăm giảm giá phải từ 1% đến 100%")
     @Max(value = 100, message = "Phần trăm giảm giá không được lớn hơn 100%")
     @Column
     private Integer discountPercent;
@@ -72,17 +71,34 @@ public class Product {
     private LocalDate discountEnd;
 
     @Column(nullable = false)
-        private Boolean available = true; // true: còn hàng, false: hết hàng
+    private Boolean available = true;
 
+    // Kiểm tra xem sản phẩm có đang trong thời gian giảm giá không
+    public boolean isDiscountActive() {
+        if (discountPercent == null || discountPercent <= 0) {
+            return false;
+        }
+
+        LocalDate now = LocalDate.now();
+
+        // Kiểm tra ngày bắt đầu
+        if (discountStart != null && now.isBefore(discountStart)) {
+            return false;
+        }
+
+        // Kiểm tra ngày kết thúc
+        if (discountEnd != null && now.isAfter(discountEnd)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    // Lấy giá sau khi giảm (nếu đang trong thời gian giảm giá)
     public double getPriceAfterDiscount() {
-        if (discountPercent != null && discountPercent > 0) {
-            LocalDate now = LocalDate.now();
-            if ((discountStart == null || !now.isBefore(discountStart)) &&
-                    (discountEnd == null || !now.isAfter(discountEnd))) {
-                return price * (1 - discountPercent / 100.0);
-            }
+        if (isDiscountActive()) {
+            return price * (1 - discountPercent / 100.0);
         }
         return price;
     }
-
 }

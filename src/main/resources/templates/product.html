@@ -235,10 +235,8 @@
                         th:text="${item.name}"
                       ></h6>
 
-                      <!-- Có giảm giá -->
-                      <th:block
-                        th:if="${item.discountPercent != null && item.discountPercent > 0}"
-                      >
+                      <!-- Có giảm giá đang hoạt động -->
+                      <th:block th:if="${item.isDiscountActive()}">
                         <span
                           class="fw-bold text-danger d-block"
                           th:text="${#numbers.formatDecimal(item.getPriceAfterDiscount(), 0, 'COMMA', 0, 'POINT')} + ' VND'"
@@ -249,10 +247,8 @@
                         ></span>
                       </th:block>
 
-                      <!-- Không có giảm giá -->
-                      <th:block
-                        th:if="${item.discountPercent == null || item.discountPercent == 0}"
-                      >
+                      <!-- Không có giảm giá hoặc giảm giá đã hết hạn - chỉ hiển thị giá gốc -->
+                      <th:block th:if="${!item.isDiscountActive()}">
                         <span
                           class="fw-bold text-muted d-block"
                           th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' VND'"

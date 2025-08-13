@@ -1,10 +1,6 @@
 package com.datn.Service.impl;
 
-
-import com.datn.utils.StringUtils;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -75,12 +71,16 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void update(Product entity, MultipartFile image1, MultipartFile image2, MultipartFile image3,
             String[] oldImages) {
+
         if (dao.existsById(entity.getId())) {
+            // Ảnh 1
             if (image1 != null && !image1.isEmpty()) {
                 entity.setImage_url(param.save(image1,
                         "D:\\Graduation Project\\Git2\\src\\main\\resources\\static\\images").getName());
             } else {
-                entity.setImage_url(oldImages.length > 0 ? oldImages[0] : null);
+                String oldImage1 = (oldImages != null && oldImages.length > 0 && !oldImages[0].isEmpty()) ? oldImages[0]
+                        : null;
+                entity.setImage_url(oldImage1);
             }
 
             // Ảnh 2
@@ -88,7 +88,9 @@ public class ProductServiceImpl implements ProductService {
                 entity.setImage_url2(param.save(image2,
                         "D:\\Graduation Project\\Git2\\src\\main\\resources\\static\\images").getName());
             } else {
-                entity.setImage_url2(oldImages.length > 1 ? oldImages[1] : null);
+                String oldImage2 = (oldImages != null && oldImages.length > 1 && !oldImages[1].isEmpty()) ? oldImages[1]
+                        : null;
+                entity.setImage_url2(oldImage2);
             }
 
             // Ảnh 3
@@ -96,7 +98,9 @@ public class ProductServiceImpl implements ProductService {
                 entity.setImage_url3(param.save(image3,
                         "D:\\Graduation Project\\Git2\\src\\main\\resources\\static\\images").getName());
             } else {
-                entity.setImage_url3(oldImages.length > 2 ? oldImages[2] : null);
+                String oldImage3 = (oldImages != null && oldImages.length > 2 && !oldImages[2].isEmpty()) ? oldImages[2]
+                        : null;
+                entity.setImage_url3(oldImage3);
             }
             dao.save(entity);
         } else {
