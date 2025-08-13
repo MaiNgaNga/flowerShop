@@ -109,7 +109,7 @@
                 class="pos-card-img"
               />
               <span
-                th:if="${product.discountPercent != null && product.discountPercent > 0 && product.discountStart != null && product.discountEnd != null && !T(java.time.LocalDate).now().isBefore(product.discountStart) && !T(java.time.LocalDate).now().isAfter(product.discountEnd)}"
+                th:if="${product.isDiscountActive()}"
                 class="promo-tag"
                 style="
                   position: absolute;
