@@ -1,6 +1,5 @@
 package com.datn.Controller.user;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.datn.Service.CartItemService;
 import com.datn.Service.OrderService;
+import com.datn.Service.PayOSService;
 import com.datn.Service.ProductCategoryService;
 import com.datn.Service.ProductService;
 import com.datn.Service.PromotionService;
@@ -64,7 +64,8 @@ public class OrderController {
     private WardService wardService;
     @Autowired
     private ZoneDAO zoneDAO;
-
+    @Autowired
+    private PayOSService payOSService;
 
     @GetMapping("/index")
     public String index(Model model) {
@@ -79,8 +80,6 @@ public class OrderController {
         model.addAttribute("orderRequest", orderRequest);
         return showForm(model);
     }
- 
-
 
     @PostMapping("/apply-voucher")
     @ResponseBody
@@ -132,12 +131,13 @@ public class OrderController {
     @PostMapping("/checkout")
     public String checkout(@Valid @ModelAttribute("orderRequest") OrderRequest orderRequest, BindingResult result,
             Model model, HttpSession session, @RequestParam("wardID") Long wardId,
-            @RequestParam(value = "specific", required = false) String specific) {
+            @RequestParam(value = "specific", required = false) String specific,
+            @RequestParam(value = "paymentMethod", defaultValue = "COD") String paymentMethod) {
         if (result.hasErrors()) {
-             model.addAttribute("selectedWardId", wardId);
-             model.addAttribute("specific", specific);
+            model.addAttribute("selectedWardId", wardId);
+            model.addAttribute("specific", specific);
             return showForm(model);
-             
+
         }
 
         User user = authService.getUser();
@@ -146,20 +146,45 @@ public class OrderController {
             model.addAttribute("message", "Giỏ hàng trống, không thể đặt hàng.");
             return showForm(model);
         }
-       
+
+        // Lấy thông tin phí vận chuyển từ ward
+        Ward selectedWard = wardService.findById(wardId);
+        Double shippingFee = 0.0;
+        if (selectedWard != null && selectedWard.getZone() != null) {
+            shippingFee = selectedWard.getZone().getShipFee();
+        }
+
         Order order = new Order();
         order.setUser(user);
         order.setCreateDate(new Date());
         order.setSdt(orderRequest.getSdt());
         order.setAddress(orderRequest.getAddress());
         order.setStatus("Chưa xác nhận");
+        order.setPaymentMethod(paymentMethod);
+        order.setShipFee(shippingFee);
+
         // Kiểm tra xem có mã giảm không
         Double finalAmount = (Double) session.getAttribute("finalAmount");
         if (finalAmount == null) {
             // Nếu không có, lấy giá gốc
             finalAmount = cartItemService.getTotalAmount(user.getId());
         }
+        
+        // Cộng phí vận chuyển vào tổng tiền
+        finalAmount += shippingFee;
         order.setTotalAmount(finalAmount);
+
+        // Tạo order code unique
+        String orderCode = String.valueOf(System.currentTimeMillis());
+        order.setOrderCode(orderCode);
+
+        // Set payment status based on payment method
+        if ("PAYOS".equals(paymentMethod)) {
+            order.setPaymentStatus("PENDING");
+        } else {
+            order.setPaymentStatus("COD");
+        }
+
         List<OrderDetail> orderDetails = new ArrayList<>();
 
         Order savedOrder = orderService.saveOrder(order, orderDetails);
@@ -175,15 +200,12 @@ public class OrderController {
 
         orderService.saveOrder(savedOrder, orderDetails);
 
-        cartItemService.clearCartByUserId(user.getId());
-
-        model.addAttribute("success", "Đặt hàng thành công");
-
+        // Xử lý promotion nếu có
         Long promotionId = (Long) session.getAttribute("promotionId");
         if (promotionId != null) {
             Promotion appliedPromotion = promotionService.findByID(promotionId);
             if (appliedPromotion != null) {
-                order.setPromotion(appliedPromotion);
+                savedOrder.setPromotion(appliedPromotion);
 
                 int currentCount = appliedPromotion.getUseCount();
                 if (currentCount > 0) {
@@ -191,24 +213,131 @@ public class OrderController {
                 }
             }
         }
-      
+
+        // Xử lý thanh toán
+        if ("PAYOS".equals(paymentMethod)) {
+            try {
+                // Tạo link thanh toán PayOS
+                String paymentUrl = payOSService.createPaymentLink(savedOrder);
+                savedOrder.setPaymentUrl(paymentUrl);
+                orderService.saveOrder(savedOrder, orderDetails);
+
+                // Clear cart và session
+                cartItemService.clearCartByUserId(user.getId());
+                session.removeAttribute("finalAmount");
+                session.removeAttribute("totalAmount");
+                session.removeAttribute("appliedPromotion");
+                session.removeAttribute("promotionId");
+
+                // Redirect đến trang thanh toán PayOS
+                return "redirect:" + paymentUrl;
+
+            } catch (Exception e) {
+                model.addAttribute("error", "Lỗi tạo link thanh toán: " + e.getMessage());
+                return showForm(model);
+            }
+        } else {
+            // Thanh toán COD
+            cartItemService.clearCartByUserId(user.getId());
+            model.addAttribute("success", "Đặt hàng thành công! Bạn sẽ thanh toán khi nhận hàng.");
+        }
+
         session.removeAttribute("finalAmount");
         session.removeAttribute("totalAmount");
         session.removeAttribute("appliedPromotion");
+        session.removeAttribute("promotionId");
 
         return showForm(model);
+    }
+
+    @GetMapping("/payment-success")
+    public String paymentSuccess(@RequestParam(value = "orderCode", required = false) String orderCode,
+            Model model, RedirectAttributes redirectAttributes) {
+        try {
+            if (orderCode != null) {
+                // Tìm đơn hàng theo orderCode
+                List<Order> orders = orderService.getAllOrders();
+                Order order = orders.stream()
+                        .filter(o -> orderCode.equals(o.getOrderCode()))
+                        .findFirst()
+                        .orElse(null);
+
+                if (order != null) {
+                    // Cập nhật trạng thái thành công (vì PayOS chỉ redirect về success khi thanh
+                    // toán thành công)
+                    order.setPaymentStatus("PAID");
+                    order.setStatus("Đã thanh toán");
+                    order.setTransactionId(orderCode);
+                    orderService.saveOrder(order, order.getOrderDetails());
+
+                    redirectAttributes.addFlashAttribute("success",
+                            "Thanh toán thành công! Đơn hàng của bạn đã được xác nhận.");
+                } else {
+                    redirectAttributes.addFlashAttribute("error", "Không tìm thấy thông tin đơn hàng.");
+                }
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi xác nhận thanh toán: " + e.getMessage());
+        }
+
+        return "redirect:/order/index";
+    }
+
+    @GetMapping("/payment-cancel")
+    public String paymentCancel(@RequestParam(value = "orderCode", required = false) String orderCode,
+            RedirectAttributes redirectAttributes) {
+        try {
+            if (orderCode != null) {
+                // Tìm đơn hàng theo orderCode
+                List<Order> orders = orderService.getAllOrders();
+                Order order = orders.stream()
+                        .filter(o -> orderCode.equals(o.getOrderCode()))
+                        .findFirst()
+                        .orElse(null);
+
+                if (order != null) {
+                    order.setPaymentStatus("CANCELLED");
+                    order.setStatus("Đã hủy");
+                    orderService.saveOrder(order, order.getOrderDetails());
+                }
+            }
+        } catch (Exception e) {
+            // Log error
+            System.err.println("Lỗi hủy thanh toán: " + e.getMessage());
+        }
+
+        redirectAttributes.addFlashAttribute("error",
+                "Thanh toán đã bị hủy. Bạn có thể thử lại hoặc chọn thanh toán khi nhận hàng.");
+        return "redirect:/order/index";
+    }
+
+    @PostMapping("/webhook")
+    @ResponseBody
+    public ResponseEntity<String> handleWebhook(@RequestParam String webhookBody,
+            @RequestParam String signature) {
+        try {
+            if (payOSService.verifyWebhook(webhookBody, signature)) {
+                // Xử lý webhook từ PayOS
+                // payOSService.handlePaymentResult(paymentData);
+                return ResponseEntity.ok("OK");
+            } else {
+                return ResponseEntity.badRequest().body("Invalid signature");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error processing webhook");
+        }
     }
 
     public String showForm(Model model) {
         User user = authService.getUser();
         model.addAttribute("user", user);
-        List<Ward> wards= wardService.getAllWards();
+        List<Ward> wards = wardService.getAllWards();
         model.addAttribute("wards", wards);
-        List<Zone> zones= zoneDAO.findAll();
+        List<Zone> zones = zoneDAO.findAll();
         model.addAttribute("zones", zones);
         List<CartItem> cartItems = cartItemService.getCartItemsByUserId(user.getId());
         model.addAttribute("cartItems", cartItems);
-        
+
         model.addAttribute("totalAmount", cartItemService.getTotalAmount(user.getId()));
 
         model.addAttribute("productCategories", pro_ca_service.findAll());

@@ -1,567 +1,860 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <style>
-  .shipping-fee-right {
-    float: right;
+  /* Order Page Specific Styling - Không ảnh hưởng đến footer và các trang khác */
+  .order-page-container {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    min-height: 80vh;
+    padding: 20px 0;
   }
 
-  .order-item-row {
+  .order-page-container .container {
+    max-width: 1200px;
+  }
+
+  .order-page-container .shipping-fee-right {
+    float: right;
+    font-weight: 600;
+    color: #28a745;
+  }
+
+  .order-page-container .order-item-row {
     display: flex;
     align-items: flex-start;
     margin-bottom: 0;
-    gap: 12px;
+    gap: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid #e9ecef;
   }
-  .order-item-img {
-    width: 56px;
-    height: 56px;
+
+  .order-page-container .order-item-row:last-child {
+    border-bottom: none;
+  }
+
+  .order-page-container .order-item-img {
+    width: 65px;
+    height: 65px;
     object-fit: cover;
     border-radius: 8px;
-    border: 1px solid #eee;
-    background: #fafafa;
+    border: 1px solid #dee2e6;
+    background: #f8f9fa;
     flex-shrink: 0;
-    margin-top: 2px;
+    transition: transform 0.2s ease;
   }
-  .order-item-info {
+
+  .order-page-container .order-item-img:hover {
+    transform: scale(1.02);
+  }
+
+  .order-page-container .order-item-info {
     flex: 1;
     display: flex;
     flex-direction: column;
     min-width: 0;
   }
-  .order-item-header {
+
+  .order-page-container .order-item-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     width: 100%;
   }
-  .order-item-name {
+
+  .order-page-container .order-item-name {
     font-weight: 600;
-    font-size: 1.05rem;
-    color: #222;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: 0;
+    font-size: 1rem;
+    color: #495057;
+    line-height: 1.4;
+    margin-bottom: 5px;
   }
-  .order-item-price {
-    color: #e53935;
-    font-weight: 500;
+
+  .order-page-container .order-item-price {
+    color: #dc3545;
+    font-weight: 600;
     font-size: 1rem;
     margin-left: 12px;
     white-space: nowrap;
   }
-  .order-item-qty {
-    color: #888;
-    font-size: 0.97rem;
+
+  .order-page-container .order-item-qty {
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-weight: 500;
     margin-top: 4px;
   }
-  .card {
-    border-radius: 14px;
-    border: 1px solid #e0e0e0;
-    box-shadow: 0 2px 12px rgba(60, 60, 60, 0.04);
+
+  .order-page-container .card {
+    border-radius: 12px;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
     background: #fff;
+    transition: box-shadow 0.3s ease;
   }
-  .card h5.mau {
-    color: gray;
+
+  .order-page-container .card:hover {
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .order-page-container .card h5.mau {
+    color: #495057;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
     margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    position: relative;
+    padding-bottom: 8px;
   }
-  .form-label {
-    font-weight: 500;
-    color: #333;
+
+  .order-page-container .card h5.mau::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 2px;
+    background: #28a745;
+    border-radius: 1px;
+  }
+
+  .order-page-container .form-label {
+    font-weight: 600;
+    color: #495057;
     margin-bottom: 6px;
+    font-size: 0.95rem;
   }
-  .form-control,
-  select,
-  textarea {
+
+  .order-page-container .form-control,
+  .order-page-container select,
+  .order-page-container textarea {
     border-radius: 8px !important;
-    border: 1px solid #d0d7de;
-    padding: 10px 14px;
-    font-size: 1rem;
-    background: #fafbfc;
-    transition: border 0.2s;
-  }
-  .form-control:focus,
-  select:focus,
-  textarea:focus {
-    border-color: #1976d2;
+    border: 1px solid #ced4da;
+    padding: 10px 12px;
+    font-size: 0.95rem;
     background: #fff;
-    box-shadow: 0 0 0 2px #1976d220;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
-  select {
-    min-height: 40px;
+
+  .order-page-container .form-control:focus,
+  .order-page-container select:focus,
+  .order-page-container textarea:focus {
+    border-color: #28a745;
+    background: #fff;
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.1);
   }
-  .mb-3 {
+
+  .order-page-container select {
+    min-height: 42px;
+    cursor: pointer;
+  }
+
+  .order-page-container .mb-3 {
     margin-bottom: 1.25rem !important;
   }
-  .error.text-danger {
-    font-size: 0.97rem;
-    margin-top: 2px;
+
+  .order-page-container .error.text-danger {
+    font-size: 0.85rem;
+    margin-top: 4px;
     display: block;
+    font-weight: 500;
   }
-  textarea.form-control {
+  .order-page-container textarea.form-control {
     resize: vertical;
     min-height: 80px;
   }
+
   /* Responsive padding for card */
   @media (max-width: 767px) {
-    .card.p-4 {
-      padding: 1rem !important;
+    .order-page-container .card.p-4 {
+      padding: 1.25rem !important;
     }
   }
 
-  .note-alert {
-    background: #fff8e1;
-    border-left: 4px solid #ffc107;
+  .order-page-container .note-alert {
+    background: #fff3cd;
+    border-left: 3px solid #ffc107;
     border-radius: 8px;
-    padding: 12px 16px;
+    padding: 15px 18px;
     margin-bottom: 18px;
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    font-size: 1rem;
-    color: #795548;
+    font-size: 0.95rem;
+    color: #856404;
   }
-  .note-alert .note-icon {
-    font-size: 1.3em;
+
+  .order-page-container .note-alert .note-icon {
+    font-size: 1.2em;
     margin-right: 6px;
-    color: #ff9800;
+    color: #ffc107;
     flex-shrink: 0;
     line-height: 1.2;
   }
 
-  .input-group {
+  .order-page-container .input-group {
     display: flex;
     align-items: stretch;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(60, 60, 60, 0.04);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
-  .input-group .form-control {
+
+  .order-page-container .input-group .form-control {
     border-radius: 8px 0 0 8px !important;
-    border: 1px solid #d0d7de;
-    background: #fafbfc;
-    font-size: 1rem;
-    transition: border 0.2s;
-  }
-  .input-group .form-control:focus {
-    border-color: #1976d2;
+    border: 1px solid #ced4da;
     background: #fff;
-    box-shadow: 0 0 0 2px #1976d220;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease;
   }
-  .input-group .btn {
+
+  .order-page-container .input-group .form-control:focus {
+    border-color: #28a745;
+    background: #fff;
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.1);
+  }
+
+  .order-page-container .input-group .btn {
     border-radius: 0 8px 8px 0 !important;
     font-weight: 600;
-    font-size: 1rem;
-    padding: 0 22px;
-    transition: background 0.2s;
+    font-size: 0.95rem;
+    padding: 0 20px;
+    transition: background-color 0.2s ease;
   }
-  .input-group .btn-primary {
-    background: #1976d2;
-    border-color: #1976d2;
+
+  .order-page-container .input-group .btn-primary {
+    background: #007bff;
+    border-color: #007bff;
   }
-  .input-group .btn-primary:hover {
-    background: #125ea7;
-    border-color: #125ea7;
+
+  .order-page-container .input-group .btn-primary:hover {
+    background: #0056b3;
+    border-color: #0056b3;
+  }
+
+  /* Payment Methods Styling */
+  .order-page-container .payment-methods {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid #dee2e6;
+  }
+
+  .order-page-container .form-check {
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    background: #fff;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+
+  .order-page-container .form-check:hover {
+    border-color: #28a745;
+    background: #f8fff9;
+  }
+
+  .order-page-container .form-check-input:checked + .form-check-label {
+    color: #28a745;
+    font-weight: 600;
+  }
+
+  .order-page-container .form-check-input:checked {
+    background-color: #28a745;
+    border-color: #28a745;
+  }
+
+  .order-page-container .form-check-label {
+    cursor: pointer;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+  }
+
+  .order-page-container .form-check-label i {
+    color: #6c757d;
+    margin-right: 8px;
+    font-size: 1.1em;
+  }
+
+  .order-page-container .form-check-input:checked + .form-check-label i {
+    color: #28a745;
+  }
+
+  /* Order Summary Styling */
+  .order-page-container .order-summary {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 16px;
+    border: 1px solid #dee2e6;
+  }
+
+  .order-page-container .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid #e9ecef;
+  }
+
+  .order-page-container .summary-row:last-child {
+    border-bottom: none;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #495057;
+    padding-top: 12px;
+    border-top: 1px solid #28a745;
+  }
+
+  .order-page-container .summary-label {
+    font-weight: 600;
+    color: #495057;
+  }
+
+  .order-page-container .summary-value {
+    font-weight: 600;
+    color: #28a745;
+  }
+
+  /* Button Styling */
+  .order-page-container .btn {
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 10px 24px;
+    transition: all 0.2s ease;
+    border: none;
+  }
+
+  .order-page-container .btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .order-page-container .btn-success {
+    background: #28a745;
+    border-color: #28a745;
+  }
+
+  .order-page-container .btn-success:hover {
+    background: #218838;
+    border-color: #1e7e34;
+  }
+
+  .order-page-container .btn-primary {
+    background: #007bff;
+    border-color: #007bff;
+  }
+
+  .order-page-container .btn-primary:hover {
+    background: #0056b3;
+    border-color: #004085;
   }
 </style>
-<div class="container mt-4">
-  <div
-    class="success alert alert-success"
-    th:if="${success}"
-    th:text="${success}"
-  ></div>
-  <div
-    class="success alert alert-danger"
-    th:if="${message}"
-    th:text="${message}"
-  ></div>
-  <form th:action="@{/order/checkout}" method="post">
-    <div class="row">
-      <!-- Cột Thông tin Đặt hàng -->
-      <div class="col-md-7">
-        <div class="card p-4 mb-4">
-          <h5 class="mb-3 mau">Thông Tin Người Đặt Hàng</h5>
+<div class="order-page-container">
+  <div class="container mt-4">
+    <div
+      class="success alert alert-success"
+      th:if="${success}"
+      th:text="${success}"
+    ></div>
+    <div
+      class="success alert alert-danger"
+      th:if="${message}"
+      th:text="${message}"
+    ></div>
+    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+    <form th:action="@{/order/checkout}" method="post">
+      <div class="row">
+        <!-- Cột Thông tin Đặt hàng -->
+        <div class="col-md-7">
+          <div class="card p-4 mb-4">
+            <h5 class="mb-3 mau">Thông Tin Người Đặt Hàng</h5>
 
-          <div class="mb-3">
-            <label class="form-label">Họ và tên </label>
-            <input
-              type="text"
-              th:value="${user.name}"
-              class="form-control"
-              readonly
-            />
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Email </label>
-            <input
-              type="email"
-              readonly
-              th:value="${user.email}"
-              class="form-control"
-            />
-          </div>
-          <th:block th:object="${orderRequest}">
             <div class="mb-3">
-              <label class="form-label">Số điện thoại *</label>
+              <label class="form-label">Họ và tên </label>
               <input
                 type="text"
-                th:field="*{sdt}"
+                th:value="${user.name}"
                 class="form-control"
-                placeholder="Nhập số điện thoại"
+                readonly
               />
-              <i class="error text-danger" th:errors="*{sdt}"></i>
             </div>
-
-            <!-- Thêm phần chọn địa chỉ -->
-
             <div class="mb-3">
-              <label class="form-label">Xã/Phường *</label>
-              <select name="don_vi_hanh_chinh" id="ward">
-                <option value="An Hai">An Hải</option>
-                <option value="An Khe">An Khê</option>
-                <option value="An Thang">An Thắng</option>
-                <option value="Avuong">Avương</option>
-                <option value="Ba">Ba</option>
-                <option value="Ba Na">Bà Nà</option>
-                <option value="Ban Thach">Bàn Thạch</option>
-                <option value="Ben Giang">Bến Giằng</option>
-                <option value="Ben Hien">Bến Hiên</option>
-                <option value="Cam Le">Cẩm Lệ</option>
-                <option value="Chien Dan">Chiên Đàn</option>
-                <option value="Dac Pring">Đắc Pring</option>
-                <option value="Dai Loc">Đại Lộc</option>
-                <option value="Dien Ban">Điện Bàn</option>
-                <option value="Dien Ban Bac">Điện Bàn Bắc</option>
-                <option value="Dien Ban Dong">Điện Bàn Đông</option>
-                <option value="Dong Duong">Đồng Dương</option>
-                <option value="Dong Giang">Prao</option>
-                <option value="Duc Phu">Đức Phú</option>
-                <option value="Duy Nghia">Duy Nghĩa</option>
-                <option value="Duy Xuyen">Duy Xuyên</option>
-                <option value="Hai Chau">Hải Châu</option>
-                <option value="Hai Van">Hải Vân</option>
-                <option value="Ha Nha">Hà Nha</option>
-                <option value="Hiep Duc">Tân Bình</option>
-                <option value="Hoa Cuong">Hòa Cường</option>
-                <option value="Hoa Khanh">Hòa Khánh</option>
-                <option value="Hoa Tien">Hòa Tiến</option>
-                <option value="Hoa Vang">Hòa Vang</option>
-                <option value="Hoa Xuan">Hòa Xuân</option>
-                <option value="Hoi An">Hội An</option>
-                <option value="Hoi An Dong">Hội An Đông</option>
-                <option value="Hoi An Tay">Hội An Tây</option>
-                <option value="Hoang Sa">Hoàng Sa</option>
-                <option value="Huong Tra">Hương Trà</option>
-                <option value="Hung Son">Hùng Sơn</option>
-                <option value="Kham Duc">Khâm Đức</option>
-                <option value="La Dee">La Dêê</option>
-                <option value="La Eee">La Êê</option>
-                <option value="Lanh Ngoc">Lãnh Ngọc</option>
-                <option value="Lien Chieu">Liên Chiểu</option>
-                <option value="Nam Giang">Nam Giang</option>
-                <option value="Nam Phuoc">Nam Phước</option>
-                <option value="Nam Tra My">Nam Trà My</option>
-                <option value="Ngu Hanh Son">Ngũ Hành Sơn</option>
-                <option value="Nong Son">Nông Sơn</option>
-                <option value="Nui Thanh">Núi Thành</option>
-                <option value="Phu Ninh">Phú Ninh</option>
-                <option value="Phu Thuan">Phú Thuận</option>
-                <option value="Phuoc Chanh">Phước Chánh</option>
-                <option value="Phuoc Hiep">Phước Hiệp</option>
-                <option value="Phuoc Nang">Phước Năng</option>
-                <option value="Phuoc Thanh">Phước Thành</option>
-                <option value="Phuoc Tra">Phước Trà</option>
-                <option value="Quang Phu">Quảng Phú</option>
-                <option value="Que Phuoc">Quế Phước</option>
-                <option value="Que Son">Quế Sơn</option>
-                <option value="Que Son Trung">Quế Sơn Trung</option>
-                <option value="Son Cam Ha">Sơn Cẩm Hà</option>
-                <option value="Son Tra">Sơn Trà</option>
-                <option value="Song Kon">Sông Kôn</option>
-                <option value="Tam Anh">Tam Anh</option>
-                <option value="Tam Hai">Tam Hải</option>
-                <option value="Tam Ky">Tam Kỳ</option>
-                <option value="Tam My">Tam Mỹ</option>
-                <option value="Tam Xuan">Tam Xuân</option>
-                <option value="Tan Hiep">Tân Hiệp</option>
-                <option value="Tay Giang">Tây Giang</option>
-                <option value="Tay Ho">Tây Hồ</option>
-                <option value="Thanh Binh">Thanh Bình</option>
-                <option value="Thanh Khe">Thanh Khê</option>
-                <option value="Thanh My">Thạnh Mỹ</option>
-                <option value="Thang An">Thăng An</option>
-                <option value="Thang Binh">Thăng Bình</option>
-                <option value="Thang Dien">Thăng Điền</option>
-                <option value="Thang Phu">Thăng Phú</option>
-                <option value="Thang Truong">Thăng Trường</option>
-                <option value="Thu Bon">Thu Bồn</option>
-                <option value="Thuong Duc">Thượng Đức</option>
-                <option value="Tien Phuoc">Tiên Phước</option>
-                <option value="Tra Doc">Trà Đốc</option>
-                <option value="Tra Giap">Trà Giáp</option>
-                <option value="Tra Leng">Trà Leng</option>
-                <option value="Tra Lien">Trà Liên</option>
-                <option value="Tra Linh">Trà Linh</option>
-                <option value="Tra My">Trà My</option>
-                <option value="Tra Tan">Trà Tân</option>
-                <option value="Tra Tap">Trà Tập</option>
-                <option value="Tra Van">Trà Vân</option>
-                <option value="Vu Gia">Vu Gia</option>
-                <option value="Viet An">Việt An</option>
-                <option value="Xuan Phu">Xuân Phú</option>
-              </select>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Địa chỉ cụ thể *</label>
+              <label class="form-label">Email </label>
               <input
-                type="text"
-                id="specific"
-                class="form-control"
-                placeholder="Nhập địa chỉ cụ thể"
-              />
-              <input type="hidden" th:field="*{address}" id="address" />
-
-              <i class="error text-danger" th:errors="*{address}"></i>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Ngày giao hàng *</label>
-              <input
-                type="date"
-                th:field="*{deliveryDate}"
+                type="email"
+                readonly
+                th:value="${user.email}"
                 class="form-control"
               />
-              <i class="error text-danger" th:errors="*{deliveryDate}"></i>
             </div>
+            <th:block th:object="${orderRequest}">
+              <div class="mb-3">
+                <label class="form-label">Số điện thoại *</label>
+                <input
+                  type="text"
+                  th:field="*{sdt}"
+                  class="form-control"
+                  placeholder="Nhập số điện thoại"
+                />
+                <i class="error text-danger" th:errors="*{sdt}"></i>
+              </div>
 
-            <div class="mb-3">
-              <label class="form-label">Ghi chú / Mô tả thêm</label>
-              <textarea
-                th:field="*{description}"
-                class="form-control"
-                rows="3"
-                placeholder="Nhập mô tả nếu có"
-              ></textarea>
-              <i class="error text-danger" th:errors="*{description}"></i>
-            </div>
-          </th:block>
+              <!-- Thêm phần chọn địa chỉ -->
+
+              <div class="mb-3">
+                <label class="form-label">Xã/Phường *</label>
+                <select name="don_vi_hanh_chinh" id="ward">
+                  <option value="An Hai">An Hải</option>
+                  <option value="An Khe">An Khê</option>
+                  <option value="An Thang">An Thắng</option>
+                  <option value="Avuong">Avương</option>
+                  <option value="Ba">Ba</option>
+                  <option value="Ba Na">Bà Nà</option>
+                  <option value="Ban Thach">Bàn Thạch</option>
+                  <option value="Ben Giang">Bến Giằng</option>
+                  <option value="Ben Hien">Bến Hiên</option>
+                  <option value="Cam Le">Cẩm Lệ</option>
+                  <option value="Chien Dan">Chiên Đàn</option>
+                  <option value="Dac Pring">Đắc Pring</option>
+                  <option value="Dai Loc">Đại Lộc</option>
+                  <option value="Dien Ban">Điện Bàn</option>
+                  <option value="Dien Ban Bac">Điện Bàn Bắc</option>
+                  <option value="Dien Ban Dong">Điện Bàn Đông</option>
+                  <option value="Dong Duong">Đồng Dương</option>
+                  <option value="Dong Giang">Prao</option>
+                  <option value="Duc Phu">Đức Phú</option>
+                  <option value="Duy Nghia">Duy Nghĩa</option>
+                  <option value="Duy Xuyen">Duy Xuyên</option>
+                  <option value="Hai Chau">Hải Châu</option>
+                  <option value="Hai Van">Hải Vân</option>
+                  <option value="Ha Nha">Hà Nha</option>
+                  <option value="Hiep Duc">Tân Bình</option>
+                  <option value="Hoa Cuong">Hòa Cường</option>
+                  <option value="Hoa Khanh">Hòa Khánh</option>
+                  <option value="Hoa Tien">Hòa Tiến</option>
+                  <option value="Hoa Vang">Hòa Vang</option>
+                  <option value="Hoa Xuan">Hòa Xuân</option>
+                  <option value="Hoi An">Hội An</option>
+                  <option value="Hoi An Dong">Hội An Đông</option>
+                  <option value="Hoi An Tay">Hội An Tây</option>
+                  <option value="Hoang Sa">Hoàng Sa</option>
+                  <option value="Huong Tra">Hương Trà</option>
+                  <option value="Hung Son">Hùng Sơn</option>
+                  <option value="Kham Duc">Khâm Đức</option>
+                  <option value="La Dee">La Dêê</option>
+                  <option value="La Eee">La Êê</option>
+                  <option value="Lanh Ngoc">Lãnh Ngọc</option>
+                  <option value="Lien Chieu">Liên Chiểu</option>
+                  <option value="Nam Giang">Nam Giang</option>
+                  <option value="Nam Phuoc">Nam Phước</option>
+                  <option value="Nam Tra My">Nam Trà My</option>
+                  <option value="Ngu Hanh Son">Ngũ Hành Sơn</option>
+                  <option value="Nong Son">Nông Sơn</option>
+                  <option value="Nui Thanh">Núi Thành</option>
+                  <option value="Phu Ninh">Phú Ninh</option>
+                  <option value="Phu Thuan">Phú Thuận</option>
+                  <option value="Phuoc Chanh">Phước Chánh</option>
+                  <option value="Phuoc Hiep">Phước Hiệp</option>
+                  <option value="Phuoc Nang">Phước Năng</option>
+                  <option value="Phuoc Thanh">Phước Thành</option>
+                  <option value="Phuoc Tra">Phước Trà</option>
+                  <option value="Quang Phu">Quảng Phú</option>
+                  <option value="Que Phuoc">Quế Phước</option>
+                  <option value="Que Son">Quế Sơn</option>
+                  <option value="Que Son Trung">Quế Sơn Trung</option>
+                  <option value="Son Cam Ha">Sơn Cẩm Hà</option>
+                  <option value="Son Tra">Sơn Trà</option>
+                  <option value="Song Kon">Sông Kôn</option>
+                  <option value="Tam Anh">Tam Anh</option>
+                  <option value="Tam Hai">Tam Hải</option>
+                  <option value="Tam Ky">Tam Kỳ</option>
+                  <option value="Tam My">Tam Mỹ</option>
+                  <option value="Tam Xuan">Tam Xuân</option>
+                  <option value="Tan Hiep">Tân Hiệp</option>
+                  <option value="Tay Giang">Tây Giang</option>
+                  <option value="Tay Ho">Tây Hồ</option>
+                  <option value="Thanh Binh">Thanh Bình</option>
+                  <option value="Thanh Khe">Thanh Khê</option>
+                  <option value="Thanh My">Thạnh Mỹ</option>
+                  <option value="Thang An">Thăng An</option>
+                  <option value="Thang Binh">Thăng Bình</option>
+                  <option value="Thang Dien">Thăng Điền</option>
+                  <option value="Thang Phu">Thăng Phú</option>
+                  <option value="Thang Truong">Thăng Trường</option>
+                  <option value="Thu Bon">Thu Bồn</option>
+                  <option value="Thuong Duc">Thượng Đức</option>
+                  <option value="Tien Phuoc">Tiên Phước</option>
+                  <option value="Tra Doc">Trà Đốc</option>
+                  <option value="Tra Giap">Trà Giáp</option>
+                  <option value="Tra Leng">Trà Leng</option>
+                  <option value="Tra Lien">Trà Liên</option>
+                  <option value="Tra Linh">Trà Linh</option>
+                  <option value="Tra My">Trà My</option>
+                  <option value="Tra Tan">Trà Tân</option>
+                  <option value="Tra Tap">Trà Tập</option>
+                  <option value="Tra Van">Trà Vân</option>
+                  <option value="Vu Gia">Vu Gia</option>
+                  <option value="Viet An">Việt An</option>
+                  <option value="Xuan Phu">Xuân Phú</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Địa chỉ cụ thể *</label>
+                <input
+                  type="text"
+                  id="specific"
+                  class="form-control"
+                  placeholder="Nhập địa chỉ cụ thể"
+                />
+                <input type="hidden" th:field="*{address}" id="address" />
+
+                <i class="error text-danger" th:errors="*{address}"></i>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Ngày giao hàng *</label>
+                <input
+                  type="date"
+                  th:field="*{deliveryDate}"
+                  class="form-control"
+                />
+                <i class="error text-danger" th:errors="*{deliveryDate}"></i>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Ghi chú / Mô tả thêm</label>
+                <textarea
+                  th:field="*{description}"
+                  class="form-control"
+                  rows="3"
+                  placeholder="Nhập mô tả nếu có"
+                ></textarea>
+                <i class="error text-danger" th:errors="*{description}"></i>
+              </div>
+
+              <!-- Phương thức thanh toán -->
+              <div class="mb-3">
+                <label class="form-label">Phương thức thanh toán *</label>
+                <div class="payment-methods">
+                  <div class="form-check mb-2">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="paymentMethod"
+                      id="paymentCOD"
+                      value="COD"
+                      checked
+                    />
+                    <label class="form-check-label" for="paymentCOD">
+                      <i class="fas fa-money-bill-wave me-2"></i>
+                      Thanh toán khi nhận hàng (COD)
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="paymentMethod"
+                      id="paymentPayOS"
+                      value="PAYOS"
+                    />
+                    <label class="form-check-label" for="paymentPayOS">
+                      <i class="fas fa-credit-card me-2"></i>
+                      Thanh toán online qua PayOS
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </th:block>
+          </div>
         </div>
-      </div>
 
-      <!-- Cột Đơn hàng -->
-      <div class="col-md-5">
-        <div class="card p-4 mb-4">
-          <h5 class="mb-3 mau">Đơn Hàng Của Bạn</h5>
-          <th:block th:each="item : ${cartItems}">
-            <div class="order-item-row">
-              <img
-                class="order-item-img"
-                th:src="@{/images/{image}(image=*{item.product.image_url})}"
-                alt="Ảnh sản phẩm"
-              />
-              <div class="order-item-info">
-                <div class="order-item-header">
+        <!-- Cột Đơn hàng -->
+        <div class="col-md-5">
+          <div class="card p-4 mb-4">
+            <h5 class="mb-3 mau">Đơn Hàng Của Bạn</h5>
+            <th:block th:each="item : ${cartItems}">
+              <div class="order-item-row">
+                <img
+                  class="order-item-img"
+                  th:src="@{/images/{image}(image=*{item.product.image_url})}"
+                  alt="Ảnh sản phẩm"
+                />
+                <div class="order-item-info">
+                  <div class="order-item-header">
+                    <span
+                      class="order-item-name"
+                      th:text="${item.product.name}"
+                    ></span>
+                    <span
+                      class="order-item-price"
+                      th:text="${#numbers.formatDecimal(item.getTotal(), 0, 'COMMA', 0, 'POINT')} + ' VND'"
+                    ></span>
+                  </div>
                   <span
-                    class="order-item-name"
-                    th:text="${item.product.name}"
-                  ></span>
-                  <span
-                    class="order-item-price"
-                    th:text="${#numbers.formatDecimal(item.getTotal(), 0, 'COMMA', 0, 'POINT')} + ' VND'"
+                    class="order-item-qty"
+                    th:text="'SL:  ' + ${item.quantity}"
                   ></span>
                 </div>
+              </div>
+              <input type="hidden" name="cartItemIds" th:value="${item.id}" />
+              <hr />
+            </th:block>
+
+            <div class="order-summary">
+              <div class="summary-row">
+                <span class="summary-label formattedOriginalTotal"
+                  >Tổng tiền hàng:</span
+                >
                 <span
-                  class="order-item-qty"
-                  th:text="'SL:  ' + ${item.quantity}"
+                  class="summary-value"
+                  th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+                ></span>
+              </div>
+              <div class="summary-row formattedDiscount" style="display: none">
+                <span class="summary-label">Giảm giá:</span>
+                <span class="summary-value discount-amount">0 VND</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">Phí vận chuyển:</span>
+                <span class="summary-value shipping-fee-right" id="shippingFee"
+                  >0 VND</span
+                >
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">Tổng thanh toán:</span>
+                <span
+                  class="summary-value finalPrice"
+                  th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
                 ></span>
               </div>
             </div>
-            <input type="hidden" name="cartItemIds" th:value="${item.id}" />
-            <hr />
-          </th:block>
+            <div class="note-alert">
+              <div class="note-icon">🌸</div>
+              <div>
+                <strong>Lưu ý quan trọng:</strong> Do đặc thù của sản phẩm hoa
+                tươi cần được bảo quản và vận chuyển cẩn thận, chúng tôi áp dụng
+                mức phí vận chuyển phù hợp nhằm đảm bảo hoa đến tay quý khách
+                tươi đẹp nhất!
+              </div>
+            </div>
+          </div>
+          <!--  -->
 
-          <p>
-            <span class="formattedOriginalTotal"> </span> <br />
-           
+          <div class="card p-4 mb-4">
+            <h5 class="mb-3">Phương thức thanh toán</h5>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="paymentMethod"
+                id="cod"
+                value="cod"
+                checked
+                required
+              />
+              <label class="form-check-label" for="cod">
+                Thanh toán khi nhận hàng
+              </label>
+            </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="paymentMethod"
+                id="zalopay"
+                value="zalopay"
+                required
+              />
+              <label class="form-check-label" for="zalopay">
+                Thanh toán qua ZaloPay
+              </label>
+            </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="paymentMethod"
+                id="paypal"
+                value="paypal"
+                required
+              />
+              <label class="form-check-label" for="paypal">
+                Thanh toán qua PayPal
+              </label>
+            </div>
+          </div>
 
-            <span class="formattedDiscount"> </span><br />
-            <strong>Phí vận chuyển: </strong>
-            <span class="shipping-fee-right" name="shippingFee" id="shippingFee">0</span>
-            <br /> 
-            <strong>Số tiền phải thanh toán: </strong>
-            <span
-              class="float-end finalPrice border-top-2"
-              th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
-            ></span>
-          </p>
-          <i style="display: block; padding-top: 1rem">
-            <span class="text-danger fw-bold">Lưu ý:</span> Do đặc thù của sản
-            phẩm hoa tươi cần được bảo quản và vận chuyển cẩn thận, chúng tôi áp
-            dụng mức phí vận chuyển phù hợp nhằm đảm bảo hoa đến tay quý khách
-            tươi đẹp nhất!</i
+          <!-- Nút Đặt Hàng gửi form -->
+          <button
+            type="submit"
+            class="btn btn-success w-100 mt-4"
+            id="checkoutBtn"
+            style="
+              font-size: 1.1rem;
+              padding: 15px 30px;
+              position: relative;
+              overflow: hidden;
+            "
           >
+            <i class="fas fa-shopping-cart me-2"></i>ĐẶT HÀNG
+          </button>
         </div>
-        <!--  -->
-
-        <div class="card p-4 mb-4">
-          <h5 class="mb-3">Phương thức thanh toán</h5>
-          <div class="form-check">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="paymentMethod"
-              id="cod"
-              value="cod"
-              checked
-              required
-            />
-            <label class="form-check-label" for="cod">
-              Thanh toán khi nhận hàng
-            </label>
-          </div>
-          <div class="form-check">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="paymentMethod"
-              id="zalopay"
-              value="zalopay"
-              required
-            />
-            <label class="form-check-label" for="zalopay">
-              Thanh toán qua ZaloPay
-            </label>
-          </div>
-          <div class="form-check">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="paymentMethod"
-              id="paypal"
-              value="paypal"
-              required
-            />
-            <label class="form-check-label" for="paypal">
-              Thanh toán qua PayPal
-            </label>
-          </div>
-        </div>
-
-        <!-- Nút Đặt Hàng gửi form -->
-        <button type="submit" class="btn btn-success w-100 mt-3">
-          ĐẶT HÀNG
-        </button>
       </div>
+    </form>
+    <!-- Áp dụng mã giảm giá -->
+    <form action="/order/apply-voucher" method="post" class="mb-3">
+      <label for="voucher" class="form-label fw-bold"
+        >Mã giảm giá <span class="text-muted">(nếu có)</span></label
+      >
+      <div class="input-group">
+        <input
+          type="text"
+          id="voucher"
+          name="voucher"
+          class="form-control"
+          placeholder="Nhập mã giảm giá, ví dụ: MA20K"
+          required
+        />
+        <button type="submit" class="btn btn-primary">Áp dụng</button>
+      </div>
+    </form>
+    <div id="voucher-message" class="mt-2"></div>
+    <div th:if="${error}" class="alert alert-danger mt-3" role="alert">
+      <p th:utext="${error}"></p>
     </div>
-  </form>
-  <!-- Áp dụng mã giảm giá -->
-  <form action="/order/apply-voucher" method="post" class="mb-3">
-    <label for="voucher" class="form-label fw-bold"
-      >Mã giảm giá <span class="text-muted">(nếu có)</span></label
-    >
-    <div class="input-group">
-      <input
-        type="text"
-        id="voucher"
-        name="voucher"
-        class="form-control"
-        placeholder="Nhập mã giảm giá, ví dụ: MA20K"
-        required
-      />
-      <button type="submit" class="btn btn-primary">Áp dụng</button>
+    <div th:if="${successApply}" class="alert alert-success mt-3" role="alert">
+      <p th:utext="${successApply}"></p>
     </div>
-  </form>
-  <div id="voucher-message" class="mt-2"></div>
-  <div th:if="${error}" class="alert alert-danger mt-3" role="alert">
-    <p th:utext="${error}"></p>
-  </div>
-  <div th:if="${successApply}" class="alert alert-success mt-3" role="alert">
-    <p th:utext="${successApply}"></p>
-  </div>
 
-  <script>
-    const wardSelect = document.getElementById("ward");
-    const specificInput = document.getElementById("specific");
-    const addressInput = document.getElementById("address");
+    <script>
+      const wardSelect = document.getElementById("ward");
+      const specificInput = document.getElementById("specific");
+      const addressInput = document.getElementById("address");
+      const shippingFeeSpan = document.getElementById("shippingFee");
 
-    function updateAddress() {
-      const ward = wardSelect.selectedOptions[0]?.text || "";
-      const specific = specificInput.value.trim();
-      if (specific && ward) {
-        addressInput.value = `${specific}, ${ward}, Đà Nẵng`;
+      function updateAddress() {
+        const wardName = wardSelect.selectedOptions[0]?.text || ""; // Tên xã
+        const wardId = wardSelect.value; // ID hoặc value trong option
+        const specific = specificInput.value.trim();
+        if (specific && ward) {
+          addressInput.value = `${specific}, ${wardName}, Đà Nẵng`;
+        }
+
+        // Cập nhật phí vận chuyển
+        const shippingFee = parseFloat(
+          wardSelect.selectedOptions[0]?.getAttribute("data-fee") || 0
+        );
+        currentShippingFee = shippingFee;
+
+        const formattedFee = shippingFee.toLocaleString("vi-VN", {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        });
+        shippingFeeSpan.textContent = `${formattedFee} VND`;
+
+        // Cập nhật tổng tiền
+        updateTotalPrice();
+
+        console.log("Ward ID:", wardId);
+        console.log("Ward Name:", wardName);
+        console.log("Shipping Fee:", shippingFee);
       }
-      const shippingFee =
-        wardSelect.selectedOptions[0]?.getAttribute("data-fee") || 0;
-      const formattedFee = Number(shippingFee).toLocaleString("en-US", {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
+
+      function updateTotalPrice() {
+        const finalTotal = originalTotal - currentDiscount + currentShippingFee;
+        const formattedTotal = finalTotal.toLocaleString("vi-VN", {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        });
+        finalPriceSpan.textContent = `${formattedTotal} VND`;
+      }
+
+      // Cập nhật địa chỉ khi người dùng nhập hoặc chọn
+      wardSelect.addEventListener("change", updateAddress);
+      specificInput.addEventListener("input", updateAddress);
+
+      // Đảm bảo cập nhật trước khi submit
+      document.querySelector("form").addEventListener("submit", function () {
+        updateAddress();
       });
-      shippingFeeSpan.textContent = ` ${formattedFee} VND`;
 
-      
+      // Cập nhật nút đặt hàng theo phương thức thanh toán
+      function updateCheckoutButton() {
+        const paymentMethod = document.querySelector(
+          'input[name="paymentMethod"]:checked'
+        ).value;
+        const checkoutBtn = document.getElementById("checkoutBtn");
 
-      console.log("Ward ID:", wardId);
-      console.log("Ward Name:", wardName);
-      console.log("Shipping Fee:", shippingFee);
-    }
+        if (paymentMethod === "PAYOS") {
+          checkoutBtn.innerHTML =
+            '<i class="fas fa-credit-card me-2"></i>THANH TOÁN ONLINE';
+          checkoutBtn.className = "btn btn-primary w-100 mt-4";
+          checkoutBtn.style.fontSize = "1rem";
+          checkoutBtn.style.padding = "12px 24px";
+        } else {
+          checkoutBtn.innerHTML =
+            '<i class="fas fa-shopping-cart me-2"></i>ĐẶT HÀNG';
+          checkoutBtn.className = "btn btn-success w-100 mt-4";
+          checkoutBtn.style.fontSize = "1rem";
+          checkoutBtn.style.padding = "12px 24px";
+        }
+      }
 
-    // Cập nhật địa chỉ khi người dùng nhập hoặc chọn
-    wardSelect.addEventListener("change", updateAddress);
-    specificInput.addEventListener("input", updateAddress);
+      // Lắng nghe thay đổi phương thức thanh toán
+      document
+        .querySelectorAll('input[name="paymentMethod"]')
+        .forEach((radio) => {
+          radio.addEventListener("change", updateCheckoutButton);
+        });
 
-    // Đảm bảo cập nhật trước khi submit
-    document.querySelector("form").addEventListener("submit", function () {
-      updateAddress();
-    });
-    // Xử lý áp dụng mã giảm giá
-    document
-      .querySelector('form[action="/order/apply-voucher"]')
-      .addEventListener("submit", function (e) {
-        e.preventDefault();
+      // Khởi tạo ban đầu
+      updateCheckoutButton();
+      // Xử lý áp dụng mã giảm giá
+      document
+        .querySelector('form[action="/order/apply-voucher"]')
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
 
-        const voucherInput = document.getElementById("voucher");
-        const voucher = voucherInput.value.trim();
-        const msgDiv = document.getElementById("voucher-message");
+          const voucherInput = document.getElementById("voucher");
+          const voucher = voucherInput.value.trim();
+          const msgDiv = document.getElementById("voucher-message");
 
-        fetch("/order/apply-voucher", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: new URLSearchParams({ voucher }),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.success) {
-              msgDiv.className = "alert alert-success mt-3";
-              msgDiv.textContent = data.success;
+          fetch("/order/apply-voucher", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({ voucher }),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.success) {
+                msgDiv.className = "alert alert-success mt-3";
+                msgDiv.textContent = data.success;
 
-              // Cập nhật tổng cộng
-              const totalEl = document.querySelector(".finalPrice");
-              const shippingFeeSpan = document.getElementById("shippingFee");
- 
-              if (totalEl) totalEl.textContent = data.formattedTotal + " VND";
-              const originalTotalEl = document.querySelector(
-                ".formattedOriginalTotal"
-              );
-              if (originalTotalEl) {
-                originalTotalEl.innerHTML =
-                  "<b> Giá gốc: </b> <span class='float-end'>" +
-                  data.formattedOriginalTotal +
-                  " VND </span>";
+                // Cập nhật giá trị discount
+                currentDiscount = parseFloat(data.discountValue) || 0;
+
+                // Hiển thị dòng giảm giá
+                const discountRow =
+                  document.querySelector(".formattedDiscount");
+                const discountAmount =
+                  document.querySelector(".discount-amount");
+
+                if (discountRow && discountAmount) {
+                  discountRow.style.display = "flex";
+                  discountAmount.textContent = `-${data.formattedDiscount} VND`;
+                }
+
+                // Cập nhật tổng tiền (bao gồm phí vận chuyển)
+                updateTotalPrice();
+              } else if (data.error) {
+                msgDiv.className = "alert alert-danger mt-3";
+                msgDiv.textContent = data.error;
               }
-              const discountEl = document.querySelector(".formattedDiscount");
-              if (discountEl) {
-                discountEl.innerHTML =
-                  "<b>Giảm giá: </b> <span class='float-end'>-" +
-                   data.formattedDiscount +
-                  " VND</span>";
-              }
-            } else if (data.error) {
-              msgDiv.className = "alert alert-danger mt-3";
-              msgDiv.textContent = data.error;
-            }
-          });
-      });
-  </script>
+            });
+        });
+    </script>
+  </div>
 </div>

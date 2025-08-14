@@ -2,7 +2,6 @@ package com.datn.Controller.admin;
 
 import com.datn.Service.OrderService;
 import com.datn.Service.ProductService;
-import com.datn.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -247,6 +247,7 @@ public class OrderServiceImpl implements OrderService {
             LocalDate toDate, Pageable pageable) {
         return dao.searchPosOrdersByOrderCode(orderType, orderCode, fromDate, toDate, pageable);
     }
+
     public Order recreateOrder(Long canceledOrderId) {
         // Tìm đơn hàng bị hủy
         Order canceledOrder = getOrderById(canceledOrderId);

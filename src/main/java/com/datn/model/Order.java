@@ -1,11 +1,8 @@
 package com.datn.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Future;
 import lombok.Data;
 import lombok.ToString;
-
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -38,7 +35,7 @@ public class Order {
 
     @Column(name = "address", columnDefinition = "NVARCHAR(255)")
     private String address;
-    
+
     @Column
     private Double shipFee;
 
@@ -74,5 +71,16 @@ public class Order {
     @Column(name = "original_id")
     private Long originalId;
 
+    @Column(name = "payment_method", columnDefinition = "NVARCHAR(50)")
+    private String paymentMethod; // "COD" hoặc "PAYOS"
+
+    @Column(name = "payment_status", columnDefinition = "NVARCHAR(50)")
+    private String paymentStatus; // "PENDING", "PAID", "CANCELLED", "FAILED"
+
+    @Column(name = "payment_url", columnDefinition = "NVARCHAR(500)")
+    private String paymentUrl; // URL thanh toán PayOS
+
+    @Column(name = "transaction_id", columnDefinition = "NVARCHAR(100)")
+    private String transactionId; // ID giao dịch từ PayOS
+
 }
- 
