@@ -1,141 +1,3 @@
-<style>
-  .custom-pagination .page-item .page-link {
-    margin: 0 4px;
-    color: #333;
-    border: 1px solid #d4a5e6;
-    background-color: #fff;
-    border-radius: 50%;
-    transition: all 0.2s ease-in-out;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: 500;
-  }
-
-  .custom-pagination .page-item.active .page-link {
-    background-color: #d4a5e6;
-    color: #fff;
-    border-color: #d4a5e6;
-  }
-
-  .custom-pagination .page-item.disabled .page-link {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .custom-pagination .page-item .page-link:hover {
-    background: #e0f7f7;
-    color: #333;
-    border-color: #d4a5e6;
-    transform: scale(1.1);
-    box-shadow: 0 4px 10px rgba(212, 165, 230, 0.3);
-  }
-  .filter-form {
-    padding: 16px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: end;
-    gap: 20px;
-    border-radius: 10px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease;
-  }
-
-  .filter-form form label {
-    font-weight: 500;
-    margin-bottom: 4px;
-    display: block;
-    white-space: nowrap;
-  }
-
-  .filter-form .btn {
-    margin-left: 8px;
-  }
-
-  .filter-form .btn-primary {
-    background-color: #90cdf4;
-    border-color: #90cdf4;
-  }
-
-  .filter-form .btn-primary:hover {
-    background-color: #3ab0d4;
-  }
-
-  .filter-form form .form-control {
-    min-width: 160px;
-  }
-  .filter-form .btn-custom {
-    background-color: #e2e2e2;
-    color: #333;
-    border: 1px solid #ccc;
-  }
-
-  .filter-form .btn-custom:hover {
-    background-color: #d4d4d4;
-  }
-  /* table */
-  /* Bảng tổng thể */
-  .table-responsive {
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 0 12px rgba(240, 144, 184, 0.2);
-    background-color: #fff;
-  }
-
-  /* Header */
-  .table thead.table-dark {
-    background-color: #f090b8;
-  }
-
-  .table thead th {
-    color: white;
-    text-align: center;
-    vertical-align: middle;
-    font-weight: 600;
-  }
-
-  /* Dòng dữ liệu */
-  .table tbody td {
-    vertical-align: middle;
-    text-align: center;
-  }
-
-  /* Dòng khi hover */
-  .table tbody tr:hover {
-    background-color: #fff0f5;
-    transition: all 0.2s ease-in-out;
-  }
-
-  /* Nút Sửa / Xóa */
-  .table .btn-sm {
-    padding: 4px 8px;
-    font-size: 0.85rem;
-    margin: 0 3px;
-  }
-
-  .table .btn-info {
-    background-color: #63c2de;
-    border-color: #63c2de;
-    color: white;
-  }
-
-  .table .btn-info:hover {
-    background-color: #3ab0d4;
-  }
-
-  .table .btn-danger {
-    background-color: #e55353;
-    border-color: #e55353;
-    color: white;
-  }
-
-  .table .btn-danger:hover {
-    background-color: #d93737;
-  }
-</style>
 <main class="container mt-3">
   <h3>Quản Lý Shipper</h3>
   <hr />
@@ -357,7 +219,7 @@
                   name="name"
                   th:value="${name}"
                   placeholder="Tên khuyến mãi"
-                  class="form-control"
+                  class="form-control form-control-sm searchName"
                 />
               </div>
               <button class="btn btn-primary" type="submit">Tìm</button>
@@ -365,18 +227,6 @@
           </div>
         </div>
       </div>
-      <!-- <div class="mb-2 mt-2 text-primary" style="font-weight: 500">
-        <span th:if="${name != null and name != ''}">
-          Các Shipper: "<b th:text="${name}"></b>"
-        </span>
-        <span th:if="${(name == null or name == '') and status != null}">
-          Các Shipper có trạng thái:
-          <b
-            th:text="${status == true ? 'Đang hoạt động' : 'Ngưng hoạt động'}"
-            class="${status == true ? 'text-success' : 'text-danger' }"
-          ></b>
-        </span>
-      </div> -->
 
       <div class="table-responsive mt-3">
         <table class="table table-striped table-hover">
