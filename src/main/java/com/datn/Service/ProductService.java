@@ -36,25 +36,14 @@ public interface ProductService {
 
         List<Product> findByProductCategoryId(int id);
 
-        Page<Product> findByPriceRange(
-                        Integer productCategoryId,
-                        Double minPrice,
-                        Double maxPrice,
-                        Pageable pageable);
+        Page<Product> findByMultipleFilters(
+        Integer proCategoryId,
+        Integer ca_Id,
+        String color,
+        Double minPrice,
+        Double maxPrice,
+        Pageable pageable);
 
-        Page<Product> findByProductCategoryIdPage(
-                        Integer productCategoryId,
-                        Pageable pageable);
-
-        Page<Product> findByColor(
-                        Integer productCategoryId,
-                        String color,
-                        Pageable pageable);
-
-        Page<Product> findByCaId(
-                        Integer productCategoryId,
-                        int categoryId,
-                        Pageable pageable);
 
         // Page<Product> findBestSellingProductsByCategory( Integer
         // productCatelogyId,Pageable pageable);
@@ -72,7 +61,11 @@ public interface ProductService {
         // Method để tìm best seller theo category name
         List<Product> findBestSellerByCategory(String categoryName);
 
-        List<Product> findProductByCategory(Integer categoryId);
+        List<Product> findProductByProductCategory(Integer id);
+
+        Page<Product> findByProductCategoryIdPage(
+                        Integer productCategoryId,
+                        Pageable pageable);
 
         Page<Product> findByProductCategoryName(String name, Pageable pageable);
 

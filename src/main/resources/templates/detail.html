@@ -237,8 +237,10 @@
    
     </th:block>
     <div class="container">
-      <div class="text text-secondary fs-3 mb-2 mt-4 ">Sản phẩm tương tự</div>
-      <div class="row">
+      <div class="row m-4 p-4 g-lg-3">
+          <div class="text text-secondary fs-3 mb-2 mt-4">
+          Sản phẩm tương tự
+        </div>
         <!-- Card 1 -->
       <th:block th:each="product : ${#lists.size(productSimilar) > 8 ? productSimilar.subList(0, 8) : productSimilar}">
 

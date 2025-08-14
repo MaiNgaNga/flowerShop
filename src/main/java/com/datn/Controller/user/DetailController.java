@@ -59,9 +59,9 @@ public class DetailController {
         // Lấy tất cả danh mục sản phẩm
         model.addAttribute("productCategories", pro_ca_Service.findAll());
 
-        // Gợi ý các sản phẩm tương tự dựa theo category của sản phẩm hiện tại
+        // Gợi ý các sản phẩm tương tự dựa theo danh muc của sản phẩm hiện tại
         model.addAttribute("productSimilar",
-                productService.findProductByCategory(productService.findByID(id).getCategory().getId()));
+                productService.findProductByProductCategory(productService.findByID(id).getProductCategory().getId()));
 
         // Nếu sản phẩm không tồn tại, thông báo lỗi và chuyển hướng về trang sản phẩm
         if (productService.findByID(id) == null) {

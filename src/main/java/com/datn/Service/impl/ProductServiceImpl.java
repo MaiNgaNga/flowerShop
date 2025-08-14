@@ -152,22 +152,16 @@ public class ProductServiceImpl implements ProductService {
         return dao.findByProductCategoryId(id);
     }
 
-    @Override
-    public Page<Product> findByPriceRange(Integer productCategoryId, Double minPrice, Double maxPrice,
-            Pageable pageable) {
-        return dao.findByPriceRange(productCategoryId, minPrice, maxPrice, pageable);
-    }
+    public Page<Product> findByMultipleFilters(
+        Integer proCategoryId,
+        Integer ca_Id,
+        String color,
+        Double minPrice,
+        Double maxPrice,
+        Pageable pageable) {
 
-    @Override
-    public Page<Product> findByColor(Integer productCategoryId, String color,
-            Pageable pageable) {
-        return dao.findByColor(productCategoryId, color, pageable);
-    }
-
-    @Override
-    public Page<Product> findByCaId(Integer productCategoryId, int categoryId,
-            Pageable pageable) {
-        return dao.findByCaId(productCategoryId, categoryId, pageable);
+    return dao.findByMultipleFilters(
+            proCategoryId, ca_Id, color, minPrice, maxPrice, pageable);
     }
 
     @Override
@@ -175,6 +169,7 @@ public class ProductServiceImpl implements ProductService {
             Pageable pageable) {
         return dao.findByProductCategoryId(productCategoryId, pageable);
     }
+   
 
     @Override
     public Page<Product> findByAllProduct(Pageable pageable) {
@@ -233,9 +228,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> findProductByCategory(Integer categoryId) {
-        // TODO Auto-generated method stub
-        return dao.findProductByCategory(categoryId);
+    public List<Product> findProductByProductCategory(Integer id) {
+        return dao.findProductByCategory(id);
     }
 
     @Override
