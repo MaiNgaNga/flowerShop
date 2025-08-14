@@ -16,6 +16,9 @@ import com.datn.model.Order;
 import com.datn.model.OrderDetail;
 
 public interface OrderService {
+
+    Order findByID(Long id);
+
     Order saveOrder(Order order, List<OrderDetail> orderDetails);
 
     Order getOrderById(Long id);

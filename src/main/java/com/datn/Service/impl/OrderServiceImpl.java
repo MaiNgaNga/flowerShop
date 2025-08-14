@@ -285,4 +285,9 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
+    @Override
+    public Order findByID(Long id) {
+        return dao.findById(id).orElse(null);
+    }
+
 }
