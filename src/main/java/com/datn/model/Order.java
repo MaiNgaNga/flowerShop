@@ -27,6 +27,10 @@ public class Order {
     @JoinColumn(name = "shipperId")
     private User shipper;
 
+    // mapping với comments
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Comment> comments;
+    
     @Temporal(TemporalType.DATE)
     private Date createDate;
     @Column
