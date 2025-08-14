@@ -130,14 +130,25 @@ public class OrderController {
 
     @PostMapping("/checkout")
     public String checkout(@Valid @ModelAttribute("orderRequest") OrderRequest orderRequest, BindingResult result,
-            Model model, HttpSession session, @RequestParam("wardID") Long wardId,
+            Model model, HttpSession session, @RequestParam(value = "wardID", required = false) Long wardId,
             @RequestParam(value = "specific", required = false) String specific,
             @RequestParam(value = "paymentMethod", defaultValue = "COD") String paymentMethod) {
+        
+        // Debug logging
+        System.out.println("Checkout called with wardID: " + wardId + ", paymentMethod: " + paymentMethod);
+        
         if (result.hasErrors()) {
+            System.out.println("Validation errors: " + result.getAllErrors());
             model.addAttribute("selectedWardId", wardId);
             model.addAttribute("specific", specific);
             return showForm(model);
+        }
 
+        // Kiểm tra wardID có tồn tại không (cần thiết cho việc đặt hàng mới)
+        if (wardId == null) {
+            System.out.println("WardID is null - returning error");
+            model.addAttribute("error", "Vui lòng chọn xã/phường để tính phí vận chuyển.");
+            return showForm(model);
         }
 
         User user = authService.getUser();
