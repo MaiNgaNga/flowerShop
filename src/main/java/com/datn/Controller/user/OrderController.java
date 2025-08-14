@@ -65,7 +65,6 @@ public class OrderController {
     @Autowired
     private ZoneDAO zoneDAO;
 
-
     @GetMapping("/index")
     public String index(Model model) {
         int cartCount = 0;
@@ -79,8 +78,6 @@ public class OrderController {
         model.addAttribute("orderRequest", orderRequest);
         return showForm(model);
     }
- 
-
 
     @PostMapping("/apply-voucher")
     @ResponseBody
@@ -134,10 +131,10 @@ public class OrderController {
             Model model, HttpSession session, @RequestParam("wardID") Long wardId,
             @RequestParam(value = "specific", required = false) String specific) {
         if (result.hasErrors()) {
-             model.addAttribute("selectedWardId", wardId);
-             model.addAttribute("specific", specific);
+            model.addAttribute("selectedWardId", wardId);
+            model.addAttribute("specific", specific);
             return showForm(model);
-             
+
         }
 
         User user = authService.getUser();
@@ -146,7 +143,7 @@ public class OrderController {
             model.addAttribute("message", "Giỏ hàng trống, không thể đặt hàng.");
             return showForm(model);
         }
-       
+
         Order order = new Order();
         order.setUser(user);
         order.setCreateDate(new Date());
@@ -191,7 +188,7 @@ public class OrderController {
                 }
             }
         }
-      
+
         session.removeAttribute("finalAmount");
         session.removeAttribute("totalAmount");
         session.removeAttribute("appliedPromotion");
@@ -202,13 +199,13 @@ public class OrderController {
     public String showForm(Model model) {
         User user = authService.getUser();
         model.addAttribute("user", user);
-        List<Ward> wards= wardService.getAllWards();
+        List<Ward> wards = wardService.getAllWards();
         model.addAttribute("wards", wards);
-        List<Zone> zones= zoneDAO.findAll();
+        List<Zone> zones = zoneDAO.findAll();
         model.addAttribute("zones", zones);
         List<CartItem> cartItems = cartItemService.getCartItemsByUserId(user.getId());
         model.addAttribute("cartItems", cartItems);
-        
+
         model.addAttribute("totalAmount", cartItemService.getTotalAmount(user.getId()));
 
         model.addAttribute("productCategories", pro_ca_service.findAll());
