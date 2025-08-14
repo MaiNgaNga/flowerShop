@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.datn.Service.CommentService;
+import com.datn.Service.OrderService;
 import com.datn.Service.ProductService;
 import com.datn.dao.CommentDAO;
 import com.datn.model.Comment;
-import com.datn.model.Product;
+import com.datn.model.Order;
+
 import com.datn.model.User;
 import com.datn.utils.AuthService;
 
@@ -24,18 +26,27 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     ProductService productService;
 
-    public List<Comment> getCommentsByProduct(Long productId) {
-        return commentDAO.findByProduct_Id(productId);
+    @Autowired
+    OrderService  orderService;
+
+    // public List<Comment> getCommentsByProduct(Long productId) {
+    //     return commentDAO.findByProduct_Id(productId);
+    // }
+
+    public List<Comment> getCommentsByOrder(Long orderId) {
+        Order order = orderService.findByID(orderId);
+        return commentDAO.findByOrder(order);
     }
 
-    public Comment saveComment(String content, Long productId, Integer rating) {
+    public Comment saveComment(String content, Long orderID, Integer rating) {
         User user = authService.getUser();
-        Product product = productService.findByID(productId);
+        Order order = orderService.findByID(orderID);
         Comment comment = new Comment();
         comment.setContent(content);
         comment.setUser(user);
-        comment.setProduct(product);
+        comment.setOrder(order);
         comment.setRating(rating);
+        comment.setStatus("Inactive");
         comment.setCreatedAt(LocalDateTime.now());
 
         return commentDAO.save(comment);
@@ -50,6 +61,21 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<Comment> getTop3Comments() {
         return commentDAO.findTop3ByOrderByCreatedAtDesc();
+    }
+
+    @Override
+    public List<Comment> findByStatusInactive() {
+        return commentDAO.findByStatusInactive();
+    }
+
+    @Override
+    public void updateComment(Long id, Comment comment) {
+         commentDAO.save(comment);
+    }
+
+    @Override
+    public Comment findById(Long id) {
+        return commentDAO.findById(id).orElse(null);
     }
 
 }

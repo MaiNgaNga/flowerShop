@@ -216,15 +216,99 @@
 
             <div class="mb-3">
               <label class="form-label">Xã/Phường *</label>
-              <select name="wardID" id="ward">
-                <th:block th:each="ward : ${wards}">
-                  <option
-                    th:value="${ward.id}"
-                    th:text="${ward.name}"
-                    th:data-fee="${ward.zone.shipFee}"
-                    th:selected="${ward.id} == ${selectedWardId}"
-                  ></option>
-                </th:block>
+              <select name="don_vi_hanh_chinh" id="ward">
+                <option value="An Hai">An Hải</option>
+                <option value="An Khe">An Khê</option>
+                <option value="An Thang">An Thắng</option>
+                <option value="Avuong">Avương</option>
+                <option value="Ba">Ba</option>
+                <option value="Ba Na">Bà Nà</option>
+                <option value="Ban Thach">Bàn Thạch</option>
+                <option value="Ben Giang">Bến Giằng</option>
+                <option value="Ben Hien">Bến Hiên</option>
+                <option value="Cam Le">Cẩm Lệ</option>
+                <option value="Chien Dan">Chiên Đàn</option>
+                <option value="Dac Pring">Đắc Pring</option>
+                <option value="Dai Loc">Đại Lộc</option>
+                <option value="Dien Ban">Điện Bàn</option>
+                <option value="Dien Ban Bac">Điện Bàn Bắc</option>
+                <option value="Dien Ban Dong">Điện Bàn Đông</option>
+                <option value="Dong Duong">Đồng Dương</option>
+                <option value="Dong Giang">Prao</option>
+                <option value="Duc Phu">Đức Phú</option>
+                <option value="Duy Nghia">Duy Nghĩa</option>
+                <option value="Duy Xuyen">Duy Xuyên</option>
+                <option value="Hai Chau">Hải Châu</option>
+                <option value="Hai Van">Hải Vân</option>
+                <option value="Ha Nha">Hà Nha</option>
+                <option value="Hiep Duc">Tân Bình</option>
+                <option value="Hoa Cuong">Hòa Cường</option>
+                <option value="Hoa Khanh">Hòa Khánh</option>
+                <option value="Hoa Tien">Hòa Tiến</option>
+                <option value="Hoa Vang">Hòa Vang</option>
+                <option value="Hoa Xuan">Hòa Xuân</option>
+                <option value="Hoi An">Hội An</option>
+                <option value="Hoi An Dong">Hội An Đông</option>
+                <option value="Hoi An Tay">Hội An Tây</option>
+                <option value="Hoang Sa">Hoàng Sa</option>
+                <option value="Huong Tra">Hương Trà</option>
+                <option value="Hung Son">Hùng Sơn</option>
+                <option value="Kham Duc">Khâm Đức</option>
+                <option value="La Dee">La Dêê</option>
+                <option value="La Eee">La Êê</option>
+                <option value="Lanh Ngoc">Lãnh Ngọc</option>
+                <option value="Lien Chieu">Liên Chiểu</option>
+                <option value="Nam Giang">Nam Giang</option>
+                <option value="Nam Phuoc">Nam Phước</option>
+                <option value="Nam Tra My">Nam Trà My</option>
+                <option value="Ngu Hanh Son">Ngũ Hành Sơn</option>
+                <option value="Nong Son">Nông Sơn</option>
+                <option value="Nui Thanh">Núi Thành</option>
+                <option value="Phu Ninh">Phú Ninh</option>
+                <option value="Phu Thuan">Phú Thuận</option>
+                <option value="Phuoc Chanh">Phước Chánh</option>
+                <option value="Phuoc Hiep">Phước Hiệp</option>
+                <option value="Phuoc Nang">Phước Năng</option>
+                <option value="Phuoc Thanh">Phước Thành</option>
+                <option value="Phuoc Tra">Phước Trà</option>
+                <option value="Quang Phu">Quảng Phú</option>
+                <option value="Que Phuoc">Quế Phước</option>
+                <option value="Que Son">Quế Sơn</option>
+                <option value="Que Son Trung">Quế Sơn Trung</option>
+                <option value="Son Cam Ha">Sơn Cẩm Hà</option>
+                <option value="Son Tra">Sơn Trà</option>
+                <option value="Song Kon">Sông Kôn</option>
+                <option value="Tam Anh">Tam Anh</option>
+                <option value="Tam Hai">Tam Hải</option>
+                <option value="Tam Ky">Tam Kỳ</option>
+                <option value="Tam My">Tam Mỹ</option>
+                <option value="Tam Xuan">Tam Xuân</option>
+                <option value="Tan Hiep">Tân Hiệp</option>
+                <option value="Tay Giang">Tây Giang</option>
+                <option value="Tay Ho">Tây Hồ</option>
+                <option value="Thanh Binh">Thanh Bình</option>
+                <option value="Thanh Khe">Thanh Khê</option>
+                <option value="Thanh My">Thạnh Mỹ</option>
+                <option value="Thang An">Thăng An</option>
+                <option value="Thang Binh">Thăng Bình</option>
+                <option value="Thang Dien">Thăng Điền</option>
+                <option value="Thang Phu">Thăng Phú</option>
+                <option value="Thang Truong">Thăng Trường</option>
+                <option value="Thu Bon">Thu Bồn</option>
+                <option value="Thuong Duc">Thượng Đức</option>
+                <option value="Tien Phuoc">Tiên Phước</option>
+                <option value="Tra Doc">Trà Đốc</option>
+                <option value="Tra Giap">Trà Giáp</option>
+                <option value="Tra Leng">Trà Leng</option>
+                <option value="Tra Lien">Trà Liên</option>
+                <option value="Tra Linh">Trà Linh</option>
+                <option value="Tra My">Trà My</option>
+                <option value="Tra Tan">Trà Tân</option>
+                <option value="Tra Tap">Trà Tập</option>
+                <option value="Tra Van">Trà Vân</option>
+                <option value="Vu Gia">Vu Gia</option>
+                <option value="Viet An">Việt An</option>
+                <option value="Xuan Phu">Xuân Phú</option>
               </select>
             </div>
 
@@ -233,12 +317,9 @@
               <input
                 type="text"
                 id="specific"
-                name="specific"
                 class="form-control"
-                th:value="${specific}"
                 placeholder="Nhập địa chỉ cụ thể"
               />
-
               <input type="hidden" th:field="*{address}" id="address" />
 
               <i class="error text-danger" th:errors="*{address}"></i>
@@ -322,6 +403,50 @@
         </div>
         <!--  -->
 
+        <div class="card p-4 mb-4">
+          <h5 class="mb-3">Phương thức thanh toán</h5>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="paymentMethod"
+              id="cod"
+              value="cod"
+              checked
+              required
+            />
+            <label class="form-check-label" for="cod">
+              Thanh toán khi nhận hàng
+            </label>
+          </div>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="paymentMethod"
+              id="zalopay"
+              value="zalopay"
+              required
+            />
+            <label class="form-check-label" for="zalopay">
+              Thanh toán qua ZaloPay
+            </label>
+          </div>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="paymentMethod"
+              id="paypal"
+              value="paypal"
+              required
+            />
+            <label class="form-check-label" for="paypal">
+              Thanh toán qua PayPal
+            </label>
+          </div>
+        </div>
+
         <!-- Nút Đặt Hàng gửi form -->
         <button type="submit" class="btn btn-success w-100 mt-3">
           ĐẶT HÀNG
@@ -329,7 +454,6 @@
       </div>
     </div>
   </form>
-
   <!-- Áp dụng mã giảm giá -->
   <form action="/order/apply-voucher" method="post" class="mb-3">
     <label for="voucher" class="form-label fw-bold"
@@ -356,23 +480,15 @@
   </div>
 
   <script>
-    $(document).ready(function () {
-      $("#ward").select2({
-        placeholder: "Chọn xã/phường",
-        allowClear: true,
-      });
-    });
     const wardSelect = document.getElementById("ward");
     const specificInput = document.getElementById("specific");
     const addressInput = document.getElementById("address");
-    const shippingFeeSpan = document.getElementById("shippingFee");
 
     function updateAddress() {
-      const wardName = wardSelect.selectedOptions[0]?.text || ""; // Tên xã
-      const wardId = wardSelect.value; // ID hoặc value trong option
+      const ward = wardSelect.selectedOptions[0]?.text || "";
       const specific = specificInput.value.trim();
       if (specific && ward) {
-        addressInput.value = `${specific}, ${wardName}, Đà Nẵng`;
+        addressInput.value = `${specific}, ${ward}, Đà Nẵng`;
       }
       const shippingFee =
         wardSelect.selectedOptions[0]?.getAttribute("data-fee") || 0;
