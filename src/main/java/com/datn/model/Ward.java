@@ -1,8 +1,6 @@
 package com.datn.model;
 
-
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
@@ -23,7 +21,6 @@ public class Ward {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "zone_id" , nullable = true)
+    @JoinColumn(name = "zone_id", nullable = true)
     private Zone zone;
 }
-

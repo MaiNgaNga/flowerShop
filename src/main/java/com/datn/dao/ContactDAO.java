@@ -1,12 +1,9 @@
 package com.datn.dao;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
 import com.datn.model.Contact;
 
 public interface ContactDAO extends JpaRepository<Contact, Integer> {
@@ -19,6 +16,6 @@ public interface ContactDAO extends JpaRepository<Contact, Integer> {
     Contact findById(int id);
 
     @Query("SELECT c FROM Contact c where c.status =?1")
-    Page<Contact> findbyStatus( boolean status, Pageable pageable);
+    Page<Contact> findbyStatus(boolean status, Pageable pageable);
 
-} 
+}

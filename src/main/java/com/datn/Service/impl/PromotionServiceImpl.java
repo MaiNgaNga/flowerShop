@@ -7,14 +7,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.datn.Service.PromotionService;
 import com.datn.dao.PromotionDAO;
-import com.datn.model.ProductCategory;
 import com.datn.model.Promotion;
 
 @Service
-public class PromotionServiceImpl implements PromotionService{
+public class PromotionServiceImpl implements PromotionService {
     @Autowired
     private PromotionDAO promotionDAO;
 
@@ -26,30 +24,29 @@ public class PromotionServiceImpl implements PromotionService{
     @Override
     public Promotion create(Promotion entity) {
         return promotionDAO.save(entity);
-        
+
     }
 
     @Override
-public void update(Promotion entity) {
-    if (promotionDAO.existsById(entity.getId())) {
+    public void update(Promotion entity) {
+        if (promotionDAO.existsById(entity.getId())) {
 
-        // Kiểm tra trùng title với bản ghi khác
-        boolean isDuplicate = promotionDAO.existsByTitleAndIdNot(entity.getTitle(), entity.getId());
-        if (isDuplicate) {
-            throw new IllegalArgumentException("Tên khuyến mãi này đã tồn tại!");
-        }
+            // Kiểm tra trùng title với bản ghi khác
+            boolean isDuplicate = promotionDAO.existsByTitleAndIdNot(entity.getTitle(), entity.getId());
+            if (isDuplicate) {
+                throw new IllegalArgumentException("Tên khuyến mãi này đã tồn tại!");
+            }
 
-        // Kiểm tra title rỗng
-        if (entity.getTitle() == null || entity.getTitle().trim().isEmpty()) {
-            throw new IllegalArgumentException("Tên khuyến mãi không được để trống!");
+            // Kiểm tra title rỗng
+            if (entity.getTitle() == null || entity.getTitle().trim().isEmpty()) {
+                throw new IllegalArgumentException("Tên khuyến mãi không được để trống!");
+            }
+            // Lưu vào DB
+            promotionDAO.save(entity);
+        } else {
+            throw new IllegalArgumentException("Chưa chọn khuyến mãi để cập nhật!");
         }
-        // Lưu vào DB
-        promotionDAO.save(entity);
-    } else {
-        throw new IllegalArgumentException("Chưa chọn khuyến mãi để cập nhật!");
     }
-}
-
 
     @Override
     public void deleteById(Long id) {
@@ -97,8 +94,4 @@ public void update(Promotion entity) {
         return promotionDAO.findValidPromotions();
     }
 
-
-
-  
-    
 }
