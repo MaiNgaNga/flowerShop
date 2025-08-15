@@ -44,6 +44,32 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
 
     List<Product> findByProductCategoryId(int productCategoryId);
 
+
+    @Query("SELECT p FROM Product p WHERE p.productCategory.id = :productCategoryId " +
+            "AND p.price BETWEEN :minPrice AND :maxPrice")
+
+    Page<Product> findByPriceRange(
+            @Param("productCategoryId") Integer productCategoryId,
+            @Param("minPrice") Double minPrice,
+            @Param("maxPrice") Double maxPrice,
+            Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE p.productCategory.id = :productCategoryId " +
+            "AND p.color.name LIKE %:color%")
+
+    Page<Product> findByColor(
+            @Param("productCategoryId") Integer productCategoryId,
+            @Param("color") String color,
+            Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE p.productCategory.id = :productCategoryId " +
+            "AND p.category.id=:categoryId")
+
+    Page<Product> findByCaId(
+            @Param("productCategoryId") Integer productCategoryId,
+            @Param("categoryId") Integer categoryId,
+            Pageable pageable);
+
    @Query("""
     SELECT p FROM Product p
     WHERE p.productCategory.id = :proCategoryId
@@ -59,6 +85,7 @@ Page<Product> findByMultipleFilters(
         @Param("minPrice") Double minPrice,
         @Param("maxPrice") Double maxPrice,
         Pageable pageable);
+
 
     // @Query("SELECT p FROM Product p JOIN OrderDetail od ON p.id = od.product.id
     // WHERE p.productCategory.id = :productCategoryId GROUP BY p.id ORDER BY
@@ -88,8 +115,13 @@ Page<Product> findByMultipleFilters(
     List<Product> findSellingProducts();
 
     // san pham tuong tu theo category
+
+    @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId")
+    List<Product> findProductByCategory(Integer categoryId);
+
     @Query("SELECT p FROM Product p WHERE p.productCategory.id = :id")
     List<Product> findProductByCategory(Integer id);
+
 
     // Gọi: productRepository.findHotProductsFromOtherCategories(id,
     // PageRequest.of(0, limit));
@@ -137,5 +169,22 @@ Page<Product> findByMultipleFilters(
             ORDER BY total_quantity_sold DESC
             """, nativeQuery = true)
     List<Map<String, Object>> getTop6SellingProductsByYear(@Param("year") int year);
+
+
+    @Query(value = """
+            SELECT TOP 6
+                pc.id AS id,
+                pc.name AS name,
+                COALESCE(SUM(od.quantity), 0) AS total_quantity_sold
+            FROM order_details od
+            INNER JOIN orders o ON od.order_id = o.id
+            INNER JOIN products p ON od.product_id = p.id
+            INNER JOIN product_categories pc ON p.category_id = pc.id
+            WHERE YEAR(o.create_date) = :year AND MONTH(o.create_date) = :month
+            GROUP BY pc.id, pc.name
+            ORDER BY total_quantity_sold DESC
+            """, nativeQuery = true)
+    List<Map<String, Object>> getTop6SellingProductsByYearAndMonth(@Param("year") int year, @Param("month") int month);
+
 
 }
