@@ -379,10 +379,12 @@
                     th:text="${#temporals.format(item.createdDate, 'dd-MM-YYYY HH:mm:ss')}"
                   ></span>
                 </td>
-                <td
-                  th:text="${item.status ? 'Hoạt động' : 'Ngưng'}"
-                  th:class="${item.status} ? 'text-success' : 'text-danger'"
-                ></td>
+                <td>
+                  <span th:class="${item.status ? 'badge badge-success' : 'badge badge-danger'}"
+                    style="display:inline-block;min-width:70px;padding:4px 12px;border-radius:12px;font-size:13px;font-weight:600;color:#fff;"
+                    th:text="${item.status ? 'Active' : 'Inactive'}">
+                  </span>
+                </td>
                 <td class="action-icons">
                   <a
                     th:href="@{'/Promotion/edit/' + ${item.id} + '?tab=edit'}"

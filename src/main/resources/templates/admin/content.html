@@ -586,7 +586,7 @@
 
     <nav class="admin-sidebar-nav">
       <!-- Tổng quan -->
-      <div class="admin-nav-group">
+      <div th:if="${session.user.role == 1}" class="admin-nav-group">
         <div class="admin-nav-group-header">
           <i class="fas fa-chart-line group-icon"></i>
           <span class="group-text">Tổng quan</span>
@@ -643,7 +643,7 @@
       </div>
 
       <!-- Người dùng -->
-      <div class="admin-nav-group">
+      <div th:if="${session.user.role == 1}" class="admin-nav-group">
         <div class="admin-nav-group-header">
           <i class="fas fa-users group-icon"></i>
           <span class="group-text">Người dùng</span>
@@ -690,9 +690,18 @@
       </a>
 
       <a href="/admin/reviews/index" class="admin-nav-item standalone" data-tooltip="Liên hệ">
-        <i class="fas fa-envelope"></i>
+      <i class="fa-solid fa-thumbs-up"></i>
         <span class="admin-nav-item-text">Đánh giá</span>
       </a>
+      <form action="/logout" method="post" style="margin:0;">
+        <button type="submit" class="admin-nav-item standalone text-danger"
+          style="width:100%;display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1.5rem;border:none;background:none;font-weight:500;cursor:pointer;">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span class="admin-nav-item-text">Đăng xuất</span>
+        </button>
+      </form>
+
+      
     </nav>
   </aside>
 

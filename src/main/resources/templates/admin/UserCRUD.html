@@ -281,13 +281,11 @@
                     <span th:case="*">Không rõ</span>
                   </span>
                 </td>
-                <td class="text-center">
-                  <span th:if="${item.status == true}" class="badge bg-success"
-                    >Onl</span
-                  >
-                  <span th:if="${item.status == false}" class="badge bg-danger"
-                    >Off</span
-                  >
+                <td>
+                  <span th:class="${item.status == true ? 'badge badge-success' : 'badge badge-danger'}"
+                    style="display:inline-block;min-width:70px;padding:4px 12px;border-radius:12px;font-size:13px;font-weight:600;color:#fff;"
+                    th:text="${item.status == true ? 'Active' : 'Inactive'}">
+                  </span>
                 </td>
                 <td class="action-icons">
                   <a
