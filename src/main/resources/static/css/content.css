@@ -1,0 +1,569 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+.admin-layout {
+  --admin-primary: #6366f1;
+  --admin-primary-dark: #4f46e5;
+  --admin-gray-50: #f9fafb;
+  --admin-gray-100: #f3f4f6;
+  --admin-gray-200: #e5e7eb;
+  --admin-gray-600: #4b5563;
+  --admin-gray-700: #374151;
+  --admin-gray-800: #1f2937;
+  --admin-gray-900: #111827;
+  --admin-sidebar-width: 220px;
+  --admin-sidebar-collapsed: 70px;
+  --admin-header-height: 60px;
+  font-family: "Inter", sans-serif;
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  isolation: isolate;
+}
+
+/* Đảm bảo không xung đột với CSS khác */
+.admin-layout * {
+  box-sizing: border-box;
+}
+
+/* Header - Namespace */
+.admin-layout .admin-header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: var(--admin-sidebar-width);
+  height: var(--admin-header-height);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--admin-gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 2rem;
+  z-index: 1000;
+  transition: left 0.3s ease;
+}
+
+.admin-layout .admin-header.collapsed {
+  left: var(--admin-sidebar-collapsed);
+}
+
+.admin-layout .admin-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.admin-layout .admin-theme-toggle {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: var(--admin-gray-100);
+  color: var(--admin-gray-600);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.admin-layout .admin-theme-toggle:hover {
+  background: var(--admin-primary);
+  color: white;
+  transform: scale(1.05);
+}
+
+.admin-layout .admin-user-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  background: var(--admin-gray-100);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-layout .admin-user-menu:hover {
+  background: var(--admin-primary);
+  color: white;
+}
+
+.admin-layout .admin-user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--admin-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.admin-layout .admin-user-info h6 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.admin-layout .admin-user-info span {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* Sidebar - Namespace */
+.admin-layout .admin-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--admin-sidebar-width);
+  height: 100vh;
+  background: #ffffff;
+  border-right: 1px solid var(--admin-gray-200);
+  z-index: 1001;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.admin-layout .admin-sidebar.collapsed {
+  width: var(--admin-sidebar-collapsed);
+}
+
+/* Đảm bảo sidebar collapsed luôn hiển thị đúng */
+.admin-layout .admin-sidebar.collapsed {
+  overflow: visible;
+}
+
+.admin-layout .admin-sidebar.collapsed:hover {
+  width: var(--admin-sidebar-width);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  z-index: 1002;
+}
+
+/* Dark theme cho sidebar */
+.admin-layout[data-theme="dark"] .admin-sidebar {
+  background: #1f2937;
+  border-right-color: #374151;
+}
+
+.admin-layout .admin-sidebar-header {
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--admin-header-height);
+  position: relative;
+}
+
+.admin-layout .admin-sidebar.collapsed .admin-sidebar-header {
+  padding: 0 1rem;
+  justify-content: center;
+}
+
+.admin-layout .admin-sidebar.collapsed:hover .admin-sidebar-header {
+  padding: 0 1.5rem;
+  justify-content: space-between;
+}
+
+.admin-layout .admin-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: var(--admin-gray-900);
+  transition: all 0.3s ease;
+}
+
+.admin-layout[data-theme="dark"] .admin-logo-container {
+  color: #ffffff;
+}
+
+.admin-layout .admin-sidebar.collapsed .admin-logo-container {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  transition: all 0.3s ease;
+}
+
+.admin-layout .admin-sidebar.collapsed:hover .admin-logo-container {
+  opacity: 1;
+  pointer-events: auto;
+  position: static;
+  display: flex;
+}
+
+.admin-layout .admin-logo-container img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+}
+
+.admin-layout .admin-sidebar-toggle {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: var(--admin-gray-100);
+  color: var(--admin-gray-600);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  position: absolute;
+  right: 1.5rem;
+  z-index: 10;
+}
+
+.admin-layout[data-theme="dark"] .admin-sidebar-toggle {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.admin-layout .admin-sidebar.collapsed .admin-sidebar-toggle {
+  position: static;
+  right: auto;
+  margin: 0 auto;
+}
+
+.admin-layout .admin-sidebar.collapsed:hover .admin-sidebar-toggle {
+  position: absolute;
+  right: 1.5rem;
+  margin: 0;
+}
+
+.admin-layout .admin-sidebar-toggle:hover {
+  background: var(--admin-primary);
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Navigation - Namespace */
+.admin-layout .admin-sidebar-nav {
+  padding: 2rem 0 1rem 0;
+  height: calc(100vh - var(--admin-header-height));
+  overflow-y: auto;
+}
+
+.admin-layout .admin-nav-group {
+  margin-bottom: 0.5rem;
+}
+
+.admin-layout .admin-nav-group-header {
+  padding: 0.75rem 1.5rem;
+  color: var(--admin-gray-600);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+/* Đảm bảo menu standalone có cùng layout với nav-group-header */
+.admin-layout .admin-nav-item.standalone {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--admin-gray-700);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.admin-layout[data-theme="dark"] .admin-nav-group-header {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.admin-layout .admin-sidebar.collapsed .admin-nav-group-header {
+  padding: 0.75rem;
+  justify-content: center;
+}
+
+.admin-layout .admin-nav-group-header:hover {
+  color: var(--admin-primary);
+  background: var(--admin-gray-50);
+}
+
+.admin-layout[data-theme="dark"] .admin-nav-group-header:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Menu items riêng lẻ - không có dấu chấm */
+.admin-layout .admin-nav-item.standalone {
+  margin-left: 0 !important;
+  padding: 0.75rem 1.5rem !important;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-layout .admin-nav-item.standalone i {
+  width: 18px;
+  text-align: center;
+  font-size: 16px;
+  margin-right: 0;
+}
+
+.admin-layout .admin-nav-item.standalone::before {
+  display: none !important;
+}
+
+.admin-layout .admin-sidebar.collapsed .admin-nav-item.standalone {
+  padding: 0.75rem !important;
+  justify-content: center;
+  margin-left: 0 !important;
+}
+
+.admin-layout .admin-sidebar.collapsed .admin-nav-item.standalone i {
+  width: auto;
+  font-size: 20px;
+}
+
+.admin-layout .admin-sidebar.collapsed:hover .admin-nav-item.standalone {
+  padding: 0.75rem 1.5rem !important;
+  justify-content: flex-start;
+  margin-left: 0 !important;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-layout .admin-sidebar.collapsed:hover .admin-nav-item.standalone i {
+  width: 18px;
+  text-align: center;
+  font-size: 16px;
+  margin-right: 0;
+}
+
+.admin-layout .admin-nav-group-header .group-icon {
+  width: 18px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.admin-layout .admin-sidebar.collapsed .admin-nav-group-header .group-icon {
+  font-size: 20px;
+}
+
+.admin-layout .admin-nav-group-header .group-text {
+  flex: 1;
+}
+
+.admin-layout .admin-sidebar.collapsed .admin-nav-group-header .group-text,
+.admin-layout
+  .admin-sidebar.collapsed
+  .admin-nav-group-header
+  .fa-chevron-down {
+  display: none;
+}
+
+.admin-layout
+  .admin-sidebar.collapsed:hover
+  .admin-nav-group-header
+  .group-text,
+.admin-layout
+  .admin-sidebar.collapsed:hover
+  .admin-nav-group-header
+  .fa-chevron-down {
+  display: block;
+}
+
+.admin-layout
+  .admin-nav-group.expanded
+  .admin-nav-group-header
+  .fa-chevron-down {
+  transform: rotate(180deg);
+}
+
+.admin-layout .admin-nav-group-items {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  margin-left: 0;
+}
+
+.admin-layout .admin-nav-group.expanded .admin-nav-group-items {
+  max-height: 500px;
+}
+
+.admin-layout .admin-sidebar.collapsed .admin-nav-group-items {
+  max-height: 0 !important;
+}
+
+.admin-layout
+  .admin-sidebar.collapsed:hover
+  .admin-nav-group.expanded
+  .admin-nav-group-items {
+  max-height: 500px !important;
+  margin-left: 0;
+}
+
+.admin-layout .admin-nav-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  color: var(--admin-gray-700);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  position: relative;
+  margin-left: 1rem;
+}
+
+.admin-layout .admin-sidebar.collapsed:hover .admin-nav-item {
+  margin-left: 1rem;
+  padding: 0.75rem 1.5rem;
+}
+
+.admin-layout[data-theme="dark"] .admin-nav-item {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.admin-layout .admin-sidebar.collapsed .admin-nav-item {
+  padding: 0.75rem;
+  justify-content: center;
+  margin-left: 0;
+}
+
+.admin-layout .admin-nav-item:hover {
+  background: var(--admin-gray-50);
+  color: var(--admin-primary);
+}
+
+.admin-layout[data-theme="dark"] .admin-nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.admin-layout .admin-nav-item.active {
+  background: #e0e7ff;
+  color: var(--admin-primary);
+}
+
+.admin-layout[data-theme="dark"] .admin-nav-item.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+.admin-layout .admin-nav-item.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--admin-primary);
+}
+
+.admin-layout .admin-nav-item::before {
+  content: "•";
+  margin-right: 0.75rem;
+  color: var(--admin-gray-400);
+  font-size: 16px;
+}
+
+.admin-layout .admin-nav-item:hover::before,
+.admin-layout .admin-nav-item.active::before {
+  color: var(--admin-primary);
+}
+
+.admin-layout[data-theme="dark"] .admin-nav-item::before {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.admin-layout[data-theme="dark"] .admin-nav-item:hover::before,
+.admin-layout[data-theme="dark"] .admin-nav-item.active::before {
+  color: white;
+}
+
+.admin-layout .admin-sidebar.collapsed .admin-nav-item::before {
+  margin-right: 0;
+}
+
+.admin-layout .admin-nav-item-text {
+  transition: all 0.3s ease;
+}
+
+.admin-layout .admin-sidebar.collapsed .admin-nav-item-text {
+  display: none;
+}
+
+.admin-layout .admin-sidebar.collapsed:hover .admin-nav-item-text {
+  display: block;
+}
+
+/* Main Content - Namespace */
+.admin-layout .admin-main-content {
+  margin-left: var(--admin-sidebar-width);
+  margin-top: var(--admin-header-height);
+  padding: 2rem;
+  min-height: calc(100vh - var(--admin-header-height));
+  transition: margin-left 0.3s ease;
+  background: var(--admin-gray-50);
+  position: relative;
+  z-index: 1;
+  overflow-x: auto; /* Thêm scroll ngang khi cần */
+}
+
+.admin-layout .admin-main-content.collapsed {
+  margin-left: var(--admin-sidebar-collapsed);
+}
+
+/* Đảm bảo bảng luôn hiển thị đầy đủ */
+.admin-layout .admin-main-content table {
+  min-width: 800px; /* Đảm bảo bảng có độ rộng tối thiểu */
+  width: 100%;
+}
+
+/* Đảm bảo các modal, dropdown trong nội dung chính có z-index cao */
+.admin-layout .admin-main-content .modal,
+.admin-layout .admin-main-content .dropdown-menu,
+.admin-layout .admin-main-content .popover,
+.admin-layout .admin-main-content .tooltip {
+  z-index: 1050 !important;
+}
+
+/* Scrollbar - Namespace */
+.admin-layout .admin-sidebar-nav::-webkit-scrollbar {
+  width: 4px;
+}
+
+.admin-layout .admin-sidebar-nav::-webkit-scrollbar-track {
+  background: var(--admin-gray-100);
+}
+
+.admin-layout .admin-sidebar-nav::-webkit-scrollbar-thumb {
+  background: var(--admin-gray-300);
+  border-radius: 2px;
+}
+
+.admin-layout[data-theme="dark"] .admin-sidebar-nav::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.admin-layout[data-theme="dark"] .admin-sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Tooltip - Namespace */
+.admin-layout
+  .admin-sidebar.collapsed
+  .admin-nav-item[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+}

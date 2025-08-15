@@ -1,3 +1,60 @@
+/* CRITICAL: Modal Z-Index Override - Must be first */
+/* EMERGENCY MODAL FIX - HIGHEST PRIORITY */
+.modal,
+.modal.fade,
+.modal.show,
+.modal.fade.show,
+#createOrderModal,
+#orderDetailsModal,
+.admin-layout .admin-main-content .modal,
+.admin-layout .modal,
+body .modal,
+html .modal {
+  z-index: 999999 !important;
+  position: fixed !important;
+}
+
+.modal-backdrop,
+.modal-backdrop.fade,
+.modal-backdrop.show,
+.modal-backdrop.fade.show,
+html .modal-backdrop,
+body .modal-backdrop {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  background-color: transparent !important;
+}
+
+.modal-dialog,
+.modal .modal-dialog,
+.modal.show .modal-dialog,
+html .modal-dialog,
+body .modal-dialog {
+  z-index: 1000001 !important;
+  position: relative !important;
+}
+
+.modal-content,
+.modal .modal-content,
+.modal.show .modal-content,
+html .modal-content,
+body .modal-content {
+  z-index: 1000002 !important;
+  position: relative !important;
+}
+
+/* Override admin layout completely */
+.admin-layout .admin-header {
+  z-index: 998 !important;
+}
+.admin-layout .admin-sidebar {
+  z-index: 997 !important;
+}
+.admin-layout .admin-sidebar.collapsed:hover {
+  z-index: 997 !important;
+}
+
 body {
   font-family: "Roboto", sans-serif;
   background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
@@ -21,6 +78,242 @@ body {
   gap: 10px;
   animation: slideInRight 0.3s ease-out;
   font-weight: 500;
+}
+
+/* Fix Modal Z-Index Issues - Set extremely high to override everything */
+.modal {
+  z-index: 999999 !important;
+}
+
+.modal-backdrop {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* Ensure modal appears above admin header */
+.modal.show {
+  z-index: 999999 !important;
+}
+
+.modal-dialog {
+  z-index: 1000000 !important;
+}
+
+/* Force override any conflicting z-index */
+.modal.fade.show {
+  z-index: 999999 !important;
+}
+
+/* Ensure backdrop is completely hidden */
+.modal-backdrop.fade.show {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* Force modal to be absolutely on top */
+.modal.show,
+.modal.fade.show {
+  z-index: 999999 !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Improve Modal Appearance */
+.modal-content {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-bottom: none;
+  padding: 20px 25px;
+}
+
+.modal-header .btn-close {
+  filter: invert(1);
+  opacity: 0.8;
+}
+
+.modal-header .btn-close:hover {
+  opacity: 1;
+}
+
+.modal-body {
+  padding: 25px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  padding: 20px 25px;
+  border-top: 1px solid #e9ecef;
+  background-color: #f8f9fa;
+}
+
+/* Ensure modal is centered and responsive */
+.modal-dialog {
+  margin: 1.75rem auto;
+  max-width: 90vw;
+}
+
+@media (min-width: 576px) {
+  .modal-dialog {
+    max-width: 500px;
+  }
+}
+
+@media (min-width: 992px) {
+  .modal-dialog {
+    max-width: 800px;
+  }
+}
+
+/* Fix backdrop issues */
+.modal-backdrop.show {
+  opacity: 0.5;
+}
+
+/* Force modal to be on top of everything */
+body.modal-open .modal {
+  z-index: 999999 !important;
+}
+
+body.modal-open .modal-backdrop {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* Override any admin layout z-index conflicts */
+.admin-layout .admin-header {
+  z-index: 999 !important;
+}
+
+.admin-layout * {
+  z-index: auto !important;
+}
+
+.admin-layout .admin-header,
+.admin-layout .admin-sidebar {
+  z-index: 999 !important;
+}
+
+/* Ensure modal content is always visible */
+.modal.show .modal-dialog {
+  z-index: 1000001 !important;
+  position: relative;
+}
+
+.modal.show .modal-content {
+  z-index: 1000002 !important;
+  position: relative;
+}
+
+/* Completely disable backdrop interference */
+.modal-backdrop {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  background-color: transparent !important;
+}
+
+/* Force remove any conflicting styles */
+body.modal-open {
+  overflow: hidden !important;
+  padding-right: 0 !important;
+}
+
+/* NUCLEAR OPTION - Force modal above everything */
+.modal,
+.modal.fade,
+.modal.show,
+.modal.fade.show,
+#createOrderModal,
+#orderDetailsModal,
+.admin-layout .admin-main-content .modal,
+.admin-layout .modal,
+body .modal {
+  z-index: 999999 !important;
+  position: fixed !important;
+}
+
+.modal-backdrop,
+.modal-backdrop.fade,
+.modal-backdrop.show,
+.modal-backdrop.fade.show {
+  z-index: 999998 !important;
+  opacity: 0.5 !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.modal-dialog,
+.modal .modal-dialog,
+.modal.show .modal-dialog {
+  z-index: 1000001 !important;
+  position: relative !important;
+}
+
+.modal-content,
+.modal .modal-content,
+.modal.show .modal-content {
+  z-index: 1000002 !important;
+  position: relative !important;
+}
+
+/* Override any admin layout interference */
+.admin-layout,
+.admin-layout
+  *:not(.modal):not(.modal-backdrop):not(.modal-dialog):not(
+    .modal-content
+  ) {
+  z-index: 999 !important;
+}
+
+/* OVERRIDE CONTENT.HTML MODAL RULES COMPLETELY */
+.admin-layout .admin-main-content .modal,
+.admin-layout .admin-main-content .dropdown-menu,
+.admin-layout .admin-main-content .popover,
+.admin-layout .admin-main-content .tooltip {
+  z-index: 999999 !important;
+}
+
+/* Force override admin header and sidebar z-index */
+.admin-layout .admin-header {
+  z-index: 998 !important;
+}
+
+.admin-layout .admin-sidebar {
+  z-index: 997 !important;
+}
+
+.admin-layout .admin-sidebar.collapsed:hover {
+  z-index: 997 !important;
+}
+
+/* Ensure modal is always on top of admin layout */
+html .modal,
+html .modal.fade,
+html .modal.show,
+html .modal.fade.show {
+  z-index: 999999 !important;
+}
+
+html .modal-backdrop,
+html .modal-backdrop.fade,
+html .modal-backdrop.show,
+html .modal-backdrop.fade.show {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
 }
 
 .custom-alert.alert-success {
@@ -110,9 +403,9 @@ body {
 }
 
 .content {
-  padding: 30px;
-  max-width: 1400px;
-  margin: 0 auto;
+  padding: 0px;
+  max-width: 100%;
+  margin: 0;
 }
 
 .card {
