@@ -256,7 +256,6 @@ public Map<Integer, Double> getDailyRevenueByMonthAndYear(int month, int year) {
     }
 
     @Override
-
     public Page<Order> searchPosOrdersByOrderCode(String orderType, String orderCode, LocalDate fromDate,
             LocalDate toDate, Pageable pageable) {
         return dao.searchPosOrdersByOrderCode(orderType, orderCode, fromDate, toDate, pageable);
@@ -300,6 +299,7 @@ public Map<Integer, Double> getDailyRevenueByMonthAndYear(int month, int year) {
     }
 
     @Override
+
     public Long getTotalOrdersInYear(int year) {
         return dao.countTotalOrdersByYear(year);
     }
@@ -317,6 +317,10 @@ public Map<Integer, Double> getDailyRevenueByMonthAndYear(int month, int year) {
     @Override
     public Long countPaidOrdersByYear(int year) {
         return dao.countPaidOrdersByYear(year);
+
+    public Order findByID(Long id) {
+        return dao.findById(id).orElse(null);
+
     }
 
 }

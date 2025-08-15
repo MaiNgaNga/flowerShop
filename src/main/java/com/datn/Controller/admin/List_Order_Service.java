@@ -9,19 +9,20 @@ import com.datn.model.ServiceRequestDraft;
 import com.datn.model.enums.ServiceOrderStatus;
 import com.datn.model.enums.ServiceRequestStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin/service-requests")
@@ -36,49 +37,64 @@ public class List_Order_Service {
     @Autowired
     private ServiceRequestDraftDAO draftDAO;
 
-    // Hiển thị cả 2 danh sách: yêu cầu và đơn hàng
+    // Hiển thị cả 2 danh sách: yêu cầu và đơn hàng với phân trang
     @GetMapping
     public String listRequests(
             Model model,
             @RequestParam(value = "status", required = false) ServiceRequestStatus status,
-            @RequestParam(value = "keyword", required = false) String keyword) {
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "requestMonth", required = false) String requestMonth,
+            @RequestParam(value = "orderStatus", required = false) ServiceOrderStatus orderStatus,
+            @RequestParam(value = "orderKeyword", required = false) String orderKeyword,
+            @RequestParam(value = "month", required = false) String month,
+            @RequestParam(value = "requestPage", defaultValue = "0") int requestPage,
+            @RequestParam(value = "orderPage", defaultValue = "0") int orderPage) {
 
-        // Lấy tất cả yêu cầu dịch vụ
-        List<ServiceRequest> allRequests = requestService.findAll();
+        // Tạo Pageable cho requests (10 items per page, sắp xếp theo ngày tạo mới nhất)
+        Pageable requestPageable = PageRequest.of(requestPage, 10,
+                Sort.by(Sort.Direction.DESC, "createdAt").and(Sort.by(Sort.Direction.DESC, "id")));
 
-        // Lọc theo trạng thái và từ khóa (tên, email, số điện thoại)
-        List<ServiceRequest> filteredRequests = allRequests.stream()
-                .filter(req -> status == null || req.getStatus() == status)
-                .filter(req -> {
-                    if (keyword == null || keyword.isBlank())
-                        return true;
-                    String kw = keyword.toLowerCase();
-                    return req.getFullName().toLowerCase().contains(kw)
-                            || req.getEmail().toLowerCase().contains(kw)
-                            || req.getPhone().contains(kw);
-                })
-                .collect(Collectors.toList());
+        // Tạo Pageable cho orders (10 items per page, sắp xếp theo ngày xác nhận mới
+        // nhất)
+        Pageable orderPageable = PageRequest.of(orderPage, 10,
+                Sort.by(Sort.Direction.DESC, "confirmedAt").and(Sort.by(Sort.Direction.DESC, "id")));
 
-        // Danh sách yêu cầu chưa chốt đơn (PENDING, CONTACTED)
-        List<ServiceRequest> requestList = filteredRequests.stream()
-                .filter(req -> req.getStatus() != ServiceRequestStatus.CONFIRMED)
-                .collect(Collectors.toList());
+        // Lấy danh sách yêu cầu với phân trang và lọc (bao gồm tất cả trạng thái)
+        Page<ServiceRequest> requestsPage = requestService.findByFilters(status, keyword, requestMonth,
+                requestPageable);
+        List<ServiceRequest> requestList = requestsPage.getContent();
 
-        // Danh sách yêu cầu đã chốt đơn (CONFIRMED)
-        List<ServiceRequest> confirmedOrders = filteredRequests.stream()
-                .filter(req -> req.getStatus() == ServiceRequestStatus.CONFIRMED)
-                .collect(Collectors.toList());
-
-        // Lấy danh sách đơn hàng thực
-        List<ServiceOrder> orderList = serviceOrderService.findAll();
+        // Lấy danh sách đơn hàng với phân trang và lọc
+        Page<ServiceOrder> orderListPage = serviceOrderService.findByFilters(orderStatus, orderKeyword, month,
+                orderPageable);
 
         // Đẩy dữ liệu sang view
         model.addAttribute("requests", requestList); // Yêu cầu chưa xác nhận
-        model.addAttribute("orders", confirmedOrders); // Yêu cầu đã xác nhận
-        model.addAttribute("orderList", orderList); // Đơn hàng thật
-        model.addAttribute("statuses", ServiceRequestStatus.values()); // Dùng cho dropdown filter
-        model.addAttribute("selectedStatus", status); // Trạng thái đang lọc
-        model.addAttribute("keyword", keyword); // Từ khóa đang lọc
+        model.addAttribute("orderList", orderListPage.getContent()); // Đơn hàng đã lọc
+
+        // Thông tin phân trang cho requests (sử dụng dữ liệu từ Page object)
+        model.addAttribute("requestCurrentPage", requestsPage.getNumber());
+        model.addAttribute("requestTotalPages", requestsPage.getTotalPages());
+        model.addAttribute("requestTotalElements", requestsPage.getTotalElements());
+        model.addAttribute("requestHasNext", requestsPage.hasNext());
+        model.addAttribute("requestHasPrevious", requestsPage.hasPrevious());
+
+        // Thông tin phân trang cho orders
+        model.addAttribute("orderCurrentPage", orderPage);
+        model.addAttribute("orderTotalPages", orderListPage.getTotalPages());
+        model.addAttribute("orderTotalElements", orderListPage.getTotalElements());
+        model.addAttribute("orderHasNext", orderListPage.hasNext());
+        model.addAttribute("orderHasPrevious", orderListPage.hasPrevious());
+
+        // Dropdown và filter data
+        model.addAttribute("statuses", ServiceRequestStatus.values());
+        model.addAttribute("orderStatuses", ServiceOrderStatus.values());
+        model.addAttribute("selectedStatus", status);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("selectedRequestMonth", requestMonth);
+        model.addAttribute("selectedOrderStatus", orderStatus);
+        model.addAttribute("orderKeyword", orderKeyword);
+        model.addAttribute("selectedMonth", month);
         model.addAttribute("view", "admin/list-order-service");
 
         return "admin/layout";
@@ -211,6 +227,43 @@ public class List_Order_Service {
         }
     }
 
+    // Khôi phục yêu cầu đã hủy
+    @PostMapping("/{id}/restore")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> restoreRequest(@PathVariable("id") Long id) {
+        try {
+            ServiceRequest request = requestService.findById(id);
+            if (request == null || request.getStatus() != ServiceRequestStatus.CANCELLED) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Chỉ có thể khôi phục yêu cầu đã hủy.");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            // Kiểm tra xem có thông tin draft không để quyết định trạng thái khôi phục
+            ServiceRequestDraft draft = draftDAO.findByRequestId(id).orElse(null);
+
+            if (draft != null) {
+                // Nếu có thông tin đã liên hệ trước đó, khôi phục về CONTACTED
+                request.setStatus(ServiceRequestStatus.CONTACTED);
+            } else {
+                // Nếu chưa có thông tin, khôi phục về PENDING
+                request.setStatus(ServiceRequestStatus.PENDING);
+            }
+
+            requestService.save(request);
+
+            Map<String, String> response = new HashMap<>();
+            String statusText = draft != null ? "đã liên hệ" : "đang chờ";
+            response.put("success", "Đã khôi phục yêu cầu về trạng thái " + statusText + " thành công.");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Có lỗi xảy ra: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(error);
+        }
+    }
+
     // Xác nhận đơn
     @PostMapping("/{id}/confirm")
     @ResponseBody
@@ -238,6 +291,7 @@ public class List_Order_Service {
             // Tạo đơn hàng chính thức
             ServiceOrder order = new ServiceOrder();
             order.setRequest(request);
+            order.setUser(request.getUser()); // Copy user từ ServiceRequest
             order.setQuotedPrice(quotedPrice);
             order.setDistrict(district);
             order.setAddressDetail(addressDetail);
@@ -388,6 +442,76 @@ public class List_Order_Service {
 
             Map<String, String> response = new HashMap<>();
             response.put("success", "Đã hoàn thành đơn hàng thành công.");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Có lỗi xảy ra: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(error);
+        }
+    }
+
+    @PostMapping("/order/{id}/mark-paid")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> markOrderAsPaid(@PathVariable Long id) {
+        try {
+            ServiceOrder order = serviceOrderService.findById(id).orElse(null);
+            if (order == null || order.getStatus() != ServiceOrderStatus.UNPAID) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Chỉ có thể đánh dấu đã thanh toán cho đơn hàng chưa thanh toán.");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            order.setStatus(ServiceOrderStatus.PAID);
+            serviceOrderService.save(order);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("success", "Đã đánh dấu đơn hàng đã thanh toán thành công.");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Có lỗi xảy ra: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(error);
+        }
+    }
+
+    @PostMapping("/order/{id}/update")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> updateOrder(
+            @PathVariable Long id,
+            @RequestParam("quotedPrice") BigDecimal quotedPrice,
+            @RequestParam("district") String district,
+            @RequestParam("addressDetail") String addressDetail,
+            @RequestParam("description") String description,
+            @RequestParam("executionTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate executionDate) {
+
+        try {
+            ServiceOrder order = serviceOrderService.findById(id).orElse(null);
+            if (order == null) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Không tìm thấy đơn hàng.");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            // Chỉ cho phép cập nhật đơn hàng chưa hoàn thành hoặc chưa hủy
+            if (order.getStatus() == ServiceOrderStatus.DONE || order.getStatus() == ServiceOrderStatus.CANCELLED) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Không thể cập nhật đơn hàng đã hoàn thành hoặc đã hủy.");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            // Cập nhật thông tin đơn hàng
+            order.setQuotedPrice(quotedPrice);
+            order.setDistrict(district);
+            order.setAddressDetail(addressDetail);
+            order.setDescription(description);
+            order.setExecutionTime(executionDate);
+
+            serviceOrderService.save(order);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("success", "Đã cập nhật đơn hàng thành công.");
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {

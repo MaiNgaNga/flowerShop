@@ -1,10 +1,6 @@
 package com.datn.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -39,5 +35,5 @@ public class Shipper {
 
     Boolean status ; // Trạng thái shipper, mặc định là true (hoạt động)
 
-    
+
 }

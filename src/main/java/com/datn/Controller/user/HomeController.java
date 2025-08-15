@@ -14,10 +14,12 @@ import com.datn.Service.CategoryService;
 import com.datn.Service.ProductService;
 import com.datn.Service.PromotionService;
 import com.datn.Service.ProductCategoryService;
+import com.datn.Service.ServiceService;
 import com.datn.model.Product;
 import com.datn.model.Comment;
 import com.datn.model.Category;
 import com.datn.model.ProductCategory;
+import com.datn.model.ServiceEntity;
 import jakarta.servlet.http.HttpSession;
 import com.datn.Service.PostService;
 import com.datn.Service.CommentService;
@@ -54,6 +56,10 @@ public class HomeController {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private ServiceService serviceService;
+
     @GetMapping("/home")
     public String home(Model model) {
         List<ProductCategory> productCategories = productCategoryService.findAll();
@@ -66,6 +72,10 @@ public class HomeController {
         List<Comment> comments = commentService.getTop3Comments();
         List<Product> discountProducts = productService
                 .findTop4ByDiscountPercentGreaterThanAndAvailableIsTrueOrderByDiscountPercentDesc(0);
+
+        // Lấy 1 dịch vụ mới nhất có trạng thái hoạt động
+        List<ServiceEntity> latestServices = serviceService.findTop1ByAvailableTrueOrderByIdDesc();
+
         int cartCount = 0;
         User user = authService.getUser();
         if (user != null) {
@@ -84,10 +94,12 @@ public class HomeController {
         model.addAttribute("posts", posts);
         model.addAttribute("discountProducts", discountProducts);
         model.addAttribute("top10PhuKien", top10PhuKien);
+        model.addAttribute("latestServices", latestServices);
         model.addAttribute("view", "home");
 
         return "layouts/layout";
     }
+
     @GetMapping("/api/best-seller")
     @ResponseBody
     public List<Product> getBestSellerByType(@RequestParam String type) {
@@ -116,7 +128,6 @@ public class HomeController {
 
         if (keyword != null && !keyword.isEmpty()) {
             Page<Product> resultPage = Page.empty();
-    
 
             resultPage = productService.searchByCategoryName(keyword, pageable);
 
@@ -136,6 +147,7 @@ public class HomeController {
 
         return "layouts/layout";
     }
+
     @GetMapping("/api/search-suggestions")
     @ResponseBody
     public List<String> getSearchSuggestions(@RequestParam String keyword) {

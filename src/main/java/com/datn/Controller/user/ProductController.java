@@ -43,8 +43,8 @@ public class ProductController {
             @RequestParam(name = "color", required = false) String color, // Màu lọc
             @RequestParam(name = "min", required = false) Double minPrice, // Giá tối thiểu
             @RequestParam(name = "max", required = false) Double maxPrice, // Giá tối đa
-            @RequestParam("p") Optional<Integer> p, // Trang hiện tại
-            @RequestParam(name = "filter", required = false) String filterType) { // Kiểu lọc
+            @RequestParam("p") Optional<Integer> p) // Trang hiện tại
+            { 
 
         int cartCount = 0;
 
@@ -59,24 +59,20 @@ public class ProductController {
 
         // Khởi tạo phân trang với 12 sản phẩm mỗi trang
         Pageable pageable = PageRequest.of(p.orElse(0), 12);
-        Page<Product> products = null;
+         // Nếu chuỗi rỗng => gán null
+    if (color != null && color.trim().isEmpty()) {
+        color = null;
+    }
+    if (ca_Id != null && ca_Id == 0) { // hoặc điều kiện bạn dùng
+        ca_Id = null;
+    }
 
-        // Lọc theo khoảng giá
-        if ("price".equals(filterType) && minPrice != null && maxPrice != null) {
-            products = productService.findByPriceRange(pro_categoryId, minPrice, maxPrice, pageable);
-        }
-        // Lọc theo màu sắc
-        else if ("color".equals(filterType) && color != null) {
-            products = productService.findByColor(pro_categoryId, color, pageable);
-        }
-        // Lọc theo danh mục con
-        else if ("ca_id".equals(filterType) && ca_Id != null) {
-            products = productService.findByCaId(pro_categoryId, ca_Id, pageable);
-        }
-        // Nếu không có điều kiện lọc, lấy toàn bộ sản phẩm thuộc danh mục
-        else {
-            products = productService.findByProductCategoryIdPage(pro_categoryId, pageable);
-        }
+    // giá mặc định nếu cần
+    if (minPrice == null) minPrice = 0.0;
+    if (maxPrice == null) maxPrice = Double.MAX_VALUE;
+        Page<Product> products = productService.findByMultipleFilters(
+            pro_categoryId, ca_Id, color, minPrice, maxPrice, pageable);
+
 
         // Truyền các dữ liệu cần thiết sang view
         model.addAttribute("page", products); // Danh sách sản phẩm theo trang

@@ -10,8 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -22,8 +20,14 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         @Query("SELECT o FROM Order o WHERE o.orderType = :orderType "
                         + "AND (:fromDate IS NULL OR o.createDate >= :fromDate) "
                         + "AND (:toDate IS NULL OR o.createDate <= :toDate) "
+
                         + "AND o.orderCode LIKE %:orderCode%")
         Page<Order> searchPosOrdersByOrderCode(@Param("orderType") String orderType,
+                 + "AND o.orderCode LIKE %:orderCode% "
+                        + "ORDER BY o.createDate DESC")
+        Page<Order> searchPosOrdersByOrderCode(
+                        @Param("orderType") String orderType,
+
                         @Param("orderCode") String orderCode,
                         @Param("fromDate") LocalDate fromDate,
                         @Param("toDate") LocalDate toDate,
@@ -31,11 +35,14 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
 
         List<Order> findByUserIdOrderByIdDesc(int userId);
 
+        List<Order> findByStatus(String status);
+
         List<Order> findByStatusOrderByIdDesc(String status);
 
         List<Order> findByStatusAndShipperId(String status, int shipperId);
 
-        Optional<Order> findByOrderCode(String orderCode);
+        @Query("SELECT o FROM Order o WHERE UPPER(o.orderCode) = UPPER(:orderCode)")
+        Optional<Order> findByOrderCode(@Param("orderCode") String orderCode);
 
         List<Order> findByStatusInAndShipperId(List<String> statuses, int shipperId);
 
@@ -87,7 +94,8 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         // Lấy đơn hàng tại quầy, lọc theo ngày bán và loại đơn hàng
         @Query("SELECT o FROM Order o WHERE o.orderType = :orderType "
                         + "AND (:fromDate IS NULL OR o.createDate >= :fromDate) "
-                        + "AND (:toDate IS NULL OR o.createDate <= :toDate)")
+                        + "AND (:toDate IS NULL OR o.createDate <= :toDate) "
+                        + "ORDER BY o.createDate DESC")
         Page<Order> findPosOrders(@Param("orderType") String orderType,
                         @Param("fromDate") LocalDate fromDate,
                         @Param("toDate") LocalDate toDate,
@@ -114,6 +122,7 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
                         "ORDER BY MONTH(o.create_date)", nativeQuery = true)
         List<Object[]> getMonthlyRevenueByYear(@Param("year") int year);
 
+
         // DAO query: Thống kê doanh thu theo ngày trong tháng/năm (chỉ lấy đơn hàng 'Đã
         // giao')
         @Query(value = "SELECT DAY(o.create_date) AS day, SUM(o.total_amount) AS revenue " +
@@ -139,5 +148,7 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         // Đếm đơn dịch vụ theo năm với trạng thái PAID
         @Query(value = "SELECT COUNT(*) FROM service_orders WHERE status = 'PAID' AND YEAR(confirmed_at) = :year", nativeQuery = true)
         Long countPaidOrdersByYear(@Param("year") int year);
+
+
 
 }

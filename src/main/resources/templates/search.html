@@ -135,11 +135,11 @@
           </div>
           <div class="product-price-search">
             <span
-              th:if="${product.discountPercent != null && product.discountPercent > 0}"
+              th:if="${product.isDiscountActive()}"
               th:text="${#numbers.formatDecimal(product.priceAfterDiscount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
             ></span>
             <span
-              th:unless="${product.discountPercent != null && product.discountPercent > 0}"
+              th:unless="${product.isDiscountActive()}"
               th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
             ></span>
           </div>

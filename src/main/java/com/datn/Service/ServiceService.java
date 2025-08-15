@@ -32,4 +32,10 @@ public interface ServiceService {
     // Lấy toàn bộ dịch vụ đang hoạt động (không phân trang – dùng cho form
     // <select>)
     List<ServiceEntity> findAllAvailable();
+
+    // Lấy 1 dịch vụ mới nhất (theo ID giảm dần)
+    List<ServiceEntity> findTop1ByOrderByIdDesc();
+
+    // Lấy 1 dịch vụ mới nhất có trạng thái hoạt động (theo ID giảm dần)
+    List<ServiceEntity> findTop1ByAvailableTrueOrderByIdDesc();
 }

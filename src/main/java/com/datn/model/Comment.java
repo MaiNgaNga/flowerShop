@@ -22,30 +22,37 @@ import jakarta.validation.constraints.Min;
 @AllArgsConstructor
 public class Comment {
 
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-@NotNull(message = "Đăng nhập để bình luận")
-@ManyToOne
-@JoinColumn(name = "user_id", nullable = false)
-private User user;
+    @NotNull(message = "Đăng nhập để bình luận")
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-@ManyToOne
-@JoinColumn(name = "product_id", nullable = false)
-private Product product;
+    // @ManyToOne
+    // @JoinColumn(name = "product_id", nullable = false)
+    // private Product product;
 
-@NotBlank(message = "Nội dung không được để trống")
-@Column(columnDefinition = "NVARCHAR(255)")
-private String content;
+    @NotBlank(message = "Nội dung không được để trống")
+    @Column(columnDefinition = "NVARCHAR(255)")
+    private String content;
 
-@NotNull(message = "Vui lòng chọn số sao")
+    @NotNull(message = "Vui lòng chọn số sao")
     @Min(value = 1, message = "Số sao phải từ 1 đến 5")
     @Max(value = 5, message = "Số sao phải từ 1 đến 5")
-    private Integer rating; 
+    private Integer rating;
 
-@Column(name = "created_at", updatable = false)
-@CreationTimestamp
-private LocalDateTime createdAt;
+    @Column(name = "created_at", updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
+    @Column(name = "status")
+    private String status ;
+
+    // mappy với order
+    @ManyToOne
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
 }

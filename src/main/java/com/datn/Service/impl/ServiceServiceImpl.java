@@ -128,4 +128,14 @@ public class ServiceServiceImpl implements ServiceService {
     public List<ServiceEntity> findAllAvailable() {
         return dao.findByAvailableTrue();
     }
+
+    @Override
+    public List<ServiceEntity> findTop1ByOrderByIdDesc() {
+        return dao.findTop1ByOrderByIdDesc();
+    }
+
+    @Override
+    public List<ServiceEntity> findTop1ByAvailableTrueOrderByIdDesc() {
+        return dao.findTop1ByAvailableTrueOrderByIdDesc();
+    }
 }

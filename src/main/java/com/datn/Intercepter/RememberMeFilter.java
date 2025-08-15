@@ -2,16 +2,11 @@ package com.datn.Intercepter;
 
 import java.io.IOException;
 import java.util.List;
-
-import org.apache.tomcat.util.net.AbstractEndpoint.Handler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.HandlerInterceptor;
-
 import com.datn.Service.CustomRememberMeService;
 import com.datn.utils.AuthService;
 import com.datn.utils.SessionService;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +19,8 @@ public class RememberMeFilter extends OncePerRequestFilter {
     private final AuthService authService;
     private final SessionService sessionService;
 
-    public RememberMeFilter(CustomRememberMeService rememberMeService, AuthService authService, SessionService sessionService) {
+    public RememberMeFilter(CustomRememberMeService rememberMeService, AuthService authService,
+            SessionService sessionService) {
         this.rememberMeService = rememberMeService;
         this.authService = authService;
         this.sessionService = sessionService;

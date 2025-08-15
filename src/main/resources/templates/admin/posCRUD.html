@@ -60,6 +60,14 @@
                       <td th:text="${order.status}"></td>
                       <td>
                         <a th:href="@{/admin/pos/index(orderId=${order.id})}" class="btn btn-sm btn-info">Chi tiết</a>
+                        <a 
+                          th:if="${order.status == 'Chờ thanh toán'}"
+                          th:href="@{/pos/payment-qr(orderCode=${order.orderCode})}"
+                          class="btn btn-sm btn-warning ms-1"
+                          target="_blank"
+                        >
+                          Thanh toán lại
+                        </a>
                       </td>
                     </tr>
                   </tbody>

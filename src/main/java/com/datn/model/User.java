@@ -1,6 +1,5 @@
 package com.datn.model;
 
-import java.security.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,29 +23,27 @@ public class User {
     @NotBlank(message = "Tên không được để trống")
     @Column(columnDefinition = "NVARCHAR(255)")
     private String name;
-    
+
     private String password;
 
     @NotBlank(message = "Email không được để trống")
     @Email(message = "Email không hợp lệ")
     private String email;
-    
+
     @NotBlank(message = "Số điện thoại không được để trống")
     @Pattern(regexp = "^(0[0-9]{9})$", message = "Số điện thoại không hợp lệ")
     private String sdt;
 
-
     @NotNull(message = "Vai trò không được để trống")
     private Integer role;
 
-     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Shipper> shippers;
 
     @NotNull(message = "Trạng thái không được để trống")
     @Column(nullable = false)
     private Boolean status = true;
 
-    
     private String rememberToken;
     private LocalDateTime rememberTokenExpiry;
 
@@ -55,6 +52,5 @@ public class User {
     public String toString() {
         return "User{id=" + id + ", name='" + name + "'}";
     }
-
 
 }

@@ -51,7 +51,7 @@ public class DetailController {
         model.addAttribute("cartCount", cartCount);
 
         // Lấy danh sách bình luận cho sản phẩm
-        model.addAttribute("comments", commentService.getCommentsByProduct(id));
+        // model.addAttribute("comments", commentService.getCommentsByProduct(id));
 
         // Lấy thông tin sản phẩm theo ID
         model.addAttribute("product", productService.findByID(id));
@@ -59,9 +59,9 @@ public class DetailController {
         // Lấy tất cả danh mục sản phẩm
         model.addAttribute("productCategories", pro_ca_Service.findAll());
 
-        // Gợi ý các sản phẩm tương tự dựa theo category của sản phẩm hiện tại
+        // Gợi ý các sản phẩm tương tự dựa theo danh muc của sản phẩm hiện tại
         model.addAttribute("productSimilar",
-                productService.findProductByCategory(productService.findByID(id).getCategory().getId()));
+                productService.findProductByProductCategory(productService.findByID(id).getProductCategory().getId()));
 
         // Nếu sản phẩm không tồn tại, thông báo lỗi và chuyển hướng về trang sản phẩm
         if (productService.findByID(id) == null) {
@@ -75,31 +75,34 @@ public class DetailController {
     }
 
     // Xử lý khi người dùng gửi bình luận và đánh giá sao
-    @PostMapping("/detail/comment")
-    public String comment(Model model,
-                          @RequestParam("comment") String content,
-                          @RequestParam("productId") Long productId,
-                          @RequestParam("rating") Integer rating,
-                          RedirectAttributes redirectAttributes) {
-        try {
-            // Kiểm tra nội dung bình luận rỗng
-            if (content == null || content.trim().isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Nội dung bình luận không được để trống.");
-            }
-            // Kiểm tra sản phẩm có tồn tại hay không
-            else if (productService.findByID(productId) == null) {
-                redirectAttributes.addFlashAttribute("error", "Sản phẩm không tồn tại.");
-            }
-            // Nếu hợp lệ thì lưu bình luận
-            else {
-                commentService.saveComment(content, productId, rating);
-            }
-        } catch (Exception e) {
-            // Nếu có lỗi trong quá trình xử lý thì thông báo lỗi
-            redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi. Vui lòng thử lại sau.");
-        }
+    // @PostMapping("/detail/comment")
+    // public String comment(Model model,
+    //                       @RequestParam("comment") String content,
+    //                       @RequestParam("orderId") Long orderId,
+    //                       @RequestParam("rating") Integer rating,
+    //                       RedirectAttributes redirectAttributes) {
+    //     try {
+    //         // Kiểm tra nội dung bình luận rỗng
+    //         if (content == null || content.trim().isEmpty()) {
+    //             redirectAttributes.addFlashAttribute("error", "Nội dung bình luận không được để trống.");
+    //         }
+    //         // Kiểm tra sản phẩm có tồn tại hay không
+    //         else if (productService.findByID(orderId) == null) {
+    //             redirectAttributes.addFlashAttribute("error", "đơn hàng k tồn tại");
+    //         }
+    //         // Nếu hợp lệ thì lưu bình luận
+    //         else {
+                
+    //             commentService.saveComment(content, orderId, rating);
+    //         }
+    //     } catch (Exception e) {
+    //         // Nếu có lỗi trong quá trình xử lý thì thông báo lỗi
+    //         redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi. Vui lòng thử lại sau.");
+    //         e.printStackTrace();
+    //         System.out.println(e.getMessage());
+    //     }
 
-        // Sau khi xử lý xong thì chuyển hướng lại trang chi tiết sản phẩm
-        return "redirect:/detail?id=" + productId;
-    }
+    //     // Sau khi xử lý xong thì chuyển hướng lại trang lịch sử mua hàng
+    //     return "redirect:/history?id=" + orderId;
+    // }
 }
