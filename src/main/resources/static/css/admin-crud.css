@@ -546,3 +546,12 @@ input[type="file"] {
   background-color: #edf2f7;
   box-shadow: 0 0 8px rgba(66, 153, 225, 0.3);
 }
+
+/* status */
+.badge-success {
+  background: #28a745;
+}
+
+.badge-danger {
+  background: #dc3545;
+}

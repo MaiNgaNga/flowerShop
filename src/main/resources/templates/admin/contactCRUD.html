@@ -67,17 +67,19 @@
               <td class="text-start" th:text="${item.sdt}"></td>
               <td class="text-start" th:text="${item.email}"></td>
               <td class="text-start" th:text="${item.message}"></td>
-              <td
-                th:text="${item.status ? 'Đã xử lý' : 'Chưa xử lý'}"
-                th:class="${item.status ? 'text-success' : 'text-danger'}"
-              ></td>
+              <td>
+                <span th:class="${item.status == true ? 'badge badge-success' : 'badge badge-danger'}"
+                  style="display:inline-block;min-width:70px;padding:4px 12px;border-radius:12px;font-size:13px;font-weight:600;color:#fff;"
+                  th:text="${item.status == true ? 'Active' : 'Inactive'}">
+                </span>
+              </td>
 
               <td th:if="${!item.status}">
                 <a
                   th:href="@{/Contact/markProcessed/{id}(id=${item.id}, status=${status}, page=${currentPage})}"
                   class="btn btn-success"
                 >
-                  Đánh dấu đã xử lý
+                <i class="fa-solid fa-check"></i>
                 </a>
               </td>
               <td th:if="${item.status}"></td>
