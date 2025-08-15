@@ -49,6 +49,19 @@ public class OrderServiceImpl implements OrderService {
         return revenueMap;
     }
 
+    // ServiceImpl: Thống kê doanh thu theo ngày trong tháng/năm (chỉ lấy đơn hàng 'Đã giao')
+@Override
+public Map<Integer, Double> getDailyRevenueByMonthAndYear(int month, int year) {
+    List<Object[]> results = dao.getDailyRevenueByMonthAndYear(month, year);
+    Map<Integer, Double> revenueMap = new HashMap<>();
+    for (Object[] row : results) {
+        Integer day = (Integer) row[0];
+        Double revenue = (Double) row[1];
+        revenueMap.put(day, revenue);
+    }
+    return revenueMap;
+}
+
     // Thống kê doanh thu theo trong năm
     @Override
     public Double getTotalRevenueInYear(int year) {
@@ -246,7 +259,8 @@ public class OrderServiceImpl implements OrderService {
 
     public Page<Order> searchPosOrdersByOrderCode(String orderType, String orderCode, LocalDate fromDate,
             LocalDate toDate, Pageable pageable) {
-        return dao.searchPosOrdersByOrderCode(orderType, orderCode, fromDate, toDate, pageable);}
+        return dao.searchPosOrdersByOrderCode(orderType, orderCode, fromDate, toDate, pageable);
+    }
 
     public Order recreateOrder(Long canceledOrderId) {
         // Tìm đơn hàng bị hủy
@@ -283,6 +297,26 @@ public class OrderServiceImpl implements OrderService {
         // Lưu đơn hàng mới
         return dao.save(newOrder);
 
+    }
+
+    @Override
+    public Long getTotalOrdersInYear(int year) {
+        return dao.countTotalOrdersByYear(year);
+    }
+
+    @Override
+    public Long countDeliveredOrdersByYear(int year) {
+        return dao.countDeliveredOrdersByYear(year);
+    }
+
+    @Override
+    public Long countTotalOrdersByMonthAndYear1(int month, int year) {
+        return dao.countTotalOrdersByMonthAndYear1(month, year);
+    }
+
+    @Override
+    public Long countPaidOrdersByYear(int year) {
+        return dao.countPaidOrdersByYear(year);
     }
 
 }

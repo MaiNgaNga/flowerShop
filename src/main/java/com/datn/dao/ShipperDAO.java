@@ -43,6 +43,11 @@ public interface ShipperDAO extends JpaRepository<Shipper, Integer> {
     boolean existsByUserId(@Param("userId") Integer userId);
 
     @Query("SELECT o FROM Order o WHERE o.status IN :statuses AND o.shipper.id = :shipperId")
-List<Order> findByStatusInAndShipperId(@Param("statuses") List<String> statuses, @Param("shipperId") int shipperId);
+    List<Order> findByStatusInAndShipperId(@Param("statuses") List<String> statuses, @Param("shipperId") int shipperId);
 
+    @Query(value = "SELECT COUNT(*) FROM orders WHERE YEAR(create_date) = :year", nativeQuery = true)
+    Long countTotalOrdersByYear(@Param("year") int year);
+
+    @Query(value = "SELECT COUNT(*) FROM orders WHERE status = N'Đã giao' AND YEAR(create_date) = :year", nativeQuery = true)
+    Long countDeliveredOrdersByYear(@Param("year") int year);
 }
