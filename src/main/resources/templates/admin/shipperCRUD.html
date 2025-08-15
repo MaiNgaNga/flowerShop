@@ -260,12 +260,10 @@
                 <td th:text="${item.cccd}"></td>
                 <td th:text="${item.address}"></td>
                 <td>
-                  <span th:if="${item.status == true}" class="badge bg-success"
-                    >Onl</span
-                  >
-                  <span th:if="${item.status == false}" class="badge bg-danger"
-                    >Off</span
-                  >
+                  <span th:class="${item.status == true ? 'badge badge-success' : 'badge badge-danger'}"
+                    style="display:inline-block;min-width:70px;padding:4px 12px;border-radius:12px;font-size:13px;font-weight:600;color:#fff;"
+                    th:text="${item.status == true ? 'Active' : 'Inactive'}">
+                  </span>
                 </td>
                 <!-- <td>
                   <span th:if="${item.totalsNumberOrder <= 0}">Chưa có</span>

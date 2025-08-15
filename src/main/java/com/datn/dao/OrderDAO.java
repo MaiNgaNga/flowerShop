@@ -1,6 +1,7 @@
 package com.datn.dao;
 
 import java.util.List;
+import java.util.Map;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
@@ -19,10 +20,14 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         @Query("SELECT o FROM Order o WHERE o.orderType = :orderType "
                         + "AND (:fromDate IS NULL OR o.createDate >= :fromDate) "
                         + "AND (:toDate IS NULL OR o.createDate <= :toDate) "
-                        + "AND o.orderCode LIKE %:orderCode% "
+
+                        + "AND o.orderCode LIKE %:orderCode%")
+        Page<Order> searchPosOrdersByOrderCode(@Param("orderType") String orderType,
+                 + "AND o.orderCode LIKE %:orderCode% "
                         + "ORDER BY o.createDate DESC")
         Page<Order> searchPosOrdersByOrderCode(
                         @Param("orderType") String orderType,
+
                         @Param("orderCode") String orderCode,
                         @Param("fromDate") LocalDate fromDate,
                         @Param("toDate") LocalDate toDate,
@@ -96,22 +101,54 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
                         @Param("toDate") LocalDate toDate,
                         Pageable pageable);
 
-        // thống kê đơn hàng hủy
-        @Query(value = "SELECT COUNT(*) FROM orders WHERE status = N'Đã hủy' AND MONTH(create_date) = :month AND YEAR(create_date) = :year", nativeQuery = true)
+        // thống kê đơn hàng thành công theo tháng / năm
+        @Query(value = "SELECT COUNT(*) FROM orders WHERE status = N'Đã giao' AND MONTH(create_date) = :month AND YEAR(create_date) = :year", nativeQuery = true)
         Long countCanceledOrdersByMonthAndYear(@Param("month") int month, @Param("year") int year);
 
         // thống kê Đếm tổng số đơn hàng trong tháng/năm
         @Query(value = "SELECT COUNT(*) FROM orders WHERE MONTH(create_date) = :month AND YEAR(create_date) = :year", nativeQuery = true)
         Long countTotalOrdersByMonthAndYear(@Param("month") int month, @Param("year") int year);
 
-        // Thống kê doanh thu theo năm
-        @Query("SELECT SUM(o.totalAmount) FROM Order o WHERE YEAR(o.createDate) = :year")
+        // Thống kê doanh thu theo năm (chỉ lấy đơn hàng Đã giao)
+        @Query(value = "SELECT SUM(o.total_amount) FROM orders o " +
+                        "WHERE YEAR(o.create_date) = :year AND o.status = N'Đã giao'", nativeQuery = true)
         Double getTotalRevenueInYear(@Param("year") int year);
 
-        // Thống kê doanh thu theo tháng trong năm
-        @Query("SELECT MONTH(o.createDate) AS month, SUM(o.totalAmount) AS revenue " +
-                        "FROM Order o WHERE YEAR(o.createDate) = :year " +
-                        "GROUP BY MONTH(o.createDate) ORDER BY MONTH(o.createDate)")
+        // Thống kê doanh thu theo tháng trong năm (chỉ lấy đơn hàng Đã giao)
+        @Query(value = "SELECT MONTH(o.create_date) AS month, SUM(o.total_amount) AS revenue " +
+                        "FROM orders o " +
+                        "WHERE YEAR(o.create_date) = :year AND o.status = N'Đã giao' " +
+                        "GROUP BY MONTH(o.create_date) " +
+                        "ORDER BY MONTH(o.create_date)", nativeQuery = true)
         List<Object[]> getMonthlyRevenueByYear(@Param("year") int year);
+
+
+        // DAO query: Thống kê doanh thu theo ngày trong tháng/năm (chỉ lấy đơn hàng 'Đã
+        // giao')
+        @Query(value = "SELECT DAY(o.create_date) AS day, SUM(o.total_amount) AS revenue " +
+                        "FROM orders o " +
+                        "WHERE YEAR(o.create_date) = :year AND MONTH(o.create_date) = :month AND o.status = N'Đã giao' "
+                        +
+                        "GROUP BY DAY(o.create_date) " +
+                        "ORDER BY DAY(o.create_date)", nativeQuery = true)
+        List<Object[]> getDailyRevenueByMonthAndYear(@Param("month") int month, @Param("year") int year);
+
+        // Đếm đơn giao trong năm
+        @Query(value = "SELECT COUNT(*) FROM orders WHERE status = N'Đã giao' AND YEAR(create_date) = :year", nativeQuery = true)
+        Long countDeliveredOrdersByYear(@Param("year") int year);
+
+        // Đếm tổng số đơn đặt hàng trong năm
+        @Query(value = "SELECT COUNT(*) FROM orders WHERE YEAR(create_date) = :year", nativeQuery = true)
+        Long countTotalOrdersByYear(@Param("year") int year);
+
+        // Thống kê số lượng đơn đặt dịch vụ trong tháng/năm với trạng thái PAID
+        @Query(value = "SELECT COUNT(*) FROM service_orders WHERE MONTH(confirmed_at) = :month AND YEAR(confirmed_at) = :year AND status = 'PAID'", nativeQuery = true)
+        Long countTotalOrdersByMonthAndYear1(@Param("month") int month, @Param("year") int year);
+
+        // Đếm đơn dịch vụ theo năm với trạng thái PAID
+        @Query(value = "SELECT COUNT(*) FROM service_orders WHERE status = 'PAID' AND YEAR(confirmed_at) = :year", nativeQuery = true)
+        Long countPaidOrdersByYear(@Param("year") int year);
+
+
 
 }
