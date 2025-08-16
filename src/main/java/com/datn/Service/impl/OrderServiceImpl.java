@@ -293,7 +293,7 @@ public class OrderServiceImpl implements OrderService {
             newOrderDetails.add(newDetail);
         }
         newOrder.setOrderDetails(newOrderDetails);
-    
+
         // Lưu đơn hàng mới
         return dao.save(newOrder);
 
@@ -318,8 +318,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Long countPaidOrdersByYear(int year) {
         return dao.countPaidOrdersByYear(year);
-    }
-
     }
 
     public Order findByID(Long id) {

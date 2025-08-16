@@ -268,7 +268,13 @@
                       >Chưa có ảnh</span
                     >
                   </td>
-                  <td th:text="${item.title}"></td>
+                <td>
+            <span
+              th:text="${#strings.abbreviate(item.title, 50)}"
+              style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; display: inline-block;"
+              title="${item.title}"
+            ></span>
+          </td>
                   <td
                     th:text="${#temporals.format(item.postDate, 'dd/MM/yyyy')}"
                   ></td>
