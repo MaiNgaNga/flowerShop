@@ -1,367 +1,20 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<style>
-  /* Order Page Specific Styling - Không ảnh hưởng đến footer và các trang khác */
-  .order-page-container {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    min-height: 80vh;
-    padding: 20px 0;
-  }
-
-  .order-page-container .container {
-    max-width: 1200px;
-  }
-
-  .order-page-container .shipping-fee-right {
-    float: right;
-    font-weight: 600;
-    color: #28a745;
-  }
-
-  .order-page-container .order-item-row {
-    display: flex;
-    align-items: flex-start;
-    margin-bottom: 0;
-    gap: 15px;
-    padding: 15px 0;
-    border-bottom: 1px solid #e9ecef;
-  }
-
-  .order-page-container .order-item-row:last-child {
-    border-bottom: none;
-  }
-
-  .order-page-container .order-item-img {
-    width: 65px;
-    height: 65px;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 1px solid #dee2e6;
-    background: #f8f9fa;
-    flex-shrink: 0;
-    transition: transform 0.2s ease;
-  }
-
-  .order-page-container .order-item-img:hover {
-    transform: scale(1.02);
-  }
-
-  .order-page-container .order-item-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-  }
-
-  .order-page-container .order-item-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    width: 100%;
-  }
-
-  .order-page-container .order-item-name {
-    font-weight: 600;
-    font-size: 1rem;
-    color: #495057;
-    line-height: 1.4;
-    margin-bottom: 5px;
-  }
-
-  .order-page-container .order-item-price {
-    color: #dc3545;
-    font-weight: 600;
-    font-size: 1rem;
-    margin-left: 12px;
-    white-space: nowrap;
-  }
-
-  .order-page-container .order-item-qty {
-    color: #6c757d;
-    font-size: 0.9rem;
-    font-weight: 500;
-    margin-top: 4px;
-  }
-
-  .order-page-container .card {
-    border-radius: 12px;
-    border: 1px solid #dee2e6;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-    background: #fff;
-    transition: box-shadow 0.3s ease;
-  }
-
-  .order-page-container .card:hover {
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-  }
-
-  .order-page-container .card h5.mau {
-    color: #495057;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-    margin-bottom: 1.5rem;
-    font-size: 1.2rem;
-    position: relative;
-    padding-bottom: 8px;
-  }
-
-  .order-page-container .card h5.mau::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 40px;
-    height: 2px;
-    background: #28a745;
-    border-radius: 1px;
-  }
-
-  .order-page-container .form-label {
-    font-weight: 600;
-    color: #495057;
-    margin-bottom: 6px;
-    font-size: 0.95rem;
-  }
-
-  .order-page-container .form-control,
-  .order-page-container select,
-  .order-page-container textarea {
-    border-radius: 8px !important;
-    border: 1px solid #ced4da;
-    padding: 10px 12px;
-    font-size: 0.95rem;
-    background: #fff;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .order-page-container .form-control:focus,
-  .order-page-container select:focus,
-  .order-page-container textarea:focus {
-    border-color: #28a745;
-    background: #fff;
-    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.1);
-  }
-
-  .order-page-container select {
-    min-height: 42px;
-    cursor: pointer;
-  }
-
-  .order-page-container .mb-3 {
-    margin-bottom: 1.25rem !important;
-  }
-
-  .order-page-container .error.text-danger {
-    font-size: 0.85rem;
-    margin-top: 4px;
-    display: block;
-    font-weight: 500;
-  }
-  .order-page-container textarea.form-control {
-    resize: vertical;
-    min-height: 80px;
-  }
-
-  /* Responsive padding for card */
-  @media (max-width: 767px) {
-    .order-page-container .card.p-4 {
-      padding: 1.25rem !important;
-    }
-  }
-
-  .order-page-container .note-alert {
-    background: #fff3cd;
-    border-left: 3px solid #ffc107;
-    border-radius: 8px;
-    padding: 15px 18px;
-    margin-bottom: 18px;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    font-size: 0.95rem;
-    color: #856404;
-  }
-
-  .order-page-container .note-alert .note-icon {
-    font-size: 1.2em;
-    margin-right: 6px;
-    color: #ffc107;
-    flex-shrink: 0;
-    line-height: 1.2;
-  }
-
-  .order-page-container .input-group {
-    display: flex;
-    align-items: stretch;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
-
-  .order-page-container .input-group .form-control {
-    border-radius: 8px 0 0 8px !important;
-    border: 1px solid #ced4da;
-    background: #fff;
-    font-size: 0.95rem;
-    transition: border-color 0.2s ease;
-  }
-
-  .order-page-container .input-group .form-control:focus {
-    border-color: #28a745;
-    background: #fff;
-    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.1);
-  }
-
-  .order-page-container .input-group .btn {
-    border-radius: 0 8px 8px 0 !important;
-    font-weight: 600;
-    font-size: 0.95rem;
-    padding: 0 20px;
-    transition: background-color 0.2s ease;
-  }
-
-  .order-page-container .input-group .btn-primary {
-    background: #007bff;
-    border-color: #007bff;
-  }
-
-  .order-page-container .input-group .btn-primary:hover {
-    background: #0056b3;
-    border-color: #0056b3;
-  }
-
-  /* Payment Methods Styling */
-  .order-page-container .payment-methods {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 16px;
-    border: 1px solid #dee2e6;
-  }
-
-  .order-page-container .form-check {
-    padding: 12px 16px;
-    border-radius: 8px;
-    border: 1px solid #dee2e6;
-    background: #fff;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    margin-bottom: 10px;
-  }
-
-  .order-page-container .form-check:hover {
-    border-color: #28a745;
-    background: #f8fff9;
-  }
-
-  .order-page-container .form-check-input:checked + .form-check-label {
-    color: #28a745;
-    font-weight: 600;
-  }
-
-  .order-page-container .form-check-input:checked {
-    background-color: #28a745;
-    border-color: #28a745;
-  }
-
-  .order-page-container .form-check-label {
-    cursor: pointer;
-    font-size: 0.95rem;
-    display: flex;
-    align-items: center;
-    font-weight: 500;
-  }
-
-  .order-page-container .form-check-label i {
-    color: #6c757d;
-    margin-right: 8px;
-    font-size: 1.1em;
-  }
-
-  .order-page-container .form-check-input:checked + .form-check-label i {
-    color: #28a745;
-  }
-
-  /* Order Summary Styling */
-  .order-page-container .order-summary {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 16px;
-    margin-top: 16px;
-    border: 1px solid #dee2e6;
-  }
-
-  .order-page-container .summary-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 6px 0;
-    border-bottom: 1px solid #e9ecef;
-  }
-
-  .order-page-container .summary-row:last-child {
-    border-bottom: none;
-    font-weight: 700;
-    font-size: 1.05rem;
-    color: #495057;
-    padding-top: 12px;
-    border-top: 1px solid #28a745;
-  }
-
-  .order-page-container .summary-label {
-    font-weight: 600;
-    color: #495057;
-  }
-
-  .order-page-container .summary-value {
-    font-weight: 600;
-    color: #28a745;
-  }
-
-  /* Button Styling */
-  .order-page-container .btn {
-    border-radius: 8px;
-    font-weight: 600;
-    padding: 10px 24px;
-    transition: all 0.2s ease;
-    border: none;
-  }
-
-  .order-page-container .btn:hover {
-    transform: translateY(-1px);
-  }
-
-  .order-page-container .btn-success {
-    background: #28a745;
-    border-color: #28a745;
-  }
-
-  .order-page-container .btn-success:hover {
-    background: #218838;
-    border-color: #1e7e34;
-  }
-
-  .order-page-container .btn-primary {
-    background: #007bff;
-    border-color: #007bff;
-  }
-
-  .order-page-container .btn-primary:hover {
-    background: #0056b3;
-    border-color: #004085;
-  }
-</style>
+<link rel="stylesheet" th:href="@{/css/order.css}" />
 <div class="order-page-container">
   <div class="container mt-4">
-    <div
-      class="success alert alert-success"
-      th:if="${success}"
-      th:text="${success}"
-    ></div>
-    <div
-      class="success alert alert-danger"
-      th:if="${message}"
-      th:text="${message}"
-    ></div>
-    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+    <div id="main-message" class="mt-3">
+      <div
+        class="alert alert-success"
+        th:if="${success}"
+        th:text="${success}"
+      ></div>
+      <div
+        class="alert alert-danger"
+        th:if="${message}"
+        th:text="${message}"
+      ></div>
+      <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+    </div>
     <form th:action="@{/order/checkout}" method="post">
       <div class="row">
         <!-- Cột Thông tin Đặt hàng -->
@@ -449,40 +102,6 @@
                 ></textarea>
                 <i class="error text-danger" th:errors="*{description}"></i>
               </div>
-
-              <!-- Phương thức thanh toán -->
-              <div class="mb-3">
-                <label class="form-label">Phương thức thanh toán *</label>
-                <div class="payment-methods">
-                  <div class="form-check mb-2">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="paymentMethod"
-                      id="paymentCOD"
-                      value="COD"
-                      checked
-                    />
-                    <label class="form-check-label" for="paymentCOD">
-                      <i class="fas fa-money-bill-wave me-2"></i>
-                      Thanh toán khi nhận hàng (COD)
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="paymentMethod"
-                      id="paymentPayOS"
-                      value="PAYOS"
-                    />
-                    <label class="form-check-label" for="paymentPayOS">
-                      <i class="fas fa-credit-card me-2"></i>
-                      Thanh toán online qua PayOS
-                    </label>
-                  </div>
-                </div>
-              </div>
             </th:block>
           </div>
         </div>
@@ -557,55 +176,103 @@
               </div>
             </div>
           </div>
-          <!--  -->
+
+          <!-- Áp dụng mã giảm giá - Di chuyển lên đây -->
+          <div class="card p-4 mb-3">
+            <h6 class="mb-3 mau-small">Mã Giảm Giá</h6>
+            <div class="voucher-form-container">
+              <div class="input-group voucher-input">
+                <input
+                  type="text"
+                  id="voucher-input"
+                  class="form-control"
+                  placeholder="Nhập mã giảm giá"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-primary"
+                  id="apply-voucher-btn"
+                >
+                  <i class="fas fa-tags me-1"></i>Áp dụng
+                </button>
+              </div>
+            </div>
+            <div id="voucher-message" class="mt-2"></div>
+          </div>
+
+          <!-- Phương thức thanh toán - Di chuyển lên đây -->
+          <div class="card p-4 mb-3">
+            <h6 class="mb-3 mau-small">Phương Thức Thanh Toán</h6>
+            <div class="payment-methods-sidebar">
+              <div class="form-check payment-option">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="paymentMethod"
+                  id="paymentCOD"
+                  value="COD"
+                  checked
+                />
+                <label class="form-check-label" for="paymentCOD">
+                  <div class="payment-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                  </div>
+                  <div class="payment-text">
+                    <span class="payment-title">Thanh toán khi nhận hàng</span>
+                    <small class="payment-desc"
+                      >Thanh toán bằng tiền mặt khi nhận hàng</small
+                    >
+                  </div>
+                </label>
+              </div>
+              <div class="form-check payment-option">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="paymentMethod"
+                  id="paymentPayOS"
+                  value="PAYOS"
+                />
+                <label class="form-check-label" for="paymentPayOS">
+                  <div class="payment-icon">
+                    <i class="fas fa-credit-card"></i>
+                  </div>
+                  <div class="payment-text">
+                    <span class="payment-title">Thanh toán online</span>
+                    <small class="payment-desc"
+                      >Thanh toán qua PayOS - An toàn & Nhanh chóng</small
+                    >
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
 
           <!-- Nút Đặt Hàng gửi form -->
           <button
             type="submit"
-            class="btn btn-success w-100 mt-4"
+            class="btn btn-success w-100 checkout-button"
             id="checkoutBtn"
-            style="
-              font-size: 1.1rem;
-              padding: 15px 30px;
-              position: relative;
-              overflow: hidden;
-            "
           >
-            <i class="fas fa-shopping-cart me-2"></i>ĐẶT HÀNG
+            <i class="fas fa-shopping-cart me-2"></i>
+            <span>ĐẶT HÀNG NGAY</span>
+            <div class="button-shine"></div>
           </button>
         </div>
       </div>
     </form>
-    <!-- Áp dụng mã giảm giá -->
-    <form action="/order/apply-voucher" method="post" class="mb-3">
-      <label for="voucher" class="form-label fw-bold"
-        >Mã giảm giá <span class="text-muted">(nếu có)</span></label
-      >
-      <div class="input-group">
-        <input
-          type="text"
-          id="voucher"
-          name="voucher"
-          class="form-control"
-          placeholder="Nhập mã giảm giá, ví dụ: MA20K"
-          required
-        />
-        <button type="submit" class="btn btn-primary">Áp dụng</button>
-      </div>
-    </form>
-    <div id="voucher-message" class="mt-2"></div>
-    <div th:if="${error}" class="alert alert-danger mt-3" role="alert">
-      <p th:utext="${error}"></p>
-    </div>
-    <div th:if="${successApply}" class="alert alert-success mt-3" role="alert">
-      <p th:utext="${successApply}"></p>
-    </div>
 
     <script>
       const wardSelect = document.getElementById("ward");
       const specificInput = document.getElementById("specific");
       const addressInput = document.getElementById("address");
       const shippingFeeSpan = document.getElementById("shippingFee");
+      const finalPriceSpan = document.querySelector(".finalPrice");
+
+      // Khởi tạo các biến tính toán
+      let originalTotal = parseFloat("[[${totalAmount}]]") || 0;
+      let currentDiscount = 0;
+      let currentShippingFee = 0;
 
       function updateAddress() {
         const wardName = wardSelect.selectedOptions[0]?.text || ""; // Tên xã
@@ -662,16 +329,12 @@
 
         if (paymentMethod === "PAYOS") {
           checkoutBtn.innerHTML =
-            '<i class="fas fa-credit-card me-2"></i>THANH TOÁN ONLINE';
-          checkoutBtn.className = "btn btn-primary w-100 mt-4";
-          checkoutBtn.style.fontSize = "1rem";
-          checkoutBtn.style.padding = "12px 24px";
+            '<i class="fas fa-credit-card me-2"></i><span>THANH TOÁN ONLINE</span><div class="button-shine"></div>';
+          checkoutBtn.className = "btn btn-success w-100 checkout-button";
         } else {
           checkoutBtn.innerHTML =
-            '<i class="fas fa-shopping-cart me-2"></i>ĐẶT HÀNG';
-          checkoutBtn.className = "btn btn-success w-100 mt-4";
-          checkoutBtn.style.fontSize = "1rem";
-          checkoutBtn.style.padding = "12px 24px";
+            '<i class="fas fa-shopping-cart me-2"></i><span>ĐẶT HÀNG NGAY</span><div class="button-shine"></div>';
+          checkoutBtn.className = "btn btn-success w-100 checkout-button";
         }
       }
 
@@ -684,15 +347,42 @@
 
       // Khởi tạo ban đầu
       updateCheckoutButton();
+
+      // Tự động ẩn thông báo chính sau 4 giây
+      function autoHideMainMessages() {
+        const mainMessageDiv = document.getElementById("main-message");
+        const alerts = mainMessageDiv.querySelectorAll(".alert");
+
+        alerts.forEach((alert) => {
+          if (alert.textContent.trim()) {
+            setTimeout(() => {
+              alert.style.transition = "opacity 0.5s ease";
+              alert.style.opacity = "0";
+              setTimeout(() => {
+                alert.remove();
+              }, 500);
+            }, 4000);
+          }
+        });
+      }
+
+      // Gọi hàm tự động ẩn khi trang load
+      autoHideMainMessages();
       // Xử lý áp dụng mã giảm giá
       document
-        .querySelector('form[action="/order/apply-voucher"]')
-        .addEventListener("submit", function (e) {
+        .getElementById("apply-voucher-btn")
+        .addEventListener("click", function (e) {
           e.preventDefault();
 
-          const voucherInput = document.getElementById("voucher");
+          const voucherInput = document.getElementById("voucher-input");
           const voucher = voucherInput.value.trim();
           const msgDiv = document.getElementById("voucher-message");
+
+          if (!voucher) {
+            msgDiv.className = "alert alert-warning mt-3";
+            msgDiv.textContent = "Vui lòng nhập mã giảm giá";
+            return;
+          }
 
           fetch("/order/apply-voucher", {
             method: "POST",
@@ -723,10 +413,47 @@
 
                 // Cập nhật tổng tiền (bao gồm phí vận chuyển)
                 updateTotalPrice();
+
+                // Tự động ẩn thông báo sau 3 giây
+                setTimeout(() => {
+                  msgDiv.style.transition = "opacity 0.5s ease";
+                  msgDiv.style.opacity = "0";
+                  setTimeout(() => {
+                    msgDiv.textContent = "";
+                    msgDiv.className = "";
+                    msgDiv.style.opacity = "1";
+                  }, 500);
+                }, 3000);
               } else if (data.error) {
                 msgDiv.className = "alert alert-danger mt-3";
                 msgDiv.textContent = data.error;
+
+                // Tự động ẩn thông báo lỗi sau 4 giây
+                setTimeout(() => {
+                  msgDiv.style.transition = "opacity 0.5s ease";
+                  msgDiv.style.opacity = "0";
+                  setTimeout(() => {
+                    msgDiv.textContent = "";
+                    msgDiv.className = "";
+                    msgDiv.style.opacity = "1";
+                  }, 500);
+                }, 4000);
               }
+            })
+            .catch((error) => {
+              msgDiv.className = "alert alert-danger mt-3";
+              msgDiv.textContent = "Có lỗi xảy ra khi áp dụng mã giảm giá";
+
+              // Tự động ẩn thông báo lỗi sau 4 giây
+              setTimeout(() => {
+                msgDiv.style.transition = "opacity 0.5s ease";
+                msgDiv.style.opacity = "0";
+                setTimeout(() => {
+                  msgDiv.textContent = "";
+                  msgDiv.className = "";
+                  msgDiv.style.opacity = "1";
+                }, 500);
+              }, 4000);
             });
         });
     </script>

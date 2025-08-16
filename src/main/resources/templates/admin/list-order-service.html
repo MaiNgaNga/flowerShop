@@ -1,683 +1,227 @@
-<!DOCTYPE html>
-<html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quản lý Dịch vụ</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-      rel="stylesheet"
-    />
-    <!-- <link rel="stylesheet" th:href="@{/css/list_order_service.css}" /> -->
-    <style>
-      body {
-        font-family: "Roboto", sans-serif;
-        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-        min-height: 100vh;
-        margin: 0;
-      }
-
-      /* Custom Alert Styles */
-      .custom-alert {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        min-width: 300px;
-        max-width: 500px;
-        padding: 15px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        animation: slideInRight 0.3s ease-out;
-        font-weight: 500;
-      }
-
-      .custom-alert.alert-success {
-        background-color: #d4edda;
-        border: 1px solid #c3e6cb;
-        color: #155724;
-      }
-
-      .custom-alert.alert-error {
-        background-color: #f8d7da;
-        border: 1px solid #f5c6cb;
-        color: #721c24;
-      }
-
-      .custom-alert.alert-warning {
-        background-color: #fff3cd;
-        border: 1px solid #ffeaa7;
-        color: #856404;
-      }
-
-      .alert-icon {
-        font-size: 18px;
-        flex-shrink: 0;
-      }
-
-      .alert-message {
-        flex: 1;
-        font-size: 14px;
-        line-height: 1.4;
-      }
-
-      .alert-close {
-        background: none;
-        border: none;
-        font-size: 18px;
-        font-weight: bold;
-        cursor: pointer;
-        padding: 0;
-        width: 20px;
-        height: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0.7;
-        transition: opacity 0.2s;
-      }
-
-      .alert-close:hover {
-        opacity: 1;
-      }
-
-      @keyframes slideInRight {
-        from {
-          transform: translateX(100%);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
-      }
-
-      @keyframes slideOutRight {
-        from {
-          transform: translateX(0);
-          opacity: 1;
-        }
-        to {
-          transform: translateX(100%);
-          opacity: 0;
-        }
-      }
-
-      /* Validation Error Styles */
-      .form-control.is-invalid,
-      .form-select.is-invalid {
-        border-color: #dc3545;
-        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
-      }
-
-      .invalid-feedback {
-        display: block;
-        width: 100%;
-        margin-top: 0.25rem;
-        font-size: 0.875rem;
-        color: #dc3545;
-      }
-
-      .content {
-        padding: 0px;
-        max-width: 100%;
-        margin: 0;
-      }
-
-      .card {
-        border: none;
-        border-radius: 15px;
-        background: #ffffff;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        overflow: hidden;
-      }
-
-      .card-header {
-        background: #bfdbfe;
-        color: #1e3a8a;
-        font-weight: 500;
-        border-radius: 15px 15px 0 0;
-        padding: 15px 20px;
-        border-bottom: none;
-      }
-
-      .nav-tabs {
-        border-bottom: 2px solid #d1d5db;
-      }
-
-      .nav-tabs .nav-link {
-        border: none;
-        padding: 12px 20px;
-        font-weight: 500;
-        color: #4b5563;
-        transition: all 0.3s ease;
-        border-radius: 8px 8px 0 0;
-      }
-
-      .nav-tabs .nav-link.active {
-        background: #60a5fa;
-        color: #ffffff;
-        border-bottom: none;
-      }
-
-      .nav-tabs .nav-link:hover {
-        background: #e5e7eb;
-        color: #1f2937;
-      }
-
-      .filter-section {
-        background: #f9fafb;
-        padding: 20px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        border: 1px solid #e5e7eb;
-      }
-
-      .form-label {
-        color: #374151;
-        font-weight: 500;
-      }
-
-      .form-control,
-      .form-select {
-        border-radius: 8px;
-        border: 1px solid #d1d5db;
-        transition: all 0.2s ease;
-      }
-
-      .form-control:focus,
-      .form-select:focus {
-        border-color: #60a5fa;
-        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
-      }
-
-      .table {
-        border-radius: 10px;
-        overflow: hidden;
-      }
-
-      .table th {
-        background: #f1f5f9;
-        color: #374151;
-        font-weight: 500;
-        text-align: center;
-      }
-
-      .table td {
-        vertical-align: middle;
-        text-align: center;
-      }
-
-      .badge {
-        padding: 6px 12px;
-        border-radius: 12px;
-        font-size: 0.85rem;
-      }
-
-      .btn-action {
-        font-size: 0.9rem;
-        padding: 8px;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-        border: none;
-        width: 38px;
-        height: 38px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .btn-action:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      }
-
-      .btn-action::before {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
-        transition: width 0.4s ease, height 0.4s ease;
-      }
-
-      .btn-action:hover::before {
-        width: 200px;
-        height: 200px;
-      }
-
-      .btn-primary {
-        background-color: #3b82f6;
-      }
-
-      .btn-primary:hover {
-        background-color: #1d4ed8;
-      }
-
-      .btn-success {
-        background-color: #34d399;
-      }
-
-      .btn-success:hover {
-        background-color: #10b981;
-      }
-
-      .btn-danger {
-        background-color: #f87171;
-      }
-
-      .btn-danger:hover {
-        background-color: #ef4444;
-      }
-
-      .btn-info {
-        background-color: #22d3ee;
-      }
-
-      .btn-info:hover {
-        background-color: #06b6d4;
-      }
-
-      .btn-secondary {
-        background-color: #6b7280;
-      }
-
-      .btn-secondary:hover {
-        background-color: #4b5563;
-      }
-
-      .modal-content {
-        border-radius: 15px;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-      }
-
-      .modal-header {
-        background: #bfdbfe;
-        color: #1e3a8a;
-        border-radius: 15px 15px 0 0;
-        border-bottom: none;
-      }
-
-      .modal-footer {
-        border-top: none;
-      }
-
-      .filter-buttons {
-        display: flex;
-        align-items: flex-end;
-        gap: 10px;
-      }
-
-      .filter-active {
-        background: #dbeafe !important;
-        border: 2px solid #3b82f6 !important;
-      }
-
-      .no-results {
-        text-align: center;
-        padding: 40px 20px;
-        color: #6b7280;
-        font-style: italic;
-      }
-
-      .filter-summary {
-        background: #f0f9ff;
-        border: 1px solid #bfdbfe;
-        border-radius: 8px;
-        padding: 10px 15px;
-        margin-bottom: 15px;
-        font-size: 0.9rem;
-        color: #1e40af;
-      }
-
-      .filter-tag {
-        display: inline-block;
-        background: #3b82f6;
-        color: white;
-        padding: 4px 8px;
-        border-radius: 12px;
-        font-size: 0.8rem;
-        margin: 2px;
-      }
-
-      /* Pagination Styles */
-      .pagination-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 20px;
-        padding: 15px 0;
-        border-top: 1px solid #e5e7eb;
-      }
-
-      .pagination-info {
-        color: #6b7280;
-        font-size: 0.9rem;
-      }
-
-      .pagination {
-        margin: 0;
-      }
-
-      .page-link {
-        color: #3b82f6;
-        border: 1px solid #d1d5db;
-        padding: 8px 12px;
-        margin: 0 2px;
-        border-radius: 6px;
-        text-decoration: none;
-        transition: all 0.2s ease;
-      }
-
-      .page-link:hover {
-        background-color: #f3f4f6;
-        border-color: #3b82f6;
-        color: #1d4ed8;
-      }
-
-      .page-item.active .page-link {
-        background-color: #3b82f6;
-        border-color: #3b82f6;
-        color: white;
-      }
-
-      .page-item.disabled .page-link {
-        color: #9ca3af;
-        background-color: #f9fafb;
-        border-color: #e5e7eb;
-        cursor: not-allowed;
-      }
-
-      .page-item.disabled .page-link:hover {
-        background-color: #f9fafb;
-        border-color: #e5e7eb;
-        color: #9ca3af;
-      }
-
-      .modal-dialog {
-        max-width: 600px;
-      }
-
-      #createOrderModal .modal-dialog,
-      #orderDetailsModal .modal-dialog {
-        max-width: 800px;
-        /* Set both modals to 800px width */
-      }
-
-      .modal-form-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 15px;
-      }
-
-      .modal-form-row .col-md-6 {
-        flex: 1;
-        min-width: 250px;
-      }
-
-      /* Ensure full-width inputs and selects in both modals */
-      #createOrderModal .form-control,
-      #createOrderModal .form-select,
-      #orderDetailsModal .form-control,
-      #orderDetailsModal .form-select {
-        width: 100%;
-      }
-
-      /* Full-width description field for orderDetailsModal */
-      #orderDetailsModal .description-field {
-        flex: 0 0 100%;
-        max-width: 100%;
-      }
-
-      /* Description field in createOrderModal shares row with execution time */
-      #createOrderModal .description-field {
-        flex: 1;
-        min-width: 250px;
-      }
-    </style>
-  </head>
-
-  <body>
-    <div class="content">
-      <div class="card">
-        <div class="card-body">
-          <!-- Tabs -->
-          <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-              <button
-                class="nav-link active"
-                id="requests-tab"
-                data-bs-toggle="tab"
-                data-bs-target="#requests"
-                type="button"
-                role="tab"
-              >
-                Danh sách yêu cầu
-              </button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button
-                class="nav-link"
-                id="orders-tab"
-                data-bs-toggle="tab"
-                data-bs-target="#orders"
-                type="button"
-                role="tab"
-              >
-                Đơn hàng dịch vụ
-              </button>
-            </li>
-          </ul>
-          <!-- Tab Content -->
-          <div class="tab-content">
-            <!-- Service Requests Tab -->
-            <div
-              class="tab-pane fade show active"
-              id="requests"
-              role="tabpanel"
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+/>
+<link
+  href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+  rel="stylesheet"
+/>
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+  rel="stylesheet"
+/>
+<link rel="stylesheet" th:href="@{/css/list-order-service.css}" />
+<div class="content">
+  <div class="card">
+    <div class="card-body">
+      <!-- Tabs -->
+      <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="requests-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#requests"
+            type="button"
+            role="tab"
+          >
+            Danh sách yêu cầu
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="orders-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#orders"
+            type="button"
+            role="tab"
+          >
+            Đơn hàng dịch vụ
+          </button>
+        </li>
+      </ul>
+      <!-- Tab Content -->
+      <div class="tab-content">
+        <!-- Service Requests Tab -->
+        <div class="tab-pane fade show active" id="requests" role="tabpanel">
+          <div class="filter-section">
+            <form
+              method="get"
+              action="/admin/service-requests"
+              id="requestFilterForm"
             >
-              <div class="filter-section">
-                <form
-                  method="get"
-                  action="/admin/service-requests"
-                  id="requestFilterForm"
-                >
-                  <div class="row g-3 align-items-end">
-                    <div class="col-md-3">
-                      <label class="form-label">Trạng thái</label>
-                      <select class="form-select" name="status">
-                        <option value="">Tất cả</option>
-                        <option
-                          th:each="status : ${statuses}"
-                          th:value="${status.name()}"
-                          th:text="${status.displayName}"
-                          th:selected="${selectedStatus != null && selectedStatus.name() == status.name()}"
-                        ></option>
-                      </select>
-                    </div>
-                    <div class="col-md-3">
-                      <label class="form-label">Tìm kiếm</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        name="keyword"
-                        th:value="${keyword}"
-                        placeholder="Tên/SĐT"
-                      />
-                    </div>
-                    <div class="col-md-3">
-                      <label class="form-label">Tháng</label>
-                      <input
-                        type="month"
-                        class="form-control"
-                        name="requestMonth"
-                        th:value="${selectedRequestMonth}"
-                      />
-                    </div>
-                    <div class="col-md-3 filter-buttons">
-                      <button
-                        type="submit"
-                        class="btn btn-primary btn-action"
-                        title="Lọc"
-                      >
-                        <i class="bi bi-funnel"></i>
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-secondary btn-action"
-                        title="Xóa lọc"
-                        onclick="clearRequestFilter()"
-                      >
-                        <i class="bi bi-x-circle"></i>
-                      </button>
-                    </div>
-                  </div>
-                  <!-- Hidden fields để giữ các filter của tab khác và phân trang -->
+              <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                  <label class="form-label">Trạng thái</label>
+                  <select class="form-select" name="status">
+                    <option value="">Tất cả</option>
+                    <option
+                      th:each="status : ${statuses}"
+                      th:value="${status.name()}"
+                      th:text="${status.displayName}"
+                      th:selected="${selectedStatus != null && selectedStatus.name() == status.name()}"
+                    ></option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Tìm kiếm</label>
                   <input
-                    type="hidden"
-                    name="orderStatus"
-                    th:value="${selectedOrderStatus?.name()}"
+                    type="text"
+                    class="form-control"
+                    name="keyword"
+                    th:value="${keyword}"
+                    placeholder="Tên/SĐT"
                   />
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Tháng</label>
                   <input
-                    type="hidden"
-                    name="orderKeyword"
-                    th:value="${orderKeyword}"
+                    type="month"
+                    class="form-control"
+                    name="requestMonth"
+                    th:value="${selectedRequestMonth}"
                   />
-                  <input
-                    type="hidden"
-                    name="month"
-                    th:value="${selectedMonth}"
-                  />
-                  <input type="hidden" name="requestPage" value="0" />
-                  <input
-                    type="hidden"
-                    name="orderPage"
-                    th:value="${orderCurrentPage}"
-                  />
-                </form>
+                </div>
+                <div class="col-md-3 filter-buttons">
+                  <button
+                    type="submit"
+                    class="btn btn-primary btn-action"
+                    title="Lọc"
+                  >
+                    <i class="bi bi-funnel"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-secondary btn-action"
+                    title="Xóa lọc"
+                    onclick="clearRequestFilter()"
+                  >
+                    <i class="bi bi-x-circle"></i>
+                  </button>
+                </div>
               </div>
+              <!-- Hidden fields để giữ các filter của tab khác và phân trang -->
+              <input
+                type="hidden"
+                name="orderStatus"
+                th:value="${selectedOrderStatus?.name()}"
+              />
+              <input
+                type="hidden"
+                name="orderKeyword"
+                th:value="${orderKeyword}"
+              />
+              <input type="hidden" name="month" th:value="${selectedMonth}" />
+              <input type="hidden" name="requestPage" value="0" />
+              <input
+                type="hidden"
+                name="orderPage"
+                th:value="${orderCurrentPage}"
+              />
+            </form>
+          </div>
 
-              <!-- Filter Summary for Requests -->
-              <div
-                class="filter-summary"
-                id="requestFilterSummary"
-                style="display: none"
-              >
-                <strong>Đang lọc:</strong>
-                <span id="requestFilterTags"></span>
-              </div>
+          <!-- Filter Summary for Requests -->
+          <div
+            class="filter-summary"
+            id="requestFilterSummary"
+            style="display: none"
+          >
+            <strong>Đang lọc:</strong>
+            <span id="requestFilterTags"></span>
+          </div>
 
-              <div class="table-responsive">
-                <table class="table table-hover">
-                  <thead>
-                    <tr>
-                      <th>Tên khách hàng</th>
-                      <th>Số điện thoại</th>
-                      <th>Dịch vụ</th>
-                      <th>Ngày tạo</th>
-                      <th>Trạng thái</th>
-                      <th>Thao tác</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr th:if="${#lists.isEmpty(requests)}" class="no-results">
-                      <td colspan="6">
-                        <i class="bi bi-search"></i><br />
-                        Không tìm thấy yêu cầu nào phù hợp với bộ lọc hiện tại
-                      </td>
-                    </tr>
-                    <tr th:each="request : ${requests}">
-                      <td th:text="${request.fullName}"></td>
-                      <td th:text="${request.phone}"></td>
-                      <td th:text="${request.service.name}"></td>
-                      <td
-                        th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy')}"
-                      ></td>
-                      <td>
-                        <span
-                          class="badge"
-                          th:classappend="' bg-' + ${request.status.badgeColor}"
-                          th:text="${request.status.displayName}"
-                        >
-                        </span>
-                      </td>
-                      <td>
-                        <!-- Nút tạo đơn cho PENDING và CONTACTED -->
-                        <button
-                          class="btn btn-success btn-action"
-                          data-bs-toggle="modal"
-                          data-bs-target="#createOrderModal"
-                          th:attr="data-request-id=${request.id}, 
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Tên khách hàng</th>
+                  <th>Số điện thoại</th>
+                  <th>Dịch vụ</th>
+                  <th>Ngày tạo</th>
+                  <th>Trạng thái</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:if="${#lists.isEmpty(requests)}" class="no-results">
+                  <td colspan="6">
+                    <i class="bi bi-search"></i><br />
+                    Không tìm thấy yêu cầu nào phù hợp với bộ lọc hiện tại
+                  </td>
+                </tr>
+                <tr th:each="request : ${requests}">
+                  <td th:text="${request.fullName}"></td>
+                  <td th:text="${request.phone}"></td>
+                  <td th:text="${request.service.name}"></td>
+                  <td
+                    th:text="${#temporals.format(request.createdAt, 'dd/MM/yyyy')}"
+                  ></td>
+                  <td>
+                    <span
+                      class="badge"
+                      th:classappend="' bg-' + ${request.status.badgeColor}"
+                      th:text="${request.status.displayName}"
+                    >
+                    </span>
+                  </td>
+                  <td>
+                    <!-- Nút tạo đơn cho PENDING và CONTACTED -->
+                    <button
+                      class="btn btn-success btn-action"
+                      data-bs-toggle="modal"
+                      data-bs-target="#createOrderModal"
+                      th:attr="data-request-id=${request.id}, 
                                   data-service-name=${request.service.name}, 
                                   data-status=${request.status.name()}"
-                          th:if="${request.status.name() == 'PENDING' || request.status.name() == 'CONTACTED'}"
-                          title="Tạo đơn hàng"
-                        >
-                          <i class="bi bi-pencil"></i>
-                        </button>
-
-                        <!-- Nút khôi phục cho CANCELLED -->
-                        <button
-                          class="btn btn-warning btn-action btn-restore"
-                          th:attr="data-request-id=${request.id}, data-service-name=${request.service.name}"
-                          th:if="${request.status.name() == 'CANCELLED'}"
-                          title="Khôi phục yêu cầu"
-                        >
-                          <i class="bi bi-arrow-clockwise"></i>
-                        </button>
-
-                        <!-- Vô hiệu hóa cho CONFIRMED -->
-                        <button
-                          class="btn btn-secondary btn-action"
-                          th:if="${request.status.name() == 'CONFIRMED'}"
-                          disabled
-                          title="Đã chốt đơn - không thể thao tác"
-                        >
-                          <i class="bi bi-lock"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <!-- Pagination for Requests -->
-              <div
-                class="pagination-container"
-                th:if="${requestTotalElements > 0}"
-              >
-                <div class="pagination-info">
-                  Hiển thị
-                  <strong th:text="${#lists.size(requests)}"></strong> trong
-                  tổng số
-                  <strong th:text="${requestTotalElements}"></strong> yêu cầu
-                </div>
-                <nav aria-label="Request pagination">
-                  <ul class="pagination">
-                    <li
-                      class="page-item"
-                      th:classappend="${!requestHasPrevious} ? 'disabled'"
+                      th:if="${request.status.name() == 'PENDING' || request.status.name() == 'CONTACTED'}"
+                      title="Tạo đơn hàng"
                     >
-                      <a
-                        class="page-link"
-                        th:href="@{/admin/service-requests(
+                      <i class="bi bi-pencil"></i>
+                    </button>
+
+                    <!-- Nút khôi phục cho CANCELLED -->
+                    <button
+                      class="btn btn-warning btn-action btn-restore"
+                      th:attr="data-request-id=${request.id}, data-service-name=${request.service.name}"
+                      th:if="${request.status.name() == 'CANCELLED'}"
+                      title="Khôi phục yêu cầu"
+                    >
+                      <i class="bi bi-arrow-clockwise"></i>
+                    </button>
+
+                    <!-- Vô hiệu hóa cho CONFIRMED -->
+                    <button
+                      class="btn btn-secondary btn-action"
+                      th:if="${request.status.name() == 'CONFIRMED'}"
+                      disabled
+                      title="Đã chốt đơn - không thể thao tác"
+                    >
+                      <i class="bi bi-lock"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination for Requests -->
+          <div class="pagination-container" th:if="${requestTotalElements > 0}">
+            <div class="pagination-info">
+              Hiển thị
+              <strong th:text="${#lists.size(requests)}"></strong> trong tổng số
+              <strong th:text="${requestTotalElements}"></strong> yêu cầu
+            </div>
+            <nav aria-label="Request pagination">
+              <ul class="pagination">
+                <li
+                  class="page-item"
+                  th:classappend="${!requestHasPrevious} ? 'disabled'"
+                >
+                  <a
+                    class="page-link"
+                    th:href="@{/admin/service-requests(
                         status=${selectedStatus?.name()},
                         keyword=${keyword},
                         orderStatus=${selectedOrderStatus?.name()},
@@ -686,24 +230,24 @@
                         requestPage=${requestCurrentPage - 1},
                         orderPage=${orderCurrentPage}
                       )}"
-                        th:if="${requestHasPrevious}"
-                      >
-                        <i class="bi bi-chevron-left"></i> Trước
-                      </a>
-                      <span class="page-link" th:unless="${requestHasPrevious}">
-                        <i class="bi bi-chevron-left"></i> Trước
-                      </span>
-                    </li>
+                    th:if="${requestHasPrevious}"
+                  >
+                    <i class="bi bi-chevron-left"></i> Trước
+                  </a>
+                  <span class="page-link" th:unless="${requestHasPrevious}">
+                    <i class="bi bi-chevron-left"></i> Trước
+                  </span>
+                </li>
 
-                    <li
-                      class="page-item"
-                      th:each="pageNum : ${#numbers.sequence(0, requestTotalPages - 1)}"
-                      th:if="${pageNum >= requestCurrentPage - 2 && pageNum <= requestCurrentPage + 2}"
-                      th:classappend="${pageNum == requestCurrentPage} ? 'active'"
-                    >
-                      <a
-                        class="page-link"
-                        th:href="@{/admin/service-requests(
+                <li
+                  class="page-item"
+                  th:each="pageNum : ${#numbers.sequence(0, requestTotalPages - 1)}"
+                  th:if="${pageNum >= requestCurrentPage - 2 && pageNum <= requestCurrentPage + 2}"
+                  th:classappend="${pageNum == requestCurrentPage} ? 'active'"
+                >
+                  <a
+                    class="page-link"
+                    th:href="@{/admin/service-requests(
                            status=${selectedStatus?.name()},
                            keyword=${keyword},
                            orderStatus=${selectedOrderStatus?.name()},
@@ -712,18 +256,18 @@
                            requestPage=${pageNum},
                            orderPage=${orderCurrentPage}
                          )}"
-                        th:text="${pageNum + 1}"
-                        >1</a
-                      >
-                    </li>
+                    th:text="${pageNum + 1}"
+                    >1</a
+                  >
+                </li>
 
-                    <li
-                      class="page-item"
-                      th:classappend="${!requestHasNext} ? 'disabled'"
-                    >
-                      <a
-                        class="page-link"
-                        th:href="@{/admin/service-requests(
+                <li
+                  class="page-item"
+                  th:classappend="${!requestHasNext} ? 'disabled'"
+                >
+                  <a
+                    class="page-link"
+                    th:href="@{/admin/service-requests(
                         status=${selectedStatus?.name()},
                         keyword=${keyword},
                         orderStatus=${selectedOrderStatus?.name()},
@@ -732,180 +276,176 @@
                         requestPage=${requestCurrentPage + 1},
                         orderPage=${orderCurrentPage}
                       )}"
-                        th:if="${requestHasNext}"
-                      >
-                        Sau <i class="bi bi-chevron-right"></i>
-                      </a>
-                      <span class="page-link" th:unless="${requestHasNext}">
-                        Sau <i class="bi bi-chevron-right"></i>
-                      </span>
-                    </li>
-                  </ul>
-                </nav>
-              </div>
-            </div>
-            <!-- Service Orders Tab -->
-            <div class="tab-pane fade" id="orders" role="tabpanel">
-              <div class="filter-section">
-                <form
-                  method="get"
-                  action="/admin/service-requests"
-                  id="orderFilterForm"
-                >
-                  <div class="row g-3 align-items-end">
-                    <div class="col-md-3">
-                      <label class="form-label">Trạng thái</label>
-                      <select class="form-select" name="orderStatus">
-                        <option value="">Tất cả</option>
-                        <option
-                          th:each="orderStatus : ${orderStatuses}"
-                          th:value="${orderStatus.name()}"
-                          th:text="${orderStatus.displayName}"
-                          th:selected="${selectedOrderStatus != null && selectedOrderStatus.name() == orderStatus.name()}"
-                        ></option>
-                      </select>
-                    </div>
-                    <div class="col-md-3">
-                      <label class="form-label">Tìm kiếm</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        name="orderKeyword"
-                        th:value="${orderKeyword}"
-                        placeholder="Tên/SĐT/Dịch vụ"
-                      />
-                    </div>
-                    <div class="col-md-3">
-                      <label class="form-label">Tháng</label>
-                      <input
-                        type="month"
-                        class="form-control"
-                        name="month"
-                        th:value="${selectedMonth}"
-                      />
-                    </div>
-                    <div class="col-md-3 filter-buttons">
-                      <button
-                        type="submit"
-                        class="btn btn-primary btn-action"
-                        title="Lọc"
-                      >
-                        <i class="bi bi-funnel"></i>
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-secondary btn-action"
-                        title="Xóa lọc"
-                        onclick="clearOrderFilter()"
-                      >
-                        <i class="bi bi-x-circle"></i>
-                      </button>
-                    </div>
-                  </div>
-                  <!-- Hidden fields để giữ các filter của tab khác và phân trang -->
-                  <input
-                    type="hidden"
-                    name="status"
-                    th:value="${selectedStatus?.name()}"
-                  />
-                  <input type="hidden" name="keyword" th:value="${keyword}" />
-                  <input
-                    type="hidden"
-                    name="requestMonth"
-                    th:value="${selectedRequestMonth}"
-                  />
-                  <input
-                    type="hidden"
-                    name="requestPage"
-                    th:value="${requestCurrentPage}"
-                  />
-                  <input type="hidden" name="orderPage" value="0" />
-                </form>
-              </div>
-
-              <!-- Filter Summary for Orders -->
-              <div
-                class="filter-summary"
-                id="orderFilterSummary"
-                style="display: none"
-              >
-                <strong>Đang lọc:</strong>
-                <span id="orderFilterTags"></span>
-              </div>
-
-              <div class="table-responsive">
-                <table class="table table-hover">
-                  <thead>
-                    <tr>
-                      <th>Mã đơn</th>
-                      <th>Tên khách hàng</th>
-                      <th>Tên Dịch vụ</th>
-                      <th>Giá chốt</th>
-                      <th>Ngày xác nhận</th>
-                      <th>Trạng thái</th>
-                      <th>Thao tác</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr th:if="${#lists.isEmpty(orderList)}" class="no-results">
-                      <td colspan="7">
-                        <i class="bi bi-search"></i><br />
-                        Không tìm thấy đơn hàng nào phù hợp với bộ lọc hiện tại
-                      </td>
-                    </tr>
-                    <tr th:each="order : ${orderList}">
-                      <td th:text="${order.id}"></td>
-                      <td th:text="${order.request.fullName}"></td>
-                      <td th:text="${order.request.service.name}"></td>
-                      <td
-                        th:text="${#numbers.formatDecimal(order.quotedPrice, 0, 'POINT', 0, 'COMMA') + ' VNĐ'}"
-                      ></td>
-                      <td
-                        th:text="${#temporals.format(order.confirmedAt, 'dd-MM-yyyy')}"
-                      ></td>
-                      <td>
-                        <span
-                          class="badge"
-                          th:classappend="' bg-' + ${order.status.badgeColor}"
-                          th:text="${order.status.displayName}"
-                        >
-                        </span>
-                      </td>
-                      <td>
-                        <button
-                          class="btn btn-info btn-action btn-detail"
-                          th:attr="data-id=${order.id}, data-status=${order.status}"
-                          data-bs-toggle="modal"
-                          data-bs-target="#orderDetailsModal"
-                        >
-                          <i class="bi bi-eye"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <!-- Pagination for Orders -->
-              <div
-                class="pagination-container"
-                th:if="${orderTotalElements > 0}"
-              >
-                <div class="pagination-info">
-                  Hiển thị
-                  <strong th:text="${#lists.size(orderList)}"></strong> trong
-                  tổng số <strong th:text="${orderTotalElements}"></strong> đơn
-                  hàng
+                    th:if="${requestHasNext}"
+                  >
+                    Sau <i class="bi bi-chevron-right"></i>
+                  </a>
+                  <span class="page-link" th:unless="${requestHasNext}">
+                    Sau <i class="bi bi-chevron-right"></i>
+                  </span>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+        <!-- Service Orders Tab -->
+        <div class="tab-pane fade" id="orders" role="tabpanel">
+          <div class="filter-section">
+            <form
+              method="get"
+              action="/admin/service-requests"
+              id="orderFilterForm"
+            >
+              <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                  <label class="form-label">Trạng thái</label>
+                  <select class="form-select" name="orderStatus">
+                    <option value="">Tất cả</option>
+                    <option
+                      th:each="orderStatus : ${orderStatuses}"
+                      th:value="${orderStatus.name()}"
+                      th:text="${orderStatus.displayName}"
+                      th:selected="${selectedOrderStatus != null && selectedOrderStatus.name() == orderStatus.name()}"
+                    ></option>
+                  </select>
                 </div>
-                <nav aria-label="Order pagination">
-                  <ul class="pagination">
-                    <li
-                      class="page-item"
-                      th:classappend="${!orderHasPrevious} ? 'disabled'"
+                <div class="col-md-3">
+                  <label class="form-label">Tìm kiếm</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="orderKeyword"
+                    th:value="${orderKeyword}"
+                    placeholder="Tên/SĐT/Dịch vụ"
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Tháng</label>
+                  <input
+                    type="month"
+                    class="form-control"
+                    name="month"
+                    th:value="${selectedMonth}"
+                  />
+                </div>
+                <div class="col-md-3 filter-buttons">
+                  <button
+                    type="submit"
+                    class="btn btn-primary btn-action"
+                    title="Lọc"
+                  >
+                    <i class="bi bi-funnel"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-secondary btn-action"
+                    title="Xóa lọc"
+                    onclick="clearOrderFilter()"
+                  >
+                    <i class="bi bi-x-circle"></i>
+                  </button>
+                </div>
+              </div>
+              <!-- Hidden fields để giữ các filter của tab khác và phân trang -->
+              <input
+                type="hidden"
+                name="status"
+                th:value="${selectedStatus?.name()}"
+              />
+              <input type="hidden" name="keyword" th:value="${keyword}" />
+              <input
+                type="hidden"
+                name="requestMonth"
+                th:value="${selectedRequestMonth}"
+              />
+              <input
+                type="hidden"
+                name="requestPage"
+                th:value="${requestCurrentPage}"
+              />
+              <input type="hidden" name="orderPage" value="0" />
+            </form>
+          </div>
+
+          <!-- Filter Summary for Orders -->
+          <div
+            class="filter-summary"
+            id="orderFilterSummary"
+            style="display: none"
+          >
+            <strong>Đang lọc:</strong>
+            <span id="orderFilterTags"></span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Mã đơn</th>
+                  <th>Tên khách hàng</th>
+                  <th>Tên Dịch vụ</th>
+                  <th>Giá chốt</th>
+                  <th>Ngày xác nhận</th>
+                  <th>Trạng thái</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:if="${#lists.isEmpty(orderList)}" class="no-results">
+                  <td colspan="7">
+                    <i class="bi bi-search"></i><br />
+                    Không tìm thấy đơn hàng nào phù hợp với bộ lọc hiện tại
+                  </td>
+                </tr>
+                <tr th:each="order : ${orderList}">
+                  <td th:text="${order.id}"></td>
+                  <td th:text="${order.request.fullName}"></td>
+                  <td th:text="${order.request.service.name}"></td>
+                  <td
+                    th:text="${#numbers.formatDecimal(order.quotedPrice, 0, 'POINT', 0, 'COMMA') + ' VNĐ'}"
+                  ></td>
+                  <td
+                    th:text="${#temporals.format(order.confirmedAt, 'dd-MM-yyyy')}"
+                  ></td>
+                  <td>
+                    <span
+                      class="badge"
+                      th:classappend="' bg-' + ${order.status.badgeColor}"
+                      th:text="${order.status.displayName}"
                     >
-                      <a
-                        class="page-link"
-                        th:href="@{/admin/service-requests(
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      class="btn btn-info btn-action btn-detail"
+                      th:attr="data-id=${order.id}, data-status=${order.status}"
+                      data-bs-toggle="modal"
+                      data-bs-target="#orderDetailsModal"
+                    >
+                      <i class="bi bi-eye"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination for Orders -->
+          <div class="pagination-container" th:if="${orderTotalElements > 0}">
+            <div class="pagination-info">
+              Hiển thị
+              <strong th:text="${#lists.size(orderList)}"></strong> trong tổng
+              số <strong th:text="${orderTotalElements}"></strong> đơn hàng
+            </div>
+            <nav aria-label="Order pagination">
+              <ul class="pagination">
+                <li
+                  class="page-item"
+                  th:classappend="${!orderHasPrevious} ? 'disabled'"
+                >
+                  <a
+                    class="page-link"
+                    th:href="@{/admin/service-requests(
                         status=${selectedStatus?.name()},
                         keyword=${keyword},
                         orderStatus=${selectedOrderStatus?.name()},
@@ -914,24 +454,24 @@
                         requestPage=${requestCurrentPage},
                         orderPage=${orderCurrentPage - 1}
                       )}"
-                        th:if="${orderHasPrevious}"
-                      >
-                        <i class="bi bi-chevron-left"></i> Trước
-                      </a>
-                      <span class="page-link" th:unless="${orderHasPrevious}">
-                        <i class="bi bi-chevron-left"></i> Trước
-                      </span>
-                    </li>
+                    th:if="${orderHasPrevious}"
+                  >
+                    <i class="bi bi-chevron-left"></i> Trước
+                  </a>
+                  <span class="page-link" th:unless="${orderHasPrevious}">
+                    <i class="bi bi-chevron-left"></i> Trước
+                  </span>
+                </li>
 
-                    <li
-                      class="page-item"
-                      th:each="pageNum : ${#numbers.sequence(0, orderTotalPages - 1)}"
-                      th:if="${pageNum >= orderCurrentPage - 2 && pageNum <= orderCurrentPage + 2}"
-                      th:classappend="${pageNum == orderCurrentPage} ? 'active'"
-                    >
-                      <a
-                        class="page-link"
-                        th:href="@{/admin/service-requests(
+                <li
+                  class="page-item"
+                  th:each="pageNum : ${#numbers.sequence(0, orderTotalPages - 1)}"
+                  th:if="${pageNum >= orderCurrentPage - 2 && pageNum <= orderCurrentPage + 2}"
+                  th:classappend="${pageNum == orderCurrentPage} ? 'active'"
+                >
+                  <a
+                    class="page-link"
+                    th:href="@{/admin/service-requests(
                            status=${selectedStatus?.name()},
                            keyword=${keyword},
                            orderStatus=${selectedOrderStatus?.name()},
@@ -940,18 +480,18 @@
                            requestPage=${requestCurrentPage},
                            orderPage=${pageNum}
                          )}"
-                        th:text="${pageNum + 1}"
-                        >1</a
-                      >
-                    </li>
+                    th:text="${pageNum + 1}"
+                    >1</a
+                  >
+                </li>
 
-                    <li
-                      class="page-item"
-                      th:classappend="${!orderHasNext} ? 'disabled'"
-                    >
-                      <a
-                        class="page-link"
-                        th:href="@{/admin/service-requests(
+                <li
+                  class="page-item"
+                  th:classappend="${!orderHasNext} ? 'disabled'"
+                >
+                  <a
+                    class="page-link"
+                    th:href="@{/admin/service-requests(
                         status=${selectedStatus?.name()},
                         keyword=${keyword},
                         orderStatus=${selectedOrderStatus?.name()},
@@ -960,2162 +500,494 @@
                         requestPage=${requestCurrentPage},
                         orderPage=${orderCurrentPage + 1}
                       )}"
-                        th:if="${orderHasNext}"
-                      >
-                        Sau <i class="bi bi-chevron-right"></i>
-                      </a>
-                      <span class="page-link" th:unless="${orderHasNext}">
-                        Sau <i class="bi bi-chevron-right"></i>
-                      </span>
-                    </li>
-                  </ul>
-                </nav>
-              </div>
-            </div>
+                    th:if="${orderHasNext}"
+                  >
+                    Sau <i class="bi bi-chevron-right"></i>
+                  </a>
+                  <span class="page-link" th:unless="${orderHasNext}">
+                    Sau <i class="bi bi-chevron-right"></i>
+                  </span>
+                </li>
+              </ul>
+            </nav>
           </div>
         </div>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- Create Order Modal -->
-    <div
-      class="modal fade"
-      id="createOrderModal"
-      tabindex="-1"
-      aria-labelledby="createOrderModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="createOrderModalLabel">
-              Tạo đơn hàng dịch vụ
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form method="post" id="createOrderForm" data-request-id="">
-              <div class="modal-form-row">
-                <div class="col-md-6">
-                  <input type="hidden" name="requestId" id="requestIdInput" />
-                  <div class="mb-3">
-                    <label class="form-label">Dịch vụ</label>
-                    <input
-                      type="text"
-                      id="serviceNameInput"
-                      class="form-control"
-                      readonly
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Giá (VNĐ)</label>
-                    <input
-                      type="number"
-                      name="quotedPrice"
-                      class="form-control"
-                      placeholder="Nhập giá"
-                    />
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <label class="form-label">Địa điểm</label>
-                    <select
-                      id="districtSelect"
-                      class="form-select"
-                      name="district"
-                    >
-                      <option value="">Chọn xã/phường</option>
-                      <option value="An Hai">An Hải</option>
-                      <option value="An Khe">An Khê</option>
-                      <option value="An Thang">An Thắng</option>
-                      <option value="Avuong">Avương</option>
-                      <option value="Ba">Ba</option>
-                      <option value="Ba Na">Bà Nà</option>
-                      <option value="Ban Thach">Bàn Thạch</option>
-                      <option value="Ben Giang">Bến Giằng</option>
-                      <option value="Ben Hien">Bến Hiên</option>
-                      <option value="Cam Le">Cẩm Lệ</option>
-                      <option value="Chien Dan">Chiên Đàn</option>
-                      <option value="Dac Pring">Đắc Pring</option>
-                      <option value="Dai Loc">Đại Lộc</option>
-                      <option value="Dien Ban">Điện Bàn</option>
-                      <option value="Dien Ban Bac">Điện Bàn Bắc</option>
-                      <option value="Dien Ban Dong">Điện Bàn Đông</option>
-                      <option value="Dong Duong">Đồng Dương</option>
-                      <option value="Dong Giang">Prao</option>
-                      <option value="Duc Phu">Đức Phú</option>
-                      <option value="Duy Nghia">Duy Nghĩa</option>
-                      <option value="Duy Xuyen">Duy Xuyên</option>
-                      <option value="Hai Chau">Hải Châu</option>
-                      <option value="Hai Van">Hải Vân</option>
-                      <option value="Ha Nha">Hà Nha</option>
-                      <option value="Hiep Duc">Tân Bình</option>
-                      <option value="Hoa Cuong">Hòa Cường</option>
-                      <option value="Hoa Khanh">Hòa Khánh</option>
-                      <option value="Hoa Tien">Hòa Tiến</option>
-                      <option value="Hoa Vang">Hòa Vang</option>
-                      <option value="Hoa Xuan">Hòa Xuân</option>
-                      <option value="Hoi An">Hội An</option>
-                      <option value="Hoi An Dong">Hội An Đông</option>
-                      <option value="Hoi An Tay">Hội An Tây</option>
-                      <option value="Hoang Sa">Hoàng Sa</option>
-                      <option value="Huong Tra">Hương Trà</option>
-                      <option value="Hung Son">Hùng Sơn</option>
-                      <option value="Kham Duc">Khâm Đức</option>
-                      <option value="La Dee">La Dêê</option>
-                      <option value="La Eee">La Êê</option>
-                      <option value="Lanh Ngoc">Lãnh Ngọc</option>
-                      <option value="Lien Chieu">Liên Chiểu</option>
-                      <option value="Nam Giang">Nam Giang</option>
-                      <option value="Nam Phuoc">Nam Phước</option>
-                      <option value="Nam Tra My">Nam Trà My</option>
-                      <option value="Ngu Hanh Son">Ngũ Hành Sơn</option>
-                      <option value="Nong Son">Nông Sơn</option>
-                      <option value="Nui Thanh">Núi Thành</option>
-                      <option value="Phu Ninh">Phú Ninh</option>
-                      <option value="Phu Thuan">Phú Thuận</option>
-                      <option value="Phuoc Chanh">Phước Chánh</option>
-                      <option value="Phuoc Hiep">Phước Hiệp</option>
-                      <option value="Phuoc Nang">Phước Năng</option>
-                      <option value="Phuoc Thanh">Phước Thành</option>
-                      <option value="Phuoc Tra">Phước Trà</option>
-                      <option value="Quang Phu">Quảng Phú</option>
-                      <option value="Que Phuoc">Quế Phước</option>
-                      <option value="Que Son">Quế Sơn</option>
-                      <option value="Que Son Trung">Quế Sơn Trung</option>
-                      <option value="Son Cam Ha">Sơn Cẩm Hà</option>
-                      <option value="Son Tra">Sơn Trà</option>
-                      <option value="Song Kon">Sông Kôn</option>
-                      <option value="Tam Anh">Tam Anh</option>
-                      <option value="Tam Hai">Tam Hải</option>
-                      <option value="Tam Ky">Tam Kỳ</option>
-                      <option value="Tam My">Tam Mỹ</option>
-                      <option value="Tam Xuan">Tam Xuân</option>
-                      <option value="Tan Hiep">Tân Hiệp</option>
-                      <option value="Tay Giang">Tây Giang</option>
-                      <option value="Tay Ho">Tây Hồ</option>
-                      <option value="Thanh Binh">Thanh Bình</option>
-                      <option value="Thanh Khe">Thanh Khê</option>
-                      <option value="Thanh My">Thạnh Mỹ</option>
-                      <option value="Thang An">Thăng An</option>
-                      <option value="Thang Binh">Thăng Bình</option>
-                      <option value="Thang Dien">Thăng Điền</option>
-                      <option value="Thang Phu">Thăng Phú</option>
-                      <option value="Thang Truong">Thăng Trường</option>
-                      <option value="Thu Bon">Thu Bồn</option>
-                      <option value="Thuong Duc">Thượng Đức</option>
-                      <option value="Tien Phuoc">Tiên Phước</option>
-                      <option value="Tra Doc">Trà Đốc</option>
-                      <option value="Tra Giap">Trà Giáp</option>
-                      <option value="Tra Leng">Trà Leng</option>
-                      <option value="Tra Lien">Trà Liên</option>
-                      <option value="Tra Linh">Trà Linh</option>
-                      <option value="Tra My">Trà My</option>
-                      <option value="Tra Tan">Trà Tân</option>
-                      <option value="Tra Tap">Trà Tập</option>
-                      <option value="Tra Van">Trà Vân</option>
-                      <option value="Vu Gia">Vu Gia</option>
-                      <option value="Viet An">Việt An</option>
-                      <option value="Xuan Phu">Xuân Phú</option>
-                    </select>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Địa chỉ chi tiết</label>
-                    <input
-                      type="text"
-                      name="addressDetail"
-                      class="form-control"
-                      placeholder="Nhập địa chỉ chi tiết"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="modal-form-row">
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <label class="form-label">Thời gian thực hiện</label>
-                    <input
-                      type="date"
-                      name="executionTime"
-                      class="form-control"
-                    />
-                  </div>
-                </div>
-                <div class="col-md-6 description-field">
-                  <div class="mb-3">
-                    <label class="form-label">Mô tả</label>
-                    <textarea
-                      name="description"
-                      class="form-control"
-                      rows="4"
-                      placeholder="Nhập mô tả dịch vụ"
-                    ></textarea>
-                  </div>
-                </div>
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-primary btn-action btn-contact"
-              title="Liên hệ lần đầu"
-            >
-              <i class="bi bi-telephone"></i>
-            </button>
-            <button
-              type="button"
-              class="btn btn-info btn-action btn-update"
-              title="Cập nhật thông tin"
-              style="display: none"
-            >
-              <i class="bi bi-pencil-square"></i>
-            </button>
-            <button
-              type="button"
-              class="btn btn-success btn-action btn-confirm"
-              title="Xác nhận tạo đơn"
-            >
-              <i class="bi bi-check-circle"></i>
-            </button>
-            <button
-              type="button"
-              class="btn btn-danger btn-action btn-cancel"
-              title="Hủy yêu cầu"
-            >
-              <i class="bi bi-x-circle"></i>
-            </button>
-            <button
-              type="button"
-              class="btn btn-secondary btn-action"
-              data-bs-dismiss="modal"
-              title="Đóng"
-            >
-              <i class="bi bi-box-arrow-right"></i>
-            </button>
-          </div>
-        </div>
+<!-- Create Order Modal -->
+<div
+  class="modal fade"
+  id="createOrderModal"
+  tabindex="-1"
+  aria-labelledby="createOrderModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createOrderModalLabel">
+          Tạo đơn hàng dịch vụ
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
       </div>
-    </div>
-
-    <!-- Order Details Modal -->
-    <div
-      class="modal fade"
-      id="orderDetailsModal"
-      tabindex="-1"
-      aria-labelledby="orderDetailsModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="orderDetailsModalLabel">
-              Chi tiết đơn hàng
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="modal-form-row">
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <label class="form-label">Mã đơn</label>
-                    <input
-                      id="modal-id"
-                      type="text"
-                      class="form-control"
-                      readonly
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Tên khách hàng</label>
-                    <input
-                      id="modal-name"
-                      type="text"
-                      class="form-control"
-                      readonly
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Dịch vụ</label>
-                    <input
-                      id="modal-service"
-                      type="text"
-                      class="form-control"
-                      readonly
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Giá chốt</label>
-                    <input
-                      id="modal-quoted-price"
-                      type="text"
-                      class="form-control"
-                      readonly
-                    />
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <label class="form-label">Ngày yêu cầu</label>
-                    <input
-                      id="modal-request-date"
-                      type="text"
-                      class="form-control"
-                      readonly
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Thời gian thực hiện</label>
-                    <input
-                      id="modal-perform-date"
-                      type="text"
-                      class="form-control"
-                      readonly
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Địa điểm</label>
-                    <input
-                      id="modal-province"
-                      type="text"
-                      class="form-control"
-                      readonly
-                    />
-                    <select
-                      id="modal-province-select"
-                      class="form-select"
-                      style="display: none"
-                    >
-                      <option value="">Chọn xã/phường</option>
-                      <option value="An Hai">An Hải</option>
-                      <option value="An Khe">An Khê</option>
-                      <option value="An Thang">An Thắng</option>
-                      <option value="Avuong">Avương</option>
-                      <option value="Ba">Ba</option>
-                      <option value="Ba Na">Bà Nà</option>
-                      <option value="Ban Thach">Bàn Thạch</option>
-                      <option value="Ben Giang">Bến Giằng</option>
-                      <option value="Ben Hien">Bến Hiên</option>
-                      <option value="Cam Le">Cẩm Lệ</option>
-                      <option value="Chien Dan">Chiên Đàn</option>
-                      <option value="Dac Pring">Đắc Pring</option>
-                      <option value="Dai Loc">Đại Lộc</option>
-                      <option value="Dien Ban">Điện Bàn</option>
-                      <option value="Dien Ban Bac">Điện Bàn Bắc</option>
-                      <option value="Dien Ban Dong">Điện Bàn Đông</option>
-                      <option value="Dong Duong">Đồng Dương</option>
-                      <option value="Dong Giang">Prao</option>
-                      <option value="Duc Phu">Đức Phú</option>
-                      <option value="Duy Nghia">Duy Nghĩa</option>
-                      <option value="Duy Xuyen">Duy Xuyên</option>
-                      <option value="Hai Chau">Hải Châu</option>
-                      <option value="Hai Van">Hải Vân</option>
-                      <option value="Ha Nha">Hà Nha</option>
-                      <option value="Hiep Duc">Tân Bình</option>
-                      <option value="Hoa Cuong">Hòa Cường</option>
-                      <option value="Hoa Khanh">Hòa Khánh</option>
-                      <option value="Hoa Tien">Hòa Tiến</option>
-                      <option value="Hoa Vang">Hòa Vang</option>
-                      <option value="Hoa Xuan">Hòa Xuân</option>
-                      <option value="Hoi An">Hội An</option>
-                      <option value="Hoi An Dong">Hội An Đông</option>
-                      <option value="Hoi An Tay">Hội An Tây</option>
-                      <option value="Hoang Sa">Hoàng Sa</option>
-                      <option value="Huong Tra">Hương Trà</option>
-                      <option value="Hung Son">Hùng Sơn</option>
-                      <option value="Kham Duc">Khâm Đức</option>
-                      <option value="La Dee">La Dêê</option>
-                      <option value="La Eee">La Êê</option>
-                      <option value="Lanh Ngoc">Lãnh Ngọc</option>
-                      <option value="Lien Chieu">Liên Chiểu</option>
-                      <option value="Nam Giang">Nam Giang</option>
-                      <option value="Nam Phuoc">Nam Phước</option>
-                      <option value="Nam Tra My">Nam Trà My</option>
-                      <option value="Ngu Hanh Son">Ngũ Hành Sơn</option>
-                      <option value="Nong Son">Nông Sơn</option>
-                      <option value="Nui Thanh">Núi Thành</option>
-                      <option value="Phu Ninh">Phú Ninh</option>
-                      <option value="Phu Thuan">Phú Thuận</option>
-                      <option value="Phuoc Chanh">Phước Chánh</option>
-                      <option value="Phuoc Hiep">Phước Hiệp</option>
-                      <option value="Phuoc Nang">Phước Năng</option>
-                      <option value="Phuoc Thanh">Phước Thành</option>
-                      <option value="Phuoc Tra">Phước Trà</option>
-                      <option value="Quang Phu">Quảng Phú</option>
-                      <option value="Que Phuoc">Quế Phước</option>
-                      <option value="Que Son">Quế Sơn</option>
-                      <option value="Que Son Trung">Quế Sơn Trung</option>
-                      <option value="Son Cam Ha">Sơn Cẩm Hà</option>
-                      <option value="Son Tra">Sơn Trà</option>
-                      <option value="Song Kon">Sông Kôn</option>
-                      <option value="Tam Anh">Tam Anh</option>
-                      <option value="Tam Hai">Tam Hải</option>
-                      <option value="Tam Ky">Tam Kỳ</option>
-                      <option value="Tam My">Tam Mỹ</option>
-                      <option value="Tam Xuan">Tam Xuân</option>
-                      <option value="Tan Hiep">Tân Hiệp</option>
-                      <option value="Tay Giang">Tây Giang</option>
-                      <option value="Tay Ho">Tây Hồ</option>
-                      <option value="Thanh Binh">Thanh Bình</option>
-                      <option value="Thanh Khe">Thanh Khê</option>
-                      <option value="Thanh My">Thạnh Mỹ</option>
-                      <option value="Thang An">Thăng An</option>
-                      <option value="Thang Binh">Thăng Bình</option>
-                      <option value="Thang Dien">Thăng Điền</option>
-                      <option value="Thang Phu">Thăng Phú</option>
-                      <option value="Thang Truong">Thăng Trường</option>
-                      <option value="Thu Bon">Thu Bồn</option>
-                      <option value="Thuong Duc">Thượng Đức</option>
-                      <option value="Tien Phuoc">Tiên Phước</option>
-                      <option value="Tra Doc">Trà Đốc</option>
-                      <option value="Tra Giap">Trà Giáp</option>
-                      <option value="Tra Leng">Trà Leng</option>
-                      <option value="Tra Lien">Trà Liên</option>
-                      <option value="Tra Linh">Trà Linh</option>
-                      <option value="Tra My">Trà My</option>
-                      <option value="Tra Tan">Trà Tân</option>
-                      <option value="Tra Tap">Trà Tập</option>
-                      <option value="Tra Van">Trà Vân</option>
-                      <option value="Vu Gia">Vu Gia</option>
-                      <option value="Viet An">Việt An</option>
-                      <option value="Xuan Phu">Xuân Phú</option>
-                    </select>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Địa chỉ chi tiết</label>
-                    <input
-                      id="modal-address"
-                      type="text"
-                      class="form-control"
-                      readonly
-                    />
-                  </div>
-                </div>
-                <div class="mb-3 description-field">
-                  <label class="form-label">Mô tả</label>
-                  <textarea
-                    id="modal-note"
-                    class="form-control"
-                    rows="4"
-                    readonly
-                  ></textarea>
-                </div>
+      <div class="modal-body">
+        <form method="post" id="createOrderForm" data-request-id="">
+          <div class="modal-form-row">
+            <div class="col-md-6">
+              <input type="hidden" name="requestId" id="requestIdInput" />
+              <div class="mb-3">
+                <label class="form-label">Dịch vụ</label>
+                <input
+                  type="text"
+                  id="serviceNameInput"
+                  class="form-control"
+                  readonly
+                />
               </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button
-              id="btn-edit"
-              class="btn btn-primary btn-action"
-              title="Chỉnh sửa đơn hàng"
-            >
-              <i class="bi bi-pencil"></i>
-            </button>
-            <button
-              id="btn-payment"
-              class="btn btn-warning btn-action"
-              title="Đánh dấu đã thanh toán"
-            >
-              <i class="bi bi-credit-card"></i>
-            </button>
-            <button
-              id="btn-confirm"
-              class="btn btn-success btn-action"
-              title="Hoàn thành đơn hàng"
-            >
-              <i class="bi bi-check-circle"></i>
-            </button>
-            <button
-              id="btn-cancel"
-              class="btn btn-danger btn-action"
-              title="Hủy đơn hàng"
-            >
-              <i class="bi bi-x-circle"></i>
-            </button>
-            <button
-              type="button"
-              class="btn btn-secondary btn-action"
-              data-bs-dismiss="modal"
-              title="Đóng"
-            >
-              <i class="bi bi-box-arrow-right"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Filter Functions Script -->
-    <script>
-      // Hàm xóa lọc cho tab yêu cầu
-      function clearRequestFilter() {
-        const form = document.getElementById("requestFilterForm");
-        form.querySelector('select[name="status"]').value = "";
-        form.querySelector('input[name="keyword"]').value = "";
-        form.querySelector('input[name="requestMonth"]').value = "";
-        form.submit();
-      }
-
-      // Hàm xóa lọc cho tab đơn hàng
-      function clearOrderFilter() {
-        const form = document.getElementById("orderFilterForm");
-        form.querySelector('select[name="orderStatus"]').value = "";
-        form.querySelector('input[name="orderKeyword"]').value = "";
-        form.querySelector('input[name="month"]').value = "";
-        form.submit();
-      }
-
-      // Xử lý chuyển tab và giữ nguyên filter
-      document.addEventListener("DOMContentLoaded", function () {
-        // Xử lý sự kiện khi chuyển tab
-        const tabs = document.querySelectorAll(
-          '#adminTabs button[data-bs-toggle="tab"]'
-        );
-        tabs.forEach((tab) => {
-          tab.addEventListener("shown.bs.tab", function (event) {
-            const targetTab = event.target.getAttribute("data-bs-target");
-
-            // Lưu tab hiện tại vào localStorage
-            if (targetTab === "#orders") {
-              localStorage.setItem("currentTab", "orders");
-            } else {
-              localStorage.setItem("currentTab", "requests");
-            }
-          });
-        });
-
-        // Chỉ khôi phục tab từ localStorage nếu có switchToOrdersTab flag
-        if (localStorage.getItem("switchToOrdersTab") === "true") {
-          localStorage.removeItem("switchToOrdersTab");
-          setTimeout(() => {
-            document.getElementById("orders-tab").click();
-          }, 100);
-        } else {
-          // Khôi phục tab cuối cùng được chọn
-          const currentTab = localStorage.getItem("currentTab");
-          if (currentTab === "orders") {
-            setTimeout(() => {
-              document.getElementById("orders-tab").click();
-            }, 100);
-          }
-        }
-      });
-
-      // Hàm hiển thị số lượng kết quả lọc
-      function updateFilterResults() {
-        // Lấy số lượng từ backend thay vì đếm DOM elements
-        const requestTotalElements = /*[[${requestTotalElements}]]*/ 0;
-        const orderTotalElements = /*[[${orderTotalElements}]]*/ 0;
-
-        // Cập nhật số lượng cho tab yêu cầu
-        const requestTab = document.getElementById("requests-tab");
-        if (requestTotalElements > 0) {
-          requestTab.innerHTML = `Danh sách yêu cầu (${requestTotalElements})`;
-        } else {
-          requestTab.innerHTML = "Danh sách yêu cầu";
-        }
-
-        // Cập nhật số lượng cho tab đơn hàng
-        const orderTab = document.getElementById("orders-tab");
-        if (orderTotalElements > 0) {
-          orderTab.innerHTML = `Đơn hàng dịch vụ (${orderTotalElements})`;
-        } else {
-          orderTab.innerHTML = "Đơn hàng dịch vụ";
-        }
-      }
-
-      // Hàm hiển thị filter summary
-      function updateFilterSummary() {
-        const urlParams = new URLSearchParams(window.location.search);
-
-        // Update Request Filter Summary
-        const requestStatus = urlParams.get("status");
-        const requestKeyword = urlParams.get("keyword");
-        const requestMonth = urlParams.get("requestMonth");
-        const requestFilterSummary = document.getElementById(
-          "requestFilterSummary"
-        );
-        const requestFilterTags = document.getElementById("requestFilterTags");
-        const requestFilterSection = document.querySelector(
-          "#requests .filter-section"
-        );
-
-        let requestTags = [];
-        if (requestStatus) {
-          const statusText =
-            document.querySelector(
-              `#requests select[name="status"] option[value="${requestStatus}"]`
-            )?.textContent || requestStatus;
-          requestTags.push(
-            `<span class="filter-tag">Trạng thái: ${statusText}</span>`
-          );
-        }
-        if (requestKeyword) {
-          requestTags.push(
-            `<span class="filter-tag">Tìm kiếm: ${requestKeyword}</span>`
-          );
-        }
-        if (requestMonth) {
-          const monthText = new Date(requestMonth + "-01").toLocaleDateString(
-            "vi-VN",
-            { year: "numeric", month: "long" }
-          );
-          requestTags.push(
-            `<span class="filter-tag">Tháng: ${monthText}</span>`
-          );
-        }
-
-        if (requestTags.length > 0) {
-          requestFilterTags.innerHTML = requestTags.join("");
-          requestFilterSummary.style.display = "block";
-          requestFilterSection.classList.add("filter-active");
-        } else {
-          requestFilterSummary.style.display = "none";
-          requestFilterSection.classList.remove("filter-active");
-        }
-
-        // Update Order Filter Summary
-        const orderStatus = urlParams.get("orderStatus");
-        const orderKeyword = urlParams.get("orderKeyword");
-        const month = urlParams.get("month");
-        const orderFilterSummary =
-          document.getElementById("orderFilterSummary");
-        const orderFilterTags = document.getElementById("orderFilterTags");
-        const orderFilterSection = document.querySelector(
-          "#orders .filter-section"
-        );
-
-        let orderTags = [];
-        if (orderStatus) {
-          const statusText =
-            document.querySelector(
-              `#orders select[name="orderStatus"] option[value="${orderStatus}"]`
-            )?.textContent || orderStatus;
-          orderTags.push(
-            `<span class="filter-tag">Trạng thái: ${statusText}</span>`
-          );
-        }
-        if (orderKeyword) {
-          orderTags.push(
-            `<span class="filter-tag">Tìm kiếm: ${orderKeyword}</span>`
-          );
-        }
-        if (month) {
-          const monthText = new Date(month + "-01").toLocaleDateString(
-            "vi-VN",
-            { year: "numeric", month: "long" }
-          );
-          orderTags.push(`<span class="filter-tag">Tháng: ${monthText}</span>`);
-        }
-
-        if (orderTags.length > 0) {
-          orderFilterTags.innerHTML = orderTags.join("");
-          orderFilterSummary.style.display = "block";
-          orderFilterSection.classList.add("filter-active");
-        } else {
-          orderFilterSummary.style.display = "none";
-          orderFilterSection.classList.remove("filter-active");
-        }
-      }
-
-      // Gọi hàm cập nhật khi trang load
-      document.addEventListener("DOMContentLoaded", function () {
-        setTimeout(() => {
-          updateFilterResults();
-          updateFilterSummary();
-        }, 200);
-      });
-    </script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Kiểm tra nếu cần chuyển sang tab đơn hàng sau reload
-        if (localStorage.getItem("switchToOrdersTab") === "true") {
-          localStorage.removeItem("switchToOrdersTab");
-          setTimeout(() => {
-            document.getElementById("orders-tab").click();
-          }, 500);
-        }
-
-        const modal = document.getElementById("createOrderModal");
-        const form = document.getElementById("createOrderForm");
-
-        // Hệ thống quản lý modal đơn giản
-        let modalManager = {
-          isProcessing: false,
-          currentRequestId: null,
-          loadingPromise: null,
-          isRestoreAction: false,
-
-          // Force cleanup modal hoàn toàn
-          forceCleanupModal: function () {
-            console.log("🧹 Force cleanup modal...");
-
-            // 1. Hủy tất cả requests đang chạy
-            if (this.loadingPromise) {
-              this.loadingPromise.abort?.();
-              this.loadingPromise = null;
-            }
-
-            // 2. Đóng modal bằng Bootstrap API
-            const bsModal = bootstrap.Modal.getInstance(modal);
-            if (bsModal) {
-              bsModal.hide();
-            }
-
-            // 3. Force cleanup DOM
-            modal.style.display = "none";
-            modal.classList.remove("show");
-            modal.setAttribute("aria-hidden", "true");
-            modal.removeAttribute("aria-modal");
-
-            // 4. Cleanup body và backdrop
-            document.body.classList.remove("modal-open");
-            document.body.style.overflow = "";
-            document.body.style.paddingRight = "";
-
-            // 5. Remove tất cả backdrop
-            document.querySelectorAll(".modal-backdrop").forEach((el) => {
-              el.remove();
-            });
-
-            // 6. Reset state
-            this.isProcessing = false;
-            this.currentRequestId = null;
-
-            console.log("✅ Modal cleanup completed");
-          },
-
-          // Kiểm tra có thể mở modal không
-          canOpenModal: function () {
-            // Nếu vừa thực hiện restore action, luôn cho phép mở modal
-            if (this.isRestoreAction) {
-              console.log(
-                "✅ Restore action detected, allowing immediate modal open"
-              );
-              return true;
-            }
-
-            // Chỉ block nếu đang xử lý request
-            if (this.isProcessing) {
-              console.log("❌ Modal đang xử lý, không thể mở");
-              return false;
-            }
-
-            return true;
-          },
-
-          // Đánh dấu action hoàn thành
-          markActionCompleted: function () {
-            this.isRestoreAction = false;
-            this.forceCleanupModal();
-          },
-
-          // Đánh dấu restore action hoàn thành
-          markRestoreCompleted: function () {
-            console.log("🔄 Restore action completed");
-            this.isRestoreAction = true;
-            this.isProcessing = false;
-            this.currentRequestId = null;
-            this.loadingPromise = null;
-
-            // Auto reset sau 3 giây
-            setTimeout(() => {
-              this.isRestoreAction = false;
-              console.log("🔄 Restore flag auto-reset");
-            }, 3000);
-          },
-
-          // Reset hoàn toàn
-          reset: function () {
-            console.log("🔄 Reset modal manager");
-            this.isProcessing = false;
-            this.currentRequestId = null;
-            this.loadingPromise = null;
-            this.isRestoreAction = false;
-          },
-        };
-
-        modal.addEventListener("show.bs.modal", function (event) {
-          console.log("🚀 Attempting to open modal...");
-
-          // Kiểm tra có thể mở modal không
-          if (!modalManager.canOpenModal()) {
-            console.log("❌ Modal bị block, preventing open");
-            event.preventDefault();
-            return;
-          }
-
-          // Force cleanup trước khi mở (trừ khi là restore action)
-          if (!modalManager.isRestoreAction) {
-            modalManager.forceCleanupModal();
-          }
-
-          // Set processing state
-          modalManager.isProcessing = true;
-
-          // Load data ngay lập tức
-          loadModalData(event);
-        });
-
-        // Hàm load data cho modal
-        function loadModalData(event) {
-          const button = event.relatedTarget;
-          const requestId = button.getAttribute("data-request-id");
-          const serviceName = button.getAttribute("data-service-name");
-          const status = button.getAttribute("data-status");
-
-          // Gán giá trị vào form
-          document.getElementById("requestIdInput").value = requestId;
-          document.getElementById("serviceNameInput").value = serviceName;
-          form.setAttribute("data-request-id", requestId);
-
-          const btnContact = modal.querySelector(".btn-contact");
-          const btnUpdate = modal.querySelector(".btn-update");
-          const btnConfirm = modal.querySelector(".btn-confirm");
-          const btnCancel = modal.querySelector(".btn-cancel");
-
-          // Reset form trước và clear validation errors
-          form.reset();
-          form.querySelectorAll(".is-invalid").forEach((el) => {
-            el.classList.remove("is-invalid");
-          });
-          form
-            .querySelectorAll(".invalid-feedback")
-            .forEach((el) => el.remove());
-          document.getElementById("serviceNameInput").value = serviceName;
-
-          // Cập nhật state
-          modalManager.currentRequestId = requestId;
-
-          console.log(`📊 Loading data for request ${requestId}...`);
-
-          // Hiển thị loading state
-          showModalLoading(modal, true);
-
-          // Tạo AbortController để hủy request cũ
-          const abortController = new AbortController();
-
-          // Load dữ liệu từ server với cache busting cực mạnh (đặc biệt sau restore)
-          const cacheParam = modalManager.isRestoreAction
-            ? `t=${Date.now()}&r=${Math.random()}&restore=1&force=${Date.now()}`
-            : `t=${Date.now()}&r=${Math.random()}`;
-          const fetchUrl = `/admin/service-requests/${requestId}/draft?${cacheParam}`;
-          console.log("📡 Fetching fresh data from:", fetchUrl);
-
-          if (modalManager.isRestoreAction) {
-            console.log(
-              "🔄 Loading data after restore action - using aggressive cache busting"
-            );
-          }
-
-          const fetchPromise = fetch(fetchUrl, {
-            method: "GET",
-            headers: {
-              "Cache-Control": "no-cache, no-store, must-revalidate",
-              Pragma: "no-cache",
-              Expires: "0",
-              "X-Requested-With": "XMLHttpRequest", // Thêm header để server biết đây là AJAX
-            },
-            signal: abortController.signal,
-          });
-
-          // Lưu promise để có thể abort
-          modalManager.loadingPromise = {
-            abort: () => abortController.abort(),
-          };
-
-          fetchPromise
-            .then((res) => res.json())
-            .then((data) => {
-              console.log("Dữ liệu nhận được:", data);
-
-              // Hiển thị nút dựa trên trạng thái
-              if (data.status === "PENDING") {
-                // Chưa liên hệ: hiển thị Liên hệ + Xác nhận + Hủy
-                btnContact.style.display = "inline-flex";
-                btnUpdate.style.display = "none";
-                btnConfirm.style.display = "inline-flex";
-                btnCancel.style.display = "inline-flex";
-              } else if (data.status === "CONTACTED") {
-                // Đã liên hệ: hiển thị Cập nhật + Xác nhận + Hủy
-                btnContact.style.display = "none";
-                btnUpdate.style.display = "inline-flex";
-                btnConfirm.style.display = "inline-flex";
-                btnCancel.style.display = "inline-flex";
-
-                // Load dữ liệu bản nháp - LUÔN LUÔN load nếu có
-                console.log("Loading draft data:", data);
-
-                // Load dữ liệu ngay lập tức
-                if (
-                  data.quotedPrice !== undefined &&
-                  data.quotedPrice !== null
-                ) {
-                  form.querySelector("input[name='quotedPrice']").value =
-                    data.quotedPrice;
-                }
-                if (data.addressDetail) {
-                  form.querySelector("input[name='addressDetail']").value =
-                    data.addressDetail;
-                }
-                if (data.executionTime) {
-                  form.querySelector("input[name='executionTime']").value =
-                    data.executionTime;
-                }
-                if (data.description) {
-                  form.querySelector("textarea[name='description']").value =
-                    data.description;
-                }
-
-                // Load district sau khi district select đã sẵn sàng
-                if (data.district) {
-                  let retryCount = 0;
-                  const maxRetries = 20; // Tối đa 2 giây
-
-                  const loadDistrict = () => {
-                    const districtSelect = form.querySelector(
-                      "select[name='district']"
-                    );
-                    if (districtSelect && districtSelect.options.length > 1) {
-                      districtSelect.value = data.district;
-                      console.log("District loaded:", data.district);
-                    } else if (retryCount < maxRetries) {
-                      retryCount++;
-                      setTimeout(loadDistrict, 100);
-                    } else {
-                      console.warn(
-                        "Could not load district after",
-                        maxRetries,
-                        "retries"
-                      );
-                    }
-                  };
-
-                  // Delay initial load để tránh conflict
-                  setTimeout(loadDistrict, 200);
-                }
-              } else {
-                // Đã xác nhận hoặc đã hủy: chỉ hiển thị nút đóng
-                btnContact.style.display = "none";
-                btnUpdate.style.display = "none";
-                btnConfirm.style.display = "none";
-                btnCancel.style.display = "none";
-              }
-            })
-            .catch((err) => {
-              // Chỉ xử lý lỗi nếu không phải do abort
-              if (err.name !== "AbortError") {
-                console.error("Lỗi load dữ liệu:", err);
-                // Fallback: hiển thị nút mặc định cho PENDING
-                btnContact.style.display = "inline-flex";
-                btnUpdate.style.display = "none";
-                btnConfirm.style.display = "inline-flex";
-                btnCancel.style.display = "inline-flex";
-              }
-            })
-            .finally(() => {
-              // Chỉ tắt loading nếu đây là request hiện tại
-              if (modalManager.currentRequestId === requestId) {
-                console.log(`✅ Data loaded for request ${requestId}`);
-                showModalLoading(modal, false);
-                modalManager.isProcessing = false;
-                modalManager.loadingPromise = null;
-              } else {
-                console.log(
-                  `⚠️ Stale request ${requestId}, current: ${modalManager.currentRequestId}`
-                );
-              }
-            });
-        }
-
-        // Reset state khi modal đóng
-        modal.addEventListener("hidden.bs.modal", function () {
-          console.log("🔒 Modal hidden event triggered");
-
-          // Force cleanup hoàn toàn
-          modalManager.forceCleanupModal();
-
-          // Clear validation errors
-          const form = document.getElementById("createOrderForm");
-          form.querySelectorAll(".is-invalid").forEach((el) => {
-            el.classList.remove("is-invalid");
-          });
-          form
-            .querySelectorAll(".invalid-feedback")
-            .forEach((el) => el.remove());
-
-          // Reset form
-          form.reset();
-
-          // Tắt loading state
-          showModalLoading(modal, false);
-
-          console.log("🧹 Modal cleanup on hidden completed");
-        });
-
-        // Hàm cập nhật UI sau khi thực hiện action
-        const updateUIAfterAction = (requestId, actionType) => {
-          // Tìm button tương ứng với requestId
-          const button = document.querySelector(
-            `[data-request-id="${requestId}"]`
-          );
-          if (!button) return;
-
-          // Tìm row chứa button này
-          const row = button.closest("tr");
-          if (!row) return;
-
-          // Tìm badge trạng thái trong row
-          const statusBadge = row.querySelector(".badge");
-          if (!statusBadge) return;
-
-          // Tìm cell chứa nút thao tác
-          const actionCell = button.closest("td");
-          if (!actionCell) return;
-
-          // Cập nhật trạng thái dựa trên action
-          if (actionType === "contact" || actionType === "update") {
-            // Cập nhật thành CONTACTED
-            statusBadge.className = "badge bg-primary";
-            statusBadge.textContent = "Đã liên hệ";
-            button.setAttribute("data-status", "CONTACTED");
-          } else if (actionType === "confirm") {
-            // Cập nhật thành CONFIRMED
-            statusBadge.className = "badge bg-success";
-            statusBadge.textContent = "Đã xác nhận";
-
-            // Thay thế nút tạo đơn bằng nút khóa (vô hiệu hóa)
-            actionCell.innerHTML = `
-              <button
-                class="btn btn-secondary btn-action"
-                disabled
-                title="Đã chốt đơn - không thể thao tác"
-              >
-                <i class="bi bi-lock"></i>
-              </button>
-            `;
-
-            // Hiển thị thông báo thành công
-            setTimeout(() => {
-              showCustomAlert("Đơn hàng đã được tạo thành công!", "success");
-            }, 500);
-          } else if (actionType === "cancel") {
-            // Cập nhật thành CANCELLED
-            statusBadge.className = "badge bg-secondary";
-            statusBadge.textContent = "Đã hủy";
-
-            // Lấy thông tin dịch vụ từ button hiện tại
-            const serviceName = button.getAttribute("data-service-name");
-
-            // Tạo nút khôi phục mới
-            const restoreButton = document.createElement("button");
-            restoreButton.className = "btn btn-warning btn-action btn-restore";
-            restoreButton.setAttribute("data-request-id", requestId);
-            restoreButton.setAttribute("data-service-name", serviceName);
-            restoreButton.setAttribute("title", "Khôi phục yêu cầu");
-            restoreButton.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
-
-            // Thay thế nút tạo đơn bằng nút khôi phục
-            button.parentNode.replaceChild(restoreButton, button);
-
-            // *** QUAN TRỌNG: Reset modal manager sau khi hủy ***
-            modalManager.reset();
-            console.log("🔄 Modal manager reset after cancel action");
-          }
-        };
-
-        // Hàm xử lý hành động
-        const requestAction = (type) => {
-          const id = form.getAttribute("data-request-id");
-          if (!id) {
-            showCustomAlert("Thiếu ID yêu cầu", "error");
-            return;
-          }
-
-          const url = `/admin/service-requests/${id}/${type}`;
-          const formData = new FormData();
-
-          if (type === "confirm" || type === "contact" || type === "update") {
-            const price = form.querySelector("input[name='quotedPrice']").value;
-            const district = form.querySelector(
-              "select[name='district']"
-            ).value;
-            const address = form.querySelector(
-              "input[name='addressDetail']"
-            ).value;
-            const time = form.querySelector(
-              "input[name='executionTime']"
-            ).value;
-            const desc = form.querySelector(
-              "textarea[name='description']"
-            ).value;
-
-            // Validate form cho tab yêu cầu
-            const requestValidation = validateRequestForm(
-              price,
-              district,
-              address,
-              time
-            );
-            if (!requestValidation.isValid) {
-              showCustomAlert(
-                "Vui lòng kiểm tra lại thông tin: " +
-                  requestValidation.errors.join(", "),
-                "error"
-              );
-              return;
-            }
-
-            formData.append("quotedPrice", price);
-            formData.append("district", district);
-            formData.append("addressDetail", address);
-            formData.append("executionTime", time);
-            formData.append("description", desc);
-          }
-
-          fetch(url, {
-            method: "POST",
-            body: formData,
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              console.log("Response data:", data);
-
-              if (data.success) {
-                console.log(`✅ Action ${type} successful for request ${id}`);
-
-                // Đánh dấu action hoàn thành và cleanup modal
-                modalManager.markActionCompleted();
-
-                // Đợi modal đóng hoàn toàn rồi mới cập nhật UI
-                setTimeout(() => {
-                  // Cập nhật trạng thái trên giao diện
-                  updateUIAfterAction(id, type);
-
-                  // *** XỬ LÝ THÔNG BÁO THÀNH CÔNG ***
-                  if (type !== "confirm") {
-                    // Sửa triệt để text thông báo từ server
-                    let message = data.success;
-                    if (message) {
-                      // Thay thế tất cả các biến thể thông báo liên hệ
-                      if (
-                        message.includes("liên hệ") &&
-                        (message.includes("lưu") || message.includes("tạm"))
-                      ) {
-                        message = "Đã liên hệ thành công!";
-                      } else if (message.includes("đã liên hệ")) {
-                        message = "Đã liên hệ thành công!";
-                      }
-                    }
-                    showCustomAlert(message, "success");
-                  }
-                }, 200);
-              } else if (data.error) {
-                console.log(
-                  `❌ Action ${type} failed for request ${id}: ${data.error}`
-                );
-
-                // Đánh dấu action hoàn thành và cleanup modal
-                modalManager.markActionCompleted();
-
-                // Hiển thị lỗi sau khi đóng modal
-                setTimeout(() => {
-                  showCustomAlert("Lỗi: " + data.error, "error");
-                }, 200);
-              }
-            })
-            .catch((err) => {
-              console.error("❌ Network/Exception error:", err);
-
-              // Đánh dấu action hoàn thành và cleanup modal
-              modalManager.markActionCompleted();
-
-              // Hiển thị lỗi sau khi đóng modal
-              setTimeout(() => {
-                showCustomAlert("Có lỗi xảy ra.", "error");
-              }, 200);
-            });
-        };
-
-        // Gắn sự kiện click vào các nút
-        modal.querySelector(".btn-contact").addEventListener("click", () => {
-          requestAction("contact");
-        });
-
-        modal.querySelector(".btn-update").addEventListener("click", () => {
-          requestAction("update");
-        });
-
-        modal.querySelector(".btn-confirm").addEventListener("click", () => {
-          requestAction("confirm");
-        });
-
-        modal.querySelector(".btn-cancel").addEventListener("click", () => {
-          showCustomConfirm("Bạn có chắc muốn hủy yêu cầu này không?", () => {
-            requestAction("cancel");
-          });
-        });
-
-        // Xử lý nút khôi phục yêu cầu đã hủy
-        document.addEventListener("click", function (event) {
-          if (event.target.closest(".btn-restore")) {
-            const button = event.target.closest(".btn-restore");
-            const requestId = button.getAttribute("data-request-id");
-            const serviceName = button.getAttribute("data-service-name");
-
-            showCustomConfirm(
-              "Bạn có chắc muốn khôi phục yêu cầu này không?",
-              () => {
-                console.log(
-                  "🔄 Starting restore action for request:",
-                  requestId
-                );
-
-                fetch(`/admin/service-requests/${requestId}/restore`, {
-                  method: "POST",
-                })
-                  .then((res) => res.json())
-                  .then((data) => {
-                    if (data.success) {
-                      console.log("✅ Restore successful:", data.success);
-                      showCustomAlert(data.success, "success");
-
-                      // Cập nhật UI: thay đổi trạng thái dựa trên response
-                      const row = button.closest("tr");
-                      const statusBadge = row.querySelector(".badge");
-
-                      // Xác định trạng thái dựa trên message response
-                      let newStatus;
-                      if (data.success.includes("đã liên hệ")) {
-                        statusBadge.className = "badge bg-primary";
-                        statusBadge.textContent = "Đã liên hệ";
-                        newStatus = "CONTACTED";
-                      } else {
-                        statusBadge.className = "badge bg-warning text-dark";
-                        statusBadge.textContent = "Đang chờ";
-                        newStatus = "PENDING";
-                      }
-
-                      // Tạo nút mới thay thế nút khôi phục
-                      const newButton = document.createElement("button");
-                      newButton.className = "btn btn-success btn-action";
-                      newButton.setAttribute("data-bs-toggle", "modal");
-                      newButton.setAttribute(
-                        "data-bs-target",
-                        "#createOrderModal"
-                      );
-                      newButton.setAttribute("data-request-id", requestId);
-                      newButton.setAttribute("data-service-name", serviceName);
-                      newButton.setAttribute("data-status", newStatus);
-                      newButton.setAttribute("title", "Tạo đơn hàng");
-                      newButton.innerHTML = '<i class="bi bi-pencil"></i>';
-
-                      // Thay thế nút khôi phục bằng nút tạo đơn
-                      button.parentNode.replaceChild(newButton, button);
-
-                      // *** QUAN TRỌNG: Đánh dấu restore action hoàn thành ***
-                      modalManager.markRestoreCompleted();
-                      console.log(
-                        "🎯 Modal manager marked restore completed - modal can now open immediately"
-                      );
-                    } else if (data.error) {
-                      console.log("❌ Restore failed:", data.error);
-                      showCustomAlert("Lỗi: " + data.error, "error");
-                    }
-                  })
-                  .catch((err) => {
-                    console.error("❌ Restore error:", err);
-                    showCustomAlert(
-                      "Có lỗi xảy ra khi khôi phục yêu cầu.",
-                      "error"
-                    );
-                  });
-              }
-            );
-          }
-        });
-      });
-    </script>
-
-    <script>
-      let currentOrderId = null;
-
-      // Custom Alert System
-      function showCustomAlert(message, type = "success") {
-        // Remove existing alerts
-        document
-          .querySelectorAll(".custom-alert")
-          .forEach((alert) => alert.remove());
-
-        const alertDiv = document.createElement("div");
-        alertDiv.className = `custom-alert alert-${type}`;
-
-        const icon =
-          type === "success"
-            ? "bi-check-circle-fill"
-            : type === "error"
-            ? "bi-x-circle-fill"
-            : "bi-exclamation-triangle-fill";
-
-        alertDiv.innerHTML = `
-          <i class="alert-icon bi ${icon}"></i>
-          <span class="alert-message">${message}</span>
-          <button class="alert-close" onclick="this.parentElement.remove()">×</button>
-        `;
-
-        document.body.appendChild(alertDiv);
-
-        // Auto remove after 6 seconds (tăng thời gian để thấy rõ hơn)
-        setTimeout(() => {
-          if (alertDiv.parentElement) {
-            alertDiv.style.animation = "slideOutRight 0.3s ease-in";
-            setTimeout(() => alertDiv.remove(), 300);
-          }
-        }, 6000);
-      }
-
-      // Modal Loading System
-      function showModalLoading(modal, show) {
-        const modalBody = modal.querySelector(".modal-body");
-        const modalFooter = modal.querySelector(".modal-footer");
-
-        if (show) {
-          // Tạo loading overlay
-          if (!modal.querySelector(".loading-overlay")) {
-            const loadingOverlay = document.createElement("div");
-            loadingOverlay.className = "loading-overlay";
-            loadingOverlay.style.cssText = `
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              background: rgba(255, 255, 255, 0.8);
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              z-index: 1000;
-              border-radius: 15px;
-            `;
-            loadingOverlay.innerHTML = `
-              <div style="text-align: center;">
-                <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Loading...</span>
-                </div>
-                <div style="margin-top: 10px; color: #666;">Đang tải dữ liệu...</div>
+              <div class="mb-3">
+                <label class="form-label">Giá (VNĐ)</label>
+                <input
+                  type="number"
+                  name="quotedPrice"
+                  class="form-control"
+                  placeholder="Nhập giá"
+                />
               </div>
-            `;
-            modal.querySelector(".modal-content").style.position = "relative";
-            modal.querySelector(".modal-content").appendChild(loadingOverlay);
-          }
-
-          // Disable form elements
-          modalBody.style.pointerEvents = "none";
-          modalFooter.style.pointerEvents = "none";
-        } else {
-          // Remove loading overlay
-          const loadingOverlay = modal.querySelector(".loading-overlay");
-          if (loadingOverlay) {
-            loadingOverlay.remove();
-          }
-
-          // Enable form elements
-          modalBody.style.pointerEvents = "auto";
-          modalFooter.style.pointerEvents = "auto";
-        }
-      }
-
-      // Custom Confirm System
-      function showCustomConfirm(message, onConfirm, onCancel = null) {
-        // Remove existing confirms
-        document
-          .querySelectorAll(".custom-confirm")
-          .forEach((confirm) => confirm.remove());
-
-        const confirmDiv = document.createElement("div");
-        confirmDiv.className = "custom-confirm";
-        confirmDiv.style.cssText = `
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(0, 0, 0, 0.5);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 10000;
-        `;
-
-        confirmDiv.innerHTML = `
-          <div style="
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            max-width: 400px;
-            width: 90%;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-          ">
-            <div style="
-              display: flex;
-              align-items: center;
-              gap: 15px;
-              margin-bottom: 20px;
-            ">
-              <i class="bi bi-question-circle-fill" style="font-size: 24px; color: #0d6efd;"></i>
-              <span style="font-size: 16px; font-weight: 500; color: #333;">${message}</span>
             </div>
-            <div style="
-              display: flex;
-              gap: 10px;
-              justify-content: flex-end;
-            ">
-              <button class="btn btn-secondary confirm-cancel" style="padding: 8px 20px;">Hủy</button>
-              <button class="btn btn-primary confirm-ok" style="padding: 8px 20px;">Đồng ý</button>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Địa điểm</label>
+                <select id="districtSelect" class="form-select" name="district">
+                  <option value="">Chọn xã/phường</option>
+                  <option value="An Hai">An Hải</option>
+                  <option value="An Khe">An Khê</option>
+                  <option value="An Thang">An Thắng</option>
+                  <option value="Avuong">Avương</option>
+                  <option value="Ba">Ba</option>
+                  <option value="Ba Na">Bà Nà</option>
+                  <option value="Ban Thach">Bàn Thạch</option>
+                  <option value="Ben Giang">Bến Giằng</option>
+                  <option value="Ben Hien">Bến Hiên</option>
+                  <option value="Cam Le">Cẩm Lệ</option>
+                  <option value="Chien Dan">Chiên Đàn</option>
+                  <option value="Dac Pring">Đắc Pring</option>
+                  <option value="Dai Loc">Đại Lộc</option>
+                  <option value="Dien Ban">Điện Bàn</option>
+                  <option value="Dien Ban Bac">Điện Bàn Bắc</option>
+                  <option value="Dien Ban Dong">Điện Bàn Đông</option>
+                  <option value="Dong Duong">Đồng Dương</option>
+                  <option value="Dong Giang">Prao</option>
+                  <option value="Duc Phu">Đức Phú</option>
+                  <option value="Duy Nghia">Duy Nghĩa</option>
+                  <option value="Duy Xuyen">Duy Xuyên</option>
+                  <option value="Hai Chau">Hải Châu</option>
+                  <option value="Hai Van">Hải Vân</option>
+                  <option value="Ha Nha">Hà Nha</option>
+                  <option value="Hiep Duc">Tân Bình</option>
+                  <option value="Hoa Cuong">Hòa Cường</option>
+                  <option value="Hoa Khanh">Hòa Khánh</option>
+                  <option value="Hoa Tien">Hòa Tiến</option>
+                  <option value="Hoa Vang">Hòa Vang</option>
+                  <option value="Hoa Xuan">Hòa Xuân</option>
+                  <option value="Hoi An">Hội An</option>
+                  <option value="Hoi An Dong">Hội An Đông</option>
+                  <option value="Hoi An Tay">Hội An Tây</option>
+                  <option value="Hoang Sa">Hoàng Sa</option>
+                  <option value="Huong Tra">Hương Trà</option>
+                  <option value="Hung Son">Hùng Sơn</option>
+                  <option value="Kham Duc">Khâm Đức</option>
+                  <option value="La Dee">La Dêê</option>
+                  <option value="La Eee">La Êê</option>
+                  <option value="Lanh Ngoc">Lãnh Ngọc</option>
+                  <option value="Lien Chieu">Liên Chiểu</option>
+                  <option value="Nam Giang">Nam Giang</option>
+                  <option value="Nam Phuoc">Nam Phước</option>
+                  <option value="Nam Tra My">Nam Trà My</option>
+                  <option value="Ngu Hanh Son">Ngũ Hành Sơn</option>
+                  <option value="Nong Son">Nông Sơn</option>
+                  <option value="Nui Thanh">Núi Thành</option>
+                  <option value="Phu Ninh">Phú Ninh</option>
+                  <option value="Phu Thuan">Phú Thuận</option>
+                  <option value="Phuoc Chanh">Phước Chánh</option>
+                  <option value="Phuoc Hiep">Phước Hiệp</option>
+                  <option value="Phuoc Nang">Phước Năng</option>
+                  <option value="Phuoc Thanh">Phước Thành</option>
+                  <option value="Phuoc Tra">Phước Trà</option>
+                  <option value="Quang Phu">Quảng Phú</option>
+                  <option value="Que Phuoc">Quế Phước</option>
+                  <option value="Que Son">Quế Sơn</option>
+                  <option value="Que Son Trung">Quế Sơn Trung</option>
+                  <option value="Son Cam Ha">Sơn Cẩm Hà</option>
+                  <option value="Son Tra">Sơn Trà</option>
+                  <option value="Song Kon">Sông Kôn</option>
+                  <option value="Tam Anh">Tam Anh</option>
+                  <option value="Tam Hai">Tam Hải</option>
+                  <option value="Tam Ky">Tam Kỳ</option>
+                  <option value="Tam My">Tam Mỹ</option>
+                  <option value="Tam Xuan">Tam Xuân</option>
+                  <option value="Tan Hiep">Tân Hiệp</option>
+                  <option value="Tay Giang">Tây Giang</option>
+                  <option value="Tay Ho">Tây Hồ</option>
+                  <option value="Thanh Binh">Thanh Bình</option>
+                  <option value="Thanh Khe">Thanh Khê</option>
+                  <option value="Thanh My">Thạnh Mỹ</option>
+                  <option value="Thang An">Thăng An</option>
+                  <option value="Thang Binh">Thăng Bình</option>
+                  <option value="Thang Dien">Thăng Điền</option>
+                  <option value="Thang Phu">Thăng Phú</option>
+                  <option value="Thang Truong">Thăng Trường</option>
+                  <option value="Thu Bon">Thu Bồn</option>
+                  <option value="Thuong Duc">Thượng Đức</option>
+                  <option value="Tien Phuoc">Tiên Phước</option>
+                  <option value="Tra Doc">Trà Đốc</option>
+                  <option value="Tra Giap">Trà Giáp</option>
+                  <option value="Tra Leng">Trà Leng</option>
+                  <option value="Tra Lien">Trà Liên</option>
+                  <option value="Tra Linh">Trà Linh</option>
+                  <option value="Tra My">Trà My</option>
+                  <option value="Tra Tan">Trà Tân</option>
+                  <option value="Tra Tap">Trà Tập</option>
+                  <option value="Tra Van">Trà Vân</option>
+                  <option value="Vu Gia">Vu Gia</option>
+                  <option value="Viet An">Việt An</option>
+                  <option value="Xuan Phu">Xuân Phú</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Địa chỉ chi tiết</label>
+                <input
+                  type="text"
+                  name="addressDetail"
+                  class="form-control"
+                  placeholder="Nhập địa chỉ chi tiết"
+                />
+              </div>
             </div>
           </div>
-        `;
-
-        document.body.appendChild(confirmDiv);
-
-        // Handle buttons
-        confirmDiv.querySelector(".confirm-ok").onclick = () => {
-          confirmDiv.remove();
-          if (onConfirm) onConfirm();
-        };
-
-        confirmDiv.querySelector(".confirm-cancel").onclick = () => {
-          confirmDiv.remove();
-          if (onCancel) onCancel();
-        };
-
-        // Handle backdrop click
-        confirmDiv.onclick = (e) => {
-          if (e.target === confirmDiv) {
-            confirmDiv.remove();
-            if (onCancel) onCancel();
-          }
-        };
-      }
-
-      // Validation Functions
-      function validateRequestForm(price, district, address, time) {
-        let isValid = true;
-        const errors = [];
-
-        // Clear previous validation errors for request form
-        const form = document.getElementById("createOrderForm");
-        form.querySelectorAll(".is-invalid").forEach((el) => {
-          el.classList.remove("is-invalid");
-        });
-        form.querySelectorAll(".invalid-feedback").forEach((el) => el.remove());
-
-        // Validate quoted price
-        const priceStr = price.toString().trim();
-        const priceInput = form.querySelector("input[name='quotedPrice']");
-        if (!priceStr) {
-          addValidationErrorToElement(priceInput, "Vui lòng nhập giá");
-          errors.push("Vui lòng nhập giá");
-          isValid = false;
-        } else {
-          // Check for invalid characters (chỉ cho phép số và dấu phẩy, chấm)
-          if (!/^[\d,.\s]+$/.test(priceStr)) {
-            addValidationErrorToElement(priceInput, "Giá chỉ được chứa số");
-            errors.push("Giá chỉ được chứa số");
-            isValid = false;
-          } else {
-            const numericPrice = parseFloat(priceStr.replace(/[,\s]/g, ""));
-            if (isNaN(numericPrice) || numericPrice <= 0) {
-              addValidationErrorToElement(
-                priceInput,
-                "Giá phải là số dương lớn hơn 0"
-              );
-              errors.push("Giá phải là số dương lớn hơn 0");
-              isValid = false;
-            } else if (numericPrice > 999999999) {
-              addValidationErrorToElement(
-                priceInput,
-                "Giá không được vượt quá 999,999,999 VNĐ"
-              );
-              errors.push("Giá không được vượt quá 999,999,999 VNĐ");
-              isValid = false;
-            }
-          }
-        }
-
-        // Validate district
-        const districtSelect = form.querySelector("select[name='district']");
-        if (!district || district.trim() === "") {
-          addValidationErrorToElement(
-            districtSelect,
-            "Vui lòng chọn quận/huyện"
-          );
-          errors.push("Vui lòng chọn quận/huyện");
-          isValid = false;
-        }
-
-        // Validate address
-        const addressInput = form.querySelector("input[name='addressDetail']");
-        if (!address || address.trim() === "") {
-          addValidationErrorToElement(
-            addressInput,
-            "Vui lòng nhập địa chỉ chi tiết"
-          );
-          errors.push("Vui lòng nhập địa chỉ chi tiết");
-          isValid = false;
-        } else if (address.trim().length < 5) {
-          addValidationErrorToElement(
-            addressInput,
-            "Địa chỉ chi tiết phải có ít nhất 5 ký tự"
-          );
-          errors.push("Địa chỉ chi tiết phải có ít nhất 5 ký tự");
-          isValid = false;
-        } else if (address.trim().length > 255) {
-          addValidationErrorToElement(
-            addressInput,
-            "Địa chỉ chi tiết không được vượt quá 255 ký tự"
-          );
-          errors.push("Địa chỉ chi tiết không được vượt quá 255 ký tự");
-          isValid = false;
-        }
-
-        // Validate execution time
-        const timeInput = form.querySelector("input[name='executionTime']");
-        if (!time) {
-          addValidationErrorToElement(
-            timeInput,
-            "Vui lòng chọn thời gian thực hiện"
-          );
-          errors.push("Vui lòng chọn thời gian thực hiện");
-          isValid = false;
-        } else {
-          const selectedDate = new Date(time);
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-
-          if (selectedDate < today) {
-            addValidationErrorToElement(
-              timeInput,
-              "Thời gian thực hiện không được là ngày trong quá khứ"
-            );
-            errors.push("Thời gian thực hiện không được là ngày trong quá khứ");
-            isValid = false;
-          }
-
-          // Check if date is too far in future (1 year)
-          const oneYearFromNow = new Date();
-          oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
-          if (selectedDate > oneYearFromNow) {
-            addValidationErrorToElement(
-              timeInput,
-              "Thời gian thực hiện không được quá 1 năm từ hiện tại"
-            );
-            errors.push("Thời gian thực hiện không được quá 1 năm từ hiện tại");
-            isValid = false;
-          }
-        }
-
-        return { isValid, errors };
-      }
-
-      function validateOrderForm() {
-        let isValid = true;
-        const errors = [];
-
-        // Clear previous validation
-        document.querySelectorAll(".is-invalid").forEach((el) => {
-          el.classList.remove("is-invalid");
-        });
-        document
-          .querySelectorAll(".invalid-feedback")
-          .forEach((el) => el.remove());
-
-        // Validate quoted price
-        const priceInput = document
-          .getElementById("modal-quoted-price")
-          .value.trim();
-        if (!priceInput) {
-          addValidationError("modal-quoted-price", "Vui lòng nhập giá");
-          errors.push("Chưa nhập giá");
-          isValid = false;
-        } else {
-          // Check for invalid characters (chỉ cho phép số và dấu phẩy, chấm)
-          if (!/^[\d,.\s]+$/.test(priceInput)) {
-            addValidationError("modal-quoted-price", "Giá chỉ được chứa số");
-            errors.push("Giá chứa ký tự không hợp lệ");
-            isValid = false;
-          } else {
-            const numericPrice = parseFloat(priceInput.replace(/[,\s]/g, ""));
-            if (isNaN(numericPrice) || numericPrice <= 0) {
-              addValidationError(
-                "modal-quoted-price",
-                "Giá phải là số dương lớn hơn 0"
-              );
-              errors.push("Giá không hợp lệ");
-              isValid = false;
-            } else if (numericPrice > 999999999) {
-              addValidationError(
-                "modal-quoted-price",
-                "Giá không được vượt quá 999,999,999 VNĐ"
-              );
-              errors.push("Giá quá lớn");
-              isValid = false;
-            }
-          }
-        }
-
-        // Validate execution date
-        const performDate = document.getElementById("modal-perform-date").value;
-        if (!performDate) {
-          addValidationError(
-            "modal-perform-date",
-            "Vui lòng chọn ngày thực hiện"
-          );
-          errors.push("Chưa chọn ngày thực hiện");
-          isValid = false;
-        } else {
-          const selectedDate = new Date(performDate);
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-
-          if (selectedDate < today) {
-            addValidationError(
-              "modal-perform-date",
-              "Ngày thực hiện không được là ngày trong quá khứ"
-            );
-            errors.push("Ngày thực hiện không hợp lệ");
-            isValid = false;
-          }
-
-          // Check if date is too far in future (1 year)
-          const oneYearFromNow = new Date();
-          oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
-          if (selectedDate > oneYearFromNow) {
-            addValidationError(
-              "modal-perform-date",
-              "Ngày thực hiện không được quá 1 năm từ hiện tại"
-            );
-            errors.push("Ngày thực hiện quá xa");
-            isValid = false;
-          }
-        }
-
-        // Validate province/district
-        const province =
-          document.getElementById("modal-province-select").style.display !==
-          "none"
-            ? document.getElementById("modal-province-select").value
-            : document.getElementById("modal-province").value;
-        if (!province || province.trim() === "") {
-          const targetElement =
-            document.getElementById("modal-province-select").style.display !==
-            "none"
-              ? "modal-province-select"
-              : "modal-province";
-          addValidationError(targetElement, "Vui lòng chọn địa điểm");
-          errors.push("Chưa chọn địa điểm");
-          isValid = false;
-        }
-
-        // Validate address detail
-        const address = document.getElementById("modal-address").value.trim();
-        if (!address) {
-          addValidationError("modal-address", "Vui lòng nhập địa chỉ chi tiết");
-          errors.push("Chưa nhập địa chỉ chi tiết");
-          isValid = false;
-        } else if (address.length < 5) {
-          addValidationError(
-            "modal-address",
-            "Địa chỉ chi tiết phải có ít nhất 5 ký tự"
-          );
-          errors.push("Địa chỉ chi tiết phải có ít nhất 5 ký tự");
-          isValid = false;
-        } else if (address.length > 255) {
-          addValidationError(
-            "modal-address",
-            "Địa chỉ chi tiết không được vượt quá 255 ký tự"
-          );
-          errors.push("Địa chỉ quá dài");
-          isValid = false;
-        }
-
-        // Validate description (optional but if provided, check length)
-        const note = document.getElementById("modal-note").value.trim();
-        if (note && note.length > 1000) {
-          addValidationError(
-            "modal-note",
-            "Mô tả không được vượt quá 1000 ký tự"
-          );
-          errors.push("Mô tả quá dài");
-          isValid = false;
-        }
-
-        return { isValid, errors };
-      }
-
-      function addValidationError(elementId, message) {
-        const element = document.getElementById(elementId);
-        addValidationErrorToElement(element, message);
-      }
-
-      function addValidationErrorToElement(element, message) {
-        if (!element) return;
-
-        element.classList.add("is-invalid");
-
-        const feedback = document.createElement("div");
-        feedback.className = "invalid-feedback";
-        feedback.textContent = message;
-        element.parentNode.appendChild(feedback);
-      }
-
-      function loadOrderDetail(orderId) {
-        currentOrderId = orderId;
-
-        // Reset form và clear validation errors
-        $("#modal-id").val("");
-        $("#modal-name").val("");
-        $("#modal-service").val("");
-        $("#modal-request-date").val("");
-        $("#modal-perform-date").val("");
-        $("#modal-province").val("");
-        $("#modal-address").val("");
-        $("#modal-note").val("");
-        $("#modal-quoted-price").val("");
-
-        // Clear validation errors
-        $("#orderDetailsModal").find(".is-invalid").removeClass("is-invalid");
-        $("#orderDetailsModal").find(".invalid-feedback").remove();
-
-        // Load dữ liệu
-        $.ajax({
-          url: `/admin/service-requests/order/${orderId}/detail`,
-          method: "GET",
-          success: function (data) {
-            $("#modal-id").val(data.orderId);
-            $("#modal-name").val(data.fullName);
-            $("#modal-service").val(data.serviceName);
-            $("#modal-request-date").val(data.requestDate.substring(0, 10));
-            $("#modal-perform-date").val(data.performDate);
-            $("#modal-province").val(data.province);
-            $("#modal-address").val(data.address);
-            $("#modal-note").val(data.note || "(Không có)");
-            $("#modal-quoted-price").val(
-              data.quotedPrice.toLocaleString("vi-VN") + " VNĐ"
-            );
-
-            // Hiển thị nút dựa trên trạng thái
-            if (data.status === "Chưa thanh toán") {
-              $("#btn-edit").show();
-              $("#btn-payment").show();
-              $("#btn-confirm").hide();
-              $("#btn-cancel").show();
-            } else if (data.status === "Đã thanh toán") {
-              $("#btn-edit").show(); // Vẫn cho phép chỉnh sửa khi đã thanh toán
-              $("#btn-payment").hide();
-              $("#btn-confirm").show();
-              $("#btn-cancel").show();
-            } else {
-              // Đã hoàn tất hoặc đã hủy - chỉ cho phép xem
-              $("#btn-edit").hide();
-              $("#btn-payment").hide();
-              $("#btn-confirm").hide();
-              $("#btn-cancel").hide();
-            }
-          },
-          error: function (xhr, status, error) {
-            console.error("Lỗi:", error);
-            showCustomAlert("Không thể tải dữ liệu đơn hàng.", "error");
-          },
-          complete: function () {
-            // Tắt loading state
-            showModalLoading(
-              document.getElementById("orderDetailsModal"),
-              false
-            );
-          },
-        });
-      }
-
-      function updateOrderStatus(orderId, newStatus) {
-        // Cập nhật trạng thái trong bảng
-        const row = $(`button[data-id="${orderId}"]`).closest("tr");
-        const statusBadge = row.find(".badge");
-
-        // Cập nhật class và text với màu đúng theo thiết kế
-        statusBadge.removeClass().addClass("badge");
-        if (newStatus === "CANCELLED") {
-          statusBadge.addClass("bg-secondary").text("Đã hủy");
-        } else if (newStatus === "DONE") {
-          statusBadge.addClass("bg-primary").text("Đã hoàn tất"); // Dùng bg-primary (xanh dương) thay vì bg-success (xanh lá)
-        } else if (newStatus === "PAID") {
-          statusBadge.addClass("bg-success").text("Đã thanh toán"); // Xanh lá cho đã thanh toán
-        }
-      }
-
-      $(document).ready(function () {
-        // Xử lý khi modal được mở
-        $("#orderDetailsModal").on("show.bs.modal", function (event) {
-          const button = $(event.relatedTarget);
-          const orderId = button.data("id");
-
-          // Hiển thị loading state
-          showModalLoading(document.getElementById("orderDetailsModal"), true);
-
-          loadOrderDetail(orderId);
-        });
-
-        // Clear validation errors khi đóng modal đơn hàng
-        $("#orderDetailsModal").on("hidden.bs.modal", function () {
-          // Clear validation errors
-          $(this).find(".is-invalid").removeClass("is-invalid");
-          $(this).find(".invalid-feedback").remove();
-        });
-
-        // Xử lý nút hoàn thành
-        $(document).on("click", "#btn-confirm", function () {
-          if (!currentOrderId) return;
-
-          showCustomConfirm(
-            "Bạn có chắc muốn hoàn thành đơn hàng này không?",
-            () => {
-              $.post(`/admin/service-requests/order/${currentOrderId}/complete`)
-                .done(function () {
-                  // Force cleanup tất cả modal và backdrop
-                  $(".modal").modal("hide");
-                  $(".modal-backdrop").remove();
-                  $("body")
-                    .removeClass("modal-open")
-                    .css({ overflow: "auto", "padding-right": "" });
-
-                  // Delay để cleanup hoàn toàn
-                  setTimeout(() => {
-                    showCustomAlert(
-                      "Đơn hàng đã được hoàn thành thành công!",
-                      "success"
-                    );
-                    updateOrderStatus(currentOrderId, "DONE");
-                  }, 500);
-                })
-                .fail(function (xhr, status, error) {
-                  console.error("Lỗi:", error);
-                  // Cleanup modal khi có lỗi
-                  $(".modal").modal("hide");
-                  $(".modal-backdrop").remove();
-                  $("body")
-                    .removeClass("modal-open")
-                    .css({ overflow: "auto", "padding-right": "" });
-
-                  setTimeout(() => {
-                    showCustomAlert(
-                      "Lỗi khi hoàn thành đơn hàng: " +
-                        (xhr.responseText || error),
-                      "error"
-                    );
-                  }, 300);
-                });
-            }
-          );
-        });
-
-        // Xử lý nút hủy
-        $(document).on("click", "#btn-cancel", function () {
-          if (!currentOrderId) return;
-
-          showCustomConfirm("Bạn có chắc muốn hủy đơn hàng này không?", () => {
-            $.post(`/admin/service-requests/order/${currentOrderId}/cancel`)
-              .done(function () {
-                // Force cleanup tất cả modal và backdrop
-                $(".modal").modal("hide");
-                $(".modal-backdrop").remove();
-                $("body")
-                  .removeClass("modal-open")
-                  .css({ overflow: "auto", "padding-right": "" });
-
-                // Delay để cleanup hoàn toàn
-                setTimeout(() => {
-                  showCustomAlert(
-                    "Đơn hàng đã được hủy thành công!",
-                    "success"
-                  );
-                  updateOrderStatus(currentOrderId, "CANCELLED");
-                }, 500);
-              })
-              .fail(function (xhr, status, error) {
-                console.error("Lỗi:", error);
-                // Cleanup modal khi có lỗi
-                $(".modal").modal("hide");
-                $(".modal-backdrop").remove();
-                $("body")
-                  .removeClass("modal-open")
-                  .css({ overflow: "auto", "padding-right": "" });
-
-                setTimeout(() => {
-                  showCustomAlert(
-                    "Lỗi khi hủy đơn hàng: " + (xhr.responseText || error),
-                    "error"
-                  );
-                }, 300);
-              });
-          });
-        });
-
-        // Xử lý nút chỉnh sửa đơn hàng
-        $(document).on("click", "#btn-edit", function () {
-          console.log("Edit button clicked");
-          const isReadonly = $("#modal-quoted-price").prop("readonly");
-          console.log("Is currently readonly:", isReadonly);
-
-          if (isReadonly) {
-            console.log("Switching to edit mode");
-            // Chuyển sang chế độ chỉnh sửa
-            $("#modal-quoted-price").prop("readonly", false);
-            $("#modal-perform-date")
-              .prop("readonly", false)
-              .attr("type", "date");
-
-            // Chuyển địa điểm từ input sang select
-            const currentProvince = $("#modal-province").val();
-            $("#modal-province").hide();
-            $("#modal-province-select").show();
-            $("#modal-province-select").val(currentProvince); // Set giá trị hiện tại
-
-            $("#modal-address").prop("readonly", false);
-            $("#modal-note").prop("readonly", false);
-
-            // Xử lý giá tiền - loại bỏ format để có thể edit
-            let currentPrice = $("#modal-quoted-price").val();
-            if (currentPrice && currentPrice.includes("VNĐ")) {
-              let numericPrice = currentPrice.replace(/[^\d]/g, "");
-              $("#modal-quoted-price").val(numericPrice);
-            }
-
-            console.log("Fields should now be editable");
-            console.log(
-              "Quoted price readonly:",
-              $("#modal-quoted-price").prop("readonly")
-            );
-            console.log(
-              "Province readonly:",
-              $("#modal-province").prop("readonly")
-            );
-
-            // Thay đổi icon và title
-            $(this)
-              .html('<i class="bi bi-check2"></i>')
-              .attr("title", "Lưu thay đổi");
-            $(this).removeClass("btn-primary").addClass("btn-success");
-
-            // Ẩn các nút khác
-            $("#btn-payment, #btn-confirm, #btn-cancel").hide();
-
-            // Thêm nút hủy chỉnh sửa
-            if ($("#btn-cancel-edit").length === 0) {
-              $(this).after(
-                '<button id="btn-cancel-edit" class="btn btn-secondary btn-action ms-1" title="Hủy chỉnh sửa"><i class="bi bi-x"></i></button>'
-              );
-            }
-          } else {
-            // Lưu thay đổi
-            const orderId = currentOrderId;
-            const quotedPrice = $("#modal-quoted-price")
-              .val()
-              .replace(/[^\d]/g, "");
-            const performDate = $("#modal-perform-date").val();
-            const province = $("#modal-province-select").val(); // Lấy từ select
-            const address = $("#modal-address").val();
-            const note = $("#modal-note").val();
-
-            // Validate form trước khi lưu
-            const validation = validateOrderForm();
-            if (!validation.isValid) {
-              showCustomAlert(
-                "Vui lòng kiểm tra lại thông tin: " +
-                  validation.errors.join(", "),
-                "error"
-              );
-              return;
-            }
-
-            showCustomConfirm(
-              "Bạn có chắc muốn lưu các thay đổi không?",
-              () => {
-                $.post(`/admin/service-requests/order/${orderId}/update`, {
-                  quotedPrice: quotedPrice,
-                  district: province,
-                  addressDetail: address,
-                  description: note,
-                  executionTime: performDate,
-                })
-                  .done(function () {
-                    showCustomAlert(
-                      "Đã cập nhật đơn hàng thành công!",
-                      "success"
-                    );
-
-                    // Đóng modal trước
-                    $("#orderDetailsModal").modal("hide");
-
-                    // Delay trước khi reload để người dùng thấy thông báo
-                    setTimeout(() => {
-                      location.reload();
-                    }, 1500); // Delay 1.5 giây để thấy thông báo
-                  })
-                  .fail(function (xhr, status, error) {
-                    console.error("Lỗi:", error);
-                    showCustomAlert(
-                      "Lỗi khi cập nhật đơn hàng: " +
-                        (xhr.responseText || error),
-                      "error"
-                    );
-                  });
-              }
-            );
-          }
-        });
-
-        // Xử lý nút hủy chỉnh sửa
-        $(document).on("click", "#btn-cancel-edit", function () {
-          // Khôi phục chế độ readonly
-          $(
-            "#modal-quoted-price, #modal-perform-date, #modal-address, #modal-note"
-          ).prop("readonly", true);
-          $("#modal-perform-date").attr("type", "text"); // Đổi lại thành text
-
-          // Khôi phục địa điểm từ select về input
-          $("#modal-province-select").hide();
-          $("#modal-province").show();
-
-          // Khôi phục nút chỉnh sửa
-          $("#btn-edit")
-            .html('<i class="bi bi-pencil"></i>')
-            .attr("title", "Chỉnh sửa đơn hàng");
-          $("#btn-edit").removeClass("btn-success").addClass("btn-primary");
-
-          // Hiển thị lại các nút khác
-          const status = $("#modal-id").data("status") || "Chưa thanh toán";
-          if (status === "Chưa thanh toán") {
-            $("#btn-payment, #btn-cancel").show();
-          } else if (status === "Đã thanh toán") {
-            $("#btn-confirm, #btn-cancel").show();
-          }
-
-          // Xóa nút hủy chỉnh sửa
-          $(this).remove();
-
-          // Reload lại dữ liệu gốc
-          loadOrderDetail(currentOrderId);
-        });
-
-        // Xử lý nút thanh toán trong modal
-        $(document).on("click", "#btn-payment", function () {
-          if (!currentOrderId) return;
-
-          showCustomConfirm(
-            "Bạn có chắc muốn xác nhận đơn hàng này đã thanh toán không?",
-            () => {
-              $.post(
-                `/admin/service-requests/order/${currentOrderId}/mark-paid`
-              )
-                .done(function () {
-                  // Force cleanup tất cả modal và backdrop
-                  $(".modal").modal("hide");
-                  $(".modal-backdrop").remove();
-                  $("body")
-                    .removeClass("modal-open")
-                    .css({ overflow: "auto", "padding-right": "" });
-
-                  // Delay để cleanup hoàn toàn
-                  setTimeout(() => {
-                    showCustomAlert(
-                      "Đơn hàng đã được xác nhận thanh toán thành công!",
-                      "success"
-                    );
-                    updateOrderStatus(currentOrderId, "PAID");
-
-                    // Delay trước khi reload để người dùng thấy thông báo
-                    setTimeout(() => {
-                      location.reload();
-                    }, 1500); // Delay 1.5 giây để thấy thông báo
-                  }, 500);
-                })
-                .fail(function (xhr, status, error) {
-                  console.error("Lỗi:", error);
-                  // Cleanup modal khi có lỗi
-                  $(".modal").modal("hide");
-                  $(".modal-backdrop").remove();
-                  $("body")
-                    .removeClass("modal-open")
-                    .css({ overflow: "auto", "padding-right": "" });
-
-                  setTimeout(() => {
-                    showCustomAlert(
-                      "Lỗi khi xác nhận thanh toán: " +
-                        (xhr.responseText || error),
-                      "error"
-                    );
-                  }, 300);
-                });
-            }
-          );
-        });
-      });
-
-      document.addEventListener("DOMContentLoaded", function () {
-        // Hệ thống quản lý modal backdrop toàn cục
-        let modalCount = 0;
-
-        document.querySelectorAll(".modal").forEach((modal) => {
-          modal.addEventListener("show.bs.modal", function () {
-            modalCount++;
-            console.log("Modal opened, count:", modalCount);
-          });
-
-          modal.addEventListener("hidden.bs.modal", function () {
-            modalCount--;
-            console.log("Modal closed, count:", modalCount);
-
-            // Chỉ cleanup khi không còn modal nào mở
-            setTimeout(() => {
-              if (modalCount <= 0) {
-                modalCount = 0;
-                // Force cleanup backdrop
-                document
-                  .querySelectorAll(".modal-backdrop")
-                  .forEach((el) => el.remove());
-                document.body.classList.remove("modal-open");
-                document.body.style.overflow = "auto";
-                document.body.style.paddingRight = "";
-              }
-            }, 100);
-          });
-        });
-
-        // Cleanup toàn cục khi cần
-        window.forceCleanupModals = function () {
-          modalCount = 0;
-          document
-            .querySelectorAll(".modal-backdrop")
-            .forEach((el) => el.remove());
-          document.body.classList.remove("modal-open");
-          document.body.style.overflow = "auto";
-          document.body.style.paddingRight = "";
-        };
-      });
-    </script>
-    <!-- <script th:src="@{/js/list-order-service.js}"></script> -->
-  </body>
-</html>
+          <div class="modal-form-row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Thời gian thực hiện</label>
+                <input type="date" name="executionTime" class="form-control" />
+              </div>
+            </div>
+            <div class="col-md-6 description-field">
+              <div class="mb-3">
+                <label class="form-label">Mô tả</label>
+                <textarea
+                  name="description"
+                  class="form-control"
+                  rows="4"
+                  placeholder="Nhập mô tả dịch vụ"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-primary btn-action btn-contact"
+          title="Liên hệ lần đầu"
+        >
+          <i class="bi bi-telephone"></i>
+        </button>
+        <button
+          type="button"
+          class="btn btn-info btn-action btn-update"
+          title="Cập nhật thông tin"
+          style="display: none"
+        >
+          <i class="bi bi-pencil-square"></i>
+        </button>
+        <button
+          type="button"
+          class="btn btn-success btn-action btn-confirm"
+          title="Xác nhận tạo đơn"
+        >
+          <i class="bi bi-check-circle"></i>
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger btn-action btn-cancel"
+          title="Hủy yêu cầu"
+        >
+          <i class="bi bi-x-circle"></i>
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary btn-action"
+          data-bs-dismiss="modal"
+          title="Đóng"
+        >
+          <i class="bi bi-box-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Order Details Modal -->
+<div
+  class="modal fade"
+  id="orderDetailsModal"
+  tabindex="-1"
+  aria-labelledby="orderDetailsModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="orderDetailsModalLabel">
+          Chi tiết đơn hàng
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="modal-form-row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Mã đơn</label>
+                <input
+                  id="modal-id"
+                  type="text"
+                  class="form-control"
+                  readonly
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Tên khách hàng</label>
+                <input
+                  id="modal-name"
+                  type="text"
+                  class="form-control"
+                  readonly
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Dịch vụ</label>
+                <input
+                  id="modal-service"
+                  type="text"
+                  class="form-control"
+                  readonly
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Giá chốt</label>
+                <input
+                  id="modal-quoted-price"
+                  type="text"
+                  class="form-control"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Ngày yêu cầu</label>
+                <input
+                  id="modal-request-date"
+                  type="text"
+                  class="form-control"
+                  readonly
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Thời gian thực hiện</label>
+                <input
+                  id="modal-perform-date"
+                  type="text"
+                  class="form-control"
+                  readonly
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Địa điểm</label>
+                <input
+                  id="modal-province"
+                  type="text"
+                  class="form-control"
+                  readonly
+                />
+                <select
+                  id="modal-province-select"
+                  class="form-select"
+                  style="display: none"
+                >
+                  <option value="">Chọn xã/phường</option>
+                  <option value="An Hai">An Hải</option>
+                  <option value="An Khe">An Khê</option>
+                  <option value="An Thang">An Thắng</option>
+                  <option value="Avuong">Avương</option>
+                  <option value="Ba">Ba</option>
+                  <option value="Ba Na">Bà Nà</option>
+                  <option value="Ban Thach">Bàn Thạch</option>
+                  <option value="Ben Giang">Bến Giằng</option>
+                  <option value="Ben Hien">Bến Hiên</option>
+                  <option value="Cam Le">Cẩm Lệ</option>
+                  <option value="Chien Dan">Chiên Đàn</option>
+                  <option value="Dac Pring">Đắc Pring</option>
+                  <option value="Dai Loc">Đại Lộc</option>
+                  <option value="Dien Ban">Điện Bàn</option>
+                  <option value="Dien Ban Bac">Điện Bàn Bắc</option>
+                  <option value="Dien Ban Dong">Điện Bàn Đông</option>
+                  <option value="Dong Duong">Đồng Dương</option>
+                  <option value="Dong Giang">Prao</option>
+                  <option value="Duc Phu">Đức Phú</option>
+                  <option value="Duy Nghia">Duy Nghĩa</option>
+                  <option value="Duy Xuyen">Duy Xuyên</option>
+                  <option value="Hai Chau">Hải Châu</option>
+                  <option value="Hai Van">Hải Vân</option>
+                  <option value="Ha Nha">Hà Nha</option>
+                  <option value="Hiep Duc">Tân Bình</option>
+                  <option value="Hoa Cuong">Hòa Cường</option>
+                  <option value="Hoa Khanh">Hòa Khánh</option>
+                  <option value="Hoa Tien">Hòa Tiến</option>
+                  <option value="Hoa Vang">Hòa Vang</option>
+                  <option value="Hoa Xuan">Hòa Xuân</option>
+                  <option value="Hoi An">Hội An</option>
+                  <option value="Hoi An Dong">Hội An Đông</option>
+                  <option value="Hoi An Tay">Hội An Tây</option>
+                  <option value="Hoang Sa">Hoàng Sa</option>
+                  <option value="Huong Tra">Hương Trà</option>
+                  <option value="Hung Son">Hùng Sơn</option>
+                  <option value="Kham Duc">Khâm Đức</option>
+                  <option value="La Dee">La Dêê</option>
+                  <option value="La Eee">La Êê</option>
+                  <option value="Lanh Ngoc">Lãnh Ngọc</option>
+                  <option value="Lien Chieu">Liên Chiểu</option>
+                  <option value="Nam Giang">Nam Giang</option>
+                  <option value="Nam Phuoc">Nam Phước</option>
+                  <option value="Nam Tra My">Nam Trà My</option>
+                  <option value="Ngu Hanh Son">Ngũ Hành Sơn</option>
+                  <option value="Nong Son">Nông Sơn</option>
+                  <option value="Nui Thanh">Núi Thành</option>
+                  <option value="Phu Ninh">Phú Ninh</option>
+                  <option value="Phu Thuan">Phú Thuận</option>
+                  <option value="Phuoc Chanh">Phước Chánh</option>
+                  <option value="Phuoc Hiep">Phước Hiệp</option>
+                  <option value="Phuoc Nang">Phước Năng</option>
+                  <option value="Phuoc Thanh">Phước Thành</option>
+                  <option value="Phuoc Tra">Phước Trà</option>
+                  <option value="Quang Phu">Quảng Phú</option>
+                  <option value="Que Phuoc">Quế Phước</option>
+                  <option value="Que Son">Quế Sơn</option>
+                  <option value="Que Son Trung">Quế Sơn Trung</option>
+                  <option value="Son Cam Ha">Sơn Cẩm Hà</option>
+                  <option value="Son Tra">Sơn Trà</option>
+                  <option value="Song Kon">Sông Kôn</option>
+                  <option value="Tam Anh">Tam Anh</option>
+                  <option value="Tam Hai">Tam Hải</option>
+                  <option value="Tam Ky">Tam Kỳ</option>
+                  <option value="Tam My">Tam Mỹ</option>
+                  <option value="Tam Xuan">Tam Xuân</option>
+                  <option value="Tan Hiep">Tân Hiệp</option>
+                  <option value="Tay Giang">Tây Giang</option>
+                  <option value="Tay Ho">Tây Hồ</option>
+                  <option value="Thanh Binh">Thanh Bình</option>
+                  <option value="Thanh Khe">Thanh Khê</option>
+                  <option value="Thanh My">Thạnh Mỹ</option>
+                  <option value="Thang An">Thăng An</option>
+                  <option value="Thang Binh">Thăng Bình</option>
+                  <option value="Thang Dien">Thăng Điền</option>
+                  <option value="Thang Phu">Thăng Phú</option>
+                  <option value="Thang Truong">Thăng Trường</option>
+                  <option value="Thu Bon">Thu Bồn</option>
+                  <option value="Thuong Duc">Thượng Đức</option>
+                  <option value="Tien Phuoc">Tiên Phước</option>
+                  <option value="Tra Doc">Trà Đốc</option>
+                  <option value="Tra Giap">Trà Giáp</option>
+                  <option value="Tra Leng">Trà Leng</option>
+                  <option value="Tra Lien">Trà Liên</option>
+                  <option value="Tra Linh">Trà Linh</option>
+                  <option value="Tra My">Trà My</option>
+                  <option value="Tra Tan">Trà Tân</option>
+                  <option value="Tra Tap">Trà Tập</option>
+                  <option value="Tra Van">Trà Vân</option>
+                  <option value="Vu Gia">Vu Gia</option>
+                  <option value="Viet An">Việt An</option>
+                  <option value="Xuan Phu">Xuân Phú</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Địa chỉ chi tiết</label>
+                <input
+                  id="modal-address"
+                  type="text"
+                  class="form-control"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="mb-3 description-field">
+              <label class="form-label">Mô tả</label>
+              <textarea
+                id="modal-note"
+                class="form-control"
+                rows="4"
+                readonly
+              ></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          id="btn-edit"
+          class="btn btn-primary btn-action"
+          title="Chỉnh sửa đơn hàng"
+        >
+          <i class="bi bi-pencil"></i>
+        </button>
+        <button
+          id="btn-payment"
+          class="btn btn-warning btn-action"
+          title="Đánh dấu đã thanh toán"
+        >
+          <i class="bi bi-credit-card"></i>
+        </button>
+        <button
+          id="btn-confirm"
+          class="btn btn-success btn-action"
+          title="Hoàn thành đơn hàng"
+        >
+          <i class="bi bi-check-circle"></i>
+        </button>
+        <button
+          id="btn-cancel"
+          class="btn btn-danger btn-action"
+          title="Hủy đơn hàng"
+        >
+          <i class="bi bi-x-circle"></i>
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary btn-action"
+          data-bs-dismiss="modal"
+          title="Đóng"
+        >
+          <i class="bi bi-box-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/list-order-service.js}"></script>

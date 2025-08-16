@@ -9,11 +9,7 @@
       th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css}"
       rel="stylesheet"
     />
-
-    <!-- Link css -->
-    <link rel="stylesheet" th:href="@{/css/admin-crud.css}" />
   </head>
-
   <body>
     <!-- Toast thông báo lỗi -->
     <div
@@ -131,51 +127,6 @@
         ></button>
       </div>
     </div>
-    <script>
-      function showToast(id) {
-        var toast = document.getElementById(id);
-        if (toast) {
-          toast.style.transform = "translateX(0)";
-          toast.style.opacity = "1";
-          setTimeout(function () {
-            hideToast(id);
-          }, 5000);
-        }
-      }
-      function hideToast(id) {
-        var toast = document.getElementById(id);
-        if (toast) {
-          toast.style.transform = "translateX(120%)";
-          toast.style.opacity = "0";
-        }
-      }
-      window.addEventListener("DOMContentLoaded", function () {
-        if (
-          document.getElementById("errorToast") &&
-          document
-            .getElementById("errorToast")
-            .querySelector(".toast-body span")
-            .textContent.trim() !== ""
-        )
-          showToast("errorToast");
-        if (
-          document.getElementById("successToast") &&
-          document
-            .getElementById("successToast")
-            .querySelector(".toast-body span")
-            .textContent.trim() !== ""
-        )
-          showToast("successToast");
-        if (
-          document.getElementById("warningToast") &&
-          document
-            .getElementById("warningToast")
-            .querySelector(".toast-body span")
-            .textContent.trim() !== ""
-        )
-          showToast("warningToast");
-      });
-    </script>
     <div class="bodi">
       <div class="container-fluid" th:insert="~{/admin/content}"></div>
     </div>
@@ -209,8 +160,6 @@
         </div>
       </div>
     </div>
-    <!-- Link js -->
     <script th:src="@{/js/layout-page.js}"></script>
-    <script th:src="@{/js/admin-crud.js}"></script>
   </body>
 </html>
