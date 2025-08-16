@@ -86,4 +86,6 @@ public interface ProductService {
          */
         List<String> findSearchSuggestionsByKeyword(String keyword, int limit);
 
+        List<Map<String, Object>> getTop6SellingProductsByYearAndMonth(int year, int month);
+
 }

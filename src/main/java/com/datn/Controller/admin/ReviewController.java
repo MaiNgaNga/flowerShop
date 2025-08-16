@@ -10,13 +10,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.datn.Service.CommentService;
 import com.datn.model.Comment;
-import com.datn.model.Contact;
 
 @RequestMapping("/admin/reviews")
 @Controller
 public class ReviewController {
-    
-    @Autowired 
+
+    @Autowired
     private CommentService commentService;
 
     @GetMapping("/index")

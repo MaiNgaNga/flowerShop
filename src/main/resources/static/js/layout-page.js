@@ -17,3 +17,49 @@ function confirmDelete(element) {
   );
   deleteModal.show();
 }
+
+// ============================================================================== //
+
+function showToast(id) {
+  var toast = document.getElementById(id);
+  if (toast) {
+    toast.style.transform = "translateX(0)";
+    toast.style.opacity = "1";
+    setTimeout(function () {
+      hideToast(id);
+    }, 5000);
+  }
+}
+function hideToast(id) {
+  var toast = document.getElementById(id);
+  if (toast) {
+    toast.style.transform = "translateX(120%)";
+    toast.style.opacity = "0";
+  }
+}
+window.addEventListener("DOMContentLoaded", function () {
+  if (
+    document.getElementById("errorToast") &&
+    document
+      .getElementById("errorToast")
+      .querySelector(".toast-body span")
+      .textContent.trim() !== ""
+  )
+    showToast("errorToast");
+  if (
+    document.getElementById("successToast") &&
+    document
+      .getElementById("successToast")
+      .querySelector(".toast-body span")
+      .textContent.trim() !== ""
+  )
+    showToast("successToast");
+  if (
+    document.getElementById("warningToast") &&
+    document
+      .getElementById("warningToast")
+      .querySelector(".toast-body span")
+      .textContent.trim() !== ""
+  )
+    showToast("warningToast");
+});

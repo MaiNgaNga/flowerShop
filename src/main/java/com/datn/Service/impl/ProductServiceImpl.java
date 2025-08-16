@@ -1,5 +1,9 @@
 package com.datn.Service.impl;
 
+
+import com.datn.utils.StringUtils;
+
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -310,6 +314,11 @@ public class ProductServiceImpl implements ProductService {
                 suggestions.add(name);
         }
         return suggestions.size() > limit ? suggestions.subList(0, limit) : suggestions;
+    }
+
+    @Override
+    public List<Map<String, Object>> getTop6SellingProductsByYearAndMonth(int year, int month) {
+        return dao.getTop6SellingProductsByYearAndMonth(year, month);
     }
 
 }
