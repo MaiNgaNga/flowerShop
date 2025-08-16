@@ -6,7 +6,6 @@ import com.datn.Service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -116,4 +115,5 @@ public class StatisticalController {
         logger.info("Kết quả top danh mục: {}", result);
         return result;
     }
+
 }
