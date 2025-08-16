@@ -320,6 +320,8 @@ public class OrderServiceImpl implements OrderService {
         return dao.countPaidOrdersByYear(year);
     }
 
+    }
+
     public Order findByID(Long id) {
         return dao.findById(id).orElse(null);
 

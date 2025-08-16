@@ -147,14 +147,19 @@
                   <input
                     type="radio"
                     th:field="*{role}"
-                    value="2"
-                    id="roleShipper"
+                    value="3"
+                    id="roleStaff"
                     class="form-check-input"
                   />
-                  <label for="roleShipper" class="form-check-label text-muted"
-                    >Shipper</label
+                  <label for="roleStaff" class="form-check-label text-muted"
+                    >Staff</label
                   >
                 </div>
+                <div class="form-check">
+                  <input type="radio" th:field="*{role}" value="2" id="roleShipper" class="form-check-input" />
+                  <label for="roleShipper" class="form-check-label text-muted">Shipper</label>
+                </div>
+                
               </div>
               <small class="text-danger" th:errors="*{role}"></small>
             </div>
@@ -278,6 +283,7 @@
                     <span th:case="0">User</span>
                     <span th:case="1">Admin</span>
                     <span th:case="2">Shipper</span>
+                    <span th:case="3">Staff</span>
                     <span th:case="*">Không rõ</span>
                   </span>
                 </td>

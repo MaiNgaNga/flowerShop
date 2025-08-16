@@ -15,6 +15,8 @@ public interface OrderService {
 
   Order findByID(Long id);
 
+
+
   // Order saveOrder(Order order, List<OrderDetail> orderDetails);
 
   Order getOrderById(Long id);
@@ -57,8 +59,11 @@ public interface OrderService {
 
   Order cancelByShipper(Long orderId, int shipperId, String cancelReason, String cancelDetails);
 
+
   // Order cancelByShipper(Long orderId, int shipperId, String cancelReason,
   // String cancelDetails);
+
+
 
   Double getTotalCompletedOrdersAmount(int shipperId);
 
@@ -88,8 +93,11 @@ public interface OrderService {
 
   Long countDeliveredOrdersByYear(int year);
 
+
   // Page<Order> getPosOrdersByType(String orderType, LocalDate fromDate,
   // LocalDate toDate, Pageable pageable);
+
+
 
   // // Tìm kiếm đơn hàng POS theo mã đơn hàng, có phân trang, lọc ngày, loại đơn
   // Page<Order> searchPosOrdersByOrderCode(String orderType, String orderCode,
