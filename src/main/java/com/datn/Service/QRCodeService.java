@@ -18,10 +18,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
-import java.io.OutputStream;    
-
-
-
+import java.io.OutputStream;
 
 @Service
 public class QRCodeService {
