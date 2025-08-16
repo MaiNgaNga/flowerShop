@@ -59,7 +59,9 @@ public interface OrderService {
 
     List<Order> findReturnedOrdersByShipper(int shipperId);
 
-    Order cancelByShipper(Long orderId, int shipperId, String cancelReason, String cancelDetails);
+    List<Order> findFailedOrdersByShipper(int shipperId);
+
+    Order cancel ByShipper(Long orderId, int shipperId, String cancelReason, String cancelDetails);
 
     Double getTotalCompletedOrdersAmount(int shipperId);
 

@@ -1,40 +1,90 @@
 <!-- shipper/sidebar.html -->
-<aside class="col-md-2 pt-4 nenindex asidemana" th:fragment="content">
+<aside class="shipper-sidebar-dark" th:fragment="content">
   <img
     th:src="@{/images/logo.png}"
     alt="Trạm Hoa"
     height="60"
-    style="text-align: center"
+    style="text-align: center; margin-bottom: 20px"
   />
-  <div class="d-flex align-items-center">
-    <h5>Xin chào Shipper!</h5>
+  <div class="d-flex align-items-center" style="margin-bottom: 20px">
+    <h5 style="color: #fff; font-weight: 700">Xin chào Shipper!</h5>
   </div>
 
-  <nav class="nav flex-column pt-2">
-    <a href="/shipper/pending-orders" class="nav-link text-dark py-3 menu-item">
+  <nav class="shipper-nav-dark flex-column pt-2">
+    <a href="/shipper/pending-orders" class="shipper-nav-link-dark">
       <i class="fa-solid fa-box-open me-2"></i> Đơn chờ giao
     </a>
-    <a href="/shipper/my-orders" class="nav-link text-dark py-3 menu-item">
+    <a href="/shipper/my-orders" class="shipper-nav-link-dark">
       <i class="fa-solid fa-truck me-2"></i> Đơn đang giao
     </a>
-    <a
-      href="/shipper/returned-orders"
-      class="nav-link text-dark py-3 menu-item"
-    >
-      <i class="fas fa-undo-alt me-2"></i> Đơn hàng hoàn trả
+    <a href="/shipper/returned-orders" class="shipper-nav-link-dark">
+      <i class="fas fa-undo-alt me-2"></i> Đơn giao thất bại
     </a>
-    <a href="/shipper/history" class="nav-link text-dark py-3 menu-item">
+    <a href="/shipper/history" class="shipper-nav-link-dark">
       <i class="fa-solid fa-clock-rotate-left me-2"></i> Lịch sử giao hàng
     </a>
-
-    <a class="nav-link text-dark py-3 menu-item"
-      >
-
-        <form action="/logout" method="post">
-          <button type="submit" class="dropdown-item text-danger">
-          <i class="fa-solid fa-right-from-bracket me-2"></i> Đăng xuất
-          </button>
-        </form>
-      </a>
+    <form action="/logout" method="post" style="margin-top: 20px">
+      <button type="submit" class="shipper-nav-link-dark text-danger">
+        <i class="fa-solid fa-right-from-bracket me-2"></i> Đăng xuất
+      </button>
+    </form>
   </nav>
+  <style>
+    .shipper-sidebar-dark {
+      width: 280px;
+      height: 100vh;
+      background: #1f2937;
+      border-right: 1px solid #374151;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+      padding: 2rem 1rem 1rem 1rem;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .shipper-nav-dark {
+      width: 100%;
+      margin-top: 10px;
+    }
+    .shipper-nav-link-dark {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      color: #fff;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      transition: all 0.2s ease;
+      background: none;
+      border: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+    }
+    .shipper-nav-link-dark i {
+      color: #fff;
+      font-size: 18px;
+      margin-right: 8px;
+    }
+    .shipper-nav-link-dark:hover {
+      background: #6366f1;
+      color: #fff;
+    }
+    .shipper-nav-link-dark:hover i {
+      color: #fff;
+    }
+    .shipper-nav-link-dark.active {
+      background: #6366f1;
+      color: #fff;
+    }
+    .shipper-nav-link-dark.text-danger {
+      color: #ef4444 !important;
+    }
+  </style>
 </aside>

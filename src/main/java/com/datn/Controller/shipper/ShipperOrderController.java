@@ -108,8 +108,8 @@ public class ShipperOrderController {
     public String showReturnedOrders(Model model) {
         User shipper = authService.getUser();
         if (shipper != null && shipper.getRole() == 2) {
-            List<Order> returnedOrders = orderService.findReturnedOrdersByShipper(shipper.getId());
-            model.addAttribute("orders", returnedOrders);
+            List<Order> failedOrders = orderService.findFailedOrdersByShipper(shipper.getId());
+            model.addAttribute("orders", failedOrders);
         }
         model.addAttribute("view", "shipper/returned-orders");
         return "shipper/layout";
@@ -119,28 +119,50 @@ public class ShipperOrderController {
     public String returnOrder(@PathVariable("orderId") Long orderId) {
         User shipper = authService.getUser();
         if (shipper != null && shipper.getRole() == 2) {
-            orderService.updateToReturned(orderId, shipper.getId());
-        }
-        return "redirect:/shipper/returned-orders";
-    }
-
-    @PostMapping("/orders/cancel")
-    public String cancelOrder(
-            @RequestParam("orderId") Long orderId,
-            @RequestParam("cancelReason") String cancelReason,
-            @RequestParam(value = "cancelDetails", required = false) String cancelDetails,
-            RedirectAttributes redirectAttributes) {
-        User shipper = authService.getUser();
-        if (shipper != null && shipper.getRole() == 2) {
-            try {
-                orderService.cancelByShipper(orderId, shipper.getId(), cancelReason, cancelDetails);
-                redirectAttributes.addFlashAttribute("message", "Hủy đơn hàng thành công!");
-            } catch (Exception e) {
-                redirectAttributes.addFlashAttribute("error", "Lỗi khi hủy đơn hàng: " + e.getMessage());
-            }
-        } else {
-            redirectAttributes.addFlashAttribute("error", "Bạn không có quyền hủy đơn hàng!");
+            orderService.updateStatus(orderId, "Đã xác nhận");
         }
         return "redirect:/shipper/my-orders";
     }
+
+    @PostMapping("/orders/failed")
+    public String failedDelivery(
+            @RequestParam("orderId") Long orderId,
+            @RequestParam("failureReason") String failureReason,
+            @RequestParam("failureDetails") String failureDetails,
+            RedirectAttributes redirectAttributes) {
+        User shipper = authService.getUser();
+        if (shipper != null && shipper.getRole() == 2) {
+            // Set trạng thái đơn hàng là 'Giao thất bại' và lưu lý do
+            orderService.updateStatus(orderId, "Giao thất bại");
+            // Nếu muốn lưu lý do chi tiết, cần bổ sung vào model Order và Service
+            redirectAttributes.addFlashAttribute("message", "Cập nhật trạng thái giao thất bại thành công!");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Bạn không có quyền thực hiện thao tác này!");
+        }
+        return "redirect:/shipper/my-orders";
+    }
+
+    // @PostMapping("/orders/cancel")
+    // public String cancelOrder(
+    // @RequestParam("orderId") Long orderId,
+    // @RequestParam("cancelReason") String cancelReason,
+    // @RequestParam(value = "cancelDetails", required = false) String
+    // cancelDetails,
+    // RedirectAttributes redirectAttributes) {
+    // User shipper = authService.getUser();
+    // if (shipper != null && shipper.getRole() == 2) {
+    // try {
+    // orderService.cancelByShipper(orderId, shipper.getId(), cancelReason,
+    // cancelDetails);
+    // redirectAttributes.addFlashAttribute("message", "Hủy đơn hàng thành công!");
+    // } catch (Exception e) {
+    // redirectAttributes.addFlashAttribute("error", "Lỗi khi hủy đơn hàng: " +
+    // e.getMessage());
+    // }
+    // } else {
+    // redirectAttributes.addFlashAttribute("error", "Bạn không có quyền hủy đơn
+    // hàng!");
+    // }
+    // return "redirect:/shipper/my-orders";
+    // ...existing code...
 }

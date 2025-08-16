@@ -1,47 +1,120 @@
 <!-- shipper/view/history.html -->
-<div class="container" th:fragment="content">
-  <h2 class="mb-4">Lịch sử giao hàng</h2>
-  <form
-    method="get"
-    th:action="@{/shipper/history}"
-    class="mb-3 d-flex align-items-center"
-  >
-    <label for="date" class="me-2"><strong>Chọn ngày:</strong></label>
-    <input
-      type="date"
-      id="date"
-      name="date"
-      class="form-control me-2"
-      th:value="${selectedDate}"
-    />
-    <button type="submit" class="btn btn-primary">Lọc</button>
-  </form>
-
-  <div class="mt-3 text-end">
-    <strong>Tổng tiền đã giao:</strong>
-    <span
-      th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT') + ' VND'}"
-    ></span>
+<div class="container mt-4" th:fragment="content">
+  <h2 class="mb-4 fw-bold" style="font-size: 2rem; color: #222">
+    Lịch sử giao hàng
+  </h2>
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <form
+        method="get"
+        th:action="@{/shipper/history}"
+        class="d-flex align-items-center gap-2"
+      >
+        <label for="date" class="me-2 fw-semibold" style="font-size: 1.1rem"
+          >Chọn ngày:</label
+        >
+        <input
+          type="date"
+          id="date"
+          name="date"
+          class="form-control"
+          th:value="${selectedDate}"
+          style="max-width: 180px"
+        />
+        <button type="submit" class="btn btn-primary ms-2">Lọc</button>
+      </form>
+    </div>
+    <div class="col-md-6 d-flex justify-content-end align-items-center">
+      <div
+        class="card shadow-sm"
+        style="border-radius: 12px; background: #fff; padding: 12px 24px"
+      >
+        <span class="fw-semibold" style="color: #6366f1"
+          >Tổng tiền đã giao:</span
+        >
+        <span
+          class="fw-bold ms-2"
+          style="font-size: 1.1rem; color: #222"
+          th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT') + ' VND'}"
+        ></span>
+      </div>
+    </div>
   </div>
-  <hr />
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>Mã đơn</th>
-        <th>Khách hàng</th>
-        <th>Ngày hoàn tất</th>
-        <th>Trạng thái</th>
-        <th>Tổng tiền</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr th:each="order : ${orders}">
-        <td th:text="${order.id}"></td>
-        <td th:text="${order.user.name}"></td>
-        <td th:text="${#dates.format(order.deliveryDate, 'dd-MM-yyyy')}"></td>
-        <td th:text="${order.status}"></td>
-        <td  th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT') + ' VND'}"></td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="card shadow-sm" style="border-radius: 16px; background: #fff">
+    <div class="table-responsive">
+      <table
+        class="table table-hover align-middle mb-0"
+        style="background: #fff"
+      >
+        <thead class="table-light">
+          <tr>
+            <th class="text-center">Mã đơn</th>
+            <th>Khách hàng</th>
+            <th class="text-center">Ngày hoàn tất</th>
+            <th class="text-center">Trạng thái</th>
+            <th class="text-end">Tổng tiền</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="order : ${orders}">
+            <td class="text-center fw-bold" th:text="${order.id}"></td>
+            <td th:text="${order.user.name}"></td>
+            <td
+              class="text-center"
+              th:text="${#dates.format(order.deliveryDate, 'dd-MM-yyyy')}"
+            ></td>
+            <td class="text-center">
+              <span
+                class="badge bg-success"
+                th:if="${order.status == 'Đã giao'}"
+                >Đã giao</span
+              >
+              <span
+                class="badge bg-danger"
+                th:if="${order.status == 'Giao thất bại'}"
+                >Giao thất bại</span
+              >
+              <span
+                th:if="${order.status != 'Đã giao' and order.status != 'Giao thất bại'}"
+                th:text="${order.status}"
+              ></span>
+            </td>
+            <td
+              class="text-end fw-semibold"
+              th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT') + ' VND'}"
+            ></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <style>
+    .table thead th {
+      font-weight: 600;
+      font-size: 1rem;
+      background: #f3f4f6;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    .table-hover tbody tr:hover {
+      background: #f9fafb;
+    }
+    .card {
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    .badge.bg-success {
+      background: #22c55e !important;
+      color: #fff;
+      font-size: 0.95rem;
+      padding: 0.5em 1em;
+      border-radius: 8px;
+    }
+    .badge.bg-danger {
+      background: #ef4444 !important;
+      color: #fff;
+      font-size: 0.95rem;
+      padding: 0.5em 1em;
+      border-radius: 8px;
+    }
+  </style>
 </div>

@@ -200,6 +200,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<Order> findFailedOrdersByShipper(int shipperId) {
+        return dao.findByStatusAndShipperId("Giao thất bại", shipperId);
+    }
+
+    @Override
     @Transactional
     public Order cancelByShipper(Long orderId, int shipperId, String cancelReason, String cancelDetails) {
         Order order = dao.findById(orderId)
