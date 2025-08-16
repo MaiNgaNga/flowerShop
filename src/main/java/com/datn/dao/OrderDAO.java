@@ -22,9 +22,7 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
                         + "AND (:toDate IS NULL OR o.createDate <= :toDate) "
 
                         + "AND o.orderCode LIKE %:orderCode%")
-        Page<Order> searchPosOrdersByOrderCode(@Param("orderType") String orderType,
-                 + "AND o.orderCode LIKE %:orderCode% "
-                        + "ORDER BY o.createDate DESC")
+       
         Page<Order> searchPosOrdersByOrderCode(
                         @Param("orderType") String orderType,
 

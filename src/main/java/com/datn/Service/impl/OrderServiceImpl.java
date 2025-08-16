@@ -318,6 +318,8 @@ public Map<Integer, Double> getDailyRevenueByMonthAndYear(int month, int year) {
     public Long countPaidOrdersByYear(int year) {
         return dao.countPaidOrdersByYear(year);
 
+    }
+
     public Order findByID(Long id) {
         return dao.findById(id).orElse(null);
 
