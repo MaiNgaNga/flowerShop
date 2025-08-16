@@ -1,0 +1,41 @@
+.custom-pagination .page-item .page-link {
+        border-radius: 50%;
+        margin: 0 5px;
+        color: #f090b8;
+        border: 1px solid #f090b8;
+        background-color: #fff;
+        transition: all 0.2s ease-in-out;
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .custom-pagination .page-item.active .page-link {
+        background-color: #f090b8;
+        color: #fff;
+        border-color: #f090b8;
+      }
+
+      .custom-pagination .page-item.disabled .page-link {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .custom-pagination .page-item .page-link:hover {
+        background-color: #fcd6e5;
+        color: #d63384;
+      }
+      .table-rounded {
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* tùy chọn để đẹp hơn */
+      }
+      .input-group-sm .form-control {
+        border-radius: 20px 0 0 20px;
+      }
+
+      .input-group-sm .btn {
+        border-radius: 0 20px 20px 0;
+      }

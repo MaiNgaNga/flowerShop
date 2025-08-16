@@ -11,10 +11,13 @@ import com.datn.model.OrderDetail;
 
 public interface OrderService {
 
+  Order saveOrder(Order order, List<OrderDetail> orderDetails);
 
-    Order findByID(Long id);
+  Order findByID(Long id);
 
-    Order saveOrder(Order order, List<OrderDetail> orderDetails);
+
+
+  // Order saveOrder(Order order, List<OrderDetail> orderDetails);
 
   Order getOrderById(Long id);
 
@@ -54,8 +57,13 @@ public interface OrderService {
 
   List<Order> findReturnedOrdersByShipper(int shipperId);
 
-
   Order cancelByShipper(Long orderId, int shipperId, String cancelReason, String cancelDetails);
+
+
+  // Order cancelByShipper(Long orderId, int shipperId, String cancelReason,
+  // String cancelDetails);
+
+
 
   Double getTotalCompletedOrdersAmount(int shipperId);
 
@@ -73,7 +81,6 @@ public interface OrderService {
 
   List<Order> getAllOfflineOrders();
 
-
   Page<Order> getPosOrdersByType(String orderType, LocalDate fromDate, LocalDate toDate, Pageable pageable);
 
   // Tìm kiếm đơn hàng POS theo mã đơn hàng, có phân trang, lọc ngày, loại đơn
@@ -87,9 +94,18 @@ public interface OrderService {
   Long countDeliveredOrdersByYear(int year);
 
 
+  // Page<Order> getPosOrdersByType(String orderType, LocalDate fromDate,
+  // LocalDate toDate, Pageable pageable);
+
+
+
+  // // Tìm kiếm đơn hàng POS theo mã đơn hàng, có phân trang, lọc ngày, loại đơn
+  // Page<Order> searchPosOrdersByOrderCode(String orderType, String orderCode,
+  // LocalDate fromDate, LocalDate toDate,
+  // Pageable pageable);
+
   // Thống kê số lượng đơn đặt dịch vụ trong tháng/năm với trạng thái PAID
   Long countTotalOrdersByMonthAndYear1(int month, int year);
-
 
   // Đếm số đơn dịch vụ theo năm với trạng thái PAID
   Long countPaidOrdersByYear(int year);

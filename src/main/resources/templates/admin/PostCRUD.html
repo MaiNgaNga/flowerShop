@@ -5,49 +5,7 @@
     <title>Quản Lý Bài Viết</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css" />
     <script src="/js/bootstrap.bundle.min.js"></script>
-    <style>
-      .custom-pagination .page-item .page-link {
-        border-radius: 50%;
-        margin: 0 5px;
-        color: #f090b8;
-        border: 1px solid #f090b8;
-        background-color: #fff;
-        transition: all 0.2s ease-in-out;
-        width: 38px;
-        height: 38px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .custom-pagination .page-item.active .page-link {
-        background-color: #f090b8;
-        color: #fff;
-        border-color: #f090b8;
-      }
-
-      .custom-pagination .page-item.disabled .page-link {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-
-      .custom-pagination .page-item .page-link:hover {
-        background-color: #fcd6e5;
-        color: #d63384;
-      }
-      .table-rounded {
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* tùy chọn để đẹp hơn */
-      }
-      .input-group-sm .form-control {
-        border-radius: 20px 0 0 20px;
-      }
-
-      .input-group-sm .btn {
-        border-radius: 0 20px 20px 0;
-      }
-    </style>
+     <link rel="stylesheet" th:href="@{/css/post.css}" />
   </head>
   <!-- Place the first <script> tag in your HTML's <head> -->
   <script
@@ -89,7 +47,7 @@
             style="
               position: absolute;
               top: 50%;
-              left: 10px;
+              right: 20px;
               transform: translateY(-50%);
               color: #888;
             "
@@ -215,8 +173,10 @@
                   th:field="*{status}"
                   class="form-control form-control-sm"
                 >
-                  <option th:value="true">Hiển thị</option>
-                  <option th:value="false">Ẩn</option>
+                <option th:value="true">Hiển thị</option>
+                   <option th:value="false">Ẩn</option>
+                  
+               
                 </select>
               </div>
             </div>

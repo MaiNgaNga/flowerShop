@@ -22,7 +22,12 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
                         + "AND (:toDate IS NULL OR o.createDate <= :toDate) "
 
                         + "AND o.orderCode LIKE %:orderCode%")
-       
+
+        // Page<Order> searchPosOrdersByOrderCode(@Param("orderType") String orderType,
+        // + "AND o.orderCode LIKE %:orderCode% "
+        // + "ORDER BY o.createDate DESC")
+
+
         Page<Order> searchPosOrdersByOrderCode(
                         @Param("orderType") String orderType,
 
@@ -107,29 +112,74 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         @Query(value = "SELECT COUNT(*) FROM orders WHERE MONTH(create_date) = :month AND YEAR(create_date) = :year", nativeQuery = true)
         Long countTotalOrdersByMonthAndYear(@Param("month") int month, @Param("year") int year);
 
-        // Thống kê doanh thu theo năm (chỉ lấy đơn hàng Đã giao)
-        @Query(value = "SELECT SUM(o.total_amount) FROM orders o " +
-                        "WHERE YEAR(o.create_date) = :year AND o.status = N'Đã giao'", nativeQuery = true)
+        // Thống kê doanh thu trong năm (bao gồm cả đơn hàng Đã giao và dịch vụ đã thanh
+        @Query(value = "SELECT SUM(revenue) AS total_revenue " +
+                        "FROM ( " +
+                        "    SELECT SUM(o.total_amount) AS revenue " +
+                        "    FROM orders o " +
+                        "    WHERE YEAR(o.create_date) = :year AND o.status IN (N'Đã giao', N'Đã thanh toán') " +
+                        "    UNION ALL " +
+                        "    SELECT SUM(s.quoted_price) AS revenue " +
+                        "    FROM service_orders s " +
+                        "    WHERE YEAR(s.confirmed_at) = :year AND s.status = 'paid' " +
+                        ") AS combined", nativeQuery = true)
         Double getTotalRevenueInYear(@Param("year") int year);
 
-        // Thống kê doanh thu theo tháng trong năm (chỉ lấy đơn hàng Đã giao)
-        @Query(value = "SELECT MONTH(o.create_date) AS month, SUM(o.total_amount) AS revenue " +
-                        "FROM orders o " +
-                        "WHERE YEAR(o.create_date) = :year AND o.status = N'Đã giao' " +
-                        "GROUP BY MONTH(o.create_date) " +
-                        "ORDER BY MONTH(o.create_date)", nativeQuery = true)
+        // Thống kê doanh thu theo tháng trong năm (bao gồm cả đơn hàng Đã giao và dịch
+        @Query(value = "SELECT m.month, COALESCE(SUM(derived.revenue), 0) AS total_revenue " +
+                        "FROM (SELECT 1 AS month UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 " +
+                        "      UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 " +
+                        "      UNION SELECT 9 UNION SELECT 10 UNION SELECT 11 UNION SELECT 12) m " +
+                        "LEFT JOIN ( " +
+                        "    SELECT MONTH(o.create_date) AS month, SUM(o.total_amount) AS revenue " +
+                        "    FROM orders o " +
+                        "    WHERE YEAR(o.create_date) = :year AND o.status IN (N'Đã giao', N'Đã thanh toán') " +
+                        "    GROUP BY MONTH(o.create_date) " +
+                        "    UNION ALL " +
+                        "    SELECT MONTH(s.confirmed_at) AS month, SUM(s.quoted_price) AS revenue " +
+                        "    FROM service_orders s " +
+                        "    WHERE YEAR(s.confirmed_at) = :year AND s.status = 'paid' " +
+                        "    GROUP BY MONTH(s.confirmed_at) " +
+                        ") derived ON m.month = derived.month " +
+                        "GROUP BY m.month " +
+                        "ORDER BY m.month", nativeQuery = true)
         List<Object[]> getMonthlyRevenueByYear(@Param("year") int year);
+        // @Query(value = "SELECT MONTH(o.create_date) AS month, SUM(o.total_amount) AS
+        // revenue " +
+        // "FROM orders o " +
+        // "WHERE YEAR(o.create_date) = :year AND o.status = N'Đã giao' " +
+        // "GROUP BY MONTH(o.create_date) " +
+        // "ORDER BY MONTH(o.create_date)", nativeQuery = true)
+        // List<Object[]> getMonthlyRevenueByYear(@Param("year") int year);
 
-
-        // DAO query: Thống kê doanh thu theo ngày trong tháng/năm (chỉ lấy đơn hàng 'Đã
-        // giao')
-        @Query(value = "SELECT DAY(o.create_date) AS day, SUM(o.total_amount) AS revenue " +
-                        "FROM orders o " +
-                        "WHERE YEAR(o.create_date) = :year AND MONTH(o.create_date) = :month AND o.status = N'Đã giao' "
+        // Thống kê doanh thu theo ngày trong tháng/năm (bao gồm cả đơn hàng Đã giao và
+        @Query(value = "SELECT DAY(derived.create_date) AS day, COALESCE(SUM(derived.revenue), 0) AS total_revenue " +
+                        "FROM ( " +
+                        "    SELECT o.create_date AS create_date, SUM(o.total_amount) AS revenue " +
+                        "    FROM orders o " +
+                        "    WHERE YEAR(o.create_date) = :year AND MONTH(o.create_date) = :month AND o.status IN (N'Đã giao', N'Đã thanh toán') "
                         +
-                        "GROUP BY DAY(o.create_date) " +
-                        "ORDER BY DAY(o.create_date)", nativeQuery = true)
+                        "    GROUP BY o.create_date " +
+                        "    UNION ALL " +
+                        "    SELECT s.confirmed_at AS create_date, SUM(s.quoted_price) AS revenue " +
+                        "    FROM service_orders s " +
+                        "    WHERE YEAR(s.confirmed_at) = :year AND MONTH(s.confirmed_at) = :month AND s.status = 'paid' "
+                        +
+                        "    GROUP BY s.confirmed_at " +
+                        ") AS derived " +
+                        "GROUP BY DAY(derived.create_date) " +
+                        "ORDER BY DAY(derived.create_date)", nativeQuery = true)
         List<Object[]> getDailyRevenueByMonthAndYear(@Param("month") int month, @Param("year") int year);
+        // @Query(value = "SELECT DAY(o.create_date) AS day, SUM(o.total_amount) AS
+        // revenue " +
+        // "FROM orders o " +
+        // "WHERE YEAR(o.create_date) = :year AND MONTH(o.create_date) = :month AND
+        // o.status = N'Đã giao' "
+        // +
+        // "GROUP BY DAY(o.create_date) " +
+        // "ORDER BY DAY(o.create_date)", nativeQuery = true)
+        // List<Object[]> getDailyRevenueByMonthAndYear(@Param("month") int month,
+        // @Param("year") int year);
 
         // Đếm đơn giao trong năm
         @Query(value = "SELECT COUNT(*) FROM orders WHERE status = N'Đã giao' AND YEAR(create_date) = :year", nativeQuery = true)
@@ -146,7 +196,5 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         // Đếm đơn dịch vụ theo năm với trạng thái PAID
         @Query(value = "SELECT COUNT(*) FROM service_orders WHERE status = 'PAID' AND YEAR(confirmed_at) = :year", nativeQuery = true)
         Long countPaidOrdersByYear(@Param("year") int year);
-
-
 
 }
