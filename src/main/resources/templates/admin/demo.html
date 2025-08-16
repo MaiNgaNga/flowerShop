@@ -1,0 +1,168 @@
+<main class="container mt-3">
+  <h3>Quản Lý Người Dùng</h3>
+  <hr />
+  <div
+    class="success alert alert-success"
+    th:if="${success}"
+    th:text="${success}"
+  ></div>
+
+  <!-- Tab Navigation -->
+  <ul class="nav nav-tabs border-bottom-0" id="UserTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link active fw-medium text-dark px-4 py-2"
+        id="edit-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#edit"
+        type="button"
+        role="tab"
+        aria-controls="edit"
+        aria-selected="true"
+        style="transition: all 0.2s ease-in-out"
+      >
+        Chỉnh sửa
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link fw-medium text-dark px-4 py-2"
+        id="list-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#list"
+        type="button"
+        role="tab"
+        aria-controls="list"
+        aria-selected="false"
+        style="transition: all 0.2s ease-in-out"
+      >
+        Danh sách
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content" id="UserTabContent">
+    <i class="error" th:if="${error}" th:text="${error}"></i>
+
+    <!-- Tab: tháng -->
+    <div
+      class="tab-pane fade show active"
+      id="edit"
+      role="tabpanel"
+      aria-labelledby="edit-tab"
+    >
+     
+    <!-- 4 Thẻ thống kê -->
+    <center>
+        <div class="stats-container">
+            <div class="card green">
+                <div class="card-content">
+                    <div class="number" id="monthlyRevenue" th:text="${#numbers.formatDecimal(monthlyRevenue, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</div>
+                    <div class="label">Tổng doanh thu trong tháng [[${selectedMonth}]]</div>
+                </div>  
+            </div>
+            <div class="card green">
+                <div class="card-content">
+                    <div class="number" id="canceledOrders" th:text="${canceledOrders}">0</div>
+                    <div class="label">Đơn giao hàng thành công trong tháng [[${selectedMonth}]]</div>
+                </div>
+            </div>
+            <div class="card pink">
+                <div class="card-content">
+                    <div class="number" id="totalOrders" th:text="${totalOrders}">0</div>
+                    <div class="label">Số lượng đơn đặt hàng trong tháng [[${selectedMonth}]]</div>
+                </div>
+            </div>
+            <div class="card pink">
+                <div class="card-content">
+                    <div class="number" id="totalOrdersByMonth" th:text="${totalOrdersByMonth}">0</div>
+                    <div class="label">Số lượng đơn đặt dịch vụ trong tháng [[${selectedMonth}]]</div>
+                </div>
+            </div>
+        </div>  
+    </center>
+
+    <!-- Biểu đồ doanh thu theo ngày trong tháng -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 mb-4">
+                <div class="chart-card">
+                    <h4 class="text-center">Doanh thu theo ngày trong tháng [[${selectedMonth}]] năm [[${selectedYear}]]</h4>
+                    <canvas id="dailyRevenueChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="chart-card">
+                    <h4 class="text-center">6 danh mục bán chạy tháng [[${selectedMonth}]] năm [[${selectedYear}]]</h4>
+                    <div style="max-width: 300px; margin: 0 auto; height: 300px; position: relative;">
+                        <canvas id="topProductsByMonthChart"></canvas>
+                    </div>
+                    <div id="customLegendByMonth" class="legend-grid mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+    <!-- Tab: Danh sách -->
+    <div
+      class="tab-pane fade"
+      id="list"
+      role="tabpanel"
+      aria-labelledby="list-tab"
+    >
+    
+    <center>
+        <div class="stats-container">
+            <div class="card blue">
+                <div class="card-content">
+                    <div class="number" id="totalRevenue" th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</div>
+                    <div class="label">Tổng doanh thu trong năm [[${selectedYear}]]</div>
+                </div>
+            </div>
+            <div class="card purple">
+                <div class="card-content">
+                    <div class="number" id="totalOrdersInYear1" th:text="${totalOrdersInYear1}">0</div>
+                    <div class="label">Tổng số đơn đặt dịch vụ trong năm [[${selectedYear}]]</div>
+                </div>
+            </div>
+            <div class="card purple">
+                <div class="card-content">
+                    <div class="number" id="totalOrdersInYear" th:text="${totalOrdersInYear}">0</div>
+                    <div class="label">Tổng số đơn đặt hàng trong năm [[${selectedYear}]]</div>
+                </div>
+            </div>
+            <div class="card orange">
+                <div class="card-content">
+                    <div class="number" id="deliveredOrdersInYear" th:text="${deliveredOrdersInYear}">0</div>
+                    <div class="label">Số lượng đơn đã giao trong năm [[${selectedYear}]]</div>
+                </div>
+            </div>
+        </div>
+    </center>
+
+    <!-- Biểu đồ xu hướng doanh số và danh mục -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 mb-4">
+                <div class="chart-card">
+                    <h4 class="text-center">Xu hướng doanh số năm: [[${selectedYear}]]</h4>
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="chart-card">
+                    <h4 class="text-center">6 danh mục bán chạy năm: [[${selectedYear}]]</h4>
+                    <div style="max-width: 300px; margin: 0 auto; height: 300px; position: relative;">
+                        <canvas id="topProductsChart"></canvas>
+                    </div>
+                    <div id="customLegend" class="legend-grid mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+  </div>
+</main>

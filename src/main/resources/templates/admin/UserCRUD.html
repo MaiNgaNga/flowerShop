@@ -147,14 +147,19 @@
                   <input
                     type="radio"
                     th:field="*{role}"
-                    value="2"
-                    id="roleShipper"
+                    value="3"
+                    id="roleStaff"
                     class="form-check-input"
                   />
-                  <label for="roleShipper" class="form-check-label text-muted"
-                    >Shipper</label
+                  <label for="roleStaff" class="form-check-label text-muted"
+                    >Staff</label
                   >
                 </div>
+                <div class="form-check">
+                  <input type="radio" th:field="*{role}" value="2" id="roleShipper" class="form-check-input" />
+                  <label for="roleShipper" class="form-check-label text-muted">Shipper</label>
+                </div>
+                
               </div>
               <small class="text-danger" th:errors="*{role}"></small>
             </div>
@@ -278,16 +283,15 @@
                     <span th:case="0">User</span>
                     <span th:case="1">Admin</span>
                     <span th:case="2">Shipper</span>
+                    <span th:case="3">Staff</span>
                     <span th:case="*">Không rõ</span>
                   </span>
                 </td>
-                <td class="text-center">
-                  <span th:if="${item.status == true}" class="badge bg-success"
-                    >Onl</span
-                  >
-                  <span th:if="${item.status == false}" class="badge bg-danger"
-                    >Off</span
-                  >
+                <td>
+                  <span th:class="${item.status == true ? 'badge badge-success' : 'badge badge-danger'}"
+                    style="display:inline-block;min-width:70px;padding:4px 12px;border-radius:12px;font-size:13px;font-weight:600;color:#fff;"
+                    th:text="${item.status == true ? 'Active' : 'Inactive'}">
+                  </span>
                 </td>
                 <td class="action-icons">
                   <a

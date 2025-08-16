@@ -4,85 +4,114 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Date;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
 import com.datn.model.Order;
 import com.datn.model.OrderDetail;
 
 public interface OrderService {
 
-    Order findByID(Long id);
+  Order saveOrder(Order order, List<OrderDetail> orderDetails);
 
-    Order saveOrder(Order order, List<OrderDetail> orderDetails);
+  Order findByID(Long id);
 
-    Order getOrderById(Long id);
 
-    List<Order> getAllOrders();
 
-    void deleteOrder(Long id);
+  // Order saveOrder(Order order, List<OrderDetail> orderDetails);
 
-    Order updateStatus(Long orderId, String status);
+  Order getOrderById(Long id);
 
-    List<Order> getOrdersByUser(int id);
+  List<Order> getAllOrders();
 
-    List<Order> findByStatus(String status);
+  void deleteOrder(Long id);
 
-    Double sumTotalAmountWhereStatusLike(String status);
+  Order updateStatus(Long orderId, String status);
 
-    Double sumTotalAmountForCurrentMonth(String status);
+  List<Order> getOrdersByUser(int id);
 
-    Double getAverageOrderValue(String status);
+  List<Order> findByStatus(String status);
 
-    Long countOrdersThisMonth(String status);
+  Double sumTotalAmountWhereStatusLike(String status);
 
-    Long getCountOrder(String status);
+  Double sumTotalAmountForCurrentMonth(String status);
 
-    List<Order> getOrdersByStatus(String status);
+  Double getAverageOrderValue(String status);
 
-    Order updateToDangGiao(Long orderId, int shipperId);
+  Long countOrdersThisMonth(String status);
 
-    List<Order> getOrdersByStatusAndShipper(String status, int shipperId);
+  Long getCountOrder(String status);
 
-    List<Order> getHistoryOrders(int shipperId);
+  List<Order> getOrdersByStatus(String status);
 
-    List<Order> getOrdersByStatusAndShipper(List<String> statuses, int shipperId);
+  Order updateToDangGiao(Long orderId, int shipperId);
 
-    void updateToCompleted(Long orderId, int shipperId);
+  List<Order> getOrdersByStatusAndShipper(String status, int shipperId);
 
-    Order updateToReturned(Long orderId, int shipperId);
+  List<Order> getHistoryOrders(int shipperId);
 
-    List<Order> findReturnedOrdersByShipper(int shipperId);
+  List<Order> getOrdersByStatusAndShipper(List<String> statuses, int shipperId);
 
-    Order cancelByShipper(Long orderId, int shipperId, String cancelReason, String cancelDetails);
+  void updateToCompleted(Long orderId, int shipperId);
 
-    Double getTotalCompletedOrdersAmount(int shipperId);
+  Order updateToReturned(Long orderId, int shipperId);
 
-    List<Order> getOrdersByShipperAndDate(int shipperId, Date date);
+  List<Order> findReturnedOrdersByShipper(int shipperId);
 
-    Double getTotalAmountByShipperAndDate(int shipperId, Date date);
+  Order cancelByShipper(Long orderId, int shipperId, String cancelReason, String cancelDetails);
 
-    Long countCancelledOrdersByMonthAndYear(int month, int year);
 
-    Long getTotalOrdersInMonth(int month, int year);
+  // Order cancelByShipper(Long orderId, int shipperId, String cancelReason,
+  // String cancelDetails);
 
-    Double getTotalRevenueInYear(int year);
 
-    Map<Integer, Double> getMonthlyRevenueByYear(int year);
 
-    List<Order> getAllOfflineOrders();
+  Double getTotalCompletedOrdersAmount(int shipperId);
 
-    Page<Order> getPosOrdersByType(String orderType, LocalDate fromDate, LocalDate toDate, Pageable pageable);
+  List<Order> getOrdersByShipperAndDate(int shipperId, Date date);
 
-    // Tìm kiếm đơn hàng POS theo mã đơn hàng, có phân trang, lọc ngày, loại đơn
-    Page<Order> searchPosOrdersByOrderCode(String orderType, String orderCode, LocalDate fromDate, LocalDate toDate,
-            Pageable pageable);
+  Double getTotalAmountByShipperAndDate(int shipperId, Date date);
 
-    Order recreateOrder(Long canceledOrderId); // Thêm phương thức tạo lại đơn hàng
+  Long countCancelledOrdersByMonthAndYear(int month, int year);
+
+  Long getTotalOrdersInMonth(int month, int year);
+
+  Double getTotalRevenueInYear(int year);
+
+  Map<Integer, Double> getMonthlyRevenueByYear(int year);
+
+  List<Order> getAllOfflineOrders();
+
+  Page<Order> getPosOrdersByType(String orderType, LocalDate fromDate, LocalDate toDate, Pageable pageable);
+
+  // Tìm kiếm đơn hàng POS theo mã đơn hàng, có phân trang, lọc ngày, loại đơn
+  Page<Order> searchPosOrdersByOrderCode(String orderType, String orderCode, LocalDate fromDate, LocalDate toDate,
+      Pageable pageable);
+
+  Order recreateOrder(Long canceledOrderId); // Thêm phương thức tạo lại đơn hàng
+
+  Long getTotalOrdersInYear(int year);
+
+  Long countDeliveredOrdersByYear(int year);
+
+
+  // Page<Order> getPosOrdersByType(String orderType, LocalDate fromDate,
+  // LocalDate toDate, Pageable pageable);
+
+
+
+  // // Tìm kiếm đơn hàng POS theo mã đơn hàng, có phân trang, lọc ngày, loại đơn
+  // Page<Order> searchPosOrdersByOrderCode(String orderType, String orderCode,
+  // LocalDate fromDate, LocalDate toDate,
+  // Pageable pageable);
+
+  // Thống kê số lượng đơn đặt dịch vụ trong tháng/năm với trạng thái PAID
+  Long countTotalOrdersByMonthAndYear1(int month, int year);
+
+  // Đếm số đơn dịch vụ theo năm với trạng thái PAID
+  Long countPaidOrdersByYear(int year);
+
+  // Service interface: Thống kê doanh thu theo ngày trong tháng/năm (chỉ lấy đơn
+  // hàng 'Đã giao')
+  Map<Integer, Double> getDailyRevenueByMonthAndYear(int month, int year);
 
 }
