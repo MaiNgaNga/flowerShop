@@ -17,8 +17,6 @@ import com.datn.model.OrderDetail;
 
 public interface OrderService {
 
-  Order saveOrder(Order order, List<OrderDetail> orderDetails);
-
 
     Order findByID(Long id);
 
@@ -65,8 +63,6 @@ public interface OrderService {
 
   Order cancelByShipper(Long orderId, int shipperId, String cancelReason, String cancelDetails);
 
-    Order cancelByShipper(Long orderId, int shipperId, String cancelReason, String cancelDetails);
-
   Double getTotalCompletedOrdersAmount(int shipperId);
 
   List<Order> getOrdersByShipperAndDate(int shipperId, Date date);
@@ -95,12 +91,6 @@ public interface OrderService {
   Long getTotalOrdersInYear(int year);
 
   Long countDeliveredOrdersByYear(int year);
-=======
-    Page<Order> getPosOrdersByType(String orderType, LocalDate fromDate, LocalDate toDate, Pageable pageable);
-
-    // Tìm kiếm đơn hàng POS theo mã đơn hàng, có phân trang, lọc ngày, loại đơn
-    Page<Order> searchPosOrdersByOrderCode(String orderType, String orderCode, LocalDate fromDate, LocalDate toDate,
-            Pageable pageable);
 
 
   // Thống kê số lượng đơn đặt dịch vụ trong tháng/năm với trạng thái PAID

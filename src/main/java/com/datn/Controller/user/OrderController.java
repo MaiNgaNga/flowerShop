@@ -122,8 +122,11 @@ public class OrderController {
 
         response.put("discountValue", discountValue);
         response.put("formattedOriginalTotal", String.format("%,.0f", totalAmount));
+        System.out.println("Total Amount: " + totalAmount);
         response.put("formattedDiscount", String.format("%,.0f", discountValue));
+        System.out.println("Discount Value: " + discountValue);
         response.put("formattedTotal", String.format("%,.0f", finalAmount));
+        System.out.println("Final Amount: " + finalAmount);
 
         return ResponseEntity.ok(response);
     }

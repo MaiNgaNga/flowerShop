@@ -119,8 +119,8 @@ Page<Product> findByMultipleFilters(
     @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId")
     List<Product> findProductByCategory(Integer categoryId);
 
-    @Query("SELECT p FROM Product p WHERE p.productCategory.id = :id")
-    List<Product> findProductByCategory(Integer id);
+//     @Query("SELECT p FROM Product p WHERE p.productCategory.id = :id")
+//     List<Product> findProductByCategory(Integer id);
 
 
     // Gọi: productRepository.findHotProductsFromOtherCategories(id,
