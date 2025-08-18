@@ -37,20 +37,20 @@ public interface ProductService {
         List<Product> findByProductCategoryId(int id);
 
         Page<Product> findByMultipleFilters(
-        Integer proCategoryId,
-        Integer ca_Id,
-        String color,
-        Double minPrice,
-        Double maxPrice,
-        Pageable pageable);
+                        Integer proCategoryId,
+                        Integer ca_Id,
+                        String color,
+                        Double minPrice,
+                        Double maxPrice,
+                        Pageable pageable);
 
-
-        // Page<Product> findBestSellingProductsByCategory( Integer
-        // productCatelogyId,Pageable pageable);
         Page<Product> findByAllProduct(Pageable pageable);
 
-        // Tìm kiếm theo tên
+        // Tìm kiếm theo tên sản phẩm và tên loại hoa
         Page<Product> searchByName(String name, Pageable pageable);
+
+        // Tìm kiếm theo tên sản phẩm, tên loại hoa kết hợp với lọc theo danh mục
+        Page<Product> searchByNameAndCategory(String name, Integer productCategoryId, Pageable pageable);
 
         // Tìm kiếm theo loại hoa (category)
         Page<Product> searchByCategoryName(String categoryName, Pageable pageable);
@@ -74,16 +74,14 @@ public interface ProductService {
 
         List<Product> findTop10ByProductCategoryName(String productCategoryName);
 
-        /// sản phẩm hot
+        /// Sản phẩm hot
         List<Product> findBestSeller();
 
         List<Map<String, Object>> getTop6SellingProductsByYear(int year);
 
         List<String> findProductNamesByKeyword(String keyword, int limit);
 
-        /**
-         * Trả về danh sách gợi ý tìm kiếm kết hợp: tên sản phẩm, loại hoa, danh mục
-         */
+        // Trả về danh sách gợi ý tìm kiếm kết hợp: tên sản phẩm, loại hoa, danh mục
         List<String> findSearchSuggestionsByKeyword(String keyword, int limit);
 
         List<Map<String, Object>> getTop6SellingProductsByYearAndMonth(int year, int month);

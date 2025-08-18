@@ -41,21 +41,39 @@ public class ServiceCRUDController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "status", required = false) String status,
             @RequestParam(value = "tab", defaultValue = "list") String tab) {
 
         Pageable pageable = PageRequest.of(page, size);
         Page<ServiceEntity> servicePage;
 
-        if (keyword != null && !keyword.isEmpty()) {
+        // Xử lý lọc theo trạng thái và tìm kiếm
+        if ((keyword != null && !keyword.isEmpty()) && (status != null && !status.isEmpty())) {
+            // Lọc cả keyword và status
+            Boolean available = Boolean.parseBoolean(status);
+            servicePage = serviceService.searchByNameAndStatus(keyword, available, pageable);
+            model.addAttribute("keyword", keyword);
+            model.addAttribute("status", status);
+        } else if (keyword != null && !keyword.isEmpty()) {
+            // Chỉ lọc theo keyword
             servicePage = serviceService.searchByName(keyword, pageable);
             model.addAttribute("keyword", keyword);
+        } else if (status != null && !status.isEmpty()) {
+            // Chỉ lọc theo status
+            Boolean available = Boolean.parseBoolean(status);
+            servicePage = serviceService.findByStatus(available, pageable);
+            model.addAttribute("status", status);
         } else {
+            // Không lọc gì, hiển thị tất cả
             servicePage = serviceService.findByAllService(pageable);
         }
 
         model.addAttribute("services", servicePage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", servicePage.getTotalPages());
+        model.addAttribute("totalElements", servicePage.getTotalElements());
+        model.addAttribute("hasPrevious", servicePage.hasPrevious());
+        model.addAttribute("hasNext", servicePage.hasNext());
         model.addAttribute("service", new ServiceEntity());
         model.addAttribute("view", "admin/ServiceCRUD");
         model.addAttribute("activeTab", tab);
@@ -80,7 +98,7 @@ public class ServiceCRUDController {
             return "admin/layout";
         }
 
-        // ✅ Kiểm tra ảnh chính có rỗng không
+        // Kiểm tra ảnh chính có rỗng không
         if (image1 == null || image1.isEmpty()) {
             model.addAttribute("error", "Ảnh chính không được để trống!");
             model.addAttribute("view", "admin/ServiceCRUD");
@@ -104,14 +122,37 @@ public class ServiceCRUDController {
     public String edit(Model model, @PathVariable("id") long id,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "status", required = false) String status,
             @RequestParam(value = "tab", defaultValue = "edit") String tab) {
 
         ServiceEntity service = serviceService.findByID(id);
-        Page<ServiceEntity> servicePage = serviceService.findByAllService(PageRequest.of(page, size));
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ServiceEntity> servicePage;
+
+        // Áp dụng cùng logic filter như trong index
+        if ((keyword != null && !keyword.isEmpty()) && (status != null && !status.isEmpty())) {
+            Boolean available = Boolean.parseBoolean(status);
+            servicePage = serviceService.searchByNameAndStatus(keyword, available, pageable);
+            model.addAttribute("keyword", keyword);
+            model.addAttribute("status", status);
+        } else if (keyword != null && !keyword.isEmpty()) {
+            servicePage = serviceService.searchByName(keyword, pageable);
+            model.addAttribute("keyword", keyword);
+        } else if (status != null && !status.isEmpty()) {
+            Boolean available = Boolean.parseBoolean(status);
+            servicePage = serviceService.findByStatus(available, pageable);
+            model.addAttribute("status", status);
+        } else {
+            servicePage = serviceService.findByAllService(pageable);
+        }
 
         model.addAttribute("services", servicePage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", servicePage.getTotalPages());
+        model.addAttribute("totalElements", servicePage.getTotalElements());
+        model.addAttribute("hasPrevious", servicePage.hasPrevious());
+        model.addAttribute("hasNext", servicePage.hasNext());
         model.addAttribute("service", service);
         model.addAttribute("view", "admin/ServiceCRUD");
         model.addAttribute("activeTab", tab);

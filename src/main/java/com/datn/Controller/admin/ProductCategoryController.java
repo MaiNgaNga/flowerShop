@@ -3,6 +3,9 @@ package com.datn.Controller.admin;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -28,9 +31,24 @@ public class ProductCategoryController {
 
     // Hiển thị trang quản lý danh mục (index)
     @RequestMapping("/index")
-    public String index(Model model) {
+    public String index(Model model,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "tab", defaultValue = "list") String tab) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductCategory> productCategoryPage = productCategoryService.findAllPaginated(pageable);
+
+        model.addAttribute("productCategories", productCategoryPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productCategoryPage.getTotalPages());
+        model.addAttribute("totalElements", productCategoryPage.getTotalElements());
+        model.addAttribute("hasPrevious", productCategoryPage.hasPrevious());
+        model.addAttribute("hasNext", productCategoryPage.hasNext());
+
         model.addAttribute("productCategory", new ProductCategory()); // Khởi tạo form trống
         model.addAttribute("view", "admin/productCategoryCRUD"); // Nạp giao diện quản lý danh mục
+        model.addAttribute("activeTab", tab);
         return "admin/layout";
     }
 
@@ -63,10 +81,27 @@ public class ProductCategoryController {
 
     // Truy cập vào form chỉnh sửa danh mục theo ID
     @GetMapping("/edit/{id}")
-    public String edit(Model model, @PathVariable("id") int id) {
+    public String edit(Model model, @PathVariable("id") int id,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "tab", defaultValue = "edit") String tab) {
+
         ProductCategory productCategory = productCategoryService.findByID(id); // Tìm danh mục theo ID
+        
+        // Nạp lại danh sách phân trang (cho tab danh sách)
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductCategory> productCategoryPage = productCategoryService.findAllPaginated(pageable);
+
+        model.addAttribute("productCategories", productCategoryPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productCategoryPage.getTotalPages());
+        model.addAttribute("totalElements", productCategoryPage.getTotalElements());
+        model.addAttribute("hasPrevious", productCategoryPage.hasPrevious());
+        model.addAttribute("hasNext", productCategoryPage.hasNext());
+
         model.addAttribute("productCategory", productCategory); // Đẩy dữ liệu lên form
         model.addAttribute("view", "admin/productCategoryCRUD"); // Nạp lại view
+        model.addAttribute("activeTab", tab);
         return "admin/layout";
     }
 

@@ -1,11 +1,9 @@
 package com.datn.dao;
 
 import java.util.List;
-import java.util.Map;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -22,7 +20,7 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
                         + "AND (:toDate IS NULL OR o.createDate <= :toDate) "
 
                         + "AND o.orderCode LIKE %:orderCode%")
-       
+
         Page<Order> searchPosOrdersByOrderCode(
                         @Param("orderType") String orderType,
 
@@ -120,7 +118,6 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
                         "ORDER BY MONTH(o.create_date)", nativeQuery = true)
         List<Object[]> getMonthlyRevenueByYear(@Param("year") int year);
 
-
         // DAO query: Thống kê doanh thu theo ngày trong tháng/năm (chỉ lấy đơn hàng 'Đã
         // giao')
         @Query(value = "SELECT DAY(o.create_date) AS day, SUM(o.total_amount) AS revenue " +
@@ -146,7 +143,5 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         // Đếm đơn dịch vụ theo năm với trạng thái PAID
         @Query(value = "SELECT COUNT(*) FROM service_orders WHERE status = 'PAID' AND YEAR(confirmed_at) = :year", nativeQuery = true)
         Long countPaidOrdersByYear(@Param("year") int year);
-
-
 
 }

@@ -83,41 +83,37 @@ public class ProductCRUDController {
         Pageable pageable = PageRequest.of(page, size);
         Page<Product> productPage;
 
-        // Nếu có từ khóa tìm kiếm, ưu tiên lọc theo tên sản phẩm
-        if (keyword != null && !keyword.isEmpty()) {
+        // Kết hợp tìm kiếm theo tên và lọc theo danh mục
+        if (keyword != null && !keyword.isEmpty() && productCategoryIdStr != null && !productCategoryIdStr.isEmpty()) {
+            // Tìm kiếm theo tên trong danh mục cụ thể
+            Integer productCategoryId = Integer.parseInt(productCategoryIdStr);
+            productPage = productService.searchByNameAndCategory(keyword, productCategoryId, pageable);
+            model.addAttribute("keyword", keyword);
+            model.addAttribute("productCategoryId", productCategoryId);
+        }
+        // Chỉ có từ khóa tìm kiếm
+        else if (keyword != null && !keyword.isEmpty()) {
             productPage = productService.searchByName(keyword, pageable);
             model.addAttribute("keyword", keyword);
         }
-        // Nếu có chọn danh mục cụ thể
+        // Chỉ có lọc theo danh mục
         else if (productCategoryIdStr != null && !productCategoryIdStr.isEmpty()) {
             Integer productCategoryId = Integer.parseInt(productCategoryIdStr);
             productPage = productService.findByProductCategoryIdPage(productCategoryId, pageable);
             model.addAttribute("productCategoryId", productCategoryId);
         }
-        // Ngược lại, mặc định hiển thị sản phẩm theo danh mục mới nhất
+        // Hiển thị tất cả sản phẩm
         else {
-            List<ProductCategory> categories = productCategoryService.findAll();
-            if (!categories.isEmpty()) {
-                ProductCategory newestCategory = categories.stream()
-                        .max((a, b) -> Integer.compare(a.getId(), b.getId()))
-                        .orElse(null);
-
-                if (newestCategory != null) {
-                    int newestId = newestCategory.getId();
-                    productPage = productService.findByProductCategoryIdPage(newestId, pageable);
-                    model.addAttribute("productCategoryId", newestId);
-                } else {
-                    productPage = productService.findByAllProduct(pageable);
-                }
-            } else {
-                productPage = productService.findByAllProduct(pageable);
-            }
+            productPage = productService.findByAllProduct(pageable);
         }
 
         // Đẩy dữ liệu danh sách và phân trang về view
         model.addAttribute("products", productPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("totalElements", productPage.getTotalElements());
+        model.addAttribute("hasNext", productPage.hasNext());
+        model.addAttribute("hasPrevious", productPage.hasPrevious());
         model.addAttribute("product", new Product());
         model.addAttribute("view", "admin/ProductCRUD");
         model.addAttribute("activeTab", tab);
@@ -137,18 +133,23 @@ public class ProductCRUDController {
             // Validate logic giảm giá tùy chỉnh
             discountValidator.validate(product, errors);
 
-            // Debug: In ra thông tin lỗi nếu có
             if (errors.hasErrors()) {
-                System.out.println("=== VALIDATION ERRORS ===");
-                errors.getAllErrors().forEach(error -> {
-                    System.out.println("Error: " + error.getDefaultMessage());
-                    if (error instanceof org.springframework.validation.FieldError) {
-                        org.springframework.validation.FieldError fieldError = (org.springframework.validation.FieldError) error;
-                        System.out.println(
-                                "Field: " + fieldError.getField() + ", Value: " + fieldError.getRejectedValue());
-                    }
-                });
-                System.out.println("========================");
+
+                // Thêm validation cho ảnh khi tạo mới
+                if (product.getId() == 0 && (image1 == null || image1.isEmpty())) {
+                    errors.rejectValue("image_url", "image.required", "Vui lòng chọn ảnh chính");
+                }
+
+                // Giữ lại thông tin ảnh tạm thời nếu có lỗi validation
+                if (image1 != null && !image1.isEmpty()) {
+                    model.addAttribute("tempImage1", image1.getOriginalFilename());
+                }
+                if (image2 != null && !image2.isEmpty()) {
+                    model.addAttribute("tempImage2", image2.getOriginalFilename());
+                }
+                if (image3 != null && !image3.isEmpty()) {
+                    model.addAttribute("tempImage3", image3.getOriginalFilename());
+                }
 
                 model.addAttribute("view", "admin/ProductCRUD");
                 model.addAttribute("activeTab", tab);
@@ -207,21 +208,57 @@ public class ProductCRUDController {
             RedirectAttributes redirectAttributes) {
 
         try {
-            // Validate logic giảm giá tùy chỉnh
-            discountValidator.validate(product, errors);
+            // Lấy thông tin sản phẩm hiện tại để so sánh ngày
+            Product currentProduct = productService.findByID(product.getId());
 
-            // Debug: In ra thông tin lỗi nếu có
+            // Kiểm tra xem có thay đổi ngày giảm giá không
+            boolean dateChanged = false;
+            if (currentProduct != null) {
+                // So sánh ngày bắt đầu
+                boolean startDateChanged = false;
+                if (currentProduct.getDiscountStart() == null && product.getDiscountStart() != null) {
+                    startDateChanged = true;
+                } else if (currentProduct.getDiscountStart() != null && product.getDiscountStart() == null) {
+                    startDateChanged = true;
+                } else if (currentProduct.getDiscountStart() != null && product.getDiscountStart() != null) {
+                    startDateChanged = !currentProduct.getDiscountStart().equals(product.getDiscountStart());
+                }
+
+                // So sánh ngày kết thúc
+                boolean endDateChanged = false;
+                if (currentProduct.getDiscountEnd() == null && product.getDiscountEnd() != null) {
+                    endDateChanged = true;
+                } else if (currentProduct.getDiscountEnd() != null && product.getDiscountEnd() == null) {
+                    endDateChanged = true;
+                } else if (currentProduct.getDiscountEnd() != null && product.getDiscountEnd() != null) {
+                    endDateChanged = !currentProduct.getDiscountEnd().equals(product.getDiscountEnd());
+                }
+
+                dateChanged = startDateChanged || endDateChanged;
+            }
+
+            // Chỉ validate ngày khi có thay đổi ngày
+            if (dateChanged) {
+                discountValidator.validate(product, errors);
+            } else {
+                discountValidator.validateWithoutDateCheck(product, errors);
+            }
+
             if (errors.hasErrors()) {
-                System.out.println("=== UPDATE VALIDATION ERRORS ===");
-                errors.getAllErrors().forEach(error -> {
-                    System.out.println("Error: " + error.getDefaultMessage());
-                    if (error instanceof org.springframework.validation.FieldError) {
-                        org.springframework.validation.FieldError fieldError = (org.springframework.validation.FieldError) error;
-                        System.out.println(
-                                "Field: " + fieldError.getField() + ", Value: " + fieldError.getRejectedValue());
+
+                // Khi có lỗi validation, giữ lại thông tin ảnh cũ để không bị mất
+                Product existingProduct = productService.findByID(product.getId());
+                if (existingProduct != null) {
+                    if (product.getImage_url() == null || product.getImage_url().isEmpty()) {
+                        product.setImage_url(existingProduct.getImage_url());
                     }
-                });
-                System.out.println("================================");
+                    if (product.getImage_url2() == null || product.getImage_url2().isEmpty()) {
+                        product.setImage_url2(existingProduct.getImage_url2());
+                    }
+                    if (product.getImage_url3() == null || product.getImage_url3().isEmpty()) {
+                        product.setImage_url3(existingProduct.getImage_url3());
+                    }
+                }
 
                 model.addAttribute("view", "admin/ProductCRUD");
                 model.addAttribute("activeTab", tab);

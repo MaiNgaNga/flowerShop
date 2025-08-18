@@ -38,4 +38,10 @@ public interface ServiceService {
 
     // Lấy 1 dịch vụ mới nhất có trạng thái hoạt động (theo ID giảm dần)
     List<ServiceEntity> findTop1ByAvailableTrueOrderByIdDesc();
+
+    // Lọc theo trạng thái (hoạt động/ngừng hoạt động)
+    Page<ServiceEntity> findByStatus(Boolean available, Pageable pageable);
+
+    // Tìm kiếm theo tên và lọc theo trạng thái
+    Page<ServiceEntity> searchByNameAndStatus(String name, Boolean available, Pageable pageable);
 }

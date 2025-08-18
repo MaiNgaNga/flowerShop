@@ -32,4 +32,11 @@ public interface ServiceDAO extends JpaRepository<ServiceEntity, Long> {
     // Lấy 1 dịch vụ mới nhất có trạng thái hoạt động (theo ID giảm dần)
     List<ServiceEntity> findTop1ByAvailableTrueOrderByIdDesc();
 
+    // Lọc theo trạng thái (hoạt động/ngừng hoạt động)
+    Page<ServiceEntity> findByAvailable(Boolean available, Pageable pageable);
+
+    // Tìm kiếm theo tên và lọc theo trạng thái
+    @Query("SELECT s FROM ServiceEntity s WHERE LOWER(s.name) LIKE LOWER(CONCAT('%', :keyword, '%')) AND s.available = :available")
+    Page<ServiceEntity> searchByNameAndStatus(@Param("keyword") String keyword, @Param("available") Boolean available, Pageable pageable);
+
 }
