@@ -1,0 +1,167 @@
+  body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f6fa;
+            font-size: 16px;
+        }
+
+        .stats-container {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: nowrap;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .card {
+            width: 250px;
+            height: 180px;
+            background: linear-gradient(135deg, #ffffff 0%, #eef2f7 100%);
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+            z-index: 0;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .label {
+            font-size: 14px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+        }
+
+        .card.blue { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
+        .card.green { background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); }
+        .card.pink { background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%); }
+        .card.purple { background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); }
+        .card.orange { background: linear-gradient(135deg, #f1c40f 0%, #e67e22 100%); }
+
+        .card.blue .number, .card.green .number, .card.pink .number, .card.purple .number, .card.orange .number { color: #ffffff; }
+        .card.blue .label, .card.green .label, .card.pink .label, .card.purple .label, .card.orange .label { color: #ecf0f1; }
+
+        .chart-card {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            padding: 10px;
+        }
+
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px 20px;
+            justify-items: start;
+            align-items: center;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .legend-color-box {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        canvas#topProductsChart, canvas#topProductsByMonthChart {
+            display: block;
+            width: 100% !important;
+            height: 300px !important;
+        }
+        /* ----------------------------- */
+        .filter-container {
+    background-color: #f8f9fa; /* Light gray background for contrast */
+    /* padding: 15px 20px; */
+    border-radius: 8px;
+    /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  */
+    margin-bottom: 20px; /* Consistent spacing */
+    display: flex;
+    gap: 15px; /* Space between select elements */
+    justify-content: center;
+    align-items: center;
+    max-width: 200px; /* Limit width for better focus */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.form-select {
+    padding: 10px 15px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    background-color: #fff;
+    font-size: 16px;
+    color: #333;
+    transition: all 0.3s ease; /* Smooth transitions for hover/focus */
+    min-width: 120px; /* Ensure consistent width */
+}
+
+.form-select:focus {
+    border-color: #007bff; /* Bootstrap primary color for focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Focus glow effect */
+    outline: none;
+}
+
+.form-select:hover {
+    border-color: #0056b3; /* Darker border on hover */
+    background-color: #f1f3f5; /* Slight background change on hover */
+}
+
+.form-select option {
+    background-color: #fff;
+    color: #333;
+    padding: 10px; /* Better spacing for dropdown items */
+}
+
+@media (max-width: 576px) {
+    .filter-container {
+        flex-direction: column; /* Stack selects vertically on small screens */
+        gap: 10px;
+        padding: 10px;
+        max-width: 100%;
+    }
+
+    .form-select {
+        width: 100%; /* Full width on small screens */
+        min-width: unset;
+    }
+}
+/* css tab */

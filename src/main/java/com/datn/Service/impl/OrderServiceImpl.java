@@ -364,7 +364,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Long countPaidOrdersByYear(int year) {
         return dao.countPaidOrdersByYear(year);
-
     }
 
     public Order findByID(Long id) {
