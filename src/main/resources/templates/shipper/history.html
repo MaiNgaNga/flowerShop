@@ -1,99 +1,241 @@
 <!-- shipper/view/history.html -->
 <div class="container mt-4" th:fragment="content">
-  <h2 class="mb-4 fw-bold" style="font-size: 2rem; color: #222">
-    Lịch sử giao hàng
-  </h2>
-  <div class="row mb-4">
-    <div class="col-md-6">
-      <form
-        method="get"
-        th:action="@{/shipper/history}"
-        class="d-flex align-items-center gap-2"
-      >
-        <label for="date" class="me-2 fw-semibold" style="font-size: 1.1rem"
-          >Chọn ngày:</label
-        >
-        <input
-          type="date"
-          id="date"
-          name="date"
-          class="form-control"
-          th:value="${selectedDate}"
-          style="max-width: 180px"
-        />
-        <button type="submit" class="btn btn-primary ms-2">Lọc</button>
-      </form>
-    </div>
-    <div class="col-md-6 d-flex justify-content-end align-items-center">
+  <div class="shipper-history-container">
+    <h2 class="mb-4 fw-bold" style="font-size: 2rem; color: #222">
+      Lịch sử giao hàng
+    </h2>
+
+    <!-- Bộ lọc -->
+    <div class="row mb-4">
       <div
-        class="card shadow-sm"
-        style="border-radius: 12px; background: #fff; padding: 12px 24px"
+        class="d-flex align-items-center justify-content-between flex-wrap mb-2"
       >
-        <span class="fw-semibold" style="color: #6366f1"
-          >Tổng tiền đã giao:</span
+        <form
+          method="get"
+          th:action="@{/shipper/history}"
+          class="col-md-9 d-flex align-items-center gap-3 flex-wrap"
         >
-        <span
-          class="fw-bold ms-2"
-          style="font-size: 1.1rem; color: #222"
-          th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT') + ' VND'}"
-        ></span>
+          <label for="date" class="fw-semibold" style="font-size: 1.1rem"
+            >Ngày:</label
+          >
+          <input
+            type="date"
+            id="date"
+            name="date"
+            class="form-control"
+            th:value="${selectedDate}"
+            style="max-width: 160px"
+          />
+          <label for="month" class="fw-semibold" style="font-size: 1.1rem"
+            >Tháng:</label
+          >
+          <select
+            id="month"
+            name="month"
+            class="form-select"
+            style="max-width: 100px"
+          >
+            <option value="">--</option>
+            <option
+              th:each="m : ${#numbers.sequence(1,12)}"
+              th:value="${m}"
+              th:text="${m}"
+              th:selected="${m == selectedMonth}"
+            ></option>
+          </select>
+          <label for="year" class="fw-semibold" style="font-size: 1.1rem"
+            >Năm:</label
+          >
+          <select
+            id="year"
+            name="year"
+            class="form-select"
+            style="max-width: 100px"
+          >
+            <option value="">--</option>
+            <option
+              th:each="y : ${years}"
+              th:value="${y}"
+              th:text="${y}"
+              th:selected="${y == selectedYear}"
+            ></option>
+          </select>
+          <button type="submit" class="btn btn-primary">Lọc</button>
+          <a href="/shipper/history" class="btn btn-secondary">Làm mới</a>
+        </form>
+        <div
+          class="card shadow-sm"
+          style="
+            border-radius: 12px;
+            background: #fff;
+            padding: 12px 24px;
+            min-width: 180px;
+          "
+        >
+          <span class="fw-semibold" style="color: #6366f1"
+            >Tổng tiền đã giao:</span
+          >
+          <span
+            class="fw-bold ms-2"
+            style="font-size: 1.1rem; color: #222"
+            th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT') + ' VND'}"
+          >
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bảng lịch sử -->
+    <div class="card shadow-sm" style="border-radius: 16px; background: #fff">
+      <div class="table-responsive">
+        <table
+          class="table table-hover align-middle mb-0"
+          style="background: #fff"
+        >
+          <thead class="table-light">
+            <tr>
+              <th class="text-center">Mã đơn</th>
+              <th>Khách hàng</th>
+              <th class="text-center">Ngày hoàn tất</th>
+              <th class="text-center">Trạng thái</th>
+              <th class="text-end">Tổng tiền</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Có đơn hàng -->
+            <th:block th:if="${#lists.isEmpty(orders)}">
+              <div class="text-center my-5">
+                <span class="fs-5 text-muted">Hiện chưa có đơn hàng nào</span>
+              </div>
+            </th:block>
+            <th:block th:if="${orders != null and !orders.isEmpty()}">
+              <tr th:each="order : ${orders}" th:if="${order != null}">
+                <td
+                  class="text-center fw-bold"
+                  th:text="${order.id != null ? order.id : ''}"
+                ></td>
+                <td th:text="${order.user != null ? order.user.name : ''}"></td>
+                <td
+                  class="text-center"
+                  th:text="${order.deliveryDate != null ? #dates.format(order.deliveryDate, 'dd-MM-yyyy') : ''}"
+                ></td>
+                <td class="text-center">
+                  <span th:if="${order.status != null}">
+                    <span
+                      class="badge bg-success"
+                      th:if="${order.status == 'Đã giao'}"
+                      >Đã giao</span
+                    >
+                    <span
+                      class="badge bg-danger"
+                      th:if="${order.status == 'Giao thất bại'}"
+                      >Giao thất bại</span
+                    >
+                    <span
+                      th:if="${order.status != 'Đã giao' and order.status != 'Giao thất bại'}"
+                      th:text="${order.status}"
+                    >
+                    </span>
+                  </span>
+                </td>
+                <td
+                  class="text-end fw-semibold"
+                  th:text="${order.totalAmount != null ? #numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT') + ' VND' : ''}"
+                ></td>
+              </tr>
+            </th:block>
+
+            <!-- Không có đơn hàng -->
+            <th:block th:if="${orders == null or orders.isEmpty()}">
+              <tr>
+                <td colspan="5" class="text-center text-muted">
+                  Không có đơn hàng nào.
+                </td>
+              </tr>
+            </th:block>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
-  <div class="card shadow-sm" style="border-radius: 16px; background: #fff">
-    <div class="table-responsive">
-      <table
-        class="table table-hover align-middle mb-0"
-        style="background: #fff"
-      >
-        <thead class="table-light">
-          <tr>
-            <th class="text-center">Mã đơn</th>
-            <th>Khách hàng</th>
-            <th class="text-center">Ngày hoàn tất</th>
-            <th class="text-center">Trạng thái</th>
-            <th class="text-end">Tổng tiền</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="order : ${orders}">
-            <td class="text-center fw-bold" th:text="${order.id}"></td>
-            <td th:text="${order.user.name}"></td>
-            <td
-              class="text-center"
-              th:text="${#dates.format(order.deliveryDate, 'dd-MM-yyyy')}"
-            ></td>
-            <td class="text-center">
-              <span
-                class="badge bg-success"
-                th:if="${order.status == 'Đã giao'}"
-                >Đã giao</span
-              >
-              <span
-                class="badge bg-danger"
-                th:if="${order.status == 'Giao thất bại'}"
-                >Giao thất bại</span
-              >
-              <span
-                th:if="${order.status != 'Đã giao' and order.status != 'Giao thất bại'}"
-                th:text="${order.status}"
-              ></span>
-            </td>
-            <td
-              class="text-end fw-semibold"
-              th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT') + ' VND'}"
-            ></td>
-          </tr>
-        </tbody>
-      </table>
+  <div th:if="${orderPage != null}">
+    <div
+      class="d-flex justify-content-center mt-5"
+      th:if="${orderPage != null and orderPage.totalPages > 0}"
+    >
+      <nav>
+        <ul class="pagination custom-pagination">
+          <li
+            class="page-item"
+            th:classappend="${orderPage.number == 0} ? 'disabled'"
+          >
+            <a
+              class="page-link"
+              th:href="@{/shipper/history(page=0, size=${orderPage.size})}"
+            >
+              <i class="fa fa-angle-double-left"></i>
+            </a>
+          </li>
+          <li
+            class="page-item"
+            th:classappend="${orderPage.number == 0} ? 'disabled'"
+          >
+            <a
+              class="page-link"
+              th:href="@{/shipper/history(page=${orderPage.number - 1}, size=${orderPage.size})}"
+            >
+              <i class="fa fa-angle-left"></i>
+            </a>
+          </li>
+          <li
+            class="page-item"
+            th:each="i : ${#numbers.sequence(0, orderPage.totalPages - 1)}"
+            th:classappend="${orderPage.number == i} ? 'active'"
+          >
+            <a
+              class="page-link"
+              th:href="@{/shipper/history(page=${i}, size=${orderPage.size})}"
+              th:text="${i + 1}"
+            ></a>
+          </li>
+          <li
+            class="page-item"
+            th:classappend="${orderPage.number + 1 == orderPage.totalPages} ? 'disabled'"
+          >
+            <a
+              class="page-link"
+              th:href="@{/shipper/history(page=${orderPage.number + 1}, size=${orderPage.size})}"
+            >
+              <i class="fa fa-angle-right"></i>
+            </a>
+          </li>
+          <li
+            class="page-item"
+            th:classappend="${orderPage.number + 1 == orderPage.totalPages} ? 'disabled'"
+          >
+            <a
+              class="page-link"
+              th:href="@{/shipper/history(page=${orderPage.totalPages - 1}, size=${orderPage.size})}"
+            >
+              <i class="fa fa-angle-double-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
+
   <style>
+    .shipper-history-container {
+      max-width: 90%;
+    }
     .table thead th {
       font-weight: 600;
       font-size: 1rem;
-      background: #f3f4f6;
+      background: #000;
       border-bottom: 2px solid #e5e7eb;
+      color: #fff;
+      font- weight: bold;
     }
     .table-hover tbody tr:hover {
       background: #f9fafb;
@@ -115,6 +257,43 @@
       font-size: 0.95rem;
       padding: 0.5em 1em;
       border-radius: 8px;
+    }
+    .custom-pagination .page-link {
+      margin: 0 10px;
+      color: #333 !important;
+      border: 1.5px solid #d4a5e6 !important;
+      background-color: #fff !important;
+      border-radius: 50% !important;
+      transition: all 0.2s ease-in-out;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: none !important;
+      outline: none !important;
+      padding: 0;
+    }
+    .custom-pagination .page-item.active .page-link {
+      background-color: #d4a5e6 !important;
+      color: #fff !important;
+      border-color: #d4a5e6 !important;
+    }
+    .custom-pagination .page-item.disabled .page-link {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: #fff !important;
+      color: #bbb !important;
+      border-color: #d4a5e6 !important;
+    }
+    .custom-pagination .page-link:hover {
+      background: #e0f7f7 !important;
+      color: #333 !important;
+      border-color: #d4a5e6 !important;
+      transform: scale(1.1);
+      box-shadow: 0 4px 10px rgba(212, 165, 230, 0.3);
     }
   </style>
 </div>

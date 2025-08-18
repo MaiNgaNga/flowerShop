@@ -231,12 +231,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const priceHTML =
       product.discountPercent && product.discountPercent > 0
-        ? `<div class="product-price">
-           <span>${formatPrice(product.priceAfterDiscount)}₫</span>
-           <span style="text-decoration: line-through; color: #999">${formatPrice(
-             product.price
-           )}₫</span>
-         </div>`
+        ? `<div class="product-price" style="display: flex; flex-direction: column; align-items: center;">
+             <span class="discounted-price">${formatPrice(
+               product.priceAfterDiscount
+             )}₫</span>
+             <span class="original-price" style="margin-top: 2px;">${formatPrice(
+               product.price
+             )}₫</span>
+           </div>`
         : `<div class="product-price">${formatPrice(product.price)}₫</div>`;
 
     // Nếu có id thì bọc ảnh trong thẻ <a>, nếu không thì chỉ hiển thị ảnh

@@ -1,6 +1,11 @@
 <div class="container mt-4" th:fragment="content">
   <h2 class="mb-4">Đơn hàng đang giao</h2>
   <div class="accordion" id="myOrdersAccordion" style="width: 90%">
+    <th:block th:if="${#lists.isEmpty(orders)}">
+      <div class="text-center my-5">
+        <span class="fs-5 text-muted">Hiện chưa có đơn hàng nào</span>
+      </div>
+    </th:block>
     <th:block th:each="order, iterStat : ${orders}">
       <div
         class="accordion-item mb-3"
@@ -328,6 +333,7 @@
   .table-light th {
     background-color: #f8f9fa;
     border-bottom: 2px solid #dee2e6;
+    text-align: center;
   }
   .text-end {
     text-align: right;

@@ -1,13 +1,15 @@
 <!-- shipper/sidebar.html -->
 <aside class="shipper-sidebar-dark" th:fragment="content">
   <img
-    th:src="@{/images/logo.png}"
+    th:src="@{/images/2.png}"
     alt="Trạm Hoa"
-    height="60"
-    style="text-align: center; margin-bottom: 20px"
+    height="100"
+
   />
   <div class="d-flex align-items-center" style="margin-bottom: 20px">
-    <h5 style="color: #fff; font-weight: 700">Xin chào Shipper!</h5>
+    <h5 style="color: #fff; font-weight: 700">
+      Hello, <span th:text="${session.user.name}">name</span>!
+    </h5>
   </div>
 
   <nav class="shipper-nav-dark flex-column pt-2">

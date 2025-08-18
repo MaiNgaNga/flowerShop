@@ -253,28 +253,36 @@ button {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
-  padding: 40px 20px;
+  padding: 40px 100px;
   text-align: center;
 }
 
 .feature-item {
   flex: 1 1 200px;
   margin: 20px;
-  max-width: 220px;
+  max-width: 290px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.feature-item i {
-  font-size: 36px;
-  color: #045d56;
-  margin-bottom: 12px;
-  transition: transform var(--transition-fast);
+.features img {
+  max-width: 40%;
+  height: auto;
+  display: block;
+  margin: 0 auto 12px auto;
+}
+/* Căn giữa SVG icon trong feature-item */
+.feature-item svg {
+  display: block;
+  margin: 0 auto 12px auto;
 }
 
 .feature-item p {
-  font-size: 16px;
+  font-size: 1.2rem;
   font-weight: var(--font-weight-normal);
-  color: #1c92d2;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 /* Promotion */
@@ -717,6 +725,17 @@ button {
   font-size: 14px;
   display: inline-block;
   margin: 2px;
+}
+
+/* Giá sản phẩm giảm giá */
+.product-price .discounted-price {
+  color: #111;
+  font-size: 1.1em;
+}
+.product-price .original-price {
+  text-decoration: line-through;
+  color: #d32f2f;
+  font-size: 1em;
 }
 
 /* Service */

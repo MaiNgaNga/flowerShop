@@ -28,6 +28,37 @@ import org.springframework.data.domain.Pageable;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+    @Override
+    public Page<Order> getOrdersByStatusAndShipper(String status, int shipperId, Pageable pageable) {
+        return dao.findByStatusAndShipperIdOrderByDeliveryDateDesc(status, shipperId, pageable);
+    }
+
+    @Override
+    public List<Order> getOrdersByShipperAndMonthYear(int shipperId, int month, int year) {
+        return dao.getOrdersByShipperAndMonthYear(shipperId, month, year);
+    }
+
+    @Override
+    public Double getTotalAmountByShipperAndMonthYear(int shipperId, int month, int year) {
+        Double total = dao.getTotalAmountByShipperAndMonthYear(shipperId, month, year);
+        return total != null ? total : 0.0;
+    }
+
+    @Override
+    public List<Order> getOrdersByShipperAndYear(int shipperId, int year) {
+        return dao.getOrdersByShipperAndYear(shipperId, year);
+    }
+
+    @Override
+    public Double getTotalAmountByShipperAndYear(int shipperId, int year) {
+        Double total = dao.getTotalAmountByShipperAndYear(shipperId, year);
+        return total != null ? total : 0.0;
+    }
+
+    @Override
+    public List<Integer> getAvailableYearsForShipper(Integer shipperId) {
+        return dao.getAvailableYearsForShipper(shipperId);
+    }
 
     @Autowired
     private OrderDAO dao;
@@ -49,18 +80,19 @@ public class OrderServiceImpl implements OrderService {
         return revenueMap;
     }
 
-    // ServiceImpl: Thống kê doanh thu theo ngày trong tháng/năm (chỉ lấy đơn hàng 'Đã giao')
-@Override
-public Map<Integer, Double> getDailyRevenueByMonthAndYear(int month, int year) {
-    List<Object[]> results = dao.getDailyRevenueByMonthAndYear(month, year);
-    Map<Integer, Double> revenueMap = new HashMap<>();
-    for (Object[] row : results) {
-        Integer day = (Integer) row[0];
-        Double revenue = (Double) row[1];
-        revenueMap.put(day, revenue);
+    // ServiceImpl: Thống kê doanh thu theo ngày trong tháng/năm (chỉ lấy đơn hàng
+    // 'Đã giao')
+    @Override
+    public Map<Integer, Double> getDailyRevenueByMonthAndYear(int month, int year) {
+        List<Object[]> results = dao.getDailyRevenueByMonthAndYear(month, year);
+        Map<Integer, Double> revenueMap = new HashMap<>();
+        for (Object[] row : results) {
+            Integer day = (Integer) row[0];
+            Double revenue = (Double) row[1];
+            revenueMap.put(day, revenue);
+        }
+        return revenueMap;
     }
-    return revenueMap;
-}
 
     // Thống kê doanh thu theo trong năm
     @Override
@@ -172,7 +204,17 @@ public Map<Integer, Double> getDailyRevenueByMonthAndYear(int month, int year) {
 
     @Override
     public List<Order> getOrdersByStatusAndShipper(String status, int shipperId) {
-        return dao.findByStatusAndShipperId(status, shipperId);
+        List<Order> orders = dao.findByStatusAndShipperId(status, shipperId);
+        orders.sort((o1, o2) -> {
+            if (o1.getDeliveryDate() == null && o2.getDeliveryDate() == null)
+                return 0;
+            if (o1.getDeliveryDate() == null)
+                return 1;
+            if (o2.getDeliveryDate() == null)
+                return -1;
+            return o2.getDeliveryDate().compareTo(o1.getDeliveryDate());
+        });
+        return orders;
     }
 
     @Override

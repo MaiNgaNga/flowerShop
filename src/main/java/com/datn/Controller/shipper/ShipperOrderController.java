@@ -69,28 +69,49 @@ public class ShipperOrderController {
     }
 
     @GetMapping("/history")
-    public String history(@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+    public String history(
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+            @RequestParam(required = false) Integer month,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
             Model model) {
         User shipper = authService.getUser();
-        if (shipper != null && shipper.getRole() == 2) {
-            List<Order> historyOrders;
-            Double totalAmount;
+        List<Order> historyOrders = new ArrayList<>();
+        Double totalAmount = 0.0;
+        org.springframework.data.domain.Page<Order> orderPage = null;
 
+        if (shipper != null && shipper.getRole() == 2) {
+            org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page,
+                    size);
             if (date != null) {
+                // Nếu lọc theo ngày, vẫn lấy toàn bộ không phân trang (có thể bổ sung sau)
                 historyOrders = orderService.getOrdersByShipperAndDate(shipper.getId(), date);
                 totalAmount = orderService.getTotalAmountByShipperAndDate(shipper.getId(), date);
                 model.addAttribute("selectedDate", new SimpleDateFormat("yyyy-MM-dd").format(date));
-
-                System.out.println("History orders: " + historyOrders);
-                System.out.println("Total amount: " + totalAmount);
+                model.addAttribute("orders", historyOrders);
+            } else if (month != null && year != null) {
+                historyOrders = orderService.getOrdersByShipperAndMonthYear(shipper.getId(), month, year);
+                totalAmount = orderService.getTotalAmountByShipperAndMonthYear(shipper.getId(), month, year);
+                model.addAttribute("selectedMonth", month);
+                model.addAttribute("selectedYear", year);
+                model.addAttribute("orders", historyOrders);
+            } else if (year != null) {
+                historyOrders = orderService.getOrdersByShipperAndYear(shipper.getId(), year);
+                totalAmount = orderService.getTotalAmountByShipperAndYear(shipper.getId(), year);
+                model.addAttribute("selectedYear", year);
+                model.addAttribute("orders", historyOrders);
             } else {
-                historyOrders = orderService.getOrdersByStatusAndShipper("Đã giao", shipper.getId());
+                orderPage = orderService.getOrdersByStatusAndShipper("Đã giao", shipper.getId(), pageable);
                 totalAmount = orderService.getTotalCompletedOrdersAmount(shipper.getId());
+                model.addAttribute("orders", orderPage.getContent());
+                model.addAttribute("orderPage", orderPage);
             }
-
-            model.addAttribute("orders", historyOrders);
             model.addAttribute("total", totalAmount);
         }
+        // Truyền danh sách năm cho dropdown
+        List<Integer> years = orderService.getAvailableYearsForShipper(shipper != null ? shipper.getId() : null);
+        model.addAttribute("years", years);
         model.addAttribute("view", "shipper/history");
         return "shipper/layout";
     }
