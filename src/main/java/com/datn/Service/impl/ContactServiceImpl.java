@@ -19,6 +19,7 @@ public class ContactServiceImpl implements ContactService {
     
     @Override
     public void saveContact(Contact contact) {
+        contact.setCreatedAt(java.time.LocalDateTime.now()); // Set createdAt to current time
         contactDAO.save(contact);
     }
 
@@ -55,6 +56,16 @@ public class ContactServiceImpl implements ContactService {
     @Override
     public Contact findById(int id) {
         return contactDAO.findById(id);
+    }
+
+    @Override
+    public Page<Contact> findByMonthAndYear(Integer month, Integer year, Pageable pageable) {
+       return contactDAO.findByMonthAndYear(month, year, pageable);
+    }
+
+    @Override
+    public List<Integer> findDistinctYears() {
+        return contactDAO.findDistinctYears();
     }
 
 }

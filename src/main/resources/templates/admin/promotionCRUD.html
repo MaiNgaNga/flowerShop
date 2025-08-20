@@ -351,7 +351,6 @@
               <th>Giá trị</th>
               <th>Ngày bắt đầu</th>
               <th>Ngày kết thúc</th>
-              <th>Ngày tạo mã</th>
               <th>Trạng thái</th>
               <th></th>
             </tr>
@@ -374,11 +373,6 @@
                 <td
                   th:text="${#temporals.format(item.endDate, 'dd-MM-YYYY ')}"
                 ></td>
-                <td>
-                  <span
-                    th:text="${#temporals.format(item.createdDate, 'dd-MM-YYYY HH:mm:ss')}"
-                  ></span>
-                </td>
                 <td>
                   <span th:class="${item.status ? 'badge badge-success' : 'badge badge-danger'}"
                     style="display:inline-block;min-width:70px;padding:4px 12px;border-radius:12px;font-size:13px;font-weight:600;color:#fff;"

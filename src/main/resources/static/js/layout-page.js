@@ -6,6 +6,26 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }, 2000); // 3 giây
 });
+// =======================================================================//
+function confirmMarkProcessed(element) {
+  let markProcessedUrl = element.getAttribute("href"); // lấy từ href của thẻ a
+  let confirmBtn = document.getElementById("confirmMarkProcessedBtn");
+
+  confirmBtn.setAttribute("href", markProcessedUrl);
+
+  let markProcessedModal = new bootstrap.Modal(
+    document.getElementById("confirmMarkProcessedModal")
+  );
+  markProcessedModal.show();
+
+  return false; // chặn <a> nhảy link ngay
+}
+
+
+
+// =======================================================================//
+
+
 function confirmDelete(element) {
   let deleteUrl = element.getAttribute("data-url"); // Lấy link từ `data-url`
   let confirmBtn = document.getElementById("confirmDeleteBtn");
