@@ -49,18 +49,19 @@ public class OrderServiceImpl implements OrderService {
         return revenueMap;
     }
 
-    // ServiceImpl: Thống kê doanh thu theo ngày trong tháng/năm (chỉ lấy đơn hàng 'Đã giao')
-@Override
-public Map<Integer, Double> getDailyRevenueByMonthAndYear(int month, int year) {
-    List<Object[]> results = dao.getDailyRevenueByMonthAndYear(month, year);
-    Map<Integer, Double> revenueMap = new HashMap<>();
-    for (Object[] row : results) {
-        Integer day = (Integer) row[0];
-        Double revenue = (Double) row[1];
-        revenueMap.put(day, revenue);
+    // ServiceImpl: Thống kê doanh thu theo ngày trong tháng/năm (chỉ lấy đơn hàng
+    // 'Đã giao')
+    @Override
+    public Map<Integer, Double> getDailyRevenueByMonthAndYear(int month, int year) {
+        List<Object[]> results = dao.getDailyRevenueByMonthAndYear(month, year);
+        Map<Integer, Double> revenueMap = new HashMap<>();
+        for (Object[] row : results) {
+            Integer day = (Integer) row[0];
+            Double revenue = (Double) row[1];
+            revenueMap.put(day, revenue);
+        }
+        return revenueMap;
     }
-    return revenueMap;
-}
 
     // Thống kê doanh thu theo trong năm
     @Override
@@ -317,7 +318,6 @@ public Map<Integer, Double> getDailyRevenueByMonthAndYear(int month, int year) {
     @Override
     public Long countPaidOrdersByYear(int year) {
         return dao.countPaidOrdersByYear(year);
-
     }
 
     public Order findByID(Long id) {
