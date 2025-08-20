@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.datn.model.Category;
 import com.datn.model.Product;
 
 public interface ProductDAO extends JpaRepository<Product, Long> {
@@ -68,6 +69,10 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
                         @Param("productCategoryId") Integer productCategoryId,
                         @Param("categoryId") Integer categoryId,
                         Pageable pageable);
+                        
+        @Query("SELECT DISTINCT p.category FROM Product p WHERE p.productCategory.id = :productCategoryId")
+        List<Category> findCategoriesByProductCategoryId(@Param("productCategoryId") int productCategoryId);
+
 
         @Query("""
                         SELECT p FROM Product p

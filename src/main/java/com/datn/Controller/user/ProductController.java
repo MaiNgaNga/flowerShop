@@ -73,46 +73,20 @@ public class ProductController {
         Page<Product> products = productService.findByMultipleFilters(
             pro_categoryId, ca_Id, color, minPrice, maxPrice, pageable);
 
-
+        model.addAttribute("selectedCategoryId", ca_Id);
+        model.addAttribute("selectedColor", color);
+        model.addAttribute("selectedMin", minPrice);
+        model.addAttribute("selectedMax", maxPrice);
         // Truyền các dữ liệu cần thiết sang view
         model.addAttribute("page", products); // Danh sách sản phẩm theo trang
         model.addAttribute("pro_ca", productCategoryService.findByID(pro_categoryId)); // Thông tin danh mục chính
         model.addAttribute("bestsellerProduct", productService.findBestSeller()); // Danh sách sản phẩm bán chạy
         model.addAttribute("productCategories", productCategoryService.findAll()); // Tất cả danh mục sản phẩm chính
-        model.addAttribute("categogies", ca_Service.findAll()); // Tất cả danh mục con
+        model.addAttribute("categogies", productService.findCategoriesByProductCategoryId(pro_categoryId)); // Tất cả danh mục con
         model.addAttribute("view", "product"); // Tên view được load bên layout
 
         return "layouts/layout"; // Trả về layout chính có nhúng view "product"
     }
 
-    // Xử lý tìm kiếm sản phẩm theo tên
-    @RequestMapping("/search")
-    public String searchProductByName(Model model,
-            @RequestParam(name = "keyword", required = false) String keyword, // Từ khóa tìm kiếm
-            @RequestParam(name = "p", defaultValue = "0") int page) { // Trang hiện tại
-        try {
-            Pageable pageable = PageRequest.of(page, 12); // Phân trang
-            Page<Product> result;
-
-            // Nếu từ khóa trống, trả về danh sách rỗng
-            if (keyword == null || keyword.trim().isEmpty()) {
-                result = Page.empty();
-            } else {
-                result = productService.searchByName(keyword.trim(), pageable); // Tìm kiếm sản phẩm theo tên
-            }
-
-            // Truyền dữ liệu sang view
-            model.addAttribute("page", result);
-            model.addAttribute("productCategories", productCategoryService.findAll());
-            model.addAttribute("categogies", ca_Service.findAll());
-            model.addAttribute("searchKeyword", keyword); // Giữ lại từ khóa trên giao diện
-            model.addAttribute("pro_ca", null); // Không truyền danh mục cụ thể
-            model.addAttribute("view", "product"); // Giao diện dùng chung với trang sản phẩm
-
-            return "layouts/layout"; // Trả về layout chính có nhúng view "product"
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "error"; // Trả về trang lỗi nếu có exception
-        }
-    }
+   
 }

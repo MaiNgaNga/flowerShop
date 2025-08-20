@@ -5,7 +5,10 @@ import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.datn.model.Category;
 import com.datn.model.Product;
 
 public interface ProductService {
@@ -88,4 +91,5 @@ public interface ProductService {
 
         List<Map<String, Object>> getTop6SellingProductsByYearAndMonth(int year, int month);
 
+        List<Category> findCategoriesByProductCategoryId(@Param("productCategoryId") int productCategoryId);
 }
