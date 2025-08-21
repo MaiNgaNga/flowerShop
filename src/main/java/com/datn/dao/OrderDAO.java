@@ -1,10 +1,10 @@
-        package com.datn.dao;
+package com.datn.dao;
 
+import java.util.List;
 import java.util.List;  
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -39,6 +39,10 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         @Query("SELECT o FROM Order o WHERE o.orderType = :orderType "
                         + "AND (:fromDate IS NULL OR o.createDate >= :fromDate) "
                         + "AND (:toDate IS NULL OR o.createDate <= :toDate) "
+
+                        + "AND o.orderCode LIKE %:orderCode% "
+                        + "ORDER BY o.createDate DESC")
+
 
                         + "AND o.orderCode LIKE %:orderCode%")
 
@@ -166,7 +170,7 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         // "ORDER BY MONTH(o.create_date)", nativeQuery = true)
         // List<Object[]> getMonthlyRevenueByYear(@Param("year") int year);
 
-        // Thống kê doanh thu theo ngày trong tháng/năm (bao gồm cả đơn hàng Đã giao và
+        // Thống kê doanh thu theo ngày trong tháng/năm (bao gồm cả đơn hàng Đã giao và dịch vụ đã thanh toán)
         @Query(value = "SELECT DAY(derived.create_date) AS day, COALESCE(SUM(derived.revenue), 0) AS total_revenue " +
                         "FROM ( " +
                         "    SELECT o.create_date AS create_date, SUM(o.total_amount) AS revenue " +

@@ -20,11 +20,18 @@ public class DiscountValidator implements Validator {
     public void validate(Object target, Errors errors) {
         Product product = (Product) target;
 
-        // Kiểm tra logic giảm giá tùy chỉnh
-        validateDiscountLogic(product, errors);
+        // Kiểm tra logic giảm giá tùy chỉnh (bao gồm validate ngày)
+        validateDiscountLogic(product, errors, true);
+    }
+    
+    public void validateWithoutDateCheck(Object target, Errors errors) {
+        Product product = (Product) target;
+
+        // Kiểm tra logic giảm giá tùy chỉnh (không validate ngày)
+        validateDiscountLogic(product, errors, false);
     }
 
-    private void validateDiscountLogic(Product product, Errors errors) {
+    private void validateDiscountLogic(Product product, Errors errors, boolean validateDate) {
         try {
             // Kiểm tra nếu có bất kỳ trường giảm giá nào được điền
             Integer discountPercent = product.getDiscountPercent();
@@ -39,15 +46,15 @@ public class DiscountValidator implements Validator {
             if (hasDiscountPercent || hasDiscountStart || hasDiscountEnd) {
                 if (!hasDiscountPercent) {
                     errors.rejectValue("discountPercent", "discount.percent.required",
-                            "Phần trăm giảm giá là bắt buộc khi áp dụng giảm giá");
+                            "Vui lòng nhập phần trăm giảm giá");
                 }
                 if (!hasDiscountStart) {
                     errors.rejectValue("discountStart", "discount.start.required",
-                            "Ngày bắt đầu là bắt buộc khi áp dụng giảm giá");
+                            "Vui lòng chọn ngày bắt đầu");
                 }
                 if (!hasDiscountEnd) {
                     errors.rejectValue("discountEnd", "discount.end.required",
-                            "Ngày kết thúc là bắt buộc khi áp dụng giảm giá");
+                            "Vui lòng chọn ngày kết thúc");
                 }
 
                 // Kiểm tra logic ngày tháng nếu có đầy đủ thông tin
@@ -59,9 +66,10 @@ public class DiscountValidator implements Validator {
                 }
 
                 if (hasDiscountStart) {
-                    if (discountStart.isBefore(LocalDate.now())) {
+                    // Validate ngày quá khứ khi có yêu cầu validate ngày
+                    if (validateDate && discountStart.isBefore(LocalDate.now())) {
                         errors.rejectValue("discountStart", "discount.start.invalid",
-                                "Ngày bắt đầu giảm giá không được trong quá khứ");
+                                "Ngày bắt đầu không được là ngày trong quá khứ");
                     }
                 }
 

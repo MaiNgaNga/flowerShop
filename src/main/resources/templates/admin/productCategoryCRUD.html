@@ -151,6 +151,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr th:if="${productCategories == null or #lists.isEmpty(productCategories)}">
+              <td colspan="4" class="text-center text-muted">
+                Không có danh mục sản phẩm nào.
+              </td>
+            </tr>
             <th:block th:each="item : ${productCategories}">
               <tr>
                 <td th:text="${item.id}"></td>
@@ -158,9 +163,9 @@
                 <td class="text-start" th:text="${item.description}"></td>
                 <td class="action-icons">
                   <a
-                    th:href="@{'/Promotion/edit/' + ${item.id} + '?tab=edit'}"
+                    th:href="@{'/ProductCategory/edit/' + ${item.id} + '?tab=edit'}"
                     class="edit-icon"
-                    title="Sửa sản phẩm"
+                    title="Sửa danh mục"
                   >
                     <i class="fa fa-edit"></i>
                   </a>
@@ -168,8 +173,8 @@
                     href="#"
                     class="delete-icon"
                     onclick="confirmDelete(this)"
-                    th:data-url="@{'/Promotion/delete/' + ${item.id} + '?tab=list'}"
-                    title="Xóa sản phẩm"
+                    th:data-url="@{'/ProductCategory/delete/' + ${item.id} + '?tab=list'}"
+                    title="Xóa danh mục"
                   >
                     <i class="fa fa-trash"></i>
                   </a>
@@ -178,6 +183,82 @@
             </th:block>
           </tbody>
         </table>
+      </div>
+
+      <!-- Phân trang chuyên nghiệp -->
+      <div class="pagination-wrapper" th:if="${productCategories != null and #lists.size(productCategories) > 0}">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="pagination-info">
+            Hiển thị <strong th:text="${#lists.size(productCategories)}"></strong> trong tổng số
+            <strong th:text="${totalElements != null ? totalElements : #lists.size(productCategories)}"></strong> danh mục sản phẩm
+          </div>
+          
+          <nav aria-label="ProductCategory pagination" th:if="${totalPages != null and totalPages > 1}">
+            <ul class="pagination simple-pagination">
+              <!-- Nút về trang đầu -->
+              <li class="page-item" th:classappend="${currentPage == null or currentPage == 0} ? 'disabled'">
+                <a class="page-link" 
+                   th:href="@{/ProductCategory/index(page=0, size=10, tab='list')}"
+                   th:unless="${currentPage == null or currentPage == 0}"
+                   title="Trang đầu">
+                  <i class="fas fa-angle-double-left"></i>
+                </a>
+                <span class="page-link" th:if="${currentPage == null or currentPage == 0}">
+                  <i class="fas fa-angle-double-left"></i>
+                </span>
+              </li>
+
+              <!-- Nút trang trước -->
+              <li class="page-item" th:classappend="${currentPage == null or currentPage == 0} ? 'disabled'">
+                <a class="page-link" 
+                   th:href="@{/ProductCategory/index(page=${(currentPage != null ? currentPage : 0) - 1}, size=10, tab='list')}"
+                   th:unless="${currentPage == null or currentPage == 0}"
+                   title="Trang trước">
+                  <i class="fas fa-chevron-left"></i>
+                </a>
+                <span class="page-link" th:if="${currentPage == null or currentPage == 0}">
+                  <i class="fas fa-chevron-left"></i>
+                </span>
+              </li>
+
+              <!-- Các trang số -->
+              <li class="page-item"
+                  th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+                  th:if="${pageNum >= (currentPage != null ? currentPage : 0) - 1 && pageNum <= (currentPage != null ? currentPage : 0) + 1}"
+                  th:classappend="${pageNum == (currentPage != null ? currentPage : 0)} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/ProductCategory/index(page=${pageNum}, size=10, tab='list')}"
+                   th:text="${pageNum + 1}"></a>
+              </li>
+
+              <!-- Nút trang sau -->
+              <li class="page-item" th:classappend="${currentPage != null and currentPage + 1 >= totalPages} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/ProductCategory/index(page=${(currentPage != null ? currentPage : 0) + 1}, size=10, tab='list')}"
+                   th:unless="${currentPage != null and currentPage + 1 >= totalPages}"
+                   title="Trang sau">
+                  <i class="fas fa-chevron-right"></i>
+                </a>
+                <span class="page-link" th:if="${currentPage != null and currentPage + 1 >= totalPages}">
+                  <i class="fas fa-chevron-right"></i>
+                </span>
+              </li>
+
+              <!-- Nút về trang cuối -->
+              <li class="page-item" th:classappend="${currentPage != null and currentPage == totalPages - 1} ? 'disabled'">
+                <a class="page-link" 
+                   th:href="@{/ProductCategory/index(page=${totalPages - 1}, size=10, tab='list')}"
+                   th:unless="${currentPage != null and currentPage == totalPages - 1}"
+                   title="Trang cuối">
+                  <i class="fas fa-angle-double-right"></i>
+                </a>
+                <span class="page-link" th:if="${currentPage != null and currentPage == totalPages - 1}">
+                  <i class="fas fa-angle-double-right"></i>
+                </span>
+              </li>
+            </ul>
+          </nav>
+        </div>
       </div>
     </div>
   </div>

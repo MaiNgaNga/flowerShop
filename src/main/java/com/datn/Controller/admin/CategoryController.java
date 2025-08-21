@@ -55,6 +55,9 @@ public class CategoryController {
         model.addAttribute("categorys", categoryPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", categoryPage.getTotalPages());
+        model.addAttribute("totalElements", categoryPage.getTotalElements());
+        model.addAttribute("hasPrevious", categoryPage.hasPrevious());
+        model.addAttribute("hasNext", categoryPage.hasNext());
 
         model.addAttribute("category", new Category());
         model.addAttribute("view", "admin/categoryCRUD");
@@ -108,6 +111,9 @@ public class CategoryController {
         model.addAttribute("categorys", categoryPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", categoryPage.getTotalPages());
+        model.addAttribute("totalElements", categoryPage.getTotalElements());
+        model.addAttribute("hasPrevious", categoryPage.hasPrevious());
+        model.addAttribute("hasNext", categoryPage.hasNext());
 
         model.addAttribute("view", "admin/categoryCRUD");
         model.addAttribute("activeTab", tab);
