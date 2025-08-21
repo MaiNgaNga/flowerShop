@@ -1,6 +1,6 @@
-/* ========================================
+/* ==========================================
    1. MENU & HOVER HIỆU ỨNG
-======================================== */
+   ========================================== */
 .menu-item:hover {
   background-color: #f3ae4d;
   color: #fff !important;
@@ -127,13 +127,6 @@ input[type="file"] {
   transform: translateY(-1px);
 }
 
-/* ========================================
-   7. BỐ CỤC TRANG ADMIN (LAYOUT)
-   ======================================== */
-
-/* ========================================
-   8. PHÂN TRANG
-   ======================================== */
 .custom-pagination .page-item .page-link {
   margin: 0 4px;
   color: #333;
@@ -166,7 +159,553 @@ input[type="file"] {
 }
 
 /* ========================================
-   9. KHU VỰC UPLOAD HÌNH ẢNH
+   7. PAGINATION CONTAINER - MODERN STYLE
+   ======================================== */
+.pagination-wrapper {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 15px;
+  padding: 25px;
+  margin-top: 30px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e3e6ea;
+}
+
+.pagination-info {
+  color: #6c757d;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.pagination-info strong {
+  color: #495057;
+  font-weight: 600;
+}
+
+.modern-pagination {
+  margin: 0;
+  gap: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modern-pagination .page-item {
+  margin: 0;
+}
+
+.modern-pagination .page-link {
+  border: 2px solid #e9ecef;
+  color: #495057;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 10px;
+  padding: 10px;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  min-width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  position: relative;
+  overflow: hidden;
+}
+
+.modern-pagination .page-link::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.modern-pagination .page-link:hover::before {
+  left: 100%;
+}
+
+.modern-pagination .page-item.active .page-link {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  border-color: #007bff;
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.modern-pagination .page-item.disabled .page-link {
+  background: #f8f9fa;
+  border-color: #e9ecef;
+  color: #adb5bd;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.modern-pagination .page-link:hover:not(.disabled) {
+  background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+  border-color: #0056b3;
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(0, 86, 179, 0.3);
+  transform: translateY(-2px);
+}
+
+.modern-pagination .page-item.disabled .page-link:hover {
+  background: #f8f9fa;
+  border-color: #e9ecef;
+  color: #adb5bd;
+  transform: none;
+  box-shadow: none;
+}
+
+.modern-pagination .page-link i {
+  font-size: 16px;
+  color: inherit;
+  font-weight: bold;
+}
+
+.modern-pagination .page-item.active .page-link i {
+  color: #fff;
+}
+
+.modern-pagination .page-item.disabled .page-link i {
+  color: #adb5bd;
+}
+
+/* ========================================
+   8. SIMPLE PAGINATION - CLEAN & COMPACT
+   ======================================== */
+.simple-pagination {
+  margin: 0;
+  justify-content: center;
+  gap: 3px;
+}
+
+.simple-pagination .page-item {
+  margin: 0;
+}
+
+.simple-pagination .page-link {
+  border: 1px solid #dee2e6;
+  color: #495057;
+  background-color: #fff;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  min-width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.simple-pagination .page-item.active .page-link {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+  color: #fff;
+  font-weight: 600;
+}
+
+.simple-pagination .page-item.disabled .page-link {
+  background-color: #f8f9fa;
+  border-color: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.simple-pagination .page-link:hover:not(.disabled) {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
+  color: #495057;
+}
+
+.simple-pagination .page-item.active .page-link:hover {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+.simple-pagination .page-item.disabled .page-link:hover {
+  background-color: #f8f9fa;
+  border-color: #e9ecef;
+  color: #6c757d;
+}
+
+.simple-pagination .page-link i {
+  font-size: 14px;
+  color: inherit;
+}
+
+/* ========================================
+   9. FILTER SECTION - MODERN STYLE
+   ======================================== */
+.filter-section {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 25px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.filter-section .form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.filter-section .form-select,
+.filter-section .form-control {
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 15px;
+  height: 42px;
+  transition: all 0.2s ease;
+}
+
+.filter-section .form-select:focus,
+.filter-section .form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: end;
+}
+
+.btn-action {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  border: none;
+  font-weight: 500;
+}
+
+.btn-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.btn-action i {
+  font-size: 14px;
+}
+
+/* Nút lọc chung - màu xanh dương */
+.btn-action.btn-primary {
+  background: #007bff;
+  color: #fff;
+  border: 1px solid #0056b3;
+}
+
+.btn-action.btn-primary:hover {
+  background: #0056b3;
+  border-color: #004085;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.25);
+}
+
+/* Nút xóa lọc chung - màu đỏ */
+.btn-action.btn-secondary {
+  background: #dc3545;
+  color: #fff;
+  border: 1px solid #c82333;
+}
+
+.btn-action.btn-secondary:hover {
+  background: #c82333;
+  border-color: #bd2130;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);
+}
+
+/* 1. BỘ LỌC SẢN PHẨM */
+.product-crud-filter {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 25px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.product-crud-filter .product-crud-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+  font-size: 17px;
+}
+
+.product-crud-filter .product-crud-select,
+.product-crud-filter .product-crud-input {
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 15px;
+  height: 42px;
+  transition: all 0.2s ease;
+}
+
+.product-crud-filter .product-crud-select:focus,
+.product-crud-filter .product-crud-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.product-crud-filter-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: end;
+}
+
+.product-crud-btn-action {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  border: none;
+  font-weight: 500;
+}
+
+.product-crud-btn-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.product-crud-btn-action i {
+  font-size: 14px;
+}
+
+/* 2. Nút lọc ProductCRUD - màu xanh dương */
+.product-crud-btn-filter {
+  background: #007bff;
+  color: #fff;
+  border: 1px solid #0056b3;
+}
+
+.product-crud-btn-filter:hover {
+  background: #0056b3;
+  border-color: #004085;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.25);
+  color: #fff;
+}
+
+/* 3. Nút xóa lọc ProductCRUD - màu đỏ */
+.product-crud-btn-clear {
+  background: #dc3545;
+  color: #fff;
+  border: 1px solid #c82333;
+}
+
+.product-crud-btn-clear:hover {
+  background: #c82333;
+  border-color: #bd2130;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);
+  color: #fff;
+}
+
+/* 4. GIAO DIỆN SERVICE CRUD */
+/* Filter section riêng cho ServiceCRUD */
+.service-crud-filter {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 25px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.service-crud-filter .service-crud-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.service-crud-filter .service-crud-select,
+.service-crud-filter .service-crud-input {
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 15px;
+  height: 42px;
+  transition: all 0.2s ease;
+}
+
+.service-crud-filter .service-crud-select:focus,
+.service-crud-filter .service-crud-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.service-crud-filter-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: end;
+}
+
+.service-crud-btn-action {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  border: none;
+  font-weight: 500;
+}
+
+.service-crud-btn-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.service-crud-btn-action i {
+  font-size: 14px;
+}
+
+/* Nút lọc ServiceCRUD - màu xanh dương */
+.service-crud-btn-filter {
+  background: #007bff;
+  color: #fff;
+  border: 1px solid #0056b3;
+}
+
+.service-crud-btn-filter:hover {
+  background: #0056b3;
+  border-color: #004085;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.25);
+  color: #fff;
+}
+
+/* Nút xóa lọc ServiceCRUD - màu đỏ */
+.service-crud-btn-clear {
+  background: #dc3545;
+  color: #fff;
+  border: 1px solid #c82333;
+}
+
+.service-crud-btn-clear:hover {
+  background: #c82333;
+  border-color: #bd2130;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);
+  color: #fff;
+}
+
+/* ========================================
+   10. CATEGORY CRUD SPECIFIC STYLES
+   ======================================== */
+/* Filter section riêng cho CategoryCRUD */
+.category-crud-filter {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 25px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.category-crud-filter .category-crud-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.category-crud-filter .category-crud-input {
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 15px;
+  height: 42px;
+  transition: all 0.2s ease;
+}
+
+.category-crud-filter .category-crud-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.category-crud-filter-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: end;
+}
+
+.category-crud-btn-action {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  border: none;
+  font-weight: 500;
+}
+
+.category-crud-btn-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.category-crud-btn-action i {
+  font-size: 14px;
+}
+
+/* Nút lọc CategoryCRUD - màu xanh dương */
+.category-crud-btn-filter {
+  background: #007bff;
+  color: #fff;
+  border: 1px solid #0056b3;
+}
+
+.category-crud-btn-filter:hover {
+  background: #0056b3;
+  border-color: #004085;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.25);
+  color: #fff;
+}
+
+/* Nút xóa lọc CategoryCRUD - màu đỏ */
+.category-crud-btn-clear {
+  background: #dc3545;
+  color: #fff;
+  border: 1px solid #c82333;
+}
+
+.category-crud-btn-clear:hover {
+  background: #c82333;
+  border-color: #bd2130;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.25);
+  color: #fff;
+}
+
+/* ========================================
+   11. KHU VỰC UPLOAD HÌNH ẢNH
    ======================================== */
 .image-upload-box {
   max-width: 110px;
@@ -207,7 +746,7 @@ input[type="file"] {
 }
 
 /* ========================================
-   10. INPUT/SELECT SIZE NHỎ
+   12. INPUT/SELECT SIZE NHỎ
    ======================================== */
 .form-control-sm,
 .form-select-sm {
@@ -254,7 +793,7 @@ input[type="file"] {
 }
 
 /* ========================================
-   11. TÌM KIẾM - LỌC - ĐẾM
+   13. TÌM KIẾM - LỌC - ĐẾM
    ======================================== */
 .search-filter-row {
   display: flex;
@@ -346,7 +885,7 @@ input[type="file"] {
 }
 
 /* ========================================
-   12. ICON HÀNH ĐỘNG (SỬA / XÓA)
+   14. ICON HÀNH ĐỘNG (SỬA / XÓA)
    ======================================== */
 .action-icons a {
   font-size: 15px;
@@ -365,7 +904,7 @@ input[type="file"] {
 }
 
 /* ========================================
-   13. BẢNG DỮ LIỆU
+   15. BẢNG DỮ LIỆU
    ======================================== */
 .table thead.table-dark {
   background-color: #343a40;
@@ -378,29 +917,28 @@ input[type="file"] {
 }
 
 /* ========================================
-   14. THÔNG BÁO LỖI
+   16. THÔNG BÁO LỖI
    ======================================== */
 .error {
   color: red;
 }
 
-/* table dep */
 .table thead th,
 .table tbody td {
-  padding-left: 16px !important; /* Tạo khoảng cách trái */
-  padding-right: 16px !important; /* Khoảng cách phải */
-  vertical-align: middle; /* Căn giữa theo chiều dọc */
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  vertical-align: middle;
 }
 
 .table td,
 .table th {
-  font-size: 15px; /* Dễ đọc hơn */
-  white-space: nowrap; /* Không cho xuống dòng */
+  font-size: 15px;
+  white-space: nowrap;
 }
 
 .table {
-  border-collapse: separate; /* Cho phép tách ô để padding rõ hơn */
-  border-spacing: 0 5px; /* Khoảng cách giữa các hàng */
+  border-collapse: separate;
+  border-spacing: 0 5px;
 }
 
 .ft {
@@ -419,7 +957,6 @@ input[type="file"] {
   background-color: #f0f0f0;
 }
 
-/*  */
 .nav-tabs .nav-link {
   border: none;
   border-bottom: 2px solid transparent;
@@ -445,6 +982,7 @@ input[type="file"] {
 .bg-light {
   background-color: #f8f9fa;
 }
+
 /* promotions css */
 .filter-form {
   padding: 16px;
@@ -498,16 +1036,14 @@ input[type="file"] {
   color: #333;
   border: 1px solid #ccc;
 }
+
 /* contact css */
 .search-box {
   display: flex;
   align-items: center;
   gap: 8px;
-  /* Khoảng cách giữa icon và input */
   padding: 12px;
-  /* Tăng khoảng cách bên trong */
   margin: 5px;
-  /* Tăng khoảng cách xung quanh */
 }
 
 .custom-search-input {
@@ -554,4 +1090,149 @@ input[type="file"] {
 
 .badge-danger {
   background: #dc3545;
+}
+
+/* 1. HIỂN THỊ LỖI VALIDATION */
+.is-invalid {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+.invalid-feedback {
+  display: block !important;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #dc3545;
+  font-weight: 500;
+}
+
+.form-control.is-invalid ~ .invalid-feedback,
+.form-select.is-invalid ~ .invalid-feedback {
+  display: block;
+}
+
+.image-upload-box input[type="file"].is-invalid + label {
+  border-color: #dc3545;
+  color: #dc3545;
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+.image-upload-box .invalid-feedback {
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.error {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.temp-image-info {
+  margin-top: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  background-color: #e3f2fd;
+  border-radius: 4px;
+  border-left: 3px solid #2196f3;
+}
+
+.temp-image-info small {
+  font-weight: 500;
+}
+
+/* 2. THÔNG BÁO ALERT */
+.custom-alert {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  min-width: 300px;
+  max-width: 500px;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideInRight 0.3s ease-out;
+  font-weight: 500;
+}
+
+.custom-alert.alert-success {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+}
+
+.custom-alert.alert-error {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+}
+
+.custom-alert.alert-warning {
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  color: #856404;
+}
+
+.custom-alert.alert-info {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+}
+
+.alert-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.alert-message {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.alert-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.alert-close:hover {
+  opacity: 1;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
 }

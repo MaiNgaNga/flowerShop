@@ -79,14 +79,17 @@
   gap: 0.75rem;
   padding: 0.5rem 1rem;
   border-radius: 10px;
-  background: var(--admin-gray-100);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.admin-layout .admin-user-menu:hover {
-  background: var(--admin-primary);
-  color: white;
+
+.admin-log{
+  background: var(--admin-gray-100);
+  color: var(--admin-gray-600); 
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  transition: all 0.2s ease;
 }
 
 .admin-layout .admin-user-avatar {

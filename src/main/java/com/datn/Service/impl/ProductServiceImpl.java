@@ -1,9 +1,6 @@
 package com.datn.Service.impl;
 
-
 import com.datn.utils.StringUtils;
-
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +8,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -99,13 +95,19 @@ public class ProductServiceImpl implements ProductService {
                 entity.setImage_url2(oldImage2);
             }
 
-            // Ảnh 3
+            // Ảnh 3 - Fixed logic
             if (image3 != null && !image3.isEmpty()) {
                 entity.setImage_url3(param.save(image3,
                         "D:\\Graduation Project\\Git2\\src\\main\\resources\\static\\images").getName());
             } else {
-                String oldImage3 = (oldImages != null && oldImages.length > 2 && !oldImages[2].isEmpty()) ? oldImages[2]
-                        : null;
+                // Fix: Kiểm tra chính xác oldImages array
+                String oldImage3 = null;
+                if (oldImages != null && oldImages.length > 2) {
+                    String img3 = oldImages[2];
+                    if (img3 != null && !img3.trim().isEmpty() && !"null".equals(img3)) {
+                        oldImage3 = img3;
+                    }
+                }
                 entity.setImage_url3(oldImage3);
             }
             dao.save(entity);
@@ -159,15 +161,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public Page<Product> findByMultipleFilters(
-        Integer proCategoryId,
-        Integer ca_Id,
-        String color,
-        Double minPrice,
-        Double maxPrice,
-        Pageable pageable) {
+            Integer proCategoryId,
+            Integer ca_Id,
+            String color,
+            Double minPrice,
+            Double maxPrice,
+            Pageable pageable) {
 
-    return dao.findByMultipleFilters(
-            proCategoryId, ca_Id, color, minPrice, maxPrice, pageable);
+        return dao.findByMultipleFilters(
+                proCategoryId, ca_Id, color, minPrice, maxPrice, pageable);
     }
 
     @Override
@@ -175,16 +177,20 @@ public class ProductServiceImpl implements ProductService {
             Pageable pageable) {
         return dao.findByProductCategoryId(productCategoryId, pageable);
     }
-   
 
     @Override
     public Page<Product> findByAllProduct(Pageable pageable) {
-        return dao.findAll(pageable);
+        return dao.findAllOrderByIdDesc(pageable);
     }
 
     @Override
     public Page<Product> searchByName(String name, Pageable pageable) {
         return dao.searchByName(name, pageable);
+    }
+
+    @Override
+    public Page<Product> searchByNameAndCategory(String name, Integer productCategoryId, Pageable pageable) {
+        return dao.searchByNameAndCategory(name, productCategoryId, pageable);
     }
 
     // Tìm kiếm theo loại hoa (category)
@@ -247,15 +253,8 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> findTop4ByDiscountPercentGreaterThanAndAvailableIsTrueOrderByDiscountPercentDesc(
             int minDiscount) {
         // Lấy tất cả sản phẩm giảm giá, filter trong Java rồi limit 4
-        List<Product> allDiscountProducts = dao
-                .findAllByDiscountPercentGreaterThanAndAvailableIsTrueOrderByDiscountPercentDesc(minDiscount);
-        java.time.LocalDate now = java.time.LocalDate.now();
-        return allDiscountProducts.stream()
-                .filter(p -> p.getDiscountPercent() != null && p.getDiscountPercent() > 0
-                        && (p.getDiscountStart() == null || !now.isBefore(p.getDiscountStart()))
-                        && (p.getDiscountEnd() == null || !now.isAfter(p.getDiscountEnd())))
-                .limit(4)
-                .toList();
+        List<Product> allDiscountProducts = dao.findDiscountProductsExcludeCategory(minDiscount, "phụ kiện");
+        return allDiscountProducts.stream().limit(4).toList();
     }
 
     @Override

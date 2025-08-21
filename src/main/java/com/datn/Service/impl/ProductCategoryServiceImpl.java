@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.datn.Service.ProductCategoryService;
@@ -69,5 +71,10 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     @Override
     public boolean existsById(int id) {
         return dao.existsById(id);
+    }
+
+    @Override
+    public Page<ProductCategory> findAllPaginated(Pageable pageable) {
+        return dao.findAll(pageable);
     }
 }

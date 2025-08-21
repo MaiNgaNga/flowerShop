@@ -138,4 +138,14 @@ public class ServiceServiceImpl implements ServiceService {
     public List<ServiceEntity> findTop1ByAvailableTrueOrderByIdDesc() {
         return dao.findTop1ByAvailableTrueOrderByIdDesc();
     }
+
+    @Override
+    public Page<ServiceEntity> findByStatus(Boolean available, Pageable pageable) {
+        return dao.findByAvailable(available, pageable);
+    }
+
+    @Override
+    public Page<ServiceEntity> searchByNameAndStatus(String name, Boolean available, Pageable pageable) {
+        return dao.searchByNameAndStatus(name, available, pageable);
+    }
 }

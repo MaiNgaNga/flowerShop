@@ -1,4 +1,3 @@
-
 <main class="container mt-3">
   <h3>Danh sách liên hệ</h3>
   <hr />
@@ -8,46 +7,51 @@
   <i class="error" th:if="${error}" th:text="${error}"></i>
   <!-- Tab: Danh sách -->
   <div class="" id="list">
-    <form
-      action="/Contact/index/admin"
-      method="get"
-      class="d-flex justify-content-between align-items-center flex-wrap"
-      style="gap: 10px; margin-bottom: 15px"
-    >
-      <!-- Bên trái: dropdown lọc -->
-      <div class="search-box">
-        <select
-          name="status"
-          class="form-control form-control-sm custom-search-input"
-          onchange="this.form.submit()"
-        >
-          <option value="">-- Tất cả --</option>
-          <option value="false" th:selected="${status == 'false'}">
-            Chưa xử lý
-          </option>
-          <option value="true" th:selected="${status == 'true'}">
-            Đã xử lý
-          </option>
-        </select>
-      </div>
+  <form action="/Contact/index/admin" method="get" class="d-flex align-items-center"
+    style="gap:10px; margin-bottom:15px;">
+    <!-- Dropdown lọc trạng thái -->
+    <div class="search-box me-2">
+      <select name="status" class="form-control form-control-sm custom-search-input" onchange="this.form.submit()"
+        style="min-width:120px">
+        <option value="">-- Tất cả --</option>
+        <option value="false" th:selected="${status == 'false'}">Chưa xử lý</option>
+        <option value="true" th:selected="${status == 'true'}">Đã xử lý</option>
+      </select>
+    </div>
+    <!-- Dropdown lọc tháng -->
+     Tháng: 
+    <select name="month" class="w-auto form-control form-control-sm me-2" onchange="this.form.submit()"
+      style="min-width:50px">
+      <option value="">----</option>
+      <option th:each="m : ${#numbers.sequence(1,12)}" th:value="${m}" th:text="${m}" th:selected="${m == month}">
+      </option>
+    </select>
+    <!-- Dropdown lọc năm -->
+     Năm: 
+    <select name="year" class="w-auto form-control form-control-sm me-2" onchange="this.form.submit()"
+      style="min-width:50px">
+      <option value="" >----</option>
+      <option th:each="y : ${years}" th:value="${y}" th:text="${y}" th:selected="${y == year}">
+      </option>
+    </select>
 
-      <!-- Bên phải: tổng kết quả -->
-      <div
-        class="count-box"
-        th:text="'Tổng: ' + ${totalItems} + ' Liên hệ'"
-      ></div>
-    </form>
-
+    
+    <a class="btn btn-custom" th:href="@{/Contact/index/admin}">Làm mới</a>
+    <!-- Tổng kết quả -->
+    <div class="count-box ms-auto" th:text="'Tổng: ' + ${totalItems} + ' Liên hệ'"></div>
+  </form>
     <div class="table-responsive">
       <table class="table table-striped table-hover">
         <thead class="table-dark">
           <tr>
             <th>ID</th>
-            <th class="text-start">Tên</th>
+            <th class="text-start">Tên người gửi </th>
             <th class="text-start">Số điện thoại</th>
             <th class="text-start">Email</th>
             <th class="text-start">Nội dung</th>
             <th class="text-start">Trạng thái</th>
+            <th>Ngày gửi</th>
+            <th></th>
             <th></th>
           </tr>
         </thead>
@@ -66,16 +70,19 @@
               <td class="text-start" th:text="${item.name}"></td>
               <td class="text-start" th:text="${item.sdt}"></td>
               <td class="text-start" th:text="${item.email}"></td>
-              <td class="text-start" th:text="${item.message}"></td>
+            <td class="text-start"
+              th:text="${#strings.length(item.message) > 30 ? #strings.substring(item.message, 0, 20) + '...' : item.message}"></td>
               <td>
                 <span th:class="${item.status == true ? 'badge badge-success' : 'badge badge-danger'}"
                   style="display:inline-block;min-width:70px;padding:4px 12px;border-radius:12px;font-size:13px;font-weight:600;color:#fff;"
-                  th:text="${item.status == true ? 'Active' : 'Inactive'}">
+                  th:text="${item.status == true ? 'Đã xử lý' : 'Chưa xử lý'}">
                 </span>
               </td>
+              <td th:text="${#temporals.format(item.createdAt, 'dd-MM-YYYY ')}"></td>
 
               <td th:if="${!item.status}">
                 <a
+                  onclick="return confirmMarkProcessed(this)"
                   th:href="@{/Contact/markProcessed/{id}(id=${item.id}, status=${status}, page=${currentPage})}"
                   class="btn btn-success"
                 >
@@ -83,6 +90,13 @@
                 </a>
               </td>
               <td th:if="${item.status}"></td>
+              <td class="text-start">
+                <a  th:href="@{'/Contact/viewDetail/' + ${item.id} }" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#contactDetailModal">
+                  <i class="fa-solid fa-eye"></i>
+                </a>
+              </td>
+              <!-- Modal xem chi tiết liên hệ -->
+             
             </tr>
           </th:block>
         </tbody>
@@ -149,7 +163,8 @@
             th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
           >
             <a
-              class="page-link"
+              class="page-link btn-outline-primary"
+              onclick="return confirmMarkProcessed(this)"
               th:href="@{/Contact/index/admin(page=${totalPages - 1}, size=10)}"
             >
               <i class="fa fa-angle-double-right"></i>
@@ -160,3 +175,62 @@
     </div>
   </div>
 </main>
+
+<!-- modal xem chi tiết liên hệ -->
+<!-- Đặt modal ở cuối file, ngoài vòng lặp -->
+<div class="modal fade" id="contactDetailModal" tabindex="-1" aria-labelledby="contactDetailModalLabel" aria-hidden="true" data-bs-backdrop="false">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:16px;">
+      <div class="modal-header bg-primary text-white" style="border-top-left-radius:16px;border-top-right-radius:16px;">
+        <h5 class="modal-title" id="contactDetailModalLabel">
+          <i class="fa-solid fa-address-card me-2"></i> Chi tiết liên hệ
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <div class="modal-body">
+        <form th:object="${contact}" class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">ID</label>
+            <input th:field="*{id}" type="text" id="modalContactId" class="form-control" readonly>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Tên người gửi</label>
+            <input th:field="*{name}" type="text" id="modalContactName" class="form-control" readonly>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Số điện thoại</label>
+            <input th:field="*{sdt}" type="text" id="modalContactSdt" class="form-control" readonly>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input th:field="*{email}" type="text" id="modalContactEmail" class="form-control" readonly>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Nội dung</label>
+            <textarea th:field="*{message}" id="modalContactMessage" class="form-control" rows="5" readonly></textarea>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll(".btn-outline-primary").forEach(btn => {
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        const url = this.getAttribute("href");
+        fetch(url)
+          .then(res => res.json())
+          .then(data => {
+            document.getElementById("modalContactId").value = data.id;
+            document.getElementById("modalContactName").value = data.name;
+            document.getElementById("modalContactSdt").value = data.sdt;
+            document.getElementById("modalContactEmail").value = data.email;
+            document.getElementById("modalContactMessage").value = data.message;
+            new bootstrap.Modal(document.getElementById('contactDetailModal')).show();
+          });
+      });
+    });
+
+</script>

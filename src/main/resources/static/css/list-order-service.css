@@ -272,9 +272,7 @@ body .modal {
 /* Override any admin layout interference */
 .admin-layout,
 .admin-layout
-  *:not(.modal):not(.modal-backdrop):not(.modal-dialog):not(
-    .modal-content
-  ) {
+  *:not(.modal):not(.modal-backdrop):not(.modal-dialog):not(.modal-content) {
   z-index: 999 !important;
 }
 
