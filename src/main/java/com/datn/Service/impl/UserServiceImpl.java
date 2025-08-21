@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.datn.Service.UserService;
@@ -13,6 +15,7 @@ import com.datn.utils.AuthService;
 
 @Service
 public class UserServiceImpl implements UserService {
+    
     @Autowired
     UserDAO dao;
     @Autowired
@@ -21,6 +24,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findAll() {
         return dao.findAll();
+    }
+
+    @Override
+    public Page<User> findAllUserPage(Pageable pageable) {
+        return dao.findAll(pageable);
     }
 
     @Override
@@ -111,5 +119,17 @@ public class UserServiceImpl implements UserService {
     public Optional<User> findByRememberToken(String token) {
         return dao.findByRememberToken(token);
     }
+
+    @Override
+    public Page<User> searchByName(String name, Pageable pageable) {
+       return dao.searchByName(name, pageable);
+    }
+
+    @Override
+    public Page<User> findByRole(int role, Pageable pageable) {
+        return dao.findByRole(role, pageable);
+    }
+
+   
 
 }

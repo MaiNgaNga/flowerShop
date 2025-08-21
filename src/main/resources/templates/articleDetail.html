@@ -26,15 +26,12 @@
     />
     <!-- Tilt.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tilt.js/1.2.1/tilt.jquery.min.js"></script>
-       <link rel="stylesheet" th:href="@{/css/articleDetail.css}" />
-    
+    <link rel="stylesheet" th:href="@{/css/articleDetail.css}" />
   </head>
   <body>
-    <!-- Particle Background -->  
+    <!-- Particle Background -->
     <canvas id="particles"></canvas>
-<!-- <link rel="stylesheet" href="\src\main\resources\static\css\articleDetail.css"> -->
-  
-   
+    <!-- <link rel="stylesheet" href="\src\main\resources\static\css\articleDetail.css"> -->
 
     <!-- Hero Section -->
     <section class="hero-section" data-aos="fade">
@@ -259,8 +256,7 @@
         </div>
       </div>
     </section>
-
-   
+    <div th:insert="~{/fragments/chatbot}"></div>
 
     <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>

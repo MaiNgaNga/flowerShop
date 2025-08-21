@@ -18,4 +18,6 @@ public interface ContactService {
     Page<Contact> findAll(Pageable pageable);
 
     Page<Contact> findbyStatus(boolean status,  Pageable pageable);
+    Page<Contact> findByMonthAndYear(Integer month, Integer year, Pageable pageable);
+    List<Integer> findDistinctYears();
 }

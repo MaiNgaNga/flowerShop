@@ -48,6 +48,16 @@ public class PromotionCRUDController {
         Pageable pageable = PageRequest.of(page, size);
         Page<Promotion> promotionPage = promotionService.findByAllPromotion(pageable);
 
+        // ✅ Kiểm tra và cập nhật status nếu hết hạn
+        for (Promotion promo : promotionPage.getContent()) {
+            if (promo.getEndDate() != null && promo.getEndDate().isBefore(LocalDate.now())) {
+                promo.setStatus(false); // hết hạn
+                promo.setUpdatedDate(LocalDateTime.now()); // updatedDate thì để LocalDateTime vẫn ok
+                promotionService.update(promo);
+            }
+
+        }
+
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", promotionPage.getTotalPages());
         model.addAttribute("promotions", promotionPage.getContent());
@@ -127,6 +137,15 @@ public class PromotionCRUDController {
         Promotion promotion = promotionService.findByID(id);
         Pageable pageable = PageRequest.of(page, 10);
         Page<Promotion> result = promotionDAO.findAll(pageable);
+
+        // ✅ Kiểm tra và cập nhật status nếu hết hạn
+        for (Promotion promo : result.getContent()) {
+            if (promo.getEndDate() != null && promo.getEndDate().isBefore(LocalDate.now())) {
+                promo.setStatus(false); // hết hạn
+                promo.setUpdatedDate(LocalDateTime.now()); // updatedDate thì để LocalDateTime vẫn ok
+                promotionService.update(promo);
+            }
+        }
 
         model.addAttribute("promotion", promotion);
         model.addAttribute("promotions", result.getContent());

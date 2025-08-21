@@ -3,6 +3,9 @@ package com.datn.Controller.admin;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -11,10 +14,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 import jakarta.validation.Valid;
 
+import com.datn.model.Promotion;
 import com.datn.model.Shipper;
 import com.datn.model.User;
 import com.datn.Service.ShipperService;
@@ -25,20 +31,43 @@ import com.datn.Service.UserService;
 public class UserCRUDController {
 
     @Autowired
-    private UserService UserService;
+    private UserService userService;
 
     @Autowired
     private ShipperService shipperService;
-    
+
     // Lấy toàn bộ danh sách user và gán vào thuộc tính "Users"
     @ModelAttribute("Users")
     public List<User> getAllUsers() {
-        return UserService.findAll();
+        return userService.findAll();
     }
 
     // Trang hiển thị form thêm user
     @RequestMapping("/index")
-    public String index(Model model) {
+    public String index(Model model,
+            @RequestParam(value = "role", required = false) Integer role,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "tab", defaultValue = "edit") String tab) {
+        
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> userPage = userService.findAllUserPage(pageable);
+        if (role != null) {
+            if (role == 0) {
+                userPage = userService.findByRole(0, pageable);
+            } else if (role == 1) {
+                userPage = userService.findByRole(1, pageable);
+            } else if (role == 2) {
+                userPage = userService.findByRole(2, pageable);
+            } else if (role == 3) {
+                userPage = userService.findByRole(3, pageable);
+            }
+        }
+
+        model.addAttribute("Users", userPage.getContent());
+        model.addAttribute("currentPage", userPage.getNumber());
+        model.addAttribute("totalPages", userPage.getTotalPages());
         model.addAttribute("User", new User());
         model.addAttribute("isEdit", false);
         model.addAttribute("view", "admin/UserCRUD");
@@ -49,25 +78,24 @@ public class UserCRUDController {
     @PostMapping("/create")
     public String create(Model model, @Valid @ModelAttribute("User") User User,
             Errors errors, RedirectAttributes redirectAttributes) {
-        
+
         // Nếu có lỗi validation thì quay lại form
         if (errors.hasErrors()) {
-            model.addAttribute("Users", UserService.findAll());
+            model.addAttribute("Users", userService.findAll());
             model.addAttribute("view", "admin/UserCRUD");
             return "admin/layout";
         }
 
-
         // Kiểm tra độ dài mật khẩu
-        if (User.getPassword() == null || User.getPassword().length() < 4 ) {
+        if (User.getPassword() == null || User.getPassword().length() < 4) {
             model.addAttribute("errorPass", "Mật khẩu phải có ít nhất 4 ký tự!");
             model.addAttribute("view", "admin/UserCRUD");
-            return "admin/layout";   
+            return "admin/layout";
         }
 
         try {
             // Tạo user
-            UserService.create(User);
+            userService.create(User);
 
             // Nếu user có role là shipper (2) → tạo mới shipper
             if (User.getRole() == 2) {
@@ -94,9 +122,17 @@ public class UserCRUDController {
 
     // Truy cập vào trang chỉnh sửa user
     @GetMapping("/edit/{id}")
-    public String edit(Model model, @PathVariable("id") int id) {
-        User User = UserService.findByID(id);
+    public String edit(Model model, @PathVariable("id") int id,
+            @RequestParam(value = "page", defaultValue = "0") int page) {
+
+        Pageable pageable = PageRequest.of(page, 10);
+
+        User User = userService.findByID(id);
+
         model.addAttribute("User", User);
+        model.addAttribute("Users", userService.findAllUserPage(pageable).getContent());
+        model.addAttribute("currentPage", pageable.getPageNumber());
+        model.addAttribute("totalPages", userService.findAllUserPage(pageable).getTotalPages());
         model.addAttribute("isEdit", true);
         model.addAttribute("view", "admin/UserCRUD");
         return "admin/layout";
@@ -113,7 +149,7 @@ public class UserCRUDController {
             return "admin/layout";
         }
 
-        User exi = UserService.findByID(User.getId());
+        User exi = userService.findByID(User.getId());
 
         // Nếu không nhập password thì giữ nguyên password cũ
         if (User.getPassword() == null || User.getPassword().isBlank()) {
@@ -121,7 +157,7 @@ public class UserCRUDController {
         }
 
         // Kiểm tra trùng số điện thoại
-        User exitSDT = UserService.findBySdt(User.getSdt());
+        User exitSDT = userService.findBySdt(User.getSdt());
         if (exitSDT != null && exitSDT.getId() != User.getId()) {
             model.addAttribute("error", "Số điện thoại này đã tồn tại!");
             model.addAttribute("view", "admin/UserCRUD");
@@ -168,7 +204,7 @@ public class UserCRUDController {
                 shipperService.save(exiShip);
             }
 
-            UserService.update(User);
+            userService.update(User);
             redirectAttributes.addFlashAttribute("success", "Cập nhật User thành công!");
             return "redirect:/User/edit/" + User.getId();
 
@@ -185,7 +221,7 @@ public class UserCRUDController {
             Errors errors, @PathVariable("id") int id, RedirectAttributes redirectAttributes) {
 
         try {
-            UserService.deleteById(id);
+            userService.deleteById(id);
             redirectAttributes.addFlashAttribute("success", "Đã xóa User!");
             return "redirect:/User/index";
 
@@ -194,6 +230,25 @@ public class UserCRUDController {
             return "redirect:/Category/edit/" + User.getId(); // 🔁 Lưu ý đường dẫn này có thể là lỗi
         }
 
+    }
+
+    // Tìm kiếm khuyến mãi theo tiêu đề
+    @GetMapping("/searchByName")
+    public String searchByName(
+            @RequestParam("name") String name,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            Model model) {
+
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<User> result = userService.searchByName(name, pageable);
+
+        model.addAttribute("name", name);
+        model.addAttribute("Users", result.getContent());
+        model.addAttribute("currentPage", result.getNumber());
+        model.addAttribute("totalPages", result.getTotalPages());
+        model.addAttribute("User", new User());
+        model.addAttribute("view", "admin/userCRUD");
+        return "admin/layout";
     }
 
 }

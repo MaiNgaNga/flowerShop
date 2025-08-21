@@ -23,4 +23,5 @@ public interface ShipperService {
     Page<Shipper> searchByStatus(Boolean status, Pageable pageable);
     boolean existsByUserId(Integer userId);
     Shipper findByUserId(@Param("userId") Integer userId);
+    
 } 

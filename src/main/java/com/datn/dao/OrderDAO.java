@@ -1,6 +1,7 @@
 package com.datn.dao;
 
 import java.util.List;
+import java.util.List;  
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
@@ -14,12 +15,37 @@ import org.springframework.data.domain.Pageable;
 import com.datn.model.Order;
 
 public interface OrderDAO extends JpaRepository<Order, Long> {
+        Page<Order> findByStatusAndShipperIdOrderByDeliveryDateDesc(String status, int shipperId,
+                        org.springframework.data.domain.Pageable pageable);
+
+        @Query(value = "SELECT * FROM orders WHERE shipper_id = :shipperId AND status = N'Đã giao' AND MONTH(create_date) = :month AND YEAR(create_date) = :year ORDER BY delivery_date DESC", nativeQuery = true)
+        List<Order> getOrdersByShipperAndMonthYear(@Param("shipperId") int shipperId, @Param("month") int month,
+                        @Param("year") int year);
+
+        @Query(value = "SELECT SUM(total_amount) FROM orders WHERE shipper_id = :shipperId AND status = N'Đã giao' AND MONTH(create_date) = :month AND YEAR(create_date) = :year", nativeQuery = true)
+        Double getTotalAmountByShipperAndMonthYear(@Param("shipperId") int shipperId, @Param("month") int month,
+                        @Param("year") int year);
+
+        @Query(value = "SELECT * FROM orders WHERE shipper_id = :shipperId AND status = N'Đã giao' AND YEAR(create_date) = :year ORDER BY delivery_date DESC", nativeQuery = true)
+        List<Order> getOrdersByShipperAndYear(@Param("shipperId") int shipperId, @Param("year") int year);
+
+        @Query(value = "SELECT SUM(total_amount) FROM orders WHERE shipper_id = :shipperId AND status = N'Đã giao' AND YEAR(create_date) = :year", nativeQuery = true)
+        Double getTotalAmountByShipperAndYear(@Param("shipperId") int shipperId, @Param("year") int year);
+
+        @Query(value = "SELECT DISTINCT YEAR(create_date) FROM orders WHERE shipper_id = :shipperId AND status = N'Đã giao' ORDER BY YEAR(create_date) DESC", nativeQuery = true)
+        List<Integer> getAvailableYearsForShipper(@Param("shipperId") Integer shipperId);
+
         // Tìm kiếm đơn hàng POS theo mã đơn hàng, có phân trang, lọc ngày, loại đơn
         @Query("SELECT o FROM Order o WHERE o.orderType = :orderType "
                         + "AND (:fromDate IS NULL OR o.createDate >= :fromDate) "
                         + "AND (:toDate IS NULL OR o.createDate <= :toDate) "
+
                         + "AND o.orderCode LIKE %:orderCode% "
                         + "ORDER BY o.createDate DESC")
+
+
+                        + "AND o.orderCode LIKE %:orderCode%")
+
         Page<Order> searchPosOrdersByOrderCode(
                         @Param("orderType") String orderType,
 
@@ -73,7 +99,7 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         Double getTotalCompletedAmountByShipperIdAndDateNative(@Param("shipperId") int shipperId,
                         @Param("date") Date date);
 
-        @Query(value = "SELECT * FROM orders o WHERE o.shipper_id = :shipperId AND o.status = N'Đã giao' AND CONVERT(date, o.create_date) = :date", nativeQuery = true)
+        @Query(value = "SELECT * FROM orders o WHERE o.shipper_id = :shipperId AND o.status = N'Đã giao' AND CONVERT(date, o.delivery_date) = :date ORDER BY delivery_date DESC", nativeQuery = true)
         List<Order> getOrdersByShipperAndDate(@Param("shipperId") int shipperId, @Param("date") Date date);
 
         // // Lấy đơn hàng tại quầy, lọc theo ngày bán

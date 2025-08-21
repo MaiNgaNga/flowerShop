@@ -102,7 +102,7 @@
           <li th:if="${session.user.role == 1 or session.user.role == 3}">
             <a class="dropdown-item" href="/User/index">Quản trị</a>
           </li>
-          <li>
+          <li th:if="${session.user.role == 0}">
             <a class="dropdown-item" href="/history">Lịch sử mua hàng</a>
           </li>
 
@@ -113,10 +113,11 @@
 
           <li><hr class="dropdown-divider" /></li>
           <li>
-          <form action="/logout" method="post">
-            <button type="submit" class="dropdown-item text-danger">Đăng xuất</button>
-          </form>
-
+            <form action="/logout" method="post">
+              <button type="submit" class="dropdown-item text-danger">
+                Đăng xuất
+              </button>
+            </form>
           </li>
         </ul>
       </div>
@@ -153,15 +154,17 @@
       }
     });
 
-    // Chặn submit form tìm kiếm nếu chưa nhập từ khóa, không phản hồi gì
     const searchForm = document.querySelector(".search-form");
     if (searchForm) {
       searchForm.addEventListener("submit", function (e) {
         const keyword = document.getElementById("searchInput").value.trim();
         if (!keyword) {
+          // Nếu input trống, chuyển về trang chủ
+          window.location.href = "/home";
           e.preventDefault();
-          // Không làm gì, không hiển thị alert hay thông báo
+          return false;
         }
+        // Nếu có từ khóa thì cho submit bình thường
       });
     }
 
