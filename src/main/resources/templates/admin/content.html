@@ -8,12 +8,26 @@
       <button class="admin-theme-toggle" id="adminThemeToggle">
         <i class="fas fa-sun" id="adminThemeIcon"></i>
       </button>
-      <div class="admin-user-menu">
-        <div class="admin-user-avatar">A</div>
-        <div class="admin-user-info">
-          <h6>Admin</h6>
-          <span>Quản trị viên</span>
-        </div>
+      <!-- Thêm vào header -->
+      <div class="admin-user-menu dropdown">
+        <button class="btn btn-light admin-log d-flex align-items-center gap-2" type="button" id="adminUserDropdown"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          <div class="admin-user-avatar">A</div>
+          <div class="admin-user-info text-start">
+            <h6 th:text="${session.user.name}" class="mb-0">Admin</h6>
+            <span class="small ">Quản trị viên</span>
+          </div>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminUserDropdown"
+          style="margin-left:15px; min-width:130px;">
+          <li>
+            <form action="/logout" method="post" style="margin:0;">
+              <button type="submit" class="dropdown-item text-danger" style="padding-left:18px;">
+                <i class="fa-solid fa-right-from-bracket me-2"></i> Đăng xuất
+              </button>
+            </form>
+          </li>
+        </ul>
       </div>
     </div>
   </header>
@@ -182,18 +196,12 @@
         <span class="admin-nav-item-text">Liên hệ</span>
       </a>
 
-        
+
       <a href="/admin/reviews/index" class="admin-nav-item standalone" data-tooltip="Liên hệ">
       <i class="fa-solid fa-thumbs-up"></i>
         <span class="admin-nav-item-text">Đánh giá</span>
       </a>
-      <form action="/logout" method="post" style="margin:0;">
-        <button type="submit" class="admin-nav-item standalone text-danger"
-          style="width:100%;display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1.5rem;border:none;background:none;font-weight:500;cursor:pointer;">
-          <i class="fa-solid fa-right-from-bracket"></i>
-          <span class="admin-nav-item-text">Đăng xuất</span>
-        </button>
-      </form>
+      
 
       
     </nav>

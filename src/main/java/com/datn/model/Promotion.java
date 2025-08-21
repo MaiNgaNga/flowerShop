@@ -44,14 +44,14 @@ public class Promotion {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "start_date")
-    @NotNull(message = "Ngày bắt đầu không được để trống")
-    @FutureOrPresent(message = "Ngày bắt đầu phải là hôm nay hoặc tương lai")
+    // @NotNull(message = "Ngày bắt đầu không được để trống")
+    // @FutureOrPresent(message = "Ngày bắt đầu phải là hôm nay hoặc tương lai")
     private LocalDate startDate;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "end_date")
-    @NotNull(message = "Ngày kết thúc không được để trống")
-    @FutureOrPresent(message = "Ngày kết thúc phải là hôm nay hoặc tương lai")
+    // @NotNull(message = "Ngày kết thúc không được để trống")
+    // @FutureOrPresent(message = "Ngày kết thúc phải là hôm nay hoặc tương lai")
     private LocalDate endDate;
 
     @Column(name = "status")

@@ -104,6 +104,19 @@
               </div>
             </th:block>
           </div>
+          <!-- Áp dụng mã giảm giá - Di chuyển lên đây -->
+          <div class="card mt-4 p-4 mb-3">
+            <h6 class="mb-3 mau-small">Mã Giảm Giá</h6>
+            <div class="voucher-form-container">
+              <div class="input-group voucher-input">
+                <input type="text" id="voucher-input" class="form-control" placeholder="Nhập mã giảm giá" />
+                <button type="button" class="btn btn-outline-primary" id="apply-voucher-btn">
+                  <i class="fas fa-tags me-1"></i>Áp dụng
+                </button>
+              </div>
+            </div>
+            <div id="voucher-message" class="mt-2"></div>
+          </div>
         </div>
 
         <!-- Cột Đơn hàng -->
@@ -177,28 +190,7 @@
             </div>
           </div>
 
-          <!-- Áp dụng mã giảm giá - Di chuyển lên đây -->
-          <div class="card p-4 mb-3">
-            <h6 class="mb-3 mau-small">Mã Giảm Giá</h6>
-            <div class="voucher-form-container">
-              <div class="input-group voucher-input">
-                <input
-                  type="text"
-                  id="voucher-input"
-                  class="form-control"
-                  placeholder="Nhập mã giảm giá"
-                />
-                <button
-                  type="button"
-                  class="btn btn-outline-primary"
-                  id="apply-voucher-btn"
-                >
-                  <i class="fas fa-tags me-1"></i>Áp dụng
-                </button>
-              </div>
-            </div>
-            <div id="voucher-message" class="mt-2"></div>
-          </div>
+         
 
           <!-- Phương thức thanh toán - Di chuyển lên đây -->
           <div class="card p-4 mb-3">
@@ -260,6 +252,7 @@
           </button>
         </div>
       </div>
+      
     </form>
 
     <div th:insert="~{/fragments/chatbot}"></div>
@@ -457,6 +450,13 @@
               }, 4000);
             });
         });
+
+        document.getElementById("voucher-input").addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              return false;
+            }
+          });
     </script>
   </div>
 </div>

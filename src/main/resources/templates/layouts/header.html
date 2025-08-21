@@ -154,15 +154,17 @@
       }
     });
 
-    // Chặn submit form tìm kiếm nếu chưa nhập từ khóa, không phản hồi gì
     const searchForm = document.querySelector(".search-form");
     if (searchForm) {
       searchForm.addEventListener("submit", function (e) {
         const keyword = document.getElementById("searchInput").value.trim();
         if (!keyword) {
+          // Nếu input trống, chuyển về trang chủ
+          window.location.href = "/home";
           e.preventDefault();
-          // Không làm gì, không hiển thị alert hay thông báo
+          return false;
         }
+        // Nếu có từ khóa thì cho submit bình thường
       });
     }
 

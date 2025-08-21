@@ -3,11 +3,16 @@ package com.datn.Service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.datn.model.User;
 
 public interface UserService {
+
     List<User> findAll();
+
+    Page<User> findAllUserPage(Pageable pageable);
 
     User findByID(int id);
 
@@ -27,5 +32,9 @@ public interface UserService {
     User findBySdt(String sdt);
 
     Optional<User> findByRememberToken(String token);
+
+    Page<User> searchByName(String name, Pageable pageable);
+
+    Page<User> findByRole(int role, Pageable pageable);
 
 }
