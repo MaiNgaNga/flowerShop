@@ -13,12 +13,14 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.datn.Service.ProductService;
 import com.datn.dao.ProductDAO;
+import com.datn.model.Category;
 import com.datn.model.Product;
 import com.datn.utils.ParamService;
 import com.datn.Service.CategoryService;
@@ -310,5 +312,8 @@ public class ProductServiceImpl implements ProductService {
     public List<Map<String, Object>> getTop6SellingProductsByYearAndMonth(int year, int month) {
         return dao.getTop6SellingProductsByYearAndMonth(year, month);
     }
-
+    @Override
+    public List<Category> findCategoriesByProductCategoryId(@Param("productCategoryId") int productCategoryId){
+        return dao.findCategoriesByProductCategoryId(productCategoryId);
+    }
 }

@@ -162,6 +162,10 @@ h3 {
   color: #d63384;
   border-color: #d63384;
 }
+.active-filter {
+  background-color: #ffe6f0 !important;
+  border: 2px solid #d63384 !important;
+}
 
 .color-link {
   display: inline-block;
@@ -284,7 +288,7 @@ h3 {
   transition: opacity 0.3s ease;
 }
 
-.add-to-cart:hover+.add-to-cart-text {
+.add-to-cart:hover + .add-to-cart-text {
   opacity: 1;
 }
 
@@ -394,7 +398,6 @@ h3 {
 .product-card:hover .back-img {
   transform: rotateY(0deg);
 }
-
 
 /*  */
 

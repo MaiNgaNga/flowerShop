@@ -42,78 +42,102 @@
         <aside class="card col-3 bg-light p-3 border-0">
   <form>
     <h3>Lọc sản phẩm</h3>
-    <!-- Mức gía -->
-    <div>
-      <h4 class="filter-title">Mức Giá</h4>
-      <div class="filter-content">
-        <ul class="filter-items">
-          <li class="filter-item">
-            <a th:href="@{/ProductUser(id=${pro_ca.id},min=0,max=200000,categoryId=${param.categoryId},color=${param.color})}" rel="nofollow"
-              role="button" class="price-range">
-              <span>0 - 200.000 VND</span>
-            </a>
-          </li>
-          <li class="filter-item">
-            <a th:href="@{/ProductUser(id=${pro_ca.id},min=200000,max=500000,categoryId=${param.categoryId},color=${param.color})}" rel="nofollow"
-              role="button" class="price-range">
-              <span>200.000 VND - 500.000 VND</span>
-            </a>
-          </li>
-          <li class="filter-item">
-            <a th:href="@{/ProductUser(id=${pro_ca.id},min=500000,max=10000000,categoryId=${param.categoryId},color=${param.color})}" rel="nofollow"
-              role="button" class="price-range">
-              <span>>=500.000 VND</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
 
-    <!-- Màu sắc -->
-    <div>
-      <h4 class="filter-title mt-4 mb-4">Màu sắc</h4>
-      <div class="d-flex gap-3 flex-wrap">
-        <a th:href="@{/ProductUser(id=${pro_ca.id},color=Đỏ,categoryId=${param.categoryId},min=${param.min},max=${param.max})}" class="color-link" role="button" rel="nofollow">
-          <span class="color-circle" style="background-color: #ff6961"></span>
+<!-- Mức gía -->
+<div>
+  <h4 class="filter-title">Mức Giá</h4>
+  <div class="filter-content">
+    <ul class="filter-items">
+      <li class="filter-item">
+        <a th:href="@{/ProductUser(id=${pro_ca.id},min=0,max=200000,categoryId=${selectedCategoryId},color=${selectedColor})}"
+           role="button" class="price-range"
+           th:classappend="${selectedMin == 0 and selectedMax == 200000} ? ' active-filter'">
+          <span>0 - 200.000 VND</span>
         </a>
-        <a th:href="@{/ProductUser(id=${pro_ca.id},color=Hồng,categoryId=${param.categoryId},min=${param.min},max=${param.max})}" class="color-link" role="button" rel="nofollow">
-          <span class="color-circle" style="background-color: #ffb6c1"></span>
+      </li>
+      <li class="filter-item">
+        <a th:href="@{/ProductUser(id=${pro_ca.id},min=200000,max=500000,categoryId=${selectedCategoryId},color=${selectedColor})}"
+           role="button" class="price-range"
+           th:classappend="${selectedMin == 200000 and selectedMax == 500000} ? ' active-filter'">
+          <span>200.000 VND - 500.000 VND</span>
         </a>
-        <a th:href="@{/ProductUser(id=${pro_ca.id},color=Vàng,categoryId=${param.categoryId},min=${param.min},max=${param.max})}" class="color-link" role="button" rel="nofollow">
-          <span class="color-circle" style="background-color: #ffeb3b"></span>
+      </li>
+      <li class="filter-item">
+        <a th:href="@{/ProductUser(id=${pro_ca.id},min=500000,max=10000000,categoryId=${selectedCategoryId},color=${selectedColor})}"
+           role="button" class="price-range"
+           th:classappend="${selectedMin == 500000} ? ' active-filter'">
+          <span>>=500.000 VND</span>
         </a>
-        <a th:href="@{/ProductUser(id=${pro_ca.id},color='Xanh dương',categoryId=${param.categoryId},min=${param.min},max=${param.max})}" class="color-link" role="button" rel="nofollow">
-          <span class="color-circle" style="background-color: #64b5f6"></span>
-        </a>
-        <a th:href="@{/ProductUser(id=${pro_ca.id},color=Xanh,categoryId=${param.categoryId},min=${param.min},max=${param.max})}" class="color-link" role="button" rel="nofollow">
-          <span class="color-circle" style="background-color: #35e67f"></span>
-        </a>
-        <a th:href="@{/ProductUser(id=${pro_ca.id},color=Trắng,categoryId=${param.categoryId},min=${param.min},max=${param.max})}" class="color-link" role="button" rel="nofollow">
-          <span class="color-circle" style="background-color: #ffffff; border: 1px solid #ddd"></span>
-        </a>
-        <a th:href="@{/ProductUser(id=${pro_ca.id},color=Tím,categoryId=${param.categoryId},min=${param.min},max=${param.max})}" class="color-link" role="button" rel="nofollow">
-          <span class="color-circle" style="background-color: #c084fc"></span>
-        </a>
-        <a th:href="@{/ProductUser(id=${pro_ca.id},color=Cam,categoryId=${param.categoryId},min=${param.min},max=${param.max})}" class="color-link" role="button" rel="nofollow">
-          <span class="color-circle" style="background-color: #f4a261"></span>
-        </a>
-      </div>
-    </div>
+      </li>
+    </ul>
+  </div>
+</div>
 
-    <!-- Loại hoa -->
-    <div>
-      <h4 class="filter-title mt-4 mb-4">Loại hoa</h4>
-      <div class="filter-content">
-        <ul class="filter-items">
-          <th:block th:each="item:${categogies}">
-            <li class="filter-item filter-text mt-2 mb-2">
-              <a th:href="@{/ProductUser(id=${pro_ca.id},categoryId=${item.id},color=${param.color},min=${param.min},max=${param.max})}" rel="nofollow"
-                role="button" class="term-label" th:text="${item.name}"></a>
-            </li>
-          </th:block>
-        </ul>
-      </div>
-    </div>
+<!-- Màu sắc -->
+<div>
+  <h4 class="filter-title mt-4 mb-4">Màu sắc</h4>
+  <div class="d-flex gap-3 flex-wrap">
+    <a th:href="@{/ProductUser(id=${pro_ca.id},color=Đỏ,categoryId=${selectedCategoryId},min=${selectedMin},max=${selectedMax})}"
+       class="color-link"
+       th:classappend="${selectedColor == 'Đỏ'} ? ' active-filter'">
+      <span class="color-circle" style="background-color: #ff6961"></span>
+    </a>
+    <a th:href="@{/ProductUser(id=${pro_ca.id},color=Hồng,categoryId=${selectedCategoryId},min=${selectedMin},max=${selectedMax})}"
+       class="color-link"
+       th:classappend="${selectedColor == 'Hồng'} ? ' active-filter'">
+      <span class="color-circle" style="background-color: #ffb6c1"></span>
+    </a>
+    <a th:href="@{/ProductUser(id=${pro_ca.id},color=Vàng,categoryId=${selectedCategoryId},min=${selectedMin},max=${selectedMax})}"
+       class="color-link"
+       th:classappend="${selectedColor == 'Vàng'} ? ' active-filter'">
+      <span class="color-circle" style="background-color: #ffeb3b"></span>
+    </a>
+    <a th:href="@{/ProductUser(id=${pro_ca.id},color='Xanh dương',categoryId=${selectedCategoryId},min=${selectedMin},max=${selectedMax})}"
+       class="color-link"
+       th:classappend="${selectedColor == 'Xanh dương'} ? ' active-filter'">
+      <span class="color-circle" style="background-color: #64b5f6"></span>
+    </a>
+    <a th:href="@{/ProductUser(id=${pro_ca.id},color=Xanh,categoryId=${selectedCategoryId},min=${selectedMin},max=${selectedMax})}"
+       class="color-link"
+       th:classappend="${selectedColor == 'Xanh'} ? ' active-filter'">
+      <span class="color-circle" style="background-color: #35e67f"></span>
+    </a>
+    <a th:href="@{/ProductUser(id=${pro_ca.id},color=Trắng,categoryId=${selectedCategoryId},min=${selectedMin},max=${selectedMax})}"
+       class="color-link"
+       th:classappend="${selectedColor == 'Trắng'} ? ' active-filter'">
+      <span class="color-circle" style="background-color: #ffffff; border: 1px solid #ddd"></span>
+    </a>
+    <a th:href="@{/ProductUser(id=${pro_ca.id},color=Tím,categoryId=${selectedCategoryId},min=${selectedMin},max=${selectedMax})}"
+       class="color-link"
+       th:classappend="${selectedColor == 'Tím'} ? ' active-filter'">
+      <span class="color-circle" style="background-color: #c084fc"></span>
+    </a>
+    <a th:href="@{/ProductUser(id=${pro_ca.id},color=Cam,categoryId=${selectedCategoryId},min=${selectedMin},max=${selectedMax})}"
+       class="color-link"
+       th:classappend="${selectedColor == 'Cam'} ? ' active-filter'">
+      <span class="color-circle" style="background-color: #f4a261"></span>
+    </a>
+  </div>
+</div>
+
+<!-- Loại hoa -->
+<div>
+  <h4 class="filter-title mt-4 mb-4">Loại hoa</h4>
+  <div class="filter-content">
+    <ul class="filter-items">
+      <th:block th:each="item:${categogies}">
+        <li class="filter-item filter-text mt-2 mb-2">
+          <a th:href="@{/ProductUser(id=${pro_ca.id},categoryId=${item.id},color=${selectedColor},min=${selectedMin},max=${selectedMax})}"
+             role="button" class="term-label"
+             th:classappend="${selectedCategoryId == item.id} ? ' active-filter'"
+             th:text="${item.name}"></a>
+        </li>
+      </th:block>
+    </ul>
+  </div>
+</div>
+
+    
   </form>
 </aside>
 
@@ -352,22 +376,16 @@
           </th:block>
         </div>
       </div>
+
 <div th:insert="~{/fragments/chatbot}"></div>
+
     <script th:src="@{/js/services-page.js}"></script>
   </body>
-  <!-- AOS JS -->
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-</html>
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
   AOS.init();
 </script>
-
-  </div>
-  <script th:src="@{/js/services-page.js}"></script>
-</body>
-<!-- AOS JS -->
+<script th:src="@{/js/services-page.js}"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
 </html>
 
