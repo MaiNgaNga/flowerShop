@@ -10,12 +10,22 @@ import com.datn.model.Order;
 import com.datn.model.OrderDetail;
 
 public interface OrderService {
+  Page<Order> getOrdersByStatusAndShipper(String status, int shipperId,
+      Pageable pageable);
+
+  List<Order> getOrdersByShipperAndMonthYear(int shipperId, int month, int year);
+
+  Double getTotalAmountByShipperAndMonthYear(int shipperId, int month, int year);
+
+  List<Order> getOrdersByShipperAndYear(int shipperId, int year);
+
+  Double getTotalAmountByShipperAndYear(int shipperId, int year);
+
+  List<Integer> getAvailableYearsForShipper(Integer shipperId);
 
   Order saveOrder(Order order, List<OrderDetail> orderDetails);
 
   Order findByID(Long id);
-
-
 
   // Order saveOrder(Order order, List<OrderDetail> orderDetails);
 
@@ -57,13 +67,12 @@ public interface OrderService {
 
   List<Order> findReturnedOrdersByShipper(int shipperId);
 
-  Order cancelByShipper(Long orderId, int shipperId, String cancelReason, String cancelDetails);
+  List<Order> findFailedOrdersByShipper(int shipperId);
 
+  Order cancelByShipper(Long orderId, int shipperId, String cancelReason, String cancelDetails);
 
   // Order cancelByShipper(Long orderId, int shipperId, String cancelReason,
   // String cancelDetails);
-
-
 
   Double getTotalCompletedOrdersAmount(int shipperId);
 
@@ -93,11 +102,8 @@ public interface OrderService {
 
   Long countDeliveredOrdersByYear(int year);
 
-
   // Page<Order> getPosOrdersByType(String orderType, LocalDate fromDate,
   // LocalDate toDate, Pageable pageable);
-
-
 
   // // Tìm kiếm đơn hàng POS theo mã đơn hàng, có phân trang, lọc ngày, loại đơn
   // Page<Order> searchPosOrdersByOrderCode(String orderType, String orderCode,

@@ -30,11 +30,17 @@
       <div class="flower-particles" id="flower-particles"></div>
       <div class="hero-content">
         <h1 data-aos="fade-down">Karina Hana</h1>
-        <p data-aos="fade-up" data-aos-delay="200">
+        <p
+          data-aos="fade-up"
+          data-aos-delay="200"
+          style="
+            font-family: 'Poppins', 'Montserrat', 'Lato', Arial, sans-serif;
+          "
+        >
           Tạo nên những khoảnh khắc đáng nhớ với những thiết kế hoa tinh tế
         </p>
         <a
-          href="#services"
+          th:href="@{/about}"
           class="btn btn-primary"
           data-aos="fade-up"
           data-aos-delay="400"
@@ -44,24 +50,36 @@
     </section>
     <section class="features">
       <div class="feature-item" data-aos="fade-up">
-        <i class="fa-solid fa-check"></i>
-        <p>Hình hoa thật</p>
+        <img
+          th:src="@{/images/Giao-hoa-nhanh-chong.png}"
+          alt="Giao hoa nhanh"
+          class="mt-4"
+        />
+        <p class="my-0">Giao hoa nhanh chóng</p>
+        <span>Hoa sẽ được giao tới bạn nhanh nhất có thể</span>
       </div>
+
       <div class="feature-item" data-aos="fade-up" data-aos-delay="100">
-        <i class="fa-solid fa-heart"></i>
-        <p>An toàn, đáng tin cậy</p>
+        <img
+          th:src="@{/images/Chup-hinh-truoc-va-sau-khi-giao.png}"
+          alt="Chụp hình trước khi giao"
+          class="mt-4"
+        />
+        <p class="my-0">Chụp Hình Trước & Sau Khi Giao</p>
+        <span>Chụp hình hoàn thiện trước và sau khi giao </span>
       </div>
+
       <div class="feature-item" data-aos="fade-up" data-aos-delay="200">
-        <i class="fa-solid fa-car-side"></i>
-        <p>Giao hoa nhanh</p>
-      </div>
-      <div class="feature-item" data-aos="fade-up" data-aos-delay="300">
-        <i class="fa-solid fa-wallet"></i>
-        <p>Thanh toán dễ</p>
+        <img
+          th:src="@{/images/Cam-ket-chat-luong.png}"
+          alt="Cam kết chất lượng"
+        />
+        <p class="my-0">Cam Kết & Chất Lượng</p>
+        <span>Hoa đẹp và giống hình 90% so với mẫu </span>
       </div>
     </section>
 
-    <section class="new-flowers-section my-5 text-center">
+    <section class="new-flowers-section text-center">
       <h2 class="mb-4" data-aos="fade-up" data-aos-duration="800">
         Sản phẩm mới theo từng danh mục
       </h2>
@@ -90,7 +108,7 @@
               class="product-category-name"
               th:text="${product.productCategory != null ? product.productCategory.name : 'Không có danh mục'}"
               style="
-                font-size: 0.9em;
+                font-size: 1 rem;
                 color: #666;
                 margin-bottom: 5px;
                 font-weight: 500;
@@ -114,6 +132,9 @@
           <div
             class="promo-card"
             th:each="product : ${#lists.size(discountProducts) > 4 ? discountProducts.subList(0, 4) : discountProducts}"
+            th:if="${product.discountStart != null
+            and T(java.time.LocalDate).now().compareTo(product.discountStart) >= 0
+            and (product.productCategory == null or !product.productCategory.name.toLowerCase().contains('phụ kiện'))}"
           >
             <span
               class="promo-tag"
@@ -138,23 +159,28 @@
           data-aos-delay="200"
           data-aos-duration="1000"
         >
-          <h2>Chọn hoa đẹp, tặng người thân yêu</h2>
-          <h3>ƯU ĐÃI</h3>
+          <h2>Chọn hoa đẹp – Trao gửi yêu thương trọn vẹn</h2>
+          <h3>ƯU ĐÃI ĐẶC BIỆT</h3>
           <p>
-            🌸 Hoa tươi nhà Karina Hana – Nơi gửi gắm yêu thương qua từng cánh
-            hoa tươi thắm, cam kết chất lượng, tươi lâu, giao nhanh, đa dạng mẫu
-            mã cho mọi dịp đặc biệt! 💐✨
+            🌸 <strong>Karina Hana Flowers</strong> – Không chỉ là những đóa hoa
+            tươi thắm, mà còn là cầu nối để bạn gửi gắm tình yêu thương, sự biết
+            ơn và những thông điệp ngọt ngào nhất. Chúng tôi cam kết hoa luôn
+            <em>tươi mới, rực rỡ và bền lâu</em> trong từng khoảnh khắc.
+            <br />
+
+            🌸 Đa dạng phong cách: Từ bó hoa lãng mạn cho ngày kỷ niệm, giỏ hoa
+            thanh lịch cho ngày khai trương, đến những thiết kế độc đáo dành cho
+            lễ, Tết, sinh nhật, ngày 8/3, 20/10 và Valentine. <br />
+
+            🌸 Ưu đãi hấp dẫn: Hàng loạt <strong>mã giảm giá</strong> dành riêng
+            cho khách hàng thân thiết, ưu đãi đặc biệt trong các dịp lễ lớn và
+            chương trình khuyến mãi theo mùa. <br />
+
+            🌸 Hãy để <strong>Karina Hana</strong> đồng hành cùng bạn trong mỗi
+            dịp đặc biệt – để từng cánh hoa thay bạn nói lời yêu thương và mang
+            đến niềm vui bất ngờ cho người nhận. Theo dõi chúng tôi ngay hôm nay
+            để không bỏ lỡ bất kỳ ưu đãi nào! 💐✨
           </p>
-          <div class="promo-benefits d-flex gap-4">
-            <div>
-              <p>Mua từ 2 sản phẩm giảm giá <strong>10%</strong></p>
-              <p>Free ship nội thành</p>
-            </div>
-            <div>
-              <p>Mua từ 5 sản phẩm giảm giá <strong>20%</strong></p>
-            </div>
-          </div>
-          <a href="#"><span>Xem chi tiết</span></a>
         </div>
       </div>
     </section>
@@ -279,21 +305,32 @@
             <div class="product-name" th:text="${product.name}">
               Tên sản phẩm
             </div>
+            <!-- Nếu đang trong thời gian giảm giá -->
             <div
               class="product-price"
-              th:if="${product.discountPercent != null && product.discountPercent > 0}"
+              th:if="${product.discountPercent != null && product.discountPercent > 0
+                && product.discountStart != null
+                && T(java.time.LocalDate).now().compareTo(product.discountStart) >= 0
+                && (product.discountEnd == null or T(java.time.LocalDate).now().compareTo(product.discountEnd) <= 0)}"
+              style="display: flex; flex-direction: column; align-items: center"
             >
               <span
+                class="discounted-price"
                 th:text="${#numbers.formatDecimal(product.priceAfterDiscount, 0, 'COMMA', 0, 'POINT')} + '₫'"
               ></span>
               <span
-                style="text-decoration: line-through; color: #999"
+                class="original-price"
+                style="margin-top: 2px"
                 th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'"
               ></span>
             </div>
+            <!-- Nếu chưa tới ngày giảm giá hoặc không có giảm giá -->
             <div
               class="product-price"
-              th:unless="${product.discountPercent != null && product.discountPercent > 0}"
+              th:if="${product.discountPercent == null || product.discountPercent <= 0
+                || product.discountStart == null
+                || T(java.time.LocalDate).now().compareTo(product.discountStart) < 0
+                || (product.discountEnd != null && T(java.time.LocalDate).now().compareTo(product.discountEnd) > 0)}"
               th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'"
             >
               Giá sản phẩm
@@ -393,21 +430,31 @@
             <div class="product-name" th:text="${product.name}">
               Tên sản phẩm
             </div>
+            <!-- Nếu đang trong thời gian giảm giá -->
             <div
               class="product-price"
-              th:if="${product.discountPercent != null && product.discountPercent > 0}"
+              th:if="${product.discountPercent != null && product.discountPercent > 0
+                && product.discountStart != null
+                && T(java.time.LocalDate).now().compareTo(product.discountStart) >= 0
+                && (product.discountEnd == null or T(java.time.LocalDate).now().compareTo(product.discountEnd) <= 0)}"
+              style="display: flex; flex-direction: column; align-items: center"
             >
               <span
+                class="discounted-price"
                 th:text="${#numbers.formatDecimal(product.priceAfterDiscount, 0, 'COMMA', 0, 'POINT')} + '₫'"
               ></span>
               <span
-                style="text-decoration: line-through; color: #999"
+                class="original-price"
                 th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'"
               ></span>
             </div>
+            <!-- Nếu chưa tới ngày giảm giá hoặc không có giảm giá -->
             <div
               class="product-price"
-              th:unless="${product.discountPercent != null && product.discountPercent > 0}"
+              th:if="${product.discountPercent == null || product.discountPercent <= 0
+                || product.discountStart == null
+                || T(java.time.LocalDate).now().compareTo(product.discountStart) < 0
+                || (product.discountEnd != null && T(java.time.LocalDate).now().compareTo(product.discountEnd) > 0)}"
               th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'"
             >
               Giá sản phẩm
@@ -513,127 +560,7 @@
         </div>
       </div>
     </section>
-
-    <!-- Chatbot Popup -->
-    <div id="chatbot-popup">
-      <div id="chatbot-header">
-        <span>💬 Tư vấn viên Karina Hana</span>
-        <button id="chatbot-close">&times;</button>
-      </div>
-      <div id="chatbot-body">
-        <div class="chatbot-message bot">
-          Xin chào! Tôi có thể giúp gì cho bạn?
-        </div>
-      </div>
-      <div id="chatbot-input-area">
-        <input type="text" id="chatbot-input" placeholder="Nhập câu hỏi..." />
-        <button id="chatbot-send">Gửi</button>
-      </div>
-    </div>
-    <button id="chatbot-toggle">
-      <i class="fa fa-comments"></i>
-    </button>
-    <style>
-      #chatbot-popup {
-        position: fixed;
-        bottom: 90px;
-        right: 30px;
-        width: 320px;
-        max-height: 420px;
-        background: #fff;
-        border-radius: 16px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
-        display: none;
-        flex-direction: column;
-        z-index: 9999;
-        overflow: hidden;
-        font-family: "Poppins", Arial, sans-serif;
-      }
-      #chatbot-header {
-        background: #7b2cbf;
-        color: #fff;
-        padding: 12px 16px;
-        font-weight: 600;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      #chatbot-header button {
-        background: none;
-        border: none;
-        color: #fff;
-        font-size: 20px;
-        cursor: pointer;
-      }
-      #chatbot-body {
-        flex: 1;
-        padding: 12px;
-        overflow-y: auto;
-        background: #f8f9fa;
-        display: flex;
-        flex-direction: column;
-      }
-      .chatbot-message {
-        margin-bottom: 10px;
-        padding: 8px 12px;
-        border-radius: 12px;
-        max-width: 85%;
-        font-size: 15px;
-        line-height: 1.5;
-        word-break: break-word;
-      }
-      .chatbot-message.bot {
-        background: #e0c3fc;
-        color: #333;
-        align-self: flex-start;
-      }
-      .chatbot-message.user {
-        background: #b9fbc0;
-        color: #333;
-        align-self: flex-end;
-        margin-left: auto;
-      }
-      #chatbot-input-area {
-        display: flex;
-        border-top: 1px solid #eee;
-        background: #fff;
-      }
-      #chatbot-input {
-        flex: 1;
-        border: none;
-        padding: 10px;
-        font-size: 15px;
-        outline: none;
-        border-radius: 0 0 0 16px;
-      }
-      #chatbot-send {
-        background: #7b2cbf;
-        color: #fff;
-        border: none;
-        padding: 0 18px;
-        font-size: 15px;
-        cursor: pointer;
-        border-radius: 0 0 16px 0;
-      }
-      #chatbot-toggle {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        background: #7b2cbf;
-        color: #fff;
-        border: none;
-        border-radius: 50%;
-        width: 56px;
-        height: 56px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
-        font-size: 26px;
-        cursor: pointer;
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-    </style>
+    <div th:insert="~{/fragments/chatbot}"></div>
     <script th:src="@{/js/home-page.js}"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>

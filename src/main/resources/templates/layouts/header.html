@@ -102,7 +102,7 @@
           <li th:if="${session.user.role == 1 or session.user.role == 3}">
             <a class="dropdown-item" href="/User/index">Quản trị</a>
           </li>
-          <li>
+          <li th:if="${session.user.role == 0}">
             <a class="dropdown-item" href="/history">Lịch sử mua hàng</a>
           </li>
 
@@ -113,10 +113,11 @@
 
           <li><hr class="dropdown-divider" /></li>
           <li>
-          <form action="/logout" method="post">
-            <button type="submit" class="dropdown-item text-danger">Đăng xuất</button>
-          </form>
-
+            <form action="/logout" method="post">
+              <button type="submit" class="dropdown-item text-danger">
+                Đăng xuất
+              </button>
+            </form>
           </li>
         </ul>
       </div>

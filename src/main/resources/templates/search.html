@@ -76,8 +76,6 @@
         justify-content: center;
       }
       .product-price-search {
-        color: #e53935;
-        font-weight: 700;
         font-size: 1.13rem;
         margin-top: 2px;
         letter-spacing: 0.2px;
@@ -134,14 +132,36 @@
             Tên sản phẩm
           </div>
           <div class="product-price-search">
+            <!-- Nếu đang trong thời gian giảm giá -->
             <span
-              th:if="${product.isDiscountActive()}"
-              th:text="${#numbers.formatDecimal(product.priceAfterDiscount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
-            ></span>
+              th:if="${product.discountPercent != null && product.discountPercent > 0
+              && product.discountStart != null
+              && T(java.time.LocalDate).now().compareTo(product.discountStart) >= 0
+              && (product.discountEnd == null or T(java.time.LocalDate).now().compareTo(product.discountEnd) <= 0)}"
+            >
+              <span
+                class="discounted-price "
+                style="color: #222"
+                th:text="${#numbers.formatDecimal(product.priceAfterDiscount, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+              >
+              </span>
+              <span
+                class="original-price text-decoration-line-through"
+                style="color: #d32f2f; margin-left: 8px"
+                th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
+              >
+              </span>
+            </span>
+            <!-- Nếu chưa tới ngày giảm giá hoặc không có giảm giá -->
             <span
-              th:unless="${product.isDiscountActive()}"
+              th:if="${product.discountPercent == null || product.discountPercent <= 0
+              || product.discountStart == null
+              || T(java.time.LocalDate).now().compareTo(product.discountStart) < 0
+              || (product.discountEnd != null && T(java.time.LocalDate).now().compareTo(product.discountEnd) > 0)}"
+              style="color: #222"
               th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"
-            ></span>
+            >
+            </span>
           </div>
         </div>
       </div>

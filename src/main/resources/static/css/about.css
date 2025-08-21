@@ -1,0 +1,135 @@
+body {
+  background-color: #f8f1f1;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+.container {
+  max-width: 1100px;
+  padding: 2rem 1rem;
+}
+.title {
+  font-family: "Playfair Display", serif;
+  font-weight: 700;
+  color: #2c3e50;
+  position: relative;
+  display: inline-block;
+}
+.title::after {
+  content: "";
+  position: absolute;
+  width: 60px;
+  height: 3px;
+  background-color: linear-gradient(135deg, #d4a5e6, #b2e0e0);
+  bottom: -10px;
+  left: 0;
+}
+.subtitle {
+  font-family: "Playfair Display", serif;
+  font-weight: 700;
+  color: #2c3e50;
+  font-size: 1.5rem;
+}
+.description,
+.text-content {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.1rem;
+  color: #34495e;
+  line-height: 1.8;
+}
+.feature-list li {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.1rem;
+  color: #2c3e50;
+  margin-bottom: 0.8rem;
+  position: relative;
+  padding-left: 1.5rem;
+}
+.feature-list li::before {
+  content: "✿";
+  position: absolute;
+  left: 0;
+  color: #e91e63;
+}
+.img-container img {
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+  width: 100%;
+  height: 350px;
+}
+.team-img img,
+.history-img img {
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+  width: 100%;
+  height: 415px;
+}
+.value-card {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s;
+}
+.value-card:hover {
+  transform: translateY(-5px);
+}
+.cta-section {
+  background-color: #fce4ec;
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+}
+.cta-button {
+  background-color: #C588DE;
+  color: #fff;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  padding: 0.75rem 2rem;
+  border-radius: 25px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+.cta-button:hover {
+  background-color: #e29afe;
+}
+.timeline {
+  position: relative;
+  padding-left: 2rem;
+}
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: #35414e;
+}
+.timeline-item {
+  position: relative;
+  margin-bottom: 2rem;
+}
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -2.25rem;
+  top: 0.5rem;
+  width: 12px;
+  height: 12px;
+  background-color: #fff;
+  border: 2px solid #35414e;
+  border-radius: 50%;
+}
+@media (max-width: 767px) {
+  .img-container img {
+    height: 250px;
+  }
+  .team-img img,
+  .history-img img {
+    height: 150px;
+  }
+}

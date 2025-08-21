@@ -122,6 +122,56 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
         @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId")
         List<Product> findProductByCategory(Integer categoryId);
 
+        // Lọc dịch vụ
+        // @Query("SELECT p FROM Product p WHERE p.productCategory.name LIKE %:name%
+        // ORDER BY p.id DESC")
+        // Page<Product> findByProductCategoryName(@Param("name") String name, Pageable
+        // pageable);
+
+        // Lọc theo danh mục
+        // Page<Product> findByProductCategoryId(
+        // @Param("productCategoryId") Integer productCategoryId,
+        // Pageable pageable);
+
+        // Tìm kiếm
+        // @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%',
+        // :keyword, '%'))")
+        // Page<Product> searchByName(@Param("keyword") String keyword, Pageable
+        // pageable);
+
+        // Tìm kiếm theo loại hoa (category name)
+        // @Query(value = "SELECT p.* FROM products p INNER JOIN categories c ON
+        // p.Category_Id = c.id WHERE c.name COLLATE Latin1_General_CI_AI LIKE
+        // CONCAT('%', :categoryName, '%')", countQuery = "SELECT COUNT(*) FROM products
+        // p INNER JOIN categories c ON p.Category_Id = c.id WHERE c.name COLLATE
+        // Latin1_General_CI_AI LIKE CONCAT('%', :categoryName, '%')", nativeQuery =
+        // true)
+        // Page<Product> searchByCategoryName(@Param("categoryName") String
+        // categoryName, Pageable pageable);
+
+        // Tìm kiếm theo danh mục hoa (productCategory name)
+        // @Query(value = "SELECT p.* FROM products p INNER JOIN product_categories pc
+        // ON p.product_Category_Id = pc.id WHERE pc.name COLLATE Latin1_General_CI_AI
+        // LIKE CONCAT('%', :productCategoryName, '%')", countQuery = "SELECT COUNT(*)
+        // FROM products p INNER JOIN product_categories pc ON p.product_Category_Id =
+        // pc.id WHERE pc.name COLLATE Latin1_General_CI_AI LIKE CONCAT('%',
+        // :productCategoryName, '%')", nativeQuery = true)
+        // Page<Product> searchByProductCategoryName(@Param("productCategoryName")
+        // String productCategoryName,
+        // Pageable pageable);
+
+        // Tìm kiếm theo tên sản phẩm (đã có sẵn: searchByName)
+
+        // List<Product>
+        // findAllByDiscountPercentGreaterThanAndAvailableIsTrueOrderByDiscountPercentDesc(int
+        // minDiscount);
+
+        // @Query(value = "SELECT TOP 10 p.* FROM products p INNER JOIN
+        // product_categories pc ON p.product_Category_Id = pc.id WHERE pc.name =
+        // :productCategoryName ORDER BY p.quantity DESC", nativeQuery = true)
+        // List<Product> findTop10ByProductCategoryName(@Param("productCategoryName")
+        // String productCategoryName);
+
         // @Query("SELECT p FROM Product p WHERE p.productCategory.id = :id")
         // List<Product> findProductByCategory(Integer id);
 
@@ -161,6 +211,23 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
                         SELECT TOP 6
                             pc.id AS id,
                             pc.name AS name,
+                            COALESCE(SUM(od.quantity), 0) AS total_quantity_sold
+                            SUM(od.quantity) AS total_quantity_sold
+                        FROM order_details od
+                        INNER JOIN orders o ON od.order_id = o.id
+                        INNER JOIN products p ON od.product_id = p.id
+                        INNER JOIN product_categories pc ON p.category_id = pc.id
+                        WHERE YEAR(o.create_date) = :year AND MONTH(o.create_date) = :month
+                        GROUP BY pc.id, pc.name
+                        ORDER BY total_quantity_sold DESC
+                        """, nativeQuery = true)
+        List<Map<String, Object>> getTop6SellingProductsByYearAndMonth(@Param("year") int year,
+                        @Param("month") int month);
+
+        @Query(value = """
+                        SELECT TOP 6
+                            pc.id AS id,
+                            pc.name AS name,
                             SUM(od.quantity) AS total_quantity_sold
                         FROM order_details od
                         INNER JOIN orders o ON od.order_id = o.id
@@ -172,20 +239,12 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
                         """, nativeQuery = true)
         List<Map<String, Object>> getTop6SellingProductsByYear(@Param("year") int year);
 
-        @Query(value = """
-                        SELECT TOP 6
-                            pc.id AS id,
-                            pc.name AS name,
-                            COALESCE(SUM(od.quantity), 0) AS total_quantity_sold
-                        FROM order_details od
-                        INNER JOIN orders o ON od.order_id = o.id
-                        INNER JOIN products p ON od.product_id = p.id
-                        INNER JOIN product_categories pc ON p.category_id = pc.id
-                        WHERE YEAR(o.create_date) = :year AND MONTH(o.create_date) = :month
-                        GROUP BY pc.id, pc.name
-                        ORDER BY total_quantity_sold DESC
-                        """, nativeQuery = true)
-        List<Map<String, Object>> getTop6SellingProductsByYearAndMonth(@Param("year") int year,
-                        @Param("month") int month);
+        @Query("SELECT p FROM Product p WHERE p.discountPercent > :minDiscount AND p.available = true "
+                        + "AND (p.discountStart IS NULL OR CURRENT_DATE >= p.discountStart) "
+                        + "AND (p.discountEnd IS NULL OR CURRENT_DATE <= p.discountEnd) "
+                        + "AND (p.productCategory IS NULL OR LOWER(p.productCategory.name) NOT LIKE %:exclude%) "
+                        + "ORDER BY p.discountPercent DESC")
+        List<Product> findDiscountProductsExcludeCategory(@Param("minDiscount") int minDiscount,
+                        @Param("exclude") String exclude);
 
 }
