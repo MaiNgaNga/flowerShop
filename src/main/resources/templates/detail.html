@@ -17,222 +17,199 @@
 
     <!-- AOS Animate On Scroll -->
     <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
-   <link rel="stylesheet" th:href="@{/css/detail.css}" />
+    <link rel="stylesheet" th:href="@{/css/detail.css}" />
   </head>
   <body>
     <th:block th:object="${product}">
-      <div class="container detail mt-5">
-        <div class="row">
-          <div class="col-md-5 position-relative">
+      <div class="container detail">
+        <div class="row ms-5 ps-5 me-5 pe-5 g-lg-3">
+          <div class="col-md-6 mb-4 position-relative">
             <img
               th:src="@{/images/{image}(image=*{image_url})}"
               id="mainImage"
-              alt="Hoa "
+              alt="Hoa"
               class="img-fluid rounded-3"
               data-bs-toggle="modal"
               data-bs-target="#imageModal"
             />
           </div>
-          <div class="col-md-5 product">
+          <div class="col-md-6 product">
             <h4 class="product-title" th:text="*{name}"></h4>
-             
-           <!-- Giá sản phẩm: Có giảm giá -->
-           <th:block th:if="*{priceAfterDiscount lt price}">
-            <div class="product-price">
-              <div class="text-danger fw-bold" 
-                  th:text="${#numbers.formatDecimal(product.priceAfterDiscount, 0, 'COMMA', 0, 'POINT')} + ' VND'">
-              </div>
-              <div class="text-muted text-decoration-line-through" 
-                  th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VND'">
-              </div>
-            </div>
-          </th:block>
 
-          <!-- Giá sản phẩm: Không giảm giá -->
-          <th:block th:if="*{priceAfterDiscount eq price}">
-            <div class="product-price text-muted" 
-                th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VND'">
-            </div>
-          </th:block>
+            <!-- Giá sản phẩm: Có giảm giá -->
+            <th:block th:if="*{priceAfterDiscount lt price}">
+              <div class="product-price">
+                <div
+                  class="text-danger fw-bold"
+                  th:text="${#numbers.formatDecimal(product.priceAfterDiscount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+                ></div>
+                <div
+                  class="text-muted text-decoration-line-through"
+                  th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+                ></div>
+              </div>
+            </th:block>
+
+            <!-- Giá sản phẩm: Không giảm giá -->
+            <th:block th:if="*{priceAfterDiscount eq price}">
+              <div
+                class="product-price text-muted"
+                th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+              ></div>
+            </th:block>
+
             <div class="button-group">
               <form th:action="@{/cart/add}" method="post">
-              <input type="hidden" name="productId" th:value="${product.id}" />
-              <input type="number" name="quantity" value="1" step="1" min="1" class="btn btn-light w-5 m-3"> <br>
-              <button type="submit" class="btn-order btn btn-sm">
-                   Thêm vào giỏ hàng
-              </button>
+                <input
+                  type="hidden"
+                  name="productId"
+                  th:value="${product.id}"
+                />
+                <input
+                  type="number"
+                  name="quantity"
+                  value="1"
+                  step="1"
+                  min="1"
+                  class="btn btn-light w-5 m-3"
+                />
+                <br />
+                <button type="submit" class="btn-order btn btn-sm">
+                  Thêm vào giỏ hàng
+                </button>
               </form>
-           </div>
-            <div class="mt-4 card-info">
-              <h4>Đặc thù sản phẩm</h4>
-              <p>
-                Hoa tươi là sản phẩm tự nhiên, nghệ thuật và <strong>thủ công</strong> nên sản phẩm thành phẩm sẽ chỉ giống 80–90% so với hình ảnh sẵn có.
-              </p>
-              <p>
-                Một số hoa, lá phụ / phụ kiện trên mẫu có thể thay đổi tùy thuộc vào tài nguyên đang có ở shop.
-              </p>
-              <p>
-                Màu sắc của hoa thực tế có thể khác đôi chút do ánh sáng, thiết bị hiển thị hoặc góc chụp.
-              </p>
-
-              <div class="divider"></div>
-
-              <h5 class="text-highlight">Tại sao nên đặt hoa tại Trạm Hoa?</h5>
-              <div class="icon-row">
-                <p><i class="fas fa-camera"></i> Chụp hình hoa thực tế trước khi giao</p>
-                <p><i class="fas fa-file-invoice"></i> Xuất hóa đơn GTGT +8% (Giá chưa gồm VAT)</p>
-                <p><i class="fas fa-gift"></i> Tặng kèm bảng tên công ty, thiệp nội dung</p>
-              </div>
             </div>
-
-          </div>
-          
-        </div>
-        <div class="accordion mt-5 mt-5" id="productAccordion">
-          <!-- Mô tả -->
-          <div class="accordion-item rounded-0">
-            <h2 class="accordion-header">
-              <button
-                class="accordion-button rounded-0"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseOne"
-              >
-                Mô tả
-              </button>
-            </h2>
-            <div
-              id="collapseOne"
-              class="accordion-collapse collapse show"
-              data-bs-parent="#productAccordion"
-            >
-              <div class="accordion-body  ">
-                <p class="fw-blod fs-4" th:text="*{description}"></p>
-
-                <p class="hinhanh d-flex justify-content-center">
-                  <img
-                    src="/photos/vungvang.webp"
-                    alt=""
-                    class="card-img-top"
-                  />
-                </p>
-                <p class="fs-5"><strong>Những ưu đãi khi đặt hoa tại Trạm Hoa</strong></p>
-                <ul class="fs-6">
-                  <li>
-                    Miễn phí các phụ kiện tặng kèm (thiệp, băng rôn, bảng tên,
-                    thông điệp,…)
-                  </li>
-                  <li>
-                    Chụp ảnh hoa thật trước khi giao để đảm bảo hài lòng khách
-                    hàng
-                  </li>
-                  <li>
-                    Miễn phí giao hoa nội thành toàn quốc 63/63 tỉnh thành phố
-                  </li>
-                  <li>
-                    Giao hoa tươi gấp trong vòng 2 giờ kể từ khi đặt hàng.
-                  </li>
-                  <li>
-                    Nhiều ưu đãi giảm giá cho khách hàng thành viên, đặt hoa
-                    thường xuyên tại Trạm Hoa
-                  </li>
-                </ul>
-                <h6 class="text-dark fw-bold fs-5 text-muted">Lưu ý</h6>
-                <ul class="fs-6">
-                  <li>
-                    Tùy khu vực, tùy mùa hoa, thời tiết nên sẽ có thay đổi đối
-                    với mẫu hoa, trước khi thực hiện thay đổi sẽ báo trước cho
-                    khách hàng.
-                  </li>
-                  <li>
-                    Hoa tươi vào những ngày lễ: Valentine, Quốc tế phụ nữ, Phụ
-                    nữ Việt Nam, Giáng sinh, Tết,… giá hoa sẽ tăng dao động từ
-                    20-30%. Thời điểm tăng giá hoa sẽ được tính từ 3 ngày trước
-                    khi lễ.
-                  </li>
-                </ul>
-              </div>
+            <div class="card-info text-start ms-3 ps-2">
+              <h4 class="mb-3 text-aline-center">Đặc thù sản phẩm</h4>
+              <ul class="">
+                <li class="mb-2">
+                  Hoa tươi là sản phẩm tự nhiên, nghệ thuật và
+                  <strong>thủ công</strong> nên sản phẩm thành phẩm sẽ chỉ giống
+                  80–90% so với hình ảnh sẵn có.
+                </li>
+                <li class="mb-2">
+                  Một số hoa, lá phụ / phụ kiện trên mẫu có thể thay đổi tùy
+                  thuộc vào tài nguyên đang có ở shop.
+                </li>
+                <li class="mb-2">
+                  Màu sắc của hoa thực tế có thể khác đôi chút do ánh sáng,
+                  thiết bị hiển thị hoặc góc chụp.
+                </li>
+              </ul>
             </div>
           </div>
         </div>
-          <!-- Đánh giá -->
-       
-          </div>
-        </div>
-   
+      </div>
+      <div class="card-info g-lg-3 m-5 p-5">
+        <h4 class="mb-3">Mô tả</h4>
+        <p class="fs-5" th:text="*{description}"></p>
+        <p class="fs-5">
+          <strong>Những ưu đãi khi đặt hoa tại Karina flower</strong>
+        </p>
+        <ul class="list-unstyled fs-6 mb-4">
+          <li class="mb-2">
+            <i class="fas fa-camera me-2"></i> Chụp hình hoa thực tế trước khi
+            giao
+          </li>
+          <li class="mb-2">
+            <i class="fas fa-file-invoice me-2"></i> Xuất hóa đơn GTGT +8% (Giá
+            chưa gồm VAT)
+          </li>
+          <li class="mb-2">
+            <i class="fas fa-gift me-2"></i> Tặng kèm bảng tên công ty, thiệp
+            nội dung
+          </li>
+        </ul>
+        <p class="fs-5">
+          <strong> Lưu ý</strong>
+        </p>
+        <ul class="fs-6">
+          <li class="mb-2">
+            Tùy khu vực, tùy mùa hoa, thời tiết nên sẽ có thay đổi đối với mẫu
+            hoa, trước khi thực hiện thay đổi sẽ báo trước cho khách hàng.
+          </li>
+          <li class="mb-2">
+            Hoa tươi vào những ngày lễ: Valentine, Quốc tế phụ nữ, Phụ nữ Việt
+            Nam, Giáng sinh, Tết,… giá hoa sẽ tăng dao động từ 20-30%. Thời điểm
+            tăng giá hoa sẽ được tính từ 3 ngày trước khi lễ.
+          </li>
+        </ul>
+      </div>
     </th:block>
     <div class="container">
       <div class="row m-4 p-4 g-lg-3">
-          <div class="text text-secondary fs-3 mb-2 mt-4">
-          Sản phẩm tương tự
-        </div>
-        <!-- Card 1 -->
-      <th:block th:each="product : ${#lists.size(productSimilar) > 8 ? productSimilar.subList(0, 8) : productSimilar}">
-
-         <div class="col-lg-3 col-md-6">
-          <div class="product-card">
-              
-            <div class="product-img-container">
-            
+        <div class="text text-secondary fs-3 mb-2 mt-4">Sản phẩm tương tự</div>
+        <th:block
+          th:each="product : ${#lists.size(productSimilar) > 8 ? productSimilar.subList(0, 8) : productSimilar}"
+        >
+          <div class="col-lg-3 col-md-6">
+            <div class="product-card">
+              <div class="product-img-container">
                 <div class="flip-box">
-                  <a th:href="@{/detail(id=${product.id})}"
-                    class="text-decoration-none" >
-                <img
-                  th:src="@{/images/{image}(image=*{product.image_url})}"
-                  class="product-img front-img"
-                />
-                <img
-                  th:src="@{/images/{image}(image=*{product.image_url2})}"
-                  class="product-img back-img"
-                />
-                 </a>
-              </div>
-             
-
-              <div class="overlay">
-                <form  th:action="@{/cart/add}"
-                       method="post"
-                       style="display: inline">
-                <div class="add-to-cart-container">
-                     <input type="hidden" name="productId" th:value="${product.id}" />
-              <input type="hidden" name="quantity" value="1" />
-                  <button class="add-to-cart">
-                    <i class="fa fa-shopping-cart"></i>
-                  </button>
-                  <div class="add-to-cart-text">Add to cart</div>
+                  <a
+                    th:href="@{/detail(id=${product.id})}"
+                    class="text-decoration-none"
+                  >
+                    <img
+                      th:src="@{/images/{image}(image=*{product.image_url})}"
+                      class="product-img front-img"
+                    />
+                    <img
+                      th:src="@{/images/{image}(image=*{product.image_url2})}"
+                      class="product-img back-img"
+                    />
+                  </a>
                 </div>
-                </form>
-              </div>
-            </div>
-            
-            <div class="product-info">
-              <h4 th:text="${product.name}">Bó hoa cưới</h4>
-              <p th:text="${product.price}">360,000₫</p>
-              <div class="sizes">
-               <form th:action="@{/cart/add}" method="post">
+
+                <div class="overlay">
+                  <form
+                    th:action="@{/cart/add}"
+                    method="post"
+                    style="display: inline"
+                  >
+                    <div class="add-to-cart-container">
                       <input
                         type="hidden"
                         name="productId"
                         th:value="${product.id}"
                       />
                       <input type="hidden" name="quantity" value="1" />
-                      <button type="submit" class="size-btn">Mua ngay</button>
-                    </form>
+                      <button class="add-to-cart">
+                        <i class="fa fa-shopping-cart"></i>
+                      </button>
+                      <div class="add-to-cart-text">Add to cart</div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <div class="product-info">
+                <h4 th:text="${product.name}">Bó hoa cưới</h4>
+                <p th:text="${product.price}">360,000₫</p>
+                <div class="sizes">
+                  <form th:action="@{/cart/add}" method="post">
+                    <input
+                      type="hidden"
+                      name="productId"
+                      th:value="${product.id}"
+                    />
+                    <input type="hidden" name="quantity" value="1" />
+                    <button type="submit" class="size-btn">Mua ngay</button>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-       </th:block>
-
-        
+        </th:block>
       </div>
     </div>
-     
+
+    <!-- Scripts -->
+    <script th:src="@{/js/services-page.js}"></script>
+    <script th:src="@{/js/pro-detail.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script>
+      AOS.init();
+    </script>
   </body>
 </html>
-   <script th:src="@{/js/services-page.js}"></script>
-   <script th:src="@{/js/pro-detail.js}"></script>
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-<script>
-  AOS.init();
-</script>

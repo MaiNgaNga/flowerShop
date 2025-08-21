@@ -235,7 +235,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> findProductByProductCategory(Integer id) {
-        return dao.findProductByCategory(id);
+        return dao.findProductByProductCategory(id);
     }
 
     @Override

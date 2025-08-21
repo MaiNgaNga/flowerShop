@@ -69,7 +69,7 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
                         @Param("productCategoryId") Integer productCategoryId,
                         @Param("categoryId") Integer categoryId,
                         Pageable pageable);
-                        
+
         @Query("SELECT DISTINCT p.category FROM Product p WHERE p.productCategory.id = :productCategoryId")
         List<Category> findCategoriesByProductCategoryId(@Param("productCategoryId") int productCategoryId);
 
@@ -122,8 +122,8 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
         @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId")
         List<Product> findProductByCategory(Integer categoryId);
 
-        // @Query("SELECT p FROM Product p WHERE p.productCategory.id = :id")
-        // List<Product> findProductByCategory(Integer id);
+        @Query("SELECT p FROM Product p WHERE p.productCategory.id = :id")
+        List<Product> findProductByProductCategory(Integer id);
 
         // Gọi: productRepository.findHotProductsFromOtherCategories(id,
         // PageRequest.of(0, limit));

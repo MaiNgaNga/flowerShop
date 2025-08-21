@@ -19,7 +19,12 @@
 .img-fluid {
   cursor: pointer;
 }
-
+.thumbnail-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 15px 0 0;
+}
 body {
   font-family: Arial, sans-serif;
 }
@@ -571,7 +576,6 @@ h4 {
 body {
   padding-top: 50px;
 }
-
 
 /* Rating */
 .star-rating-custom {
