@@ -102,76 +102,63 @@
         </tbody>
       </table>
     </div>
-    <div class="d-flex justify-content-center mt-3" th:if="${totalPages > 0}">
-      <nav>
-        <ul class="pagination custom-pagination">
-          <!-- First Page -->
-          <li
-            class="page-item"
-            th:classappend="${currentPage == 0} ? 'disabled'"
-          >
-            <a
-              class="page-link"
-              th:href="@{/Contact/index/admin(page=0, size=10)}"
-            >
-              <i class="fa fa-angle-double-left"></i>
-            </a>
-          </li>
+    <!-- Phân trang chuyên nghiệp -->
+    <div class="pagination-wrapper" th:if="${totalElements > 0}">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="pagination-info">
+          Hiển thị <strong th:text="${#lists.size(contacts)}"></strong> trong
+          tổng số <strong th:text="${totalElements}"></strong> liên hệ
+        </div>
 
-          <!-- Previous Page -->
-          <li
-            class="page-item"
-            th:classappend="${currentPage == 0} ? 'disabled'"
-          >
-            <a
-              class="page-link"
-              th:href="@{/Contact/index/admin(page=${currentPage - 1}, size=10)}"
-            >
-              <i class="fa fa-angle-left"></i>
-            </a>
-          </li>
+        <nav aria-label="Contact pagination" th:if="${totalPages > 1}">
+          <ul class="pagination simple-pagination">
+            <!-- Nút về trang đầu -->
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+              <a class="page-link" th:href="@{/Contact/index/admin(page=0, size=10, status=${status}, year=${year}, month=${month})}" th:unless="${currentPage == 0}" title="Trang đầu">
+                <i class="fas fa-angle-double-left"></i>
+              </a>
+              <span class="page-link" th:if="${currentPage == 0}">
+                <i class="fas fa-angle-double-left"></i>
+              </span>
+            </li>
 
-          <!-- Page Numbers -->
-          <li
-            class="page-item"
-            th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-            th:classappend="${currentPage == i} ? 'active'"
-          >
-            <a
-              class="page-link"
-              th:href="@{/Contact/index/admin(page=${i}, size=10)}"
-              th:text="${i + 1}"
-            ></a>
-          </li>
+            <!-- Nút trang trước -->
+            <li class="page-item" th:classappend="${!hasPrevious} ? 'disabled'">
+              <a class="page-link" th:href="@{/Contact/index/admin(page=${currentPage - 1}, size=10, status=${status}, year=${year}, month=${month})}" th:if="${hasPrevious}" title="Trang trước">
+                <i class="fas fa-chevron-left"></i>
+              </a>
+              <span class="page-link" th:unless="${hasPrevious}">
+                <i class="fas fa-chevron-left"></i>
+              </span>
+            </li>
 
-          <!-- Next Page -->
-          <li
-            class="page-item"
-            th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
-          >
-            <a
-              class="page-link"
-              th:href="@{/Contact/index/admin(page=${currentPage + 1}, size=10)}"
-            >
-              <i class="fa fa-angle-right"></i>
-            </a>
-          </li>
+            <!-- Các trang số -->
+            <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}" th:if="${pageNum >= currentPage - 1 && pageNum <= currentPage + 1}" th:classappend="${pageNum == currentPage} ? 'active'">
+              <a class="page-link" th:href="@{/Contact/index/admin(page=${pageNum}, size=10, status=${status}, year=${year}, month=${month})}" th:text="${pageNum + 1}"></a>
+            </li>
 
-          <!-- Last Page -->
-          <li
-            class="page-item"
-            th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
-          >
-            <a
-              class="page-link btn-outline-primary"
-              onclick="return confirmMarkProcessed(this)"
-              th:href="@{/Contact/index/admin(page=${totalPages - 1}, size=10)}"
-            >
-              <i class="fa fa-angle-double-right"></i>
-            </a>
-          </li>
-        </ul>
-      </nav>
+            <!-- Nút trang sau -->
+            <li class="page-item" th:classappend="${!hasNext} ? 'disabled'">
+              <a class="page-link" th:href="@{/Contact/index/admin(page=${currentPage + 1}, size=10, status=${status}, year=${year}, month=${month})}" th:if="${hasNext}" title="Trang sau">
+                <i class="fas fa-chevron-right"></i>
+              </a>
+              <span class="page-link" th:unless="${hasNext}">
+                <i class="fas fa-chevron-right"></i>
+              </span>
+            </li>
+
+            <!-- Nút về trang cuối -->
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+              <a class="page-link" th:href="@{/Contact/index/admin(page=${totalPages - 1}, size=10, status=${status}, year=${year}, month=${month})}" th:unless="${currentPage == totalPages - 1}" title="Trang cuối">
+                <i class="fas fa-angle-double-right"></i>
+              </a>
+              <span class="page-link" th:if="${currentPage == totalPages - 1}">
+                <i class="fas fa-angle-double-right"></i>
+              </span>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
   </div>
 </main>
