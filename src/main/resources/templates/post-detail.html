@@ -13,51 +13,12 @@
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet"/>
   <!-- Swiper -->
   <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css"/>
+    <link rel="stylesheet" th:href="@{/css/articleDetail.css}" />
 
-  <!-- Custom CSS -->
-  <style>
-    .related-articles .card {
-  background: transparent;
-  border: none;
-  transition: all 0.6s ease;
-}
-.related-articles .card img {
-  height: 160px;
-  object-fit: cover;
-  border-radius: 10px;
-  transition: transform 0.6s ease;
-}
-.related-articles .card:hover img {
-  transform: scale(1.12);
-}
-.related-articles .card-title {
-  font-family: "Playfair Display", serif;
-  color: #d81b60;
-  font-size: 1.4rem;
-  margin-bottom: 10px;
-}
-.related-articles .card-text {
-  color: #666;
-  font-size: 0.95rem;
-}
 
-    body { background: #f8f9fa; }
-    /* Giới hạn chiều cao hero image xuống 600px để ảnh nhỏ gọn */
-    .post-header { position: relative; border-radius: 12px; overflow: hidden; }
-    .post-header img { width: 100%; max-height: 600px; object-fit: cover; display: block; }
-    .post-header .title-container { position: absolute; bottom: 20px; left: 20px; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,0.6); }
-    .post-content { background: #fff; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 2rem; }
-    .back-link i { transition: transform .2s ease; }
-    .back-link:hover i { transform: translateX(-3px); }
-    .related-title { margin-top: 4rem; margin-bottom: 1rem; }
-    .swiper-container { padding-bottom: 1.5rem; }
-    .swiper-slide { background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .swiper-slide img { width: 100%; height: 150px; object-fit: cover; }
-    .swiper-slide .card-body { padding: .8rem; }
-   
-  </style>
 </head>
-<body>
+<body  >
+  <div id="top"></div>
   <div class="container py-5">
     <!-- Back Link -->
   
@@ -139,7 +100,16 @@
 
 <div th:insert="~{/fragments/chatbot}"></div>
 
-
+ <!-- ============================ Nút về đầu trang ============================ -->
+  <a
+    href="#top"
+    id="backToTopBtn"
+    title="Về đầu trang"
+    class="position-fixed bottom-0 end-0 m-3 btn btn-success d-flex align-items-center gap-1"
+    style="display: none; z-index: 1000"
+  >
+    <i class="fa fa-arrow-up"></i> <span></span>
+  </a>
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
@@ -158,6 +128,21 @@
         992: { slidesPerView: 3 }
       }
     });
+const backToTopBtn = document.getElementById("backToTopBtn");
+
+window.addEventListener("scroll", function () {
+  backToTopBtn.style.display = window.scrollY > 200 ? "flex" : "none";
+});
+
+backToTopBtn.addEventListener("click", function (e) {
+  e.preventDefault();
+  document.getElementById("top").scrollIntoView({ behavior: "smooth" });
+});
+
+
+    
   </script>
+
+  
 </body>
 </html>
