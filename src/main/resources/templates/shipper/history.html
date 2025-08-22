@@ -5,6 +5,27 @@
       Lịch sử giao hàng
     </h2>
 
+    <!-- Alert thông báo - Fixed position bên phải -->
+    <div class="alert-container-fixed">
+      <div th:if="${success}" class="alert alert-success alert-dismissible fade show custom-alert" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+
+      <div th:if="${error}" class="alert alert-danger alert-dismissible fade show custom-alert" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+
+      <div th:if="${warning}" class="alert alert-warning alert-dismissible fade show custom-alert" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <span th:text="${warning}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    </div>
+
     <!-- Bộ lọc -->
     <div class="row mb-4">
       <div
@@ -14,6 +35,8 @@
           method="get"
           th:action="@{/shipper/history}"
           class="col-md-9 d-flex align-items-center gap-3 flex-wrap"
+          id="filterForm"
+          onsubmit="return validateForm()"
         >
           <label for="date" class="fw-semibold" style="font-size: 1.1rem"
             >Ngày:</label
@@ -103,11 +126,6 @@
           </thead>
           <tbody>
             <!-- Có đơn hàng -->
-            <th:block th:if="${#lists.isEmpty(orders)}">
-              <div class="text-center my-5">
-                <span class="fs-5 text-muted">Hiện chưa có đơn hàng nào</span>
-              </div>
-            </th:block>
             <th:block th:if="${orders != null and !orders.isEmpty()}">
               <tr th:each="order : ${orders}" th:if="${order != null}">
                 <td
@@ -235,7 +253,7 @@
       background: #000;
       border-bottom: 2px solid #e5e7eb;
       color: #fff;
-      font- weight: bold;
+      font-weight: bold;
     }
     .table-hover tbody tr:hover {
       background: #f9fafb;
@@ -295,5 +313,199 @@
       transform: scale(1.1);
       box-shadow: 0 4px 10px rgba(212, 165, 230, 0.3);
     }
+
+    /* Alert container fixed position */
+    .alert-container-fixed {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      max-width: 400px;
+      min-width: 300px;
+    }
+
+    /* Custom Alert styles */
+    .custom-alert {
+      border-radius: 15px;
+      border: none;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      font-size: 0.95rem;
+      padding: 1.2rem 3rem 1.2rem 1.5rem;
+      margin-bottom: 1rem;
+      backdrop-filter: blur(10px);
+      animation: slideInRight 0.4s ease-out;
+      position: relative;
+    }
+    
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    .alert-success.custom-alert {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      border-left: 5px solid #047857;
+    }
+    
+    .alert-danger.custom-alert {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: #ffffff;
+      border-left: 5px solid #b91c1c;
+    }
+    
+    .alert-warning.custom-alert {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #ffffff;
+      border-left: 5px solid #b45309;
+    }
+    
+    .custom-alert i {
+      font-size: 1.2rem;
+      margin-right: 0.5rem;
+    }
+    
+    .custom-alert .btn-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 20px;
+      font-weight: bold;
+      opacity: 0.8;
+      cursor: pointer;
+      padding: 0;
+      width: auto;
+      height: auto;
+      line-height: 1;
+    }
+    
+    .custom-alert .btn-close::before {
+      content: "×";
+    }
+    
+    .custom-alert .btn-close:hover {
+      opacity: 1;
+    }
   </style>
+
+  <script>
+    function validateForm() {
+      const dateValue = document.getElementById('date').value;
+      const monthValue = document.getElementById('month').value;
+      const yearValue = document.getElementById('year').value;
+      
+      // Kiểm tra phải chọn ít nhất một tiêu chí
+      if (!dateValue && !monthValue && !yearValue) {
+        showAlert('error', 'Vui lòng chọn ít nhất một tiêu chí lọc!');
+        return false;
+      }
+      
+      // Không được chọn ngày + tháng/năm cùng lúc
+      if (dateValue && (monthValue || yearValue)) {
+        showAlert('error', 'Không thể chọn ngày cùng với tháng hoặc năm!');
+        return false;
+      }
+      
+      // Chọn tháng phải có năm
+      if (monthValue && !yearValue) {
+        showAlert('error', 'Vui lòng chọn năm khi đã chọn tháng!');
+        return false;
+      }
+      
+      // Kiểm tra không chọn tương lai
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1;
+      
+      if (yearValue && parseInt(yearValue) > currentYear) {
+        showAlert('error', 'Không thể chọn năm trong tương lai!');
+        return false;
+      }
+      
+      if (monthValue && yearValue && parseInt(yearValue) === currentYear && parseInt(monthValue) > currentMonth) {
+        showAlert('error', 'Không thể chọn tháng trong tương lai!');
+        return false;
+      }
+      
+      if (dateValue && new Date(dateValue) > now) {
+        showAlert('error', 'Không thể chọn ngày trong tương lai!');
+        return false;
+      }
+      
+      return true;
+    }
+    
+    function showAlert(type, message) {
+      // Xóa alert cũ nếu có
+      const existingAlert = document.querySelector('.dynamic-alert');
+      if (existingAlert) {
+        existingAlert.remove();
+      }
+      
+      // Tạo alert mới với class custom
+      const alertDiv = document.createElement('div');
+      const alertType = type === 'error' ? 'danger' : type;
+      alertDiv.className = `alert alert-${alertType} alert-dismissible fade show custom-alert dynamic-alert`;
+      alertDiv.setAttribute('role', 'alert');
+      
+      let iconClass = '';
+      switch(type) {
+        case 'success':
+          iconClass = 'fas fa-check-circle';
+          break;
+        case 'error':
+        case 'danger':
+          iconClass = 'fas fa-exclamation-circle';
+          break;
+        case 'warning':
+          iconClass = 'fas fa-exclamation-triangle';
+          break;
+      }
+      
+      alertDiv.innerHTML = `
+        <i class="${iconClass}"></i>
+        <span>${message}</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+      
+      // Tạo hoặc tìm container alert fixed
+      let alertContainer = document.querySelector('.alert-container-fixed');
+      if (!alertContainer) {
+        alertContainer = document.createElement('div');
+        alertContainer.className = 'alert-container-fixed';
+        document.body.appendChild(alertContainer);
+      }
+      
+      // Chèn alert vào container fixed
+      alertContainer.appendChild(alertDiv);
+      
+      // Tự động ẩn sau 5 giây
+      setTimeout(() => {
+        if (alertDiv && alertDiv.parentNode) {
+          alertDiv.remove();
+        }
+      }, 5000);
+    }
+    
+    // Reset form khi click "Làm mới"
+    document.addEventListener('DOMContentLoaded', function() {
+      const refreshBtn = document.querySelector('a[href="/shipper/history"]');
+      if (refreshBtn) {
+        refreshBtn.addEventListener('click', function() {
+          document.getElementById('date').value = '';
+          document.getElementById('month').value = '';
+          document.getElementById('year').value = '';
+        });
+      }
+    });
+  </script>
 </div>

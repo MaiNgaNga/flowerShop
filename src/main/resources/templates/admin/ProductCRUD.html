@@ -1,11 +1,21 @@
 <main class="container mt-3">
   <h3>Quản Lý Sản Phẩm</h3>
   <hr />
-  <div
-    class="success alert alert-success"
-    th:if="${success}"
-    th:text="${success}"
-  ></div>
+  <!-- Hiển thị thông báo flash messages từ controller -->
+  <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <span th:text="${success}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <span th:text="${error}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <div th:if="${warning}" class="alert alert-warning alert-dismissible fade show" role="alert">
+    <span th:text="${warning}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
 
   <!-- Tab Navigation -->
   <ul class="nav nav-tabs" id="productTab" role="tablist">
@@ -41,7 +51,6 @@
 
   <!-- Tab Content -->
   <div class="tab-content" id="productTabContent">
-    <i class="error" th:if="${error}" th:text="${error}"></i>
 
     <!-- Tab: Chỉnh sửa -->
     <div
@@ -435,9 +444,33 @@
               <td
                 th:text="${#numbers.formatDecimal(item.price, 0, 'POINT', 0, 'COMMA') + ' VNĐ'}"
               ></td>
-              <td
-                th:text="${item.discountPercent != null ? item.discountPercent + '%' : ''}"
-              ></td>
+              <td>
+                <!-- Hiển thị giảm giá chỉ khi còn hiệu lực -->
+                <span
+                  th:if="${item.discountPercent != null && item.discountPercent > 0
+                    && item.discountStart != null
+                    && T(java.time.LocalDate).now().compareTo(item.discountStart) >= 0
+                    && (item.discountEnd == null or T(java.time.LocalDate).now().compareTo(item.discountEnd) <= 0)}"
+                  th:text="${item.discountPercent + '%'}"
+                  class="text-success fw-bold"
+                ></span>
+                <!-- Hiển thị trạng thái hết hạn nếu có giảm giá nhưng đã hết hạn -->
+                <span
+                  th:if="${item.discountPercent != null && item.discountPercent > 0
+                    && item.discountEnd != null
+                    && T(java.time.LocalDate).now().compareTo(item.discountEnd) > 0}"
+                  class="text-muted"
+                  style="font-style: italic;"
+                >Hết hạn</span>
+                <!-- Hiển thị trạng thái chưa bắt đầu nếu có giảm giá nhưng chưa tới ngày -->
+                <span
+                  th:if="${item.discountPercent != null && item.discountPercent > 0
+                    && item.discountStart != null
+                    && T(java.time.LocalDate).now().compareTo(item.discountStart) < 0}"
+                  class="text-warning"
+                  style="font-style: italic;"
+                >Chưa bắt đầu</span>
+              </td>
               <td class="action-icons">
                 <a
                   th:href="@{'/Product/edit/' + ${item.id} + '?tab=edit'}"

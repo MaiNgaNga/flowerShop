@@ -16,6 +16,9 @@ import com.datn.utils.AuthService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -72,18 +75,27 @@ public class ShipperOrderController {
     public String history(
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
             @RequestParam(required = false) Integer month,
-            @RequestParam(required = false) Integer year,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) Integer year, @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             Model model) {
         User shipper = authService.getUser();
         List<Order> historyOrders = new ArrayList<>();
         Double totalAmount = 0.0;
-        org.springframework.data.domain.Page<Order> orderPage = null;
+        Page<Order> orderPage = null;
+
+        // Validation cơ bản phía server (chỉ kiểm tra bảo mật)
+        if (month != null && year == null) {
+            model.addAttribute("error", "Vui lòng chọn năm khi đã chọn tháng!");
+            List<Integer> years = orderService.getAvailableYearsForShipper(shipper != null ? shipper.getId() : null);
+            model.addAttribute("years", years);
+            model.addAttribute("view", "shipper/history");
+            model.addAttribute("total", 0.0);
+            model.addAttribute("orders", new ArrayList<>());
+            return "shipper/layout";
+        }
 
         if (shipper != null && shipper.getRole() == 2) {
-            org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page,
-                    size);
+            Pageable pageable = PageRequest.of(page, size);
             if (date != null) {
                 // Nếu lọc theo ngày, vẫn lấy toàn bộ không phân trang (có thể bổ sung sau)
                 historyOrders = orderService.getOrdersByShipperAndDate(shipper.getId(), date);
@@ -148,42 +160,16 @@ public class ShipperOrderController {
     @PostMapping("/orders/failed")
     public String failedDelivery(
             @RequestParam("orderId") Long orderId,
-            @RequestParam("failureReason") String failureReason,
-            @RequestParam("failureDetails") String failureDetails,
+            @RequestParam("failureReason") String cancelReason,
+            @RequestParam("failureDetails") String cancelDetails,
             RedirectAttributes redirectAttributes) {
         User shipper = authService.getUser();
         if (shipper != null && shipper.getRole() == 2) {
-            // Set trạng thái đơn hàng là 'Giao thất bại' và lưu lý do
-            orderService.updateStatus(orderId, "Giao thất bại");
-            // Nếu muốn lưu lý do chi tiết, cần bổ sung vào model Order và Service
+            orderService.cancelByShipper(orderId, shipper.getId(), cancelReason, cancelDetails);
             redirectAttributes.addFlashAttribute("message", "Cập nhật trạng thái giao thất bại thành công!");
         } else {
             redirectAttributes.addFlashAttribute("error", "Bạn không có quyền thực hiện thao tác này!");
         }
         return "redirect:/shipper/my-orders";
     }
-
-    // @PostMapping("/orders/cancel")
-    // public String cancelOrder(
-    // @RequestParam("orderId") Long orderId,
-    // @RequestParam("cancelReason") String cancelReason,
-    // @RequestParam(value = "cancelDetails", required = false) String
-    // cancelDetails,
-    // RedirectAttributes redirectAttributes) {
-    // User shipper = authService.getUser();
-    // if (shipper != null && shipper.getRole() == 2) {
-    // try {
-    // orderService.cancelByShipper(orderId, shipper.getId(), cancelReason,
-    // cancelDetails);
-    // redirectAttributes.addFlashAttribute("message", "Hủy đơn hàng thành công!");
-    // } catch (Exception e) {
-    // redirectAttributes.addFlashAttribute("error", "Lỗi khi hủy đơn hàng: " +
-    // e.getMessage());
-    // }
-    // } else {
-    // redirectAttributes.addFlashAttribute("error", "Bạn không có quyền hủy đơn
-    // hàng!");
-    // }
-    // return "redirect:/shipper/my-orders";
-    // ...existing code...
 }
