@@ -150,7 +150,7 @@ public class OrderController {
         // Kiểm tra wardID có tồn tại không (cần thiết cho việc đặt hàng mới)
         if (wardId == null) {
             System.out.println("WardID is null - returning error");
-            model.addAttribute("error", "Vui lòng chọn xã/phường để tính phí vận chuyển.");
+            model.addAttribute("error", "Vui lòng chọn xã/phường.");
             return showForm(model);
         }
 
