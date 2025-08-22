@@ -1,12 +1,21 @@
 <main class="container mt-4">
   <h3>Quản Lý Dịch Vụ</h3>
   <hr />
-  <div
-    class="success alert alert-success"
-    th:if="${success}"
-    th:text="${success}"
-  ></div>
-  <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+  <!-- Hiển thị thông báo flash messages từ controller -->
+  <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <span th:text="${success}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <span th:text="${error}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <div th:if="${warning}" class="alert alert-warning alert-dismissible fade show" role="alert">
+    <span th:text="${warning}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
 
   <!-- Tab Navigation -->
   <ul class="nav nav-tabs" id="serviceTab" role="tablist">
@@ -76,7 +85,7 @@
               class="form-control form-control-sm"
               placeholder="Tên dịch vụ"
             />
-            <div class="error" th:errors="*{name}"></div>
+            <i class="error" th:errors="*{name}"></i>
           </div>
         </div>
 
@@ -92,7 +101,7 @@
               <option value="true">Hoạt động</option>
               <option value="false">Ngừng hoạt động</option>
             </select>
-            <div class="error" th:errors="*{available}"></div>
+            <i class="error" th:errors="*{available}"></i>
           </div>
         </div>
 
@@ -107,6 +116,7 @@
               placeholder="Mô tả dịch vụ"
               rows="4"
             ></textarea>
+            <i class="error" th:errors="*{description}"></i>
           </div>
         </div>
 
@@ -131,7 +141,7 @@
               >Chọn ảnh</label
             >
             <input type="file" id="image1" name="image1" />
-            <!-- <div class="error" th:errors="*{image_url}"></div> -->
+            <i class="error" id="image1-error"></i>
           </div>
           <div class="image-upload-box">
             <label class="image-title">Hình Ảnh 2</label>
@@ -152,6 +162,7 @@
               >Chọn ảnh</label
             >
             <input type="file" id="image2" name="image2" />
+            <i class="error" id="image2-error"></i>
           </div>
           <div class="image-upload-box">
             <label class="image-title">Hình Ảnh 3</label>
@@ -173,6 +184,7 @@
               >Chọn ảnh</label
             >
             <input type="file" id="image3" name="image3" />
+            <i class="error" id="image3-error"></i>
           </div>
         </div>
 
