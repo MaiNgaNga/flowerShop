@@ -1,11 +1,21 @@
 <main class="container mt-3">
   <h3>Quản Lý Khuyến Mãi</h3>
   <hr />
-  <div
-    class="success alert alert-success"
-    th:if="${success}"
-    th:text="${success}"
-  ></div>
+  <!-- Hiển thị thông báo flash messages từ controller -->
+  <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <span th:text="${success}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <span th:text="${error}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <div th:if="${warning}" class="alert alert-warning alert-dismissible fade show" role="alert">
+    <span th:text="${warning}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
   <!-- Tab Navigation -->
   <ul class="nav nav-tabs" id="flowerTab" role="tablist">
     <li class="nav-item" role="presentation">
@@ -40,7 +50,6 @@
 
   <!-- Tab Content -->
   <div class="tab-content" id="flowerTabContent">
-    <i class="error" th:if="${error}" th:text="${error}"></i>
 
     <!-- Tab: Chỉnh sửa -->
     <div
@@ -81,7 +90,7 @@
                 class="form-control form-control-sm"
                 placeholder="Tên khuyến mãi"
               />
-              <small class="text-danger" th:errors="*{title}"></small>
+              <i class="error" th:errors="*{title}"></i>
             </div>
           </div>
 
@@ -98,7 +107,7 @@
                 placeholder="Mô tả"
                 rows="3"
               ></textarea>
-              <small class="text-danger" th:errors="*{description}"></small>
+              <i class="error" th:errors="*{description}"></i>
             </div>
           </div>
 
@@ -117,7 +126,7 @@
                 <option value="percent">Phần trăm (%)</option>
                 <option value="amount">Số tiền (VNĐ)</option>
               </select>
-              <small class="text-danger" th:errors="*{discountType}"></small>
+              <i class="error" th:errors="*{discountType}"></i>
             </div>
           </div>
 
@@ -135,7 +144,7 @@
                 class="form-control form-control-sm"
                 placeholder="VD: 10 hoặc 100000"
               />
-              <small class="text-danger" th:errors="*{discountValue}"></small>
+              <i class="error" th:errors="*{discountValue}"></i>
               <small class="text-danger" th:text="${errorDiscount}"></small>
             </div>
           </div>
@@ -152,7 +161,7 @@
                 th:field="*{startDate}"
                 class="form-control form-control-sm"
               />
-              <small class="text-danger" th:errors="*{startDate}"></small>
+              <i class="error" th:errors="*{startDate}"></i>
             </div>
           </div>
 
@@ -168,7 +177,7 @@
                 th:field="*{endDate}"
                 class="form-control form-control-sm"
               />
-              <small class="text-danger" th:errors="*{endDate}"></small>
+              <i class="error" th:errors="*{endDate}"></i>
               <small class="text-danger" th:text="${errorEndDate}"></small>
             </div>
           </div>
@@ -183,7 +192,7 @@
                 <option value="true">Đang hoạt động</option>
                 <option value="false">Ngưng hoạt động</option>
               </select>
-              <small class="text-danger" th:errors="*{status}"></small>
+              <i class="error" th:errors="*{status}"></i>
             </div>
           </div>
 
@@ -200,7 +209,7 @@
                 class="form-control form-control-sm"
                 placeholder="Nhập số lượng sử dụng của voucher"
               />
-              <small class="text-danger" th:errors="*{useCount}"></small>
+              <i class="error" th:errors="*{useCount}"></i>
             </div>
           </div>
         </div>

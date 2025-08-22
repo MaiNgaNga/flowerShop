@@ -1,11 +1,21 @@
 <main class="container mt-3">
   <h3>Quản Lý Người Dùng</h3>
   <hr />
-  <div
-    class="success alert alert-success"
-    th:if="${success}"
-    th:text="${success}"
-  ></div>
+  <!-- Hiển thị thông báo flash messages từ controller -->
+  <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <span th:text="${success}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <span th:text="${error}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <div th:if="${warning}" class="alert alert-warning alert-dismissible fade show" role="alert">
+    <span th:text="${warning}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
 
   <!-- Tab Navigation -->
   <ul class="nav nav-tabs border-bottom-0" id="UserTab" role="tablist">
@@ -43,7 +53,6 @@
 
   <!-- Tab Content -->
   <div class="tab-content" id="UserTabContent">
-    <i class="error" th:if="${error}" th:text="${error}"></i>
 
     <!-- Tab: Chỉnh sửa -->
     <div
@@ -82,7 +91,7 @@
                 class="form-control form-control-sm"
                 placeholder="Nhập tên người dùng"
               />
-              <small class="text-danger" th:errors="*{name}"></small>
+              <i class="error" th:errors="*{name}"></i>
             </div>
           </div>
           <div class="col-md-6">
@@ -97,7 +106,7 @@
                 class="form-control form-control-sm"
                 placeholder="Nhập email"
               />
-              <small class="text-danger" th:errors="*{email}"></small>
+              <i class="error" th:errors="*{email}"></i>
             </div>
           </div>
           <div class="col-md-6">
@@ -112,7 +121,7 @@
                 class="form-control form-control-sm"
                 placeholder="Nhập số điện thoại"
               />
-              <small class="text-danger" th:errors="*{sdt}"></small>
+              <i class="error" th:errors="*{sdt}"></i>
             </div>
           </div>
           <div class="col-md-6">
@@ -168,7 +177,7 @@
                   >
                 </div>
               </div>
-              <small class="text-danger" th:errors="*{role}"></small>
+              <i class="error" th:errors="*{role}"></i>
             </div>
           </div>
           <div th:if="*{id == null}" class="col-md-6">
@@ -215,7 +224,7 @@
                   >
                 </div>
               </div>
-              <small class="text-danger" th:errors="*{status}"></small>
+              <i class="error" th:errors="*{status}"></i>
             </div>
           </div>
         </div>
