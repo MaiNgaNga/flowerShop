@@ -271,7 +271,7 @@ public class OrderServiceImpl implements OrderService {
 
         order.setReason(cancelReason); // Lưu lý do hủy vào cột reason
         order.setDescription(cancelDetails); // Lưu chi tiết lý do vào cột description
-        order.setStatus("Đã hủy");
+        order.setStatus("Giao thất bại");
         return dao.save(order);
     }
 

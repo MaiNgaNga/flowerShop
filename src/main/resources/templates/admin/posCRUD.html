@@ -104,7 +104,6 @@
         </nav>
       </div>
                 </div>
-                        <!-- Đã có vòng lặp th:each ở trên, các dòng này bị dư thừa và gây lỗi nếu không có biến order. Đã xóa để tránh lỗi. -->
                       </tr>
                       <tr th:if="${#lists.isEmpty(orders)}">
                         <td colspan="7" class="text-center text-muted">
@@ -199,7 +198,6 @@
           </div>
         </div>
       </div>
-    </form>
   </div>
 <script th:inline="javascript">
     var hasOrderDetail = /*[[${orderDetail != null}]]*/ false;
@@ -211,5 +209,7 @@
     }
   </script>
 <script src="/js/posCRUD.js"></script>
+<script src="/js/admin-crud.js"></script>
+
 </main>
 

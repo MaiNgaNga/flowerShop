@@ -64,7 +64,7 @@ public class HomeController {
     public String home(Model model) {
         List<ProductCategory> productCategories = productCategoryService.findAll();
         List<Category> categories = categoryService.findAll();
-        List<Product> productQuantities = productService.findTop6ByOrderByQuantityDesc();
+        // List<Product> productQuantities = productService.findTop6ByOrderByQuantityDesc();
         List<Product> latestProducts = productService.findLatestProductsPerCategory();
         List<Product> bestSellingProducts = productService.findBestSellingProductPerCategory();
         List<Post> posts = postService.findAll();
@@ -86,7 +86,7 @@ public class HomeController {
         model.addAttribute("comments", comments);
         model.addAttribute("productCategories", productCategories);
         model.addAttribute("categories", categories);
-        model.addAttribute("productQuantities", productQuantities);
+        // model.addAttribute("productQuantities", productQuantities);
         model.addAttribute("latestProducts", latestProducts);
         model.addAttribute("promotionsCode", promotionservice.findValidPromotion());
         model.addAttribute("bestSellingProducts", bestSellingProducts);
