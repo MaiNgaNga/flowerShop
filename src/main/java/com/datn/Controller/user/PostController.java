@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,15 +42,15 @@ public class PostController {
     @RequestMapping("/PostUser")
     public String postPage(Model model,
             @RequestParam(name = "p", defaultValue = "0") int page) {
+        Pageable pageable = PageRequest.of(page, 6, Sort.by(Sort.Direction.DESC, "postDate"));
 
-        Pageable pageable = PageRequest.of(page, 6);
-        Page<Post> posts = postService.findAllPageable(pageable);
         List<Post> newestPosts = postService.findTop12Newest();
+        Page<Post> posts = postService.findAllPageable(pageable);
 
         int cartCount = 0;
         User user = authService.getUser();
         if (user != null) {
-            Integer userId = user.getId(); // Sửa lại nếu getter id khác
+            Integer userId = user.getId();
             cartCount = cartItemService.getCartItemsByUserId(userId).size();
         }
         model.addAttribute("cartCount", cartCount);
@@ -67,7 +68,7 @@ public class PostController {
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "p", defaultValue = "0") int page) {
 
-        Pageable pageable = PageRequest.of(page, 12);
+        Pageable pageable = PageRequest.of(page, 6);
         Page<Post> posts;
 
         if (keyword != null && !keyword.trim().isEmpty()) {

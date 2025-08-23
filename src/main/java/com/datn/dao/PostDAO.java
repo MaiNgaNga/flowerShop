@@ -28,6 +28,9 @@ public interface PostDAO extends JpaRepository<Post, Long> {
 
     // Lấy bài viết phân trang
     Page<Post> findAll(Pageable pageable);
+    
+    // @Query("SELECT p FROM Posts p ORDER BY p.post_date DESC")
+    // Page<Post> findAll(Pageable pageable);
 
     // Lấy các bài viết theo status với phân trang
     Page<Post> findByStatus(boolean status, Pageable pageable);
@@ -35,7 +38,7 @@ public interface PostDAO extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p WHERE p.id <> :excludeId ORDER BY p.postDate DESC")
     List<Post> findTopRelatedPosts(@Param("excludeId") Long excludeId, Pageable pageable);
 
-    List<Post> findTop12ByStatusTrueOrderByPostDateDesc();
+    List<Post> findTop9ByStatusTrueOrderByPostDateDesc();
 
     Page<Post> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
 
