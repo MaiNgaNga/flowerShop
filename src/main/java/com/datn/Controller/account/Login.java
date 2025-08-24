@@ -12,8 +12,6 @@ import com.datn.utils.AuthService;
 
 import jakarta.servlet.http.HttpServletResponse;
 
-
-
 @Controller
 public class Login {
     @Autowired
@@ -29,7 +27,7 @@ public class Login {
 
     @PostMapping("/login")
     public String login(@RequestParam String username, @RequestParam String password,
-    @RequestParam(required = false) String rememberMe, Model model, HttpServletResponse response) {
+            @RequestParam(required = false) String rememberMe, Model model, HttpServletResponse response) {
         if (username.isEmpty() || password.isEmpty()) {
             model.addAttribute("error", "Chưa nhập đầy đủ thông tin!");
             return "account/login";
@@ -41,10 +39,13 @@ public class Login {
                 customRememberMeService.createRememberMeToken(user, response);
             }
             int role = authService.getUser().getRole();
-            if (role == 2) {
-                return "redirect:/shipper/pending-orders";
-            }
-            return "redirect:/home";
+            return switch (role) {
+                case 0 -> "redirect:/home";
+                case 1 -> "redirect:/statistical";
+                case 2 -> "redirect:/shipper/pending-orders";
+                case 3 -> "redirect:/pos";
+                default -> "redirect:/home";
+            };
         } else {
             model.addAttribute("error", "Sai tài khoản hoặc mật khẩu!");
             return "account/login";
