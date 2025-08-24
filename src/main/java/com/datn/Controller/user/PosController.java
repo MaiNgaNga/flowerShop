@@ -113,7 +113,7 @@ public class PosController {
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("colors", colorService.findAll());
         model.addAttribute("view", "pos");
-        return "layouts/layout";
+        return "layouts/pos-layout";
     }
 
     @SuppressWarnings("unchecked")
@@ -324,7 +324,7 @@ public class PosController {
         model.addAttribute("paymentMethod", order.getOrderType());
         model.addAttribute("orderDetails", order.getOrderDetails());
         model.addAttribute("view", "pos-payment-qr");
-        return "layouts/qr-layout";
+        return "layouts/pos-layout";
     }
 
     /**

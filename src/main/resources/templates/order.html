@@ -109,8 +109,17 @@
             <h6 class="mb-3 mau-small">Mã Giảm Giá</h6>
             <div class="voucher-form-container">
               <div class="input-group voucher-input">
-                <input type="text" id="voucher-input" class="form-control" placeholder="Nhập mã giảm giá" />
-                <button type="button" class="btn btn-outline-primary" id="apply-voucher-btn">
+                <input
+                  type="text"
+                  id="voucher-input"
+                  class="form-control"
+                  placeholder="Nhập mã giảm giá"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-primary"
+                  id="apply-voucher-btn"
+                >
                   <i class="fas fa-tags me-1"></i>Áp dụng
                 </button>
               </div>
@@ -190,8 +199,6 @@
             </div>
           </div>
 
-         
-
           <!-- Phương thức thanh toán - Di chuyển lên đây -->
           <div class="card p-4 mb-3">
             <h6 class="mb-3 mau-small">Phương Thức Thanh Toán</h6>
@@ -252,11 +259,13 @@
           </button>
         </div>
       </div>
-      
     </form>
 
     <div th:insert="~{/fragments/chatbot}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script>
+      AOS.init();
+
       const wardSelect = document.getElementById("ward");
       const specificInput = document.getElementById("specific");
       const addressInput = document.getElementById("address");
@@ -451,12 +460,14 @@
             });
         });
 
-        document.getElementById("voucher-input").addEventListener("keydown", function (e) {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              return false;
-            }
-          });
+      document
+        .getElementById("voucher-input")
+        .addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            return false;
+          }
+        });
     </script>
   </div>
 </div>

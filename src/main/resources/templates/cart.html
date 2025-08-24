@@ -75,7 +75,10 @@
         </tbody>
       </table>
 
-      <div class="d-flex justify-content-between">
+      <div
+        class="d-flex justify-content-between"
+        th:if="${!#lists.isEmpty(cartItems)}"
+      >
         <button
           type="button"
           class="btn btn-outline-danger"
@@ -99,8 +102,19 @@
           ></strong>
         </li>
       </ul>
-      <a href="/order/index" class="btn btn-success w-100 mt-3"> ĐẶT HÀNG</a>
+      <a
+        th:if="${!#lists.isEmpty(cartItems)}"
+        href="/order/index"
+        class="btn w-100 mt-3"
+        style="background: linear-gradient(45deg, #d8a7c7, #c8f3f3)"
+      >
+        ĐẶT HÀNG</a
+      >
     </div>
   </div>
 </div>
 <div th:insert="~{/fragments/chatbot}"></div>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init();
+</script>
