@@ -11,11 +11,7 @@
   </style>
 </head>
 <body>
-  <div
-  class="success alert alert-success"
-  th:if="${success}"
-  th:text="${success}"
-></div>
+  
 <form
   action="/editProfile"
   th:object="${user}"
@@ -23,11 +19,16 @@
   method="post"
 >
   <h4
-    style="font-family: Georgia, 'Times New Roman', Times, serif"
+    style="font-size: 30px;font-family: Georgia, 'Times New Roman', Times, serif"
     class="text-center"
   >
     Cập nhật thông tin cá nhân
   </h4>
+  <div
+  class="success alert alert-success"
+  th:if="${success}"
+  th:text="${success}"
+></div>
   <i class="error text-danger" th:if="${error}" th:text="${error}"></i>
 
   <input type="text" th:field="*{id}" class="form-control" hidden />
@@ -51,6 +52,16 @@
       placeholder="Email"
     />
     <i class="error" th:errors="*{email}"></i>
+  </div>
+  <div class="py-2">
+    <label for="" class="form-label">Số điện thoại</label>
+    <input
+      type="text"
+      th:field="*{sdt}"
+      class="form-control"
+      placeholder="sdt"
+    />
+    <i class="error" th:errors="*{sdt}"></i>
   </div>
 
   <input th:field="*{password}" type="hidden" />

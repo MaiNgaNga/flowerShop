@@ -20,6 +20,20 @@ function confirmMarkProcessed(element) {
 
   return false; // chặn <a> nhảy link ngay
 }
+// =======================================================================//
+function confirmReview(element) {
+  let markProcessedUrl = element.getAttribute("href"); // lấy từ href của thẻ a
+  let confirmBtn = document.getElementById("confirmReviewBtn");
+
+  confirmBtn.setAttribute("href", markProcessedUrl);
+
+  let markProcessedModal = new bootstrap.Modal(
+    document.getElementById("confirmReviewModal")
+  );
+  markProcessedModal.show();
+
+  return false; // chặn <a> nhảy link ngay
+}
 
 
 

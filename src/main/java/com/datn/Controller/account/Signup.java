@@ -47,9 +47,9 @@ public class Signup {
         }
         try {
             userService.create(User);
-            sendMailService.send(new Mail(User.getEmail(), "Hello", "Chào mừng đến trang web"));
-            redirectAttributes.addFlashAttribute("success", "Đăng kí User thành công!");
-            return "redirect:/signup";
+            sendMailService.send(new Mail(User.getEmail(), "Hello", "Cảm ơn bạn đã đăng kí tài khoản tại hệ thống của chúng tôi. Mời bạn đăng nhập để sử dụng dịch vụ."));
+            redirectAttributes.addFlashAttribute("success", "Đăng kí thành công!, mời bạn đăng nhập");
+            return "redirect:/login";
         } catch (IllegalArgumentException e) {
             System.out.println("looix : "+e);
             model.addAttribute("error", e.getMessage());

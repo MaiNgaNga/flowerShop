@@ -93,6 +93,7 @@ public class HistoryController {
             else {
                 
                 commentService.saveComment(content, orderId, rating);
+                redirectAttributes.addFlashAttribute("message", "Cảm ơn bạn đã đánh giá sản phẩm.");
             }
         } catch (Exception e) {
             // Nếu có lỗi trong quá trình xử lý thì thông báo lỗi
@@ -103,6 +104,19 @@ public class HistoryController {
 
         // Sau khi xử lý xong thì chuyển hướng lại trang lịch sử mua hàng
         return "redirect:/history?id=" + orderId;
+    }
+
+    @GetMapping("/history/comment/delete/{id}")
+    public String deleteComment(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        try {
+            commentService.deleteComment(id);
+            redirectAttributes.addFlashAttribute("message", "Đã xóa bình luận thành công.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi. Vui lòng thử lại sau.");
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+        return "redirect:/history";
     }
 
 }
