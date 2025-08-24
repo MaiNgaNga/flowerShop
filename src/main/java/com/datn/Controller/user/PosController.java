@@ -264,7 +264,7 @@ public class PosController {
 
             // Thanh toán tiền mặt
             if ("cash".equalsIgnoreCase(paymentMethod)) {
-                savedOrder.setStatus("Đã thanh toán");
+                savedOrder.setStatus("Chờ xác nhận");
                 orderDAO.save(savedOrder);
                 session.removeAttribute("cart");
                 // Hiển thị bill để in
@@ -398,7 +398,7 @@ public class PosController {
      * 1. Lấy mã đơn hàng từ request body.
      * 2. Nếu không có mã đơn hàng, trả về lỗi yêu cầu nhập mã.
      * 3. Tìm đơn hàng theo mã. Nếu tìm thấy:
-     * - Đổi trạng thái đơn hàng thành "Đã thanh toán" và lưu lại.
+     * - Đổi trạng thái đơn hàng thành "Chờ xác nhận" và lưu lại.
      * - Trả về thành công và thông báo xác nhận.
      * Nếu không tìm thấy:
      * - Trả về lỗi không tìm thấy đơn hàng.
@@ -434,7 +434,7 @@ public class PosController {
             Optional<Order> orderOpt = orderDAO.findByOrderCode(orderCode);
             if (orderOpt.isPresent()) {
                 Order order = orderOpt.get();
-                order.setStatus("Đã thanh toán");
+                order.setStatus("Chờ xác nhận");
                 orderDAO.save(order);
                 response.put("success", true);
                 response.put("message", "Đã xác nhận thanh toán cho đơn hàng");
