@@ -1,6 +1,9 @@
 package com.datn.Controller.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,9 +22,20 @@ public class ReviewController {
     private CommentService commentService;
 
     @GetMapping("/index")
-    public String index(Model model) {
-        model.addAttribute("inactiveReview", commentService.findByStatusInactive());
+    public String index(Model model,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
 
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Comment> commentPage = commentService.findByStatusInactive(pageable);
+
+        model.addAttribute("commentPage", commentPage.getContent());
+        model.addAttribute("totalPages", commentPage.getTotalPages());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalElements", commentPage.getTotalElements());
+
+        model.addAttribute("hasNext", commentPage.hasNext());
+        model.addAttribute("hasPrevious", commentPage.hasPrevious());
         model.addAttribute("view", "admin/review");
         return "admin/layout";
     }

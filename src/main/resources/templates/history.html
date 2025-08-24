@@ -276,26 +276,26 @@
                   <div class="col-md-7">
                     <h4 class="fw-bold mb-3">Đánh giá của bạn</h4>
                     <ol class="commentlist" th:each="item:${order.comments}">
-                      <li class="review-item">
+                      <li class="review-item position-relative">
                         <div class="comment-container">
-                         
                           <div class="review-content">
                             <p class="meta">
-                               
-                              <strong
-                                class="review-author"
-                                th:text="${item.user.name}"
-                              ></strong>
+                              <strong class="review-author" th:text="${item.user.name}"></strong>
                               -
-                              <time
-                                class="review-date"
-                                th:text="${#temporals.format(item.createdAt, 'dd/MM/yyyy')}"
-                              ></time>
+                              <time class="review-date" th:text="${#temporals.format(item.createdAt, 'dd/MM/yyyy')}"></time>
                             </p>
-                            Nội dung: 
                             <p class="review-text" th:text="${item.content}">
                               Tư vấn nhiệt tình, dịch vụ khá hài lòng.
                             </p>
+                          </div>
+                          <!-- Nút 3 chấm -->
+                          <div class="dropdown ms-auto" style="position: absolute; top: 25px; right: 350px;min-width: 70px;">
+                            <button class="btn btn-link text-dark p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" style="min-width: 70px !important;">
+                              <li><a class="dropdown-item text-danger" th:href="@{/history/comment/delete/{id}(id=${item.id})}"><i class="fa-solid fa-trash"></i></a></li>
+                            </ul>
                           </div>
                         </div>
                       </li>
