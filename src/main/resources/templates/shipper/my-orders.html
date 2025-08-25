@@ -96,42 +96,52 @@
               </div>
             </div>
             <div class="mt-4 text-end">
-              <div class="btn-group" role="group">
-                <form
-                  th:action="@{'/shipper/orders/complete/' + ${order.id}}"
-                  method="post"
-                >
-                  <button
-                    type="submit"
-                    class="btn btn-success btn-sm ms-1"
-                    title="Đã giao"
-                  >
-                    <i class="bi bi-check-circle"></i> Đã giao
-                  </button>
-                </form>
-                <form
-                  th:action="@{'/shipper/orders/return/' + ${order.id}}"
-                  method="post"
-                >
-                  <button
-                    type="submit"
-                    class="btn btn-warning btn-sm"
-                    title="Hoàn tác đơn"
-                  >
-                    <i class="bi bi-arrow-return-left"></i> Hoàn tác đơn
-                  </button>
-                </form>
+              <button
+                class="btn btn-info btn-sm me-2"
+                onclick="openMapModal(this)"
+                th:attr="data-address=${order.address}, data-order-id=${order.id}"
+              >
+                <i class="bi bi-geo-alt"></i> Mở bản đồ chỉ đường
+              </button>
+
+              <form
+                th:action="@{'/shipper/orders/complete/' + ${order.id}}"
+                method="post"
+                class="d-inline"
+              >
                 <button
-                  type="button"
-                  class="btn btn-danger btn-sm ms-1"
-                  title="Giao thất bại"
-                  data-bs-toggle="modal"
-                  data-bs-target="#failedDeliveryModal"
-                  th:attr="data-order-id=${order.id}"
+                  type="submit"
+                  class="btn btn-success btn-sm me-2"
+                  title="Đã giao"
                 >
-                  <i class="bi bi-x-circle"></i> Giao thất bại
+                  <i class="bi bi-check-circle"></i> Đã giao
                 </button>
-              </div>
+              </form>
+
+              <form
+                th:action="@{'/shipper/orders/return/' + ${order.id}}"
+                method="post"
+                class="d-inline"
+              >
+                <button
+                  type="submit"
+                  class="btn btn-warning btn-sm me-2"
+                  title="Hoàn tác đơn"
+                >
+                  <i class="bi bi-arrow-return-left"></i> Hoàn tác đơn
+                </button>
+              </form>
+
+              <button
+                type="button"
+                class="btn btn-danger btn-sm"
+                title="Giao thất bại"
+                data-bs-toggle="modal"
+                data-bs-target="#failedDeliveryModal"
+                th:attr="data-order-id=${order.id}"
+              >
+                <i class="bi bi-x-circle"></i> Giao thất bại
+              </button>
             </div>
           </div>
         </div>
@@ -355,4 +365,483 @@
     background-color: #a259e6;
     color: #fff;
   }
+
+  /* Map Modal Styles */
+  #mapModal .modal-dialog {
+    max-width: 90%;
+    width: 900px;
+  }
+
+  #map {
+    height: 400px;
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid #dee2e6;
+  }
+
+  .route-info {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+  }
 </style>
+
+<!-- Map Modal -->
+<div
+  class="modal fade"
+  id="mapModal"
+  tabindex="-1"
+  aria-labelledby="mapModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="mapModalLabel">
+          <i class="bi bi-geo-alt"></i> Chỉ đường giao hàng
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="route-info" id="routeInfo" style="display: none">
+          <div class="row">
+            <div class="col-md-6">
+              <strong>Khoảng cách:</strong> <span id="routeDistance">--</span>
+            </div>
+            <div class="col-md-6">
+              <strong>Thời gian:</strong> <span id="routeDuration">--</span>
+            </div>
+          </div>
+          <div class="mt-2">
+            <strong>Địa chỉ giao hàng:</strong>
+            <span id="deliveryAddress">--</span>
+          </div>
+        </div>
+
+        <!-- Thông báo về độ chính xác vị trí -->
+        <div
+          class="alert alert-info alert-sm p-2 mb-3"
+          style="font-size: 0.875rem"
+        >
+          <i class="bi bi-info-circle me-1"></i>
+          <strong>Lưu ý:</strong> Vị trí trên máy tính có thể không chính xác
+          bằng điện thoại. Nếu vị trí hiển thị sai, hãy sử dụng nút
+          <strong>"Bắt đầu điều hướng"</strong> để mở Google Maps với địa chỉ
+          chính xác.
+        </div>
+
+        <div class="loading-spinner" id="mapLoading">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Đang tải bản đồ...</span>
+          </div>
+        </div>
+
+        <div id="map" style="display: none"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Đóng
+        </button>
+        <button type="button" class="btn btn-primary" id="getCurrentLocation">
+          <i class="bi bi-crosshair"></i> Vị trí hiện tại
+        </button>
+        <button type="button" class="btn btn-success" id="startNavigation">
+          <i class="bi bi-navigation"></i> Bắt đầu điều hướng
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Leaflet CSS -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  crossorigin=""
+/>
+
+<!-- Leaflet JavaScript -->
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin=""
+></script>
+
+<!-- Leaflet Routing Machine -->
+<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"
+/>
+
+<script>
+  let map;
+  let currentLocationMarker;
+  let destinationMarker;
+  let routeControl;
+  let currentOrderAddress = "";
+
+  function openMapModal(button) {
+    const address = button.getAttribute("data-address");
+    const orderId = button.getAttribute("data-order-id");
+
+    currentOrderAddress = address;
+    document.getElementById("deliveryAddress").textContent = address;
+
+    // Reset modal state
+    document.getElementById("mapLoading").style.display = "flex";
+    document.getElementById("map").style.display = "none";
+    document.getElementById("routeInfo").style.display = "none";
+
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById("mapModal"));
+    modal.show();
+
+    // Initialize map after modal is shown
+    setTimeout(() => {
+      initializeMap(address);
+    }, 500);
+  }
+
+  function initializeMap(address) {
+    // Default location (Vietnam center)
+    const defaultLat = 16.0544;
+    const defaultLng = 108.2022;
+
+    // Initialize map
+    if (map) {
+      map.remove();
+    }
+
+    map = L.map("map").setView([defaultLat, defaultLng], 13);
+
+    // Add OpenStreetMap tiles
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "© OpenStreetMap contributors",
+    }).addTo(map);
+
+    // Hide loading, show map
+    document.getElementById("mapLoading").style.display = "none";
+    document.getElementById("map").style.display = "block";
+
+    // Resize map to fit container
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 100);
+
+    // Geocode the delivery address
+    geocodeAddress(address);
+
+    // Try to get current location
+    getCurrentLocationOnMap();
+  }
+
+  function geocodeAddress(address) {
+    // Thử nhiều phương pháp geocoding để tăng độ chính xác
+    const queries = [
+      `${address}, Đà Nẵng, Vietnam`, // Đầy đủ nhất
+      `${address}, Da Nang, Vietnam`, // Tiếng Anh
+      `${address}, Vietnam`, // Cơ bản
+      address, // Chỉ địa chỉ gốc
+    ];
+
+    // Thử từng query cho đến khi tìm được kết quả tốt
+    tryGeocode(queries, 0);
+  }
+
+  function tryGeocode(queries, index) {
+    if (index >= queries.length) {
+      alert(
+        "Không thể tìm thấy địa chỉ trên bản đồ. Vui lòng kiểm tra lại địa chỉ."
+      );
+      return;
+    }
+
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+      queries[index]
+    )}&format=json&limit=3&countrycodes=vn`;
+
+    console.log(`🔍 Tìm kiếm địa chỉ (lần ${index + 1}): ${queries[index]}`);
+
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(`📍 Kết quả geocoding:`, data);
+
+        if (data && data.length > 0) {
+          // Tìm kết quả tốt nhất (có chứa "Đà Nẵng" hoặc "Da Nang")
+          let bestResult =
+            data.find(
+              (item) =>
+                item.display_name.includes("Đà Nẵng") ||
+                item.display_name.includes("Da Nang") ||
+                item.display_name.includes("Hòa Khánh")
+            ) || data[0];
+
+          const lat = parseFloat(bestResult.lat);
+          const lng = parseFloat(bestResult.lon);
+
+          console.log(`✅ Địa chỉ tìm được: ${bestResult.display_name}`);
+          console.log(`📍 Tọa độ: ${lat}, ${lng}`);
+
+          // Add destination marker
+          if (destinationMarker) {
+            map.removeLayer(destinationMarker);
+          }
+
+          destinationMarker = L.marker([lat, lng], {
+            icon: L.icon({
+              iconUrl:
+                "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+              shadowUrl:
+                "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+              iconSize: [25, 41],
+              iconAnchor: [12, 41],
+              popupAnchor: [1, -34],
+              shadowSize: [41, 41],
+            }),
+          }).addTo(map);
+
+          destinationMarker
+            .bindPopup(
+              `<strong>Địa chỉ giao hàng:</strong><br>${currentOrderAddress}<br><br>
+             <small><strong>Kết quả tìm được:</strong><br>${bestResult.display_name}</small>`
+            )
+            .openPopup();
+
+          // Center map on destination
+          map.setView([lat, lng], 15);
+        } else {
+          // Thử query tiếp theo
+          tryGeocode(queries, index + 1);
+        }
+      })
+      .catch((error) => {
+        console.error("Geocoding error:", error);
+        // Thử query tiếp theo
+        tryGeocode(queries, index + 1);
+      });
+  } // Đóng hàm tryGeocode
+
+  function getCurrentLocationOnMap() {
+    if (navigator.geolocation) {
+      // Hiển thị loading
+      document.getElementById("getCurrentLocation").innerHTML =
+        '<i class="spinner-border spinner-border-sm me-2"></i>Đang lấy vị trí...';
+      document.getElementById("getCurrentLocation").disabled = true;
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          const accuracy = position.coords.accuracy;
+
+          console.log(
+            `📍 Vị trí hiện tại: ${lat}, ${lng} (độ chính xác: ±${Math.round(
+              accuracy
+            )}m)`
+          );
+
+          // Add current location marker
+          if (currentLocationMarker) {
+            map.removeLayer(currentLocationMarker);
+          }
+
+          currentLocationMarker = L.marker([lat, lng], {
+            icon: L.icon({
+              iconUrl:
+                "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png",
+              shadowUrl:
+                "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+              iconSize: [25, 41],
+              iconAnchor: [12, 41],
+              popupAnchor: [1, -34],
+              shadowSize: [41, 41],
+            }),
+          }).addTo(map);
+
+          // Popup với thông tin chi tiết
+          const accuracyText =
+            accuracy > 100
+              ? `⚠️ Độ chính xác thấp: ±${Math.round(accuracy)}m`
+              : `✅ Độ chính xác tốt: ±${Math.round(accuracy)}m`;
+
+          currentLocationMarker.bindPopup(
+            `<strong>Vị trí hiện tại của bạn</strong><br>
+             <small>${accuracyText}</small>`
+          );
+
+          // Zoom to current location
+          map.setView([lat, lng], 16);
+
+          // Reset button
+          document.getElementById("getCurrentLocation").innerHTML =
+            '<i class="bi bi-crosshair"></i> Vị trí hiện tại';
+          document.getElementById("getCurrentLocation").disabled = false;
+
+          // If both markers exist, create route
+          if (destinationMarker) {
+            createRoute();
+          }
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+
+          // Reset button
+          document.getElementById("getCurrentLocation").innerHTML =
+            '<i class="bi bi-crosshair"></i> Vị trí hiện tại';
+          document.getElementById("getCurrentLocation").disabled = false;
+
+          let errorMessage = "Không thể lấy vị trí hiện tại. ";
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              errorMessage +=
+                "Vui lòng cho phép truy cập vị trí trong trình duyệt.";
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMessage += "Vị trí không khả dụng. Hãy thử lại sau.";
+              break;
+            case error.TIMEOUT:
+              errorMessage += "Hết thời gian chờ. Hãy thử lại.";
+              break;
+            default:
+              errorMessage += "Lỗi không xác định.";
+              break;
+          }
+
+          alert(
+            errorMessage +
+              "\n\nBạn có thể sử dụng tính năng 'Bắt đầu điều hướng' để mở Google Maps với địa chỉ chính xác."
+          );
+        },
+        {
+          enableHighAccuracy: true, // Yêu cầu độ chính xác cao
+          timeout: 10000, // Timeout 10 giây
+          maximumAge: 300000, // Cache 5 phút
+        }
+      );
+    } else {
+      alert("Trình duyệt không hỗ trợ Geolocation API.");
+    }
+  } // Đóng hàm getCurrentLocationOnMap
+
+  function createRoute() {
+    if (!currentLocationMarker || !destinationMarker) {
+      return;
+    }
+
+    // Remove existing route
+    if (routeControl) {
+      map.removeControl(routeControl);
+    }
+
+    const startLatLng = currentLocationMarker.getLatLng();
+    const endLatLng = destinationMarker.getLatLng();
+
+    // Tạo đường thẳng đơn giản thay vì routing phức tạp (tránh OSRM demo server)
+    const routeLine = L.polyline(
+      [
+        [startLatLng.lat, startLatLng.lng],
+        [endLatLng.lat, endLatLng.lng],
+      ],
+      {
+        color: "#007bff",
+        weight: 4,
+        opacity: 0.7,
+        dashArray: "10, 10", // Đường đứt nét để phân biệt với đường thật
+      }
+    ).addTo(map);
+
+    // Tính khoảng cách trực tiếp (đường chim bay)
+    const distance = startLatLng.distanceTo(endLatLng);
+    const distanceKm = (distance / 1000).toFixed(1);
+
+    // Ước lượng thời gian (30km/h trung bình trong thành phố)
+    const estimatedTime = Math.round((distance / 1000) * 2); // phút
+
+    document.getElementById("routeDistance").textContent =
+      distanceKm + " km (đường chim bay)";
+    document.getElementById("routeDuration").textContent =
+      "~" + estimatedTime + " phút (ước lượng)";
+    document.getElementById("routeInfo").style.display = "block";
+
+    // Lưu reference để có thể xóa sau
+    routeControl = {
+      remove: () => map.removeLayer(routeLine),
+      addTo: () => routeLine.addTo(map),
+    };
+
+    // Zoom để hiển thị cả 2 điểm
+    const group = new L.featureGroup([
+      currentLocationMarker,
+      destinationMarker,
+    ]);
+    map.fitBounds(group.getBounds().pad(0.1));
+  }
+
+  // Event listeners
+  document
+    .getElementById("getCurrentLocation")
+    .addEventListener("click", function () {
+      getCurrentLocationOnMap();
+    });
+
+  document
+    .getElementById("startNavigation")
+    .addEventListener("click", function () {
+      if (currentOrderAddress && currentOrderAddress.trim()) {
+        let googleMapsUrl;
+
+        // Nếu có vị trí hiện tại, truyền cả điểm xuất phát và đích đến
+        if (currentLocationMarker) {
+          const currentPos = currentLocationMarker.getLatLng();
+          googleMapsUrl = `https://www.google.com/maps/dir/${currentPos.lat},${
+            currentPos.lng
+          }/${encodeURIComponent(currentOrderAddress)}`;
+          console.log(
+            `🗺️ Mở Google Maps với vị trí hiện tại: ${currentPos.lat}, ${currentPos.lng}`
+          );
+        } else {
+          // Chỉ có địa chỉ đích, Google Maps sẽ dùng vị trí hiện tại của thiết bị
+          googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+            currentOrderAddress
+          )}`;
+          console.log(`🗺️ Mở Google Maps chỉ với địa chỉ đích`);
+        }
+
+        console.log(`📍 Địa chỉ đích: ${currentOrderAddress}`);
+        console.log(`🔗 URL: ${googleMapsUrl}`);
+
+        window.open(googleMapsUrl, "_blank");
+      } else {
+        alert("Không tìm thấy địa chỉ giao hàng. Vui lòng thử lại.");
+      }
+    });
+
+  // Clean up when modal is closed
+  document
+    .getElementById("mapModal")
+    .addEventListener("hidden.bs.modal", function () {
+      if (map) {
+        map.remove();
+        map = null;
+      }
+      currentLocationMarker = null;
+      destinationMarker = null;
+      routeControl = null;
+    });
+</script>

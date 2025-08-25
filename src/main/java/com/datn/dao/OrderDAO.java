@@ -1,6 +1,8 @@
 package com.datn.dao;
 
 import java.util.List;
+import java.util.List;
+
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
@@ -35,15 +37,13 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         List<Integer> getAvailableYearsForShipper(@Param("shipperId") Integer shipperId);
 
         // Tìm kiếm đơn hàng POS theo mã đơn hàng, có phân trang, lọc ngày, loại đơn
-        @Query("SELECT o FROM Order o WHERE o.orderType = :orderType "
-                        + "AND (:fromDate IS NULL OR o.createDate >= :fromDate) "
-                        + "AND (:toDate IS NULL OR o.createDate <= :toDate) "
-
-                        + "AND o.orderCode LIKE %:orderCode%")
-
+        @Query(value = "SELECT * FROM orders o WHERE o.order_type = :orderType "
+                        + "AND (:fromDate IS NULL OR o.create_date >= :fromDate) "
+                        + "AND (:toDate IS NULL OR o.create_date <= :toDate) "
+                        + "AND o.order_code LIKE CONCAT('%', :orderCode, '%') "
+                        + "ORDER BY o.create_date DESC", nativeQuery = true)
         Page<Order> searchPosOrdersByOrderCode(
                         @Param("orderType") String orderType,
-
                         @Param("orderCode") String orderCode,
                         @Param("fromDate") LocalDate fromDate,
                         @Param("toDate") LocalDate toDate,
@@ -108,10 +108,10 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         List<Order> findByOrderTypeIgnoreCase(String orderType);
 
         // Lấy đơn hàng tại quầy, lọc theo ngày bán và loại đơn hàng
-        @Query("SELECT o FROM Order o WHERE o.orderType = :orderType "
-                        + "AND (:fromDate IS NULL OR o.createDate >= :fromDate) "
-                        + "AND (:toDate IS NULL OR o.createDate <= :toDate) "
-                        + "ORDER BY o.createDate DESC")
+        @Query(value = "SELECT * FROM orders o WHERE o.order_type = :orderType "
+                        + "AND (:fromDate IS NULL OR o.create_date >= :fromDate) "
+                        + "AND (:toDate IS NULL OR o.create_date <= :toDate) "
+                        + "ORDER BY o.create_date DESC", nativeQuery = true)
         Page<Order> findPosOrders(@Param("orderType") String orderType,
                         @Param("fromDate") LocalDate fromDate,
                         @Param("toDate") LocalDate toDate,
