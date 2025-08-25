@@ -1,4 +1,4 @@
-// Xử lý mở bill ở cửa sổ mới khi thanh toán tiền mặt
+// Xử lý mở bill ở cửa sổ mới khi thanh toán tiền mặt và thông báo phương thức thanh toán
 document.addEventListener("DOMContentLoaded", function () {
   const posForm = document.getElementById("posForm");
   if (posForm) {
@@ -36,6 +36,24 @@ document.addEventListener("DOMContentLoaded", function () {
           .catch(() => {
             alert("Có lỗi khi xác nhận bán hàng!");
           });
+      }
+    });
+  }
+
+  // Cập nhật thông báo khi chọn phương thức thanh toán
+  const paymentSelect = document.getElementById("paymentMethodSelect");
+  const paymentNote = document.getElementById("paymentNote");
+
+  if (paymentSelect && paymentNote) {
+    paymentSelect.addEventListener("change", function () {
+      if (this.value === "cash") {
+        paymentNote.textContent =
+          "Thanh toán tiền mặt sẽ hoàn tất đơn hàng ngay lập tức.";
+        paymentNote.className = "form-text text-success";
+      } else if (this.value === "qr_code") {
+        paymentNote.textContent =
+          "Chuyển khoản cần nhân viên xác nhận sau khi khách thanh toán.";
+        paymentNote.className = "form-text text-warning";
       }
     });
   }
