@@ -90,7 +90,6 @@ if (printQRBtn) {
   });
 }
 
-
 const modal = document.getElementById("confirmPaymentModal");
 if (modal) {
   modal.addEventListener("show.bs.modal", function () {
@@ -138,6 +137,26 @@ if (modal) {
             alert("Lỗi kết nối tới máy chủ!");
           });
       };
+    }
+  });
+}
+
+// Xử lý modal hủy đơn hàng
+const confirmCancelBtn = document.getElementById("confirmCancelBtn");
+if (confirmCancelBtn) {
+  confirmCancelBtn.addEventListener("click", function () {
+    // Đóng modal
+    const cancelModal = bootstrap.Modal.getInstance(
+      document.getElementById("cancelOrderModal")
+    );
+    if (cancelModal) {
+      cancelModal.hide();
+    }
+
+    // Submit form hủy đơn hàng
+    const cancelForm = document.getElementById("cancelOrderForm");
+    if (cancelForm) {
+      cancelForm.submit();
     }
   });
 }
