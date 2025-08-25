@@ -323,71 +323,108 @@
         </table>
       </div>
       <!-- phan trang -->
-      <div
-        class="d-flex justify-content-center mt-4"
-        th:if="${totalPages >= 1}"
-      >
-        <nav>
-          <ul class="pagination custom-pagination">
-            <li
-              class="page-item"
-              th:classappend="${currentPage == 0} ? 'disabled'"
-            >
-              <a
-                class="page-link"
-                th:href="@{'/Shipper/index?page=0' + '#list'}"
-              >
-                <i class="fa fa-angle-double-left"></i>
-              </a>
-            </li>
-            <li
-              class="page-item"
-              th:classappend="${currentPage == 0} ? 'disabled'"
-            >
-              <a
-                class="page-link"
-                th:href="@{'/Shipper/index?page=' + (${currentPage - 1}) + '#list'}"
-              >
-                <i class="fa fa-angle-left"></i>
-              </a>
-            </li>
-            <li
-              class="page-item"
-              th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-              th:classappend="${currentPage == i} ? 'active'"
-            >
-              <a
-                class="page-link"
-                th:href="@{'/Shipper/index?page=' + ${i} + '#list'}"
-                th:text="${i + 1}"
-              >
-              </a>
-            </li>
-            <li
-              class="page-item"
-              th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
-            >
-              <a
-                class="page-link"
-                th:href="@{'/Shipper/index?page=' + (${currentPage + 1}) + '#list'}"
-              >
-                <i class="fa fa-angle-right"></i>
-              </a>
-            </li>
-            <li
-              class="page-item"
-              th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
-            >
-              <a
-                class="page-link"
-                th:href="@{'/Shipper/index?page=' + (${totalPages - 1}) + '#list'}"
-              >
-                <i class="fa fa-angle-double-right"></i>
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </div>
+ <!-- Phân trang tích hợp cho shipper -->
+<div class="pagination-wrapper" th:if="${totalElements > 0}">
+  <div class="d-flex justify-content-between align-items-center">
+    <div class="pagination-info">
+      Hiển thị <strong th:text="${#lists.size(shippers)}"></strong> trong
+      tổng số <strong th:text="${totalElements}"></strong> shipper
+    </div>
+
+    <nav aria-label="Shipper pagination" th:if="${totalPages > 1}">
+      <ul class="pagination simple-pagination">
+        <!-- Nút về trang đầu -->
+        <li
+          class="page-item"
+          th:classappend="${currentPage == 0} ? 'disabled'"
+        >
+          <a
+            class="page-link"
+            th:href="@{/Shipper/index(page=0, size=10, tab='list')}"
+            th:unless="${currentPage == 0}"
+            title="Trang đầu"
+          >
+            <i class="fa fa-angle-double-left"></i>
+          </a>
+          <span class="page-link" th:if="${currentPage == 0}">
+            <i class="fa fa-angle-double-left"></i>
+          </span>
+        </li>
+
+        <!-- Nút trang trước -->
+        <li
+          class="page-item"
+          th:classappend="${!hasPrevious} ? 'disabled'"
+        >
+          <a
+            class="page-link"
+            th:href="@{/Shipper/index(page=${currentPage - 1}, size=10, tab='list')}"
+            th:if="${hasPrevious}"
+            title="Trang trước"
+          >
+            <i class="fa fa-angle-left"></i>
+          </a>
+          <span class="page-link" th:unless="${hasPrevious}">
+            <i class="fa fa-angle-left"></i>
+          </span>
+        </li>
+
+        <!-- Các trang số -->
+        <li
+          class="page-item"
+          th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+          th:if="${pageNum >= currentPage - 1 && pageNum <= currentPage + 1}"
+          th:classappend="${pageNum == currentPage} ? 'active'"
+        >
+          <a
+            class="page-link"
+            th:href="@{/Shipper/index(page=${pageNum}, size=10, tab='list')}"
+            th:text="${pageNum + 1}"
+          ></a>
+        </li>
+
+        <!-- Nút trang sau -->
+        <li
+          class="page-item"
+          th:classappend="${!hasNext} ? 'disabled'"
+        >
+          <a
+            class="page-link"
+            th:href="@{/Shipper/index(page=${currentPage + 1}, size=10, tab='list')}"
+            th:if="${hasNext}"
+            title="Trang sau"
+          >
+            <i class="fa fa-angle-right"></i>
+          </a>
+          <span class="page-link" th:unless="${hasNext}">
+            <i class="fa fa-angle-right"></i>
+          </span>
+        </li>
+
+        <!-- Nút về trang cuối -->
+        <li
+          class="page-item"
+          th:classappend="${currentPage == totalPages - 1} ? 'disabled'"
+        >
+          <a
+            class="page-link"
+            th:href="@{/Shipper/index(page=${totalPages - 1}, size=10, tab='list')}"
+            th:unless="${currentPage == totalPages - 1}"
+            title="Trang cuối"
+          >
+            <i class="fa fa-angle-double-right"></i>
+          </a>
+          <span
+            class="page-link"
+            th:if="${currentPage == totalPages - 1}"
+          > 
+            <i class="fa fa-angle-double-right"></i>
+          </span>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
     </div>
     <!-- tab tìm kiếm -->
   </div>

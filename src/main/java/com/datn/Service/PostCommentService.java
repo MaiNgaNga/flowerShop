@@ -10,4 +10,6 @@ public interface PostCommentService {
     PostComment saveComment(String content, Long postId);
 
     void deleteComment(Long id);
+
+    List<PostComment> findByPostId(Long postId); // ✅ Thêm phương thức tìm bình luận theo ID bài viết
 }
