@@ -74,6 +74,9 @@ public class OrderController {
         if (user != null) {
             Integer userId = user.getId(); // Sửa lại nếu getter id khác
             cartCount = cartItemService.getCartItemsByUserId(userId).size();
+            
+            // Kiểm tra và cập nhật các đơn hàng PayOS "bỏ dở" thành Thất bại
+            updateAbandonedPayOSOrders(userId);
         }
         model.addAttribute("cartCount", cartCount);
         OrderRequest orderRequest = new OrderRequest();
@@ -136,10 +139,10 @@ public class OrderController {
             Model model, HttpSession session, @RequestParam(value = "wardID", required = false) Long wardId,
             @RequestParam(value = "specific", required = false) String specific,
             @RequestParam(value = "paymentMethod", defaultValue = "COD") String paymentMethod) {
-        
+
         // Debug logging
         System.out.println("Checkout called with wardID: " + wardId + ", paymentMethod: " + paymentMethod);
-        
+
         if (result.hasErrors()) {
             System.out.println("Validation errors: " + result.getAllErrors());
             model.addAttribute("selectedWardId", wardId);
@@ -173,7 +176,9 @@ public class OrderController {
         order.setCreateDate(new Date());
         order.setSdt(user.getSdt());
         order.setAddress(orderRequest.getAddress());
-        order.setStatus("Chưa xác nhận");
+        order.setDeliveryDate(orderRequest.getDeliveryDate()); // Thêm dòng này để lưu ngày giao
+        order.setDescription(orderRequest.getDescription()); // Thêm dòng này để lưu mô tả
+        order.setStatus("Chờ xác nhận");
         order.setPaymentMethod(paymentMethod);
         order.setShipFee(shippingFee);
 
@@ -188,7 +193,7 @@ public class OrderController {
             // Nếu không có, lấy giá gốc
             finalAmount = cartItemService.getTotalAmount(user.getId());
         }
-        
+
         // Cộng phí vận chuyển vào tổng tiền
         finalAmount += shippingFee;
         order.setTotalAmount(finalAmount);
@@ -199,9 +204,9 @@ public class OrderController {
 
         // Set payment status based on payment method
         if ("PAYOS".equals(paymentMethod)) {
-            order.setPaymentStatus("PENDING");
+            order.setPaymentStatus("Chờ thanh toán");
         } else {
-            order.setPaymentStatus("COD");
+            order.setPaymentStatus("Chờ thanh toán");
         }
 
         List<OrderDetail> orderDetails = new ArrayList<>();
@@ -284,8 +289,8 @@ public class OrderController {
                 if (order != null) {
                     // Cập nhật trạng thái thành công (vì PayOS chỉ redirect về success khi thanh
                     // toán thành công)
-                    order.setPaymentStatus("PAID");
-                    order.setStatus("Đã thanh toán");
+                    order.setPaymentStatus("Đã thanh toán");
+                    order.setStatus("Chờ xác nhận");
                     order.setTransactionId(orderCode);
                     orderService.saveOrder(order, order.getOrderDetails());
 
@@ -315,7 +320,7 @@ public class OrderController {
                         .orElse(null);
 
                 if (order != null) {
-                    order.setPaymentStatus("CANCELLED");
+                    order.setPaymentStatus("Thất bại");
                     order.setStatus("Đã hủy");
                     orderService.saveOrder(order, order.getOrderDetails());
                 }
@@ -362,6 +367,48 @@ public class OrderController {
         model.addAttribute("productCategories", pro_ca_service.findAll());
         model.addAttribute("view", "order");
         return "layouts/layout";
+    }
+
+    /**
+     * Kiểm tra và cập nhật các đơn hàng PayOS "bỏ dở" thành Thất bại
+     * Đơn hàng được coi là "bỏ dở" nếu:
+     * - paymentMethod = "PAYOS"
+     * - paymentStatus = "Chờ thanh toán" 
+     * - status = "Chờ xác nhận"
+     * - Đã tạo từ 1 phút trước (người dùng đã back về)
+     */
+    private void updateAbandonedPayOSOrders(Integer userId) {
+        try {
+            // Lấy thời gian 1 phút trước (giảm xuống để test)
+            Date oneMinuteAgo = new Date(System.currentTimeMillis() - 1 * 60 * 1000);
+            
+            // Tìm các đơn hàng của user có thể bị "bỏ dở"
+            List<Order> userOrders = orderService.getOrdersByUser(userId);
+            
+            for (Order order : userOrders) {
+                // Debug log
+                System.out.println("Checking order: " + order.getOrderCode() + 
+                    ", PaymentMethod: " + order.getPaymentMethod() +
+                    ", PaymentStatus: " + order.getPaymentStatus() +
+                    ", Status: " + order.getStatus() +
+                    ", CreateDate: " + order.getCreateDate());
+                
+                if ("PAYOS".equals(order.getPaymentMethod()) && 
+                    "Chờ thanh toán".equals(order.getPaymentStatus()) &&
+                    "Chờ xác nhận".equals(order.getStatus()) &&
+                    order.getCreateDate().before(oneMinuteAgo)) {
+                    
+                    // Cập nhật thành Thất bại
+                    order.setStatus("Đã hủy");
+                    order.setPaymentStatus("Thất bại");
+                    orderService.saveOrder(order, order.getOrderDetails());
+                    
+                    System.out.println("Đã cập nhật đơn hàng bỏ dở: " + order.getOrderCode());
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi khi cập nhật đơn hàng bỏ dở: " + e.getMessage());
+        }
     }
 
 }

@@ -1,7 +1,6 @@
 package com.datn.dao;
 
 import java.util.List;
-import java.util.List;  
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
@@ -131,7 +130,7 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
                         "FROM ( " +
                         "    SELECT SUM(o.total_amount) AS revenue " +
                         "    FROM orders o " +
-                        "    WHERE YEAR(o.create_date) = :year AND o.status IN (N'Đã giao', N'Đã thanh toán') " +
+                        "    WHERE YEAR(o.create_date) = :year AND (o.status = N'Đã giao' OR o.payment_status = N'Đã thanh toán') " +
                         "    UNION ALL " +
                         "    SELECT SUM(s.quoted_price) AS revenue " +
                         "    FROM service_orders s " +
@@ -147,7 +146,7 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
                         "LEFT JOIN ( " +
                         "    SELECT MONTH(o.create_date) AS month, SUM(o.total_amount) AS revenue " +
                         "    FROM orders o " +
-                        "    WHERE YEAR(o.create_date) = :year AND o.status IN (N'Đã giao', N'Đã thanh toán') " +
+                        "    WHERE YEAR(o.create_date) = :year AND (o.status = N'Đã giao' OR o.payment_status = N'Đã thanh toán') " +
                         "    GROUP BY MONTH(o.create_date) " +
                         "    UNION ALL " +
                         "    SELECT MONTH(s.confirmed_at) AS month, SUM(s.quoted_price) AS revenue " +
@@ -166,12 +165,13 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         // "ORDER BY MONTH(o.create_date)", nativeQuery = true)
         // List<Object[]> getMonthlyRevenueByYear(@Param("year") int year);
 
-        // Thống kê doanh thu theo ngày trong tháng/năm (bao gồm cả đơn hàng Đã giao và dịch vụ đã thanh toán)
+        // Thống kê doanh thu theo ngày trong tháng/năm (bao gồm cả đơn hàng Đã giao và
+        // dịch vụ đã thanh toán)
         @Query(value = "SELECT DAY(derived.create_date) AS day, COALESCE(SUM(derived.revenue), 0) AS total_revenue " +
                         "FROM ( " +
                         "    SELECT o.create_date AS create_date, SUM(o.total_amount) AS revenue " +
                         "    FROM orders o " +
-                        "    WHERE YEAR(o.create_date) = :year AND MONTH(o.create_date) = :month AND o.status IN (N'Đã giao', N'Đã thanh toán') "
+                        "    WHERE YEAR(o.create_date) = :year AND MONTH(o.create_date) = :month AND (o.status = N'Đã giao' OR o.payment_status = N'Đã thanh toán') "
                         +
                         "    GROUP BY o.create_date " +
                         "    UNION ALL " +

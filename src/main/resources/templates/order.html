@@ -1,4 +1,43 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+// Detect khi user quay lại trang order từ PayOS và cập nhật đơn hàng thành "Thất bại"
+$(document).ready(function() {
+    // Kiểm tra nếu user vừa quay lại từ trang thanh toán
+    if (document.referrer && (document.referrer.includes('payos') || document.referrer.includes('payment'))) {
+        console.log('User quay lại từ trang thanh toán, đang cập nhật trạng thái...');
+        
+        // Gọi API để cập nhật đơn hàng thành "Thất bại"
+        $.ajax({
+            url: '/payment-status/mark-abandoned',
+            type: 'POST',
+            success: function(response) {
+                console.log('Đã cập nhật trạng thái đơn hàng:', response);
+            },
+            error: function(xhr, status, error) {
+                console.error('Lỗi khi cập nhật trạng thái:', error);
+            }
+        });
+    }
+    
+    // Backup: Cũng kiểm tra khi trang được load từ browser back button
+    if (performance.navigation.type === 2) { // TYPE_BACK_FORWARD
+        console.log('User sử dụng nút back, kiểm tra đơn hàng...');
+        
+        setTimeout(function() {
+            $.ajax({
+                url: '/payment-status/mark-abandoned',
+                type: 'POST',
+                success: function(response) {
+                    console.log('Đã kiểm tra và cập nhật đơn hàng:', response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Lỗi khi kiểm tra đơn hàng:', error);
+                }
+            });
+        }, 500); // Delay 500ms để đảm bảo trang đã load xong
+    }
+});
+</script>
 <link rel="stylesheet" th:href="@{/css/order.css}" />
 <div class="order-page-container">
   <div class="container mt-4">
