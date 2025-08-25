@@ -84,36 +84,37 @@
 }
 
 
-.admin-log{
-  background: var(--admin-gray-100);
-  color: var(--admin-gray-600); 
-  padding: 0.5rem 1rem;
-  border-radius: 10px;
-  transition: all 0.2s ease;
-}
-
-.admin-layout .admin-user-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--admin-primary);
+.admin-log {
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
-  font-size: 14px;
+  gap: 10px;
+  background: white;
+  padding: 6px 12px;
+  border-radius: 70px;
+  /* bo tròn hẳn */
+  border: 1px solid #e5e7eb;
+  /* viền mảnh xám nhạt */
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.admin-layout .admin-user-info h6 {
-  font-size: 14px;
+.admin-log:hover {
+  background: #f9fafb;
+  transform: translateY(-1px);
+}
+
+.admin-user-info h6 {
+  font-size: 0.9rem;
   font-weight: 600;
   margin: 0;
+  color: #111827;
 }
 
-.admin-layout .admin-user-info span {
-  font-size: 12px;
-  opacity: 0.7;
+.admin-user-info .small {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
 }
 
 /* Sidebar - Namespace */
