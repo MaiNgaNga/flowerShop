@@ -43,7 +43,7 @@ public class Login {
                 case 0 -> "redirect:/home";
                 case 1 -> "redirect:/statistical";
                 case 2 -> "redirect:/shipper/pending-orders";
-                case 3 -> "redirect:/pos";
+                case 3 -> "redirect:/Product/index";
                 default -> "redirect:/home";
             };
         } else {

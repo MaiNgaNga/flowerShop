@@ -23,6 +23,7 @@ public interface UserDAO extends JpaRepository<User, Integer> {
     @Query("SELECT u FROM User u WHERE u.role = ?1")
     Page<User> findByRole(int role, Pageable pageable);
 
+    @Query("SELECT u FROM User u ORDER BY u.id DESC")
     Page<User> findAll(Pageable pageable);
 
     // tìm ng dùng k phải là shipper
