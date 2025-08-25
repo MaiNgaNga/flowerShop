@@ -165,10 +165,13 @@ public class ProductCRUDController {
         }
         try {
             // Gọi service để lưu sản phẩm cùng với 3 hình ảnh
-            productService.create(product, image1, image2, image3);
+            Product savedProduct = productService.create(product, image1, image2, image3);
             // Gửi thông báo thành công qua flash
             redirectAttributes.addFlashAttribute("success", "Thêm sản phẩm thành công!");
-            return "redirect:/Product/index?tab=" + tab;
+            redirectAttributes.addFlashAttribute("newProductId", savedProduct.getId());
+            redirectAttributes.addFlashAttribute("forceRefresh", true);
+            // Chuyển về tab danh sách sau khi thêm thành công
+            return "redirect:/Product/index?tab=list";
         } catch (IllegalArgumentException e) {
             // Nếu có lỗi thì hiển thị lại form và thông báo lỗi
             model.addAttribute("error", e.getMessage());
@@ -285,7 +288,8 @@ public class ProductCRUDController {
             // Gọi service để cập nhật sản phẩm
             productService.update(product, image1, image2, image3, oldImages);
             redirectAttributes.addFlashAttribute("success", "Cập nhật sản phẩm thành công!");
-            return "redirect:/Product/index?tab=" + tab;
+            // Chuyển về tab danh sách sau khi cập nhật thành công
+            return "redirect:/Product/index?tab=list";
 
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
@@ -306,7 +310,8 @@ public class ProductCRUDController {
             // Gọi service xóa sản phẩm theo ID
             productService.deleteById(id);
             redirectAttributes.addFlashAttribute("success", "Đã xóa sản phẩm!");
-            return "redirect:/Product/index?tab=" + tab;
+            // Chuyển về tab danh sách sau khi xóa thành công
+            return "redirect:/Product/index?tab=list";
 
         } catch (IllegalArgumentException e) {
             // Nếu xóa thất bại thì chuyển hướng về lại form chỉnh sửa

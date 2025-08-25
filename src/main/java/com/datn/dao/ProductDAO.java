@@ -125,20 +125,21 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
         @Query("SELECT p FROM Product p WHERE p.productCategory.name LIKE %:name% ORDER BY p.id DESC")
         Page<Product> findByProductCategoryName(@Param("name") String name, Pageable pageable);
 
-        // Lọc theo danh mục
+        // Lọc theo danh mục - sắp xếp theo ID giảm dần (sản phẩm mới nhất trước)
+        @Query("SELECT p FROM Product p WHERE p.productCategory.id = :productCategoryId ORDER BY p.id DESC")
         Page<Product> findByProductCategoryId(
                         @Param("productCategoryId") Integer productCategoryId,
                         Pageable pageable);
 
-        // Tìm kiếm theo tên sản phẩm và tên loại hoa
-        @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+        // Tìm kiếm theo tên sản phẩm và tên loại hoa - sắp xếp theo ID giảm dần
+        @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) ORDER BY p.id DESC")
         Page<Product> searchByName(@Param("keyword") String keyword, Pageable pageable);
 
-        // Tìm kiếm theo tên sản phẩm, tên loại hoa kết hợp với lọc theo danh mục
+        // Tìm kiếm theo tên sản phẩm, tên loại hoa kết hợp với lọc theo danh mục - sắp xếp theo ID giảm dần
         @Query("SELECT p FROM Product p WHERE " +
                         "(LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
                         "LOWER(p.category.name) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
-                        "AND p.productCategory.id = :productCategoryId")
+                        "AND p.productCategory.id = :productCategoryId ORDER BY p.id DESC")
         Page<Product> searchByNameAndCategory(@Param("keyword") String keyword,
                         @Param("productCategoryId") Integer productCategoryId, Pageable pageable);
 
