@@ -332,6 +332,12 @@ html .modal-backdrop.fade.show {
   color: #856404;
 }
 
+.custom-alert.alert-info {
+  background-color: #d1ecf1;
+  border: 1px solid #bee5eb;
+  color: #0c5460;
+}
+
 .alert-icon {
   font-size: 18px;
   flex-shrink: 0;

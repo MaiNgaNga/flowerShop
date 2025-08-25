@@ -40,14 +40,21 @@ document.addEventListener("DOMContentLoaded", function () {
   if (localStorage.getItem("switchToOrdersTab") === "true") {
     localStorage.removeItem("switchToOrdersTab");
     setTimeout(() => {
-      document.getElementById("orders-tab").click();
+      const ordersTab = document.getElementById("orders-tab");
+      if (ordersTab) {
+        ordersTab.click();
+        console.log("🎯 Switched to orders tab after order creation");
+      }
     }, 100);
   } else {
     // Khôi phục tab cuối cùng được chọn
     const currentTab = localStorage.getItem("currentTab");
     if (currentTab === "orders") {
       setTimeout(() => {
-        document.getElementById("orders-tab").click();
+        const ordersTab = document.getElementById("orders-tab");
+        if (ordersTab) {
+          ordersTab.click();
+        }
       }, 100);
     }
   }
@@ -169,15 +176,172 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // ============================================================================================= //
 
-document.addEventListener("DOMContentLoaded", function () {
-  // Kiểm tra nếu cần chuyển sang tab đơn hàng sau reload
-  if (localStorage.getItem("switchToOrdersTab") === "true") {
-    localStorage.removeItem("switchToOrdersTab");
-    setTimeout(() => {
-      document.getElementById("orders-tab").click();
-    }, 500);
+// Hàm refresh dữ liệu tab đơn hàng dịch vụ
+async function refreshOrdersTab() {
+  console.log("🔄 Refreshing orders tab data...");
+
+  try {
+    // Lấy các filter hiện tại từ form
+    const orderForm = document.getElementById("orderFilterForm");
+    const formData = new FormData(orderForm);
+    const params = new URLSearchParams();
+
+    // Chỉ lấy các filter của tab orders
+    if (formData.get("orderStatus"))
+      params.append("orderStatus", formData.get("orderStatus"));
+    if (formData.get("orderKeyword"))
+      params.append("orderKeyword", formData.get("orderKeyword"));
+    if (formData.get("month")) params.append("month", formData.get("month"));
+    params.append("orderPage", formData.get("orderPage") || "0");
+
+    // Thêm cache busting để đảm bảo lấy dữ liệu mới nhất
+    params.append("t", Date.now());
+
+    // Gọi API mới để lấy dữ liệu JSON
+    const response = await fetch(
+      `/admin/service-requests/orders/refresh?${params.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.error || "Unknown error");
+    }
+
+    // Render lại bảng đơn hàng
+    renderOrdersTable(data.orders, data);
+
+    // Cập nhật số lượng trên tab title
+    const orderTab = document.getElementById("orders-tab");
+    if (data.totalElements > 0) {
+      orderTab.innerHTML = `Đơn hàng dịch vụ (${data.totalElements})`;
+    } else {
+      orderTab.innerHTML = "Đơn hàng dịch vụ";
+    }
+
+    console.log("✅ Orders tab refreshed successfully");
+    return true;
+  } catch (error) {
+    console.error("❌ Error refreshing orders tab:", error);
+    throw error;
+  }
+}
+
+// Hàm render bảng đơn hàng từ dữ liệu JSON
+function renderOrdersTable(orders, paginationData) {
+  const tbody = document.querySelector("#orders tbody");
+
+  if (!tbody) {
+    console.error("Could not find orders table tbody");
+    return;
   }
 
+  // Clear existing content
+  tbody.innerHTML = "";
+
+  if (!orders || orders.length === 0) {
+    // Hiển thị thông báo không có dữ liệu
+    tbody.innerHTML = `
+      <tr class="no-results">
+        <td colspan="7">
+          <i class="bi bi-search"></i><br />
+          Không tìm thấy đơn hàng nào phù hợp với bộ lọc hiện tại
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  // Render từng đơn hàng
+  orders.forEach((order) => {
+    const row = document.createElement("tr");
+
+    // Format giá tiền
+    const formattedPrice =
+      new Intl.NumberFormat("vi-VN").format(order.quotedPrice) + " VNĐ";
+
+    // Format ngày
+    const confirmedDate = new Date(order.confirmedAt).toLocaleDateString(
+      "vi-VN"
+    );
+
+    // Xác định class badge cho trạng thái
+    let badgeClass = "bg-secondary";
+    if (order.status === "UNPAID") badgeClass = "bg-warning text-dark";
+    else if (order.status === "PAID") badgeClass = "bg-success";
+    else if (order.status === "DONE") badgeClass = "bg-primary";
+    else if (order.status === "CANCELLED") badgeClass = "bg-secondary";
+
+    row.innerHTML = `
+      <td>${order.id}</td>
+      <td>${order.request.fullName}</td>
+      <td>${order.request.service.name}</td>
+      <td>${formattedPrice}</td>
+      <td>${confirmedDate}</td>
+      <td>
+        <span class="badge ${badgeClass}">${
+      order.status === "UNPAID"
+        ? "Chưa thanh toán"
+        : order.status === "PAID"
+        ? "Đã thanh toán"
+        : order.status === "DONE"
+        ? "Đã hoàn tất"
+        : "Đã hủy"
+    }</span>
+      </td>
+      <td>
+        <button
+          class="btn btn-info btn-action btn-detail"
+          data-id="${order.id}"
+          data-status="${order.status}"
+          data-bs-toggle="modal"
+          data-bs-target="#orderDetailsModal"
+        >
+          <i class="bi bi-eye"></i>
+        </button>
+      </td>
+    `;
+
+    tbody.appendChild(row);
+  });
+
+  // Cập nhật pagination nếu cần
+  updateOrdersPagination(paginationData);
+}
+
+// Hàm cập nhật pagination cho orders (tùy chọn)
+function updateOrdersPagination(data) {
+  // Cập nhật thông tin pagination
+  const paginationInfo = document.querySelector("#orders .pagination-info");
+  if (paginationInfo) {
+    const ordersCount = data.orders ? data.orders.length : 0;
+    paginationInfo.innerHTML = `
+      Hiển thị <strong>${ordersCount}</strong> trong tổng số
+      <strong>${data.totalElements}</strong> đơn hàng
+    `;
+  }
+
+  // Có thể thêm logic cập nhật các nút pagination ở đây nếu cần
+}
+
+// ============================================================================================= //
+
+// Đã xử lý switchToOrdersTab ở trên, không cần duplicate
+
+document.addEventListener("DOMContentLoaded", function () {
   const modal = document.getElementById("createOrderModal");
   const form = document.getElementById("createOrderForm");
 
@@ -187,6 +351,8 @@ document.addEventListener("DOMContentLoaded", function () {
     currentRequestId: null,
     loadingPromise: null,
     isRestoreAction: false,
+    justCompletedContactAction: false, // Flag để đánh dấu vừa thực hiện liên hệ
+    justShowedSuccessAlert: false, // Flag để tránh hiển thị thông báo duplicate
 
     // Force cleanup modal hoàn toàn
     forceCleanupModal: function () {
@@ -257,8 +423,17 @@ document.addEventListener("DOMContentLoaded", function () {
     },
 
     // Đánh dấu action hoàn thành
-    markActionCompleted: function () {
+    markActionCompleted: function (actionType) {
       this.isRestoreAction = false;
+      // Đánh dấu nếu vừa thực hiện contact/update action
+      if (actionType === "contact" || actionType === "update") {
+        this.justCompletedContactAction = true;
+        // Auto reset sau 10 giây
+        setTimeout(() => {
+          this.justCompletedContactAction = false;
+          console.log("🔄 Contact action flag auto-reset");
+        }, 10000);
+      }
       this.forceCleanupModal();
     },
 
@@ -419,16 +594,30 @@ document.addEventListener("DOMContentLoaded", function () {
     // Tạo AbortController để hủy request cũ
     const abortController = new AbortController();
 
-    // Load dữ liệu từ server với cache busting cực mạnh (đặc biệt sau restore)
-    const cacheParam = modalManager.isRestoreAction
-      ? `t=${Date.now()}&r=${Math.random()}&restore=1&force=${Date.now()}`
+    // Nếu vừa thực hiện contact action, delay một chút để server lưu dữ liệu
+    const loadDelay = modalManager.justCompletedContactAction ? 800 : 0;
+
+    if (loadDelay > 0) {
+      console.log(
+        "⏳ Delaying load after contact action to ensure data is saved..."
+      );
+    }
+
+    // Load dữ liệu từ server với cache busting cực mạnh
+    // Đặc biệt mạnh cho restore action và sau khi liên hệ
+    const isAfterContactAction =
+      status === "CONTACTED" ||
+      modalManager.isRestoreAction ||
+      modalManager.justCompletedContactAction;
+    const cacheParam = isAfterContactAction
+      ? `t=${Date.now()}&r=${Math.random()}&restore=1&force=${Date.now()}&contact=1&fresh=${Date.now()}`
       : `t=${Date.now()}&r=${Math.random()}`;
     const fetchUrl = `/admin/service-requests/${requestId}/draft?${cacheParam}`;
     console.log("📡 Fetching fresh data from:", fetchUrl);
 
-    if (modalManager.isRestoreAction) {
+    if (isAfterContactAction) {
       console.log(
-        "🔄 Loading data after restore action - using aggressive cache busting"
+        "🔄 Loading data after contact/restore action - using aggressive cache busting"
       );
     }
 
@@ -448,10 +637,47 @@ document.addEventListener("DOMContentLoaded", function () {
       abort: () => abortController.abort(),
     };
 
-    fetchPromise
-      .then((res) => res.json())
-      .then((data) => {
+    // Hàm load dữ liệu với retry logic
+    const loadDataWithRetry = async (retryCount = 0) => {
+      const maxRetries = 3;
+
+      try {
+        const res = await fetchPromise;
+        const data = await res.json();
         console.log("Dữ liệu nhận được:", data);
+
+        // Kiểm tra nếu là CONTACTED nhưng thiếu dữ liệu draft và còn retry
+        if (data.status === "CONTACTED" && retryCount < maxRetries) {
+          const hasIncompleteData =
+            !data.quotedPrice || !data.district || !data.addressDetail;
+          if (hasIncompleteData) {
+            console.log(
+              `⚠️ Incomplete CONTACTED data, retrying... (${
+                retryCount + 1
+              }/${maxRetries})`
+            );
+            // Delay và retry với cache busting mới
+            await new Promise((resolve) => setTimeout(resolve, 500));
+
+            const newCacheParam = `t=${Date.now()}&r=${Math.random()}&retry=${
+              retryCount + 1
+            }&force=${Date.now()}`;
+            const newFetchUrl = `/admin/service-requests/${requestId}/draft?${newCacheParam}`;
+
+            const newFetchPromise = fetch(newFetchUrl, {
+              method: "GET",
+              headers: {
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+                Pragma: "no-cache",
+                Expires: "0",
+                "X-Requested-With": "XMLHttpRequest",
+              },
+              signal: abortController.signal,
+            });
+
+            return loadDataWithRetry(retryCount + 1);
+          }
+        }
 
         // Hiển thị nút dựa trên trạng thái
         if (data.status === "PENDING") {
@@ -490,8 +716,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
           // Load district sau khi district select đã sẵn sàng
           if (data.district) {
-            let retryCount = 0;
-            const maxRetries = 20; // Tối đa 2 giây
+            let districtRetryCount = 0;
+            const maxDistrictRetries = 20; // Tối đa 2 giây
 
             const loadDistrict = () => {
               const districtSelect = form.querySelector(
@@ -500,13 +726,13 @@ document.addEventListener("DOMContentLoaded", function () {
               if (districtSelect && districtSelect.options.length > 1) {
                 districtSelect.value = data.district;
                 console.log("District loaded:", data.district);
-              } else if (retryCount < maxRetries) {
-                retryCount++;
+              } else if (districtRetryCount < maxDistrictRetries) {
+                districtRetryCount++;
                 setTimeout(loadDistrict, 100);
               } else {
                 console.warn(
                   "Could not load district after",
-                  maxRetries,
+                  maxDistrictRetries,
                   "retries"
                 );
               }
@@ -522,31 +748,49 @@ document.addEventListener("DOMContentLoaded", function () {
           btnConfirm.style.display = "none";
           btnCancel.style.display = "none";
         }
-      })
-      .catch((err) => {
-        // Chỉ xử lý lỗi nếu không phải do abort
-        if (err.name !== "AbortError") {
-          console.error("Lỗi load dữ liệu:", err);
-          // Fallback: hiển thị nút mặc định cho PENDING
-          btnContact.style.display = "inline-flex";
-          btnUpdate.style.display = "none";
-          btnConfirm.style.display = "inline-flex";
-          btnCancel.style.display = "inline-flex";
-        }
-      })
-      .finally(() => {
-        // Chỉ tắt loading nếu đây là request hiện tại
-        if (modalManager.currentRequestId === requestId) {
-          console.log(`✅ Data loaded for request ${requestId}`);
-          showModalLoading(modal, false);
-          modalManager.isProcessing = false;
-          modalManager.loadingPromise = null;
-        } else {
+
+        return data;
+      } catch (error) {
+        if (retryCount < maxRetries && error.name !== "AbortError") {
           console.log(
-            `⚠️ Stale request ${requestId}, current: ${modalManager.currentRequestId}`
+            `⚠️ Fetch error, retrying... (${retryCount + 1}/${maxRetries}):`,
+            error
           );
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          return loadDataWithRetry(retryCount + 1);
         }
-      });
+        throw error;
+      }
+    };
+
+    // Gọi hàm load với retry (có delay nếu cần)
+    setTimeout(() => {
+      loadDataWithRetry()
+        .catch((err) => {
+          // Chỉ xử lý lỗi nếu không phải do abort
+          if (err.name !== "AbortError") {
+            console.error("Lỗi load dữ liệu:", err);
+            // Fallback: hiển thị nút mặc định cho PENDING
+            btnContact.style.display = "inline-flex";
+            btnUpdate.style.display = "none";
+            btnConfirm.style.display = "inline-flex";
+            btnCancel.style.display = "inline-flex";
+          }
+        })
+        .finally(() => {
+          // Chỉ tắt loading nếu đây là request hiện tại
+          if (modalManager.currentRequestId === requestId) {
+            console.log(`✅ Data loaded for request ${requestId}`);
+            showModalLoading(modal, false);
+            modalManager.isProcessing = false;
+            modalManager.loadingPromise = null;
+          } else {
+            console.log(
+              `⚠️ Stale request ${requestId}, current: ${modalManager.currentRequestId}`
+            );
+          }
+        });
+    }, loadDelay);
   }
 
   // Reset state khi modal đóng
@@ -612,10 +856,7 @@ document.addEventListener("DOMContentLoaded", function () {
               </button>
             `;
 
-      // Hiển thị thông báo thành công
-      setTimeout(() => {
-        showCustomAlert("Đơn hàng đã được tạo thành công!", "success");
-      }, 500);
+      // Không hiển thị thông báo ở đây nữa vì đã có ở chỗ khác
     } else if (actionType === "cancel") {
       // Cập nhật thành CANCELLED
       statusBadge.className = "badge bg-secondary";
@@ -694,7 +935,7 @@ document.addEventListener("DOMContentLoaded", function () {
           console.log(`✅ Action ${type} successful for request ${id}`);
 
           // Đánh dấu action hoàn thành và cleanup modal
-          modalManager.markActionCompleted();
+          modalManager.markActionCompleted(type);
 
           // Đợi modal đóng hoàn toàn rồi mới cập nhật UI
           setTimeout(() => {
@@ -702,7 +943,8 @@ document.addEventListener("DOMContentLoaded", function () {
             updateUIAfterAction(id, type);
 
             // *** XỬ LÝ THÔNG BÁO THÀNH CÔNG ***
-            if (type !== "confirm") {
+            // Kiểm tra để tránh hiển thị thông báo duplicate
+            if (!modalManager.justShowedSuccessAlert) {
               // Sửa triệt để text thông báo từ server
               let message = data.success;
               if (message) {
@@ -717,6 +959,51 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
               }
               showCustomAlert(message, "success");
+              
+              // Đánh dấu đã hiển thị thông báo
+              modalManager.justShowedSuccessAlert = true;
+              
+              // Auto reset sau 3 giây
+              setTimeout(() => {
+                modalManager.justShowedSuccessAlert = false;
+                console.log("🔄 Success alert flag reset");
+              }, 3000);
+            } else {
+              console.log("⚠️ Skipped duplicate success alert");
+            }
+
+            // *** XỬ LÝ ĐẶC BIỆT CHO CONFIRM - TẠO ĐƠN HÀNG ***
+            if (type === "confirm") {
+              // *** QUAN TRỌNG: Refresh tab đơn hàng dịch vụ NGAY LẬP TỨC ***
+              setTimeout(() => {
+                // Chuyển sang tab đơn hàng dịch vụ
+                localStorage.setItem("switchToOrdersTab", "true");
+
+                // Refresh dữ liệu tab đơn hàng ngay lập tức thay vì reload toàn trang
+                refreshOrdersTab()
+                  .then(() => {
+                    // Chuyển sang tab đơn hàng sau khi refresh xong
+                    const ordersTab = document.getElementById("orders-tab");
+                    if (ordersTab) {
+                      ordersTab.click();
+                      console.log(
+                        "🎯 Successfully refreshed and switched to orders tab"
+                      );
+                    }
+                  })
+                  .catch((error) => {
+                    // Fallback: reload trang nếu refresh thất bại
+                    console.warn(
+                      "⚠️ Refresh failed, switching to orders tab without reload:",
+                      error
+                    );
+                    // Chỉ chuyển tab mà không reload để tránh thông báo duplicate
+                    const ordersTab = document.getElementById("orders-tab");
+                    if (ordersTab) {
+                      ordersTab.click();
+                    }
+                  });
+              }, 1000); // Giảm delay để phản hồi nhanh hơn
             }
           }, 200);
         } else if (data.error) {
@@ -725,7 +1012,7 @@ document.addEventListener("DOMContentLoaded", function () {
           );
 
           // Đánh dấu action hoàn thành và cleanup modal
-          modalManager.markActionCompleted();
+          modalManager.markActionCompleted(type);
 
           // Hiển thị lỗi sau khi đóng modal
           setTimeout(() => {
@@ -737,7 +1024,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("❌ Network/Exception error:", err);
 
         // Đánh dấu action hoàn thành và cleanup modal
-        modalManager.markActionCompleted();
+        modalManager.markActionCompleted(type);
 
         // Hiển thị lỗi sau khi đóng modal
         setTimeout(() => {
@@ -850,6 +1137,8 @@ function showCustomAlert(message, type = "success") {
       ? "bi-check-circle-fill"
       : type === "error"
       ? "bi-x-circle-fill"
+      : type === "info"
+      ? "bi-info-circle-fill"
       : "bi-exclamation-triangle-fill";
 
   alertDiv.innerHTML = `
