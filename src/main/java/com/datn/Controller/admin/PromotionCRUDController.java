@@ -210,6 +210,20 @@ public class PromotionCRUDController {
             // Cập nhật ngày hiện tại cho updatedDate
             promotion.setUpdatedDate(LocalDateTime.now());
 
+            // Nếu có chỉnh sửa ngày thì mới validate
+            if (promotion.getStartDate() != null && promotion.getEndDate() != null) {
+                boolean startChanged = !promotion.getStartDate().isEqual(existing.getStartDate());
+                boolean endChanged = !promotion.getEndDate().isEqual(existing.getEndDate());
+
+                if (startChanged || endChanged) {
+                    if (promotion.getEndDate().isBefore(promotion.getStartDate())) {
+                        model.addAttribute("errorEndDate", "Ngày kết thúc phải sau ngày bắt đầu!");
+                        model.addAttribute("view", "admin/promotionCRUD");
+                        return "admin/layout";
+                    }
+                }
+            }
+
             // Cập nhật DB
             promotionService.update(promotion);
 
