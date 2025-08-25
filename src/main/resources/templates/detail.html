@@ -21,32 +21,55 @@
   </head>
   <body>
     <th:block th:object="${product}">
-      <div class="container detail">
+      <div class="container">
         <div class="row ms-5 ps-5 me-5 pe-5 g-lg-3">
-          <div class="col-md-6 mb-4 position-relative">
-            <img
-              th:src="@{/images/{image}(image=*{image_url})}"
-              id="mainImage"
-              alt="Hoa"
-              class="img-fluid rounded-3"
-              data-bs-toggle="modal"
-              data-bs-target="#imageModal"
-            />
+          <div class="col-md-6 mb-4">
+            <div class="image-viewer">
+              <img
+                th:src="@{/images/{image}(image=*{image_url})}"
+                class="main-image"
+                id="main-image"
+                data-bs-toggle="modal"
+                data-bs-target="#imageModal"
+              />
+            </div>
+
+            <div class="thumbnail-container">
+              <img
+                th:src="@{/images/{image}(image=*{image_url})}"
+                alt="Angle 1"
+                class="thumbnail active"
+                th:data-image="@{/images/{image}(image=*{image_url})}"
+              />
+              <img
+                th:src="@{/images/{image}(image=*{image_url2})}"
+                alt="Angle 2"
+                class="thumbnail"
+                th:data-image="@{/images/{image}(image=*{image_url2})}"
+              />
+              <img
+                th:src="@{/images/{image}(image=*{image_url3})}"
+                alt="Angle 3"
+                class="thumbnail"
+                th:data-image="@{/images/{image}(image=*{image_url3})}"
+              />
+            </div>
           </div>
+
           <div class="col-md-6 product">
-            <h4 class="product-title" th:text="*{name}"></h4>
+            <h3 class="product-title" th:text="*{name}"></h3>
 
             <!-- Giá sản phẩm: Có giảm giá -->
             <th:block th:if="*{priceAfterDiscount lt price}">
               <div class="product-price">
-                <div
-                  class="text-danger fw-bold"
+                <h3
+                  class="text-black"
                   th:text="${#numbers.formatDecimal(product.priceAfterDiscount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
-                ></div>
-                <div
-                  class="text-muted text-decoration-line-through"
+                ></h3>
+                <em
+                  class="text-danger text-decoration-line-through"
                   th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VND'"
-                ></div>
+                ></em>
               </div>
             </th:block>
 
@@ -74,24 +97,32 @@
                   class="btn btn-light w-5 m-3"
                 />
                 <br />
-                <button type="submit" class="btn-order btn btn-sm">
+                <button
+                  type="submit"
+                  class="btn-order btn btn-sm rounded-pill"
+                  style="color: white; font-weight: bolder"
+                >
                   Thêm vào giỏ hàng
                 </button>
               </form>
             </div>
+
             <div class="card-info text-start ms-3 ps-2">
-              <h4 class="mb-3 text-aline-center">Đặc thù sản phẩm</h4>
-              <ul class="">
+              <h4 class="mb-3 text-center">Đặc thù sản phẩm</h4>
+              <ul class="list-unstyled">
                 <li class="mb-2">
+                  <i class="bi bi-check2-circle text-success me-2"></i>
                   Hoa tươi là sản phẩm tự nhiên, nghệ thuật và
                   <strong>thủ công</strong> nên sản phẩm thành phẩm sẽ chỉ giống
                   80–90% so với hình ảnh sẵn có.
                 </li>
                 <li class="mb-2">
+                  <i class="bi bi-check2-circle text-success me-2"></i>
                   Một số hoa, lá phụ / phụ kiện trên mẫu có thể thay đổi tùy
                   thuộc vào tài nguyên đang có ở shop.
                 </li>
                 <li class="mb-2">
+                  <i class="bi bi-check2-circle text-success me-2"></i>
                   Màu sắc của hoa thực tế có thể khác đôi chút do ánh sáng,
                   thiết bị hiển thị hoặc góc chụp.
                 </li>
@@ -102,33 +133,33 @@
       </div>
       <div class="card-info g-lg-3 m-5 p-5">
         <h4 class="mb-3">Mô tả</h4>
-        <p class="fs-5" th:text="*{description}"></p>
-        <p class="fs-5">
-          <strong>Những ưu đãi khi đặt hoa tại Karina flower</strong>
-        </p>
+        <p th:text="*{description}"></p>
+        <h4>Những ưu đãi khi đặt hoa tại Karina flower</h4>
         <ul class="list-unstyled fs-6 mb-4">
           <li class="mb-2">
-            <i class="fas fa-camera me-2"></i> Chụp hình hoa thực tế trước khi
-            giao
+            <i class="bi bi-check2-circle text-success me-2"></i>
+            Chụp hình hoa thực tế trước khi giao
           </li>
           <li class="mb-2">
-            <i class="fas fa-file-invoice me-2"></i> Xuất hóa đơn GTGT +8% (Giá
-            chưa gồm VAT)
+            <i class="bi bi-check2-circle text-success me-2"></i>
+            Xuất hóa đơn GTGT +8% (Giá chưa gồm VAT)
           </li>
           <li class="mb-2">
-            <i class="fas fa-gift me-2"></i> Tặng kèm bảng tên công ty, thiệp
-            nội dung
+            <i class="bi bi-check2-circle text-success me-2"></i>
+            Tặng kèm bảng tên công ty, thiệp nội dung
           </li>
         </ul>
-        <p class="fs-5">
-          <strong> Lưu ý</strong>
-        </p>
-        <ul class="fs-6">
+        <h4>Lưu ý</h4>
+        <ul class="fs-6 list-unstyled">
           <li class="mb-2">
+            <i class="bi bi-check2-circle text-success me-2"></i>
+
             Tùy khu vực, tùy mùa hoa, thời tiết nên sẽ có thay đổi đối với mẫu
             hoa, trước khi thực hiện thay đổi sẽ báo trước cho khách hàng.
           </li>
           <li class="mb-2">
+            <i class="bi bi-check2-circle text-success me-2"></i>
+
             Hoa tươi vào những ngày lễ: Valentine, Quốc tế phụ nữ, Phụ nữ Việt
             Nam, Giáng sinh, Tết,… giá hoa sẽ tăng dao động từ 20-30%. Thời điểm
             tăng giá hoa sẽ được tính từ 3 ngày trước khi lễ.
@@ -210,6 +241,35 @@
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script>
       AOS.init();
+      // Flower Petal Animation
+      const particleContainer = document.getElementById("flower-particles");
+      function createPetal() {
+        const petal = document.createElement("div");
+        petal.classList.add("petal");
+        petal.style.left = Math.random() * 100 + "vw";
+        petal.style.animationDuration = Math.random() * 8 + 7 + "s";
+        petal.style.opacity = Math.random() * 0.4 + 0.3;
+        petal.style.setProperty("--drift", Math.random() > 0.5 ? 1 : -1);
+        particleContainer.appendChild(petal);
+        setTimeout(() => petal.remove(), 15000);
+      }
+      setInterval(createPetal, 300);
+
+      // Image Viewer and Zoom Functionality
+      const mainImage = document.getElementById("main-image");
+      const thumbnails = document.querySelectorAll(".thumbnail");
+      const lightbox = document.getElementById("lightbox");
+      const lightboxImage = document.getElementById("lightbox-image");
+      const lightboxClose = document.getElementById("lightbox-close");
+
+      // Thumbnail click to change main image
+      thumbnails.forEach((thumbnail) => {
+        thumbnail.addEventListener("click", () => {
+          thumbnails.forEach((thumb) => thumb.classList.remove("active"));
+          thumbnail.classList.add("active");
+          mainImage.src = thumbnail.dataset.image;
+        });
+      });
     </script>
     <div th:insert="~{/fragments/chatbot}"></div>
   </body>

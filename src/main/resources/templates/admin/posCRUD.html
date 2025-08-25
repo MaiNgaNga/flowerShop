@@ -47,6 +47,9 @@
                         <th>Mã đơn</th>
                         <th>Tổng tiền</th>
                         <th>Ngày bán</th>
+
+                        <th>PT Thanh toán</th>
+                        <th>Trạng thái TT</th>
                         <th>Trạng thái</th>
                         <th>Thao tác</th>
                       </tr>
@@ -57,7 +60,25 @@
                       <td th:text="${order.orderCode}"></td>
                       <td th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                       <td th:text="${#dates.format(order.createDate, 'dd/MM/yyyy')}"></td>
-                      <td th:text="${order.status}"></td>
+                      <td>
+                        <span 
+                          th:class="${order.paymentMethod == 'CASH'} ? 'badge bg-success' : 'badge bg-primary'"
+                          th:text="${order.paymentMethod == 'CASH'} ? '💵 Tiền mặt' : '🏦 Chuyển khoản'"
+                        ></span>
+                      </td>
+                      <td>
+                        <span 
+                          th:class="${order.paymentStatus == 'Đã thanh toán'} ? 'badge bg-success' : 'badge bg-warning'"
+                          th:text="${order.paymentStatus}"
+                        ></span>
+                      </td>
+                      <td>
+                        <span 
+                          th:class="${order.status == 'Hoàn tất'} ? 'badge bg-success' : 'badge bg-warning'"
+                          th:text="${order.status}"
+                        ></span>
+                      </td>
+
                       <td>
                         <a th:href="@{/admin/pos/index(orderId=${order.id})}" class="btn btn-sm btn-info">Chi tiết</a>
                         <a 
@@ -104,10 +125,9 @@
         </nav>
       </div>
                 </div>
-                        <!-- Đã có vòng lặp th:each ở trên, các dòng này bị dư thừa và gây lỗi nếu không có biến order. Đã xóa để tránh lỗi. -->
                       </tr>
                       <tr th:if="${#lists.isEmpty(orders)}">
-                        <td colspan="7" class="text-center text-muted">
+                        <td colspan="8" class="text-center text-muted">
                           Hiện chưa có đơn hàng nào tại quầy.
                         </td>
                       </tr>
@@ -138,7 +158,26 @@
                     </div>
                     <div class="col-md-4">
                       <b>Trạng thái:</b>
-                      <span th:text="${orderDetail.status}"></span>
+                      <span 
+                        th:class="${orderDetail.status == 'Hoàn tất'} ? 'badge bg-success' : 'badge bg-warning'"
+                        th:text="${orderDetail.status}"
+                      ></span>
+                    </div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-md-6">
+                      <b>Phương thức thanh toán:</b>
+                      <span 
+                        th:class="${orderDetail.paymentMethod == 'CASH'} ? 'badge bg-success' : 'badge bg-primary'"
+                        th:text="${orderDetail.paymentMethod == 'CASH'} ? '💵 Tiền mặt' : '🏦 Chuyển khoản'"
+                      ></span>
+                    </div>
+                    <div class="col-md-6">
+                      <b>Trạng thái thanh toán:</b>
+                      <span 
+                        th:class="${orderDetail.paymentStatus == 'Đã thanh toán'} ? 'badge bg-success' : 'badge bg-warning'"
+                        th:text="${orderDetail.paymentStatus}"
+                      ></span>
                     </div>
                   </div>
                 </div>
@@ -199,8 +238,23 @@
           </div>
         </div>
       </div>
-    </form>
   </div>
+<!-- Hiển thị thông báo flash messages từ controller -->
+<div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+  <span th:text="${success}"></span>
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+
+<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+  <span th:text="${error}"></span>
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+
+<div th:if="${warning}" class="alert alert-warning alert-dismissible fade show" role="alert">
+  <span th:text="${warning}"></span>
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+
 <script th:inline="javascript">
     var hasOrderDetail = /*[[${orderDetail != null}]]*/ false;
     if (hasOrderDetail) {

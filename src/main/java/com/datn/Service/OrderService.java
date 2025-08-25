@@ -70,7 +70,6 @@ public interface OrderService {
   List<Order> findFailedOrdersByShipper(int shipperId);
 
   Order cancelByShipper(Long orderId, int shipperId, String cancelReason, String cancelDetails);
-
   // Order cancelByShipper(Long orderId, int shipperId, String cancelReason,
   // String cancelDetails);
 

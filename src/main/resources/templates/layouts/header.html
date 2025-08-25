@@ -32,9 +32,6 @@
       </div>
       <a href="/contact">Liên Hệ</a>
       <a href="/PostUser">Bài viết</a>
-      <a href="/pos" th:if="${session.user != null and session.user.role == 1}"
-        >Bán hàng tại quầy (POS)</a
-      >
     </nav>
 
     <!-- Search bar -->
@@ -143,8 +140,6 @@
           path.startsWith("/contact")) ||
         (link.getAttribute("href") === "/article" &&
           path.startsWith("/article")) ||
-        (link.getAttribute("href") === "/pos" && path.startsWith("/pos")) ||
-        // Dòng này là quan trọng: nếu là dropdown-toggle (Danh mục) và path đúng thì active
         (link.classList.contains("dropdown-category") &&
           (path.startsWith("/ProductUser") || path.startsWith("/products")))
       ) {

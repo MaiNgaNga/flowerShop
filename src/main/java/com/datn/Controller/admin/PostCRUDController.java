@@ -7,27 +7,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import com.datn.Service.PostService;
 import com.datn.Service.UserService;
 import com.datn.model.Post;
 import com.datn.model.User;
-
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
@@ -39,7 +33,7 @@ public class PostCRUDController {
     private PostService postService;
 
     @Autowired
-    private UserService userService; // ✅ Thêm dòng này để lấy danh sách người dùng
+    private UserService userService;
 
     @ModelAttribute("posts")
     public List<Post> getAllPosts() {
@@ -64,7 +58,10 @@ public class PostCRUDController {
         model.addAttribute("posts", postPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", postPage.getTotalPages());
-        model.addAttribute("keyword", keyword); // để đổ lại vào ô tìm kiếm
+        model.addAttribute("totalElements", postPage.getTotalElements());
+        model.addAttribute("hasPrevious", postPage.hasPrevious());
+        model.addAttribute("hasNext", postPage.hasNext());
+        model.addAttribute("keyword", keyword);
         model.addAttribute("post", new Post());
         model.addAttribute("view", "admin/PostCRUD");
 
@@ -72,13 +69,29 @@ public class PostCRUDController {
     }
 
     @GetMapping("/create")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(Model model,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "keyword", required = false) String keyword) {
         Post post = new Post();
         post.setPostDate(LocalDate.now());
         post.setStatus(true);
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> postPage = keyword != null && !keyword.trim().isEmpty()
+                ? postService.findByTitleContaining(keyword.trim(), pageable)
+                : postService.findAllPageable(pageable);
+
         model.addAttribute("post", post);
         model.addAttribute("users", userService.findAll());
-        model.addAttribute("view", "admin/PostCRUD"); // hoặc path đúng tới form của bạn
+        model.addAttribute("posts", postPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", postPage.getTotalPages());
+        model.addAttribute("totalElements", postPage.getTotalElements());
+        model.addAttribute("hasPrevious", postPage.hasPrevious());
+        model.addAttribute("hasNext", postPage.hasNext());
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("view", "admin/PostCRUD");
         return "admin/layout";
     }
 
@@ -86,17 +99,31 @@ public class PostCRUDController {
     public String create(Model model,
             @Valid @ModelAttribute("post") Post post, Errors errors,
             @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "keyword", required = false) String keyword,
             HttpSession session,
             RedirectAttributes redirectAttributes) {
 
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> postPage = keyword != null && !keyword.trim().isEmpty()
+                ? postService.findByTitleContaining(keyword.trim(), pageable)
+                : postService.findAllPageable(pageable);
+
         if (errors.hasErrors()) {
             model.addAttribute("users", userService.findAll());
+            model.addAttribute("posts", postPage.getContent());
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", postPage.getTotalPages());
+            model.addAttribute("totalElements", postPage.getTotalElements());
+            model.addAttribute("hasPrevious", postPage.hasPrevious());
+            model.addAttribute("hasNext", postPage.hasNext());
+            model.addAttribute("keyword", keyword);
             model.addAttribute("view", "admin/PostCRUD");
             return "admin/layout";
         }
 
         try {
-            // ✅ Lấy userId từ session
             Integer userId = (Integer) session.getAttribute("userId");
 
             if (userId == null) {
@@ -104,14 +131,9 @@ public class PostCRUDController {
                 return "redirect:/login";
             }
 
-            // ✅ Lấy user từ DB và gán cho bài viết
             User currentUser = userService.findByID(userId);
             post.setUser(currentUser);
-
-            // ✅ Luôn gán ngày hiện tại, bỏ qua giá trị từ form
             post.setPostDate(LocalDate.now());
-
-            // ✅ Tạo bài viết
             postService.create(post, imageFile);
 
             redirectAttributes.addFlashAttribute("success", "Thêm bài viết thành công!");
@@ -119,6 +141,13 @@ public class PostCRUDController {
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("users", userService.findAll());
+            model.addAttribute("posts", postPage.getContent());
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", postPage.getTotalPages());
+            model.addAttribute("totalElements", postPage.getTotalElements());
+            model.addAttribute("hasPrevious", postPage.hasPrevious());
+            model.addAttribute("hasNext", postPage.hasNext());
+            model.addAttribute("keyword", keyword);
             model.addAttribute("view", "admin/PostCRUD");
             return "admin/layout";
         }
@@ -127,19 +156,25 @@ public class PostCRUDController {
     @GetMapping("/edit/{id}")
     public String edit(Model model, @PathVariable("id") long id,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size) {
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "keyword", required = false) String keyword) {
 
         Post post = postService.findById(id);
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<Post> postPage = postService.findAllPageable(pageable);
+        Page<Post> postPage = keyword != null && !keyword.trim().isEmpty()
+                ? postService.findByTitleContaining(keyword.trim(), pageable)
+                : postService.findAllPageable(pageable);
 
         model.addAttribute("posts", postPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", postPage.getTotalPages());
-
+        model.addAttribute("totalElements", postPage.getTotalElements());
+        model.addAttribute("hasPrevious", postPage.hasPrevious());
+        model.addAttribute("hasNext", postPage.hasNext());
+        model.addAttribute("keyword", keyword);
         model.addAttribute("post", post);
-        model.addAttribute("users", userService.findAll()); // ✅ Truyền danh sách người dùng
+        model.addAttribute("users", userService.findAll());
         model.addAttribute("view", "admin/PostCRUD");
         return "admin/layout";
     }
@@ -149,16 +184,30 @@ public class PostCRUDController {
             @Valid @ModelAttribute("post") Post post, Errors errors,
             @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
             @RequestParam(value = "oldImage", required = false) String oldImage,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "keyword", required = false) String keyword,
             RedirectAttributes redirectAttributes) {
 
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> postPage = keyword != null && !keyword.trim().isEmpty()
+                ? postService.findByTitleContaining(keyword.trim(), pageable)
+                : postService.findAllPageable(pageable);
+
         if (errors.hasErrors()) {
-            model.addAttribute("users", userService.findAll()); // ✅ Truyền lại khi lỗi
+            model.addAttribute("users", userService.findAll());
+            model.addAttribute("posts", postPage.getContent());
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", postPage.getTotalPages());
+            model.addAttribute("totalElements", postPage.getTotalElements());
+            model.addAttribute("hasPrevious", postPage.hasPrevious());
+            model.addAttribute("hasNext", postPage.hasNext());
+            model.addAttribute("keyword", keyword);
             model.addAttribute("view", "admin/PostCRUD");
             return "admin/layout";
         }
 
         try {
-            // 🔍 Lấy bài viết cũ từ DB
             Post oldPost = postService.findById(post.getId());
 
             if (oldPost == null) {
@@ -166,21 +215,25 @@ public class PostCRUDController {
                 return "redirect:/Post/index";
             }
 
-            // ✅ Gán lại user từ bài viết cũ
             post.setUser(oldPost.getUser());
-
-            // ✅ Cập nhật bài viết
             postService.update(post, imageFile, oldImage);
 
             redirectAttributes.addFlashAttribute("success", "Cập nhật bài viết thành công!");
-            return "redirect:/Post/edit/" + post.getId();
+            return "redirect:/Post/edit/" + post.getId() + "?page=" + page + "&size=" + size
+                    + (keyword != null ? "&keyword=" + keyword : "");
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("users", userService.findAll());
+            model.addAttribute("posts", postPage.getContent());
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", postPage.getTotalPages());
+            model.addAttribute("totalElements", postPage.getTotalElements());
+            model.addAttribute("hasPrevious", postPage.hasPrevious());
+            model.addAttribute("hasNext", postPage.hasNext());
+            model.addAttribute("keyword", keyword);
             model.addAttribute("view", "admin/PostCRUD");
             return "admin/layout";
         }
-
     }
 
     @RequestMapping("/delete/{id}")

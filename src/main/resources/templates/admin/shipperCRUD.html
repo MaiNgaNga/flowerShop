@@ -1,11 +1,21 @@
 <main class="container mt-3">
   <h3>Quản Lý Shipper</h3>
   <hr />
-  <div
-    class="success alert alert-success"
-    th:if="${success}"
-    th:text="${success}"
-  ></div>
+  <!-- Hiển thị thông báo flash messages từ controller -->
+  <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <span th:text="${success}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <span th:text="${error}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <div th:if="${warning}" class="alert alert-warning alert-dismissible fade show" role="alert">
+    <span th:text="${warning}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
   <!-- Tab Navigation -->
   <ul class="nav nav-tabs" id="flowerTab" role="tablist">
     <li class="nav-item" role="presentation">
@@ -40,7 +50,6 @@
 
   <!-- Tab Content -->
   <div class="tab-content" id="flowerTabContent">
-    <i class="error" th:if="${error}" th:text="${error}"></i>
 
     <!-- Tab: Chỉnh sửa -->
     <div
@@ -82,7 +91,7 @@
                 class="form-control form-control-sm"
                 placeholder="Nhập phương tiện"
               />
-              <small class="text-danger" th:errors="*{vehicle}"></small>
+              <i class="error" th:errors="*{vehicle}"></i>
             </div>
           </div>
 
@@ -99,7 +108,7 @@
                 class="form-control form-control-sm"
                 placeholder="Nhập số CCCD"
               />
-              <small class="text-danger" th:errors="*{cccd}"></small>
+              <i class="error" th:errors="*{cccd}"></i>
               <small
                 class="text-danger"
                 th:if="${errorCCCD}"
@@ -121,7 +130,7 @@
                 class="form-control form-control-sm"
                 placeholder="Nhập địa chỉ"
               />
-              <small class="text-danger" th:errors="*{address}"></small>
+              <i class="error" th:errors="*{address}"></i>
             </div>
           </div>
         </div>

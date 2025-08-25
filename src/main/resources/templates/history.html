@@ -248,7 +248,7 @@
           </table>
           <button
             class="btn btn-danger"
-            th:if="${order.status == 'Chưa xác nhận'}"
+            th:if="${order.status == 'Chờ xác nhận'}"
             onclick="confirmDelete(this)"
             th:data-url="@{/history/delete/{orderId}(orderId=${order.id})}"
           >

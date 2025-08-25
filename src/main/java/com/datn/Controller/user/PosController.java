@@ -113,7 +113,7 @@ public class PosController {
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("colors", colorService.findAll());
         model.addAttribute("view", "pos");
-        return "layouts/layout";
+        return "layouts/pos-layout";
     }
 
     @SuppressWarnings("unchecked")
@@ -205,8 +205,22 @@ public class PosController {
 
             order.setUser(user);
             order.setCreateDate(new Date());
-            order.setStatus("Chờ thanh toán");
             order.setOrderType("offline");
+
+            // Thiết lập payment method và trạng thái ban đầu
+            if ("cash".equalsIgnoreCase(paymentMethod)) {
+                order.setPaymentMethod("CASH");
+                order.setStatus("Hoàn tất");
+                order.setPaymentStatus("Đã thanh toán");
+            } else if ("qr_code".equalsIgnoreCase(paymentMethod)) {
+                order.setPaymentMethod("PAYOS");
+                order.setStatus("Chờ thanh toán");
+                order.setPaymentStatus("Chưa thanh toán");
+            } else {
+                order.setPaymentMethod("CASH"); // Default
+                order.setStatus("Hoàn tất");
+                order.setPaymentStatus("Đã thanh toán");
+            }
 
             List<OrderDetail> details = new ArrayList<>();
             double total = 0;
@@ -262,10 +276,8 @@ public class PosController {
                 }
             }
 
-            // Thanh toán tiền mặt
+            // Thanh toán tiền mặt - đã được set status ở trên
             if ("cash".equalsIgnoreCase(paymentMethod)) {
-                savedOrder.setStatus("Đã thanh toán");
-                orderDAO.save(savedOrder);
                 session.removeAttribute("cart");
                 // Hiển thị bill để in
                 return "redirect:/pos/bill?orderCode=" + orderCode;
@@ -324,7 +336,7 @@ public class PosController {
         model.addAttribute("paymentMethod", order.getOrderType());
         model.addAttribute("orderDetails", order.getOrderDetails());
         model.addAttribute("view", "pos-payment-qr");
-        return "layouts/qr-layout";
+        return "layouts/pos-layout";
     }
 
     /**
@@ -434,7 +446,9 @@ public class PosController {
             Optional<Order> orderOpt = orderDAO.findByOrderCode(orderCode);
             if (orderOpt.isPresent()) {
                 Order order = orderOpt.get();
-                order.setStatus("Đã thanh toán");
+                // Khi xác nhận thanh toán thủ công cho chuyển khoản
+                order.setStatus("Hoàn tất");
+                order.setPaymentStatus("Đã thanh toán");
                 orderDAO.save(order);
                 response.put("success", true);
                 response.put("message", "Đã xác nhận thanh toán cho đơn hàng");

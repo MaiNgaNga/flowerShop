@@ -93,6 +93,19 @@
         </form>
       </div>
       <div class="pos-product-list">
+        <div
+          th:if="${#lists.isEmpty(products)}"
+          style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+          "
+        >
+          <span style="font-size: 22px; color: #888; text-align: center"
+            >Không tìm thấy sản phẩm nào</span
+          >
+        </div>
         <div class="pos-product-grid">
           <div th:each="product : ${products}" class="pos-card">
             <div style="position: relative">
@@ -178,9 +191,8 @@
                 <a
                   class="page-link"
                   th:href="@{/pos(page=0, color=${color}, type=${type}, category=${category}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
-                >
-                  <i class="fa fa-angle-double-left"></i>
-                </a>
+                  ><i class="fa fa-angle-double-left"></i
+                ></a>
               </li>
               <li
                 class="page-item"
@@ -189,19 +201,44 @@
                 <a
                   class="page-link"
                   th:href="@{/pos(page=${currentPage - 1}, color=${color}, type=${type}, category=${category}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
-                >
-                  <i class="fa fa-angle-left"></i>
-                </a>
+                  ><i class="fa fa-angle-left"></i
+                ></a>
               </li>
+              <!-- Trang đầu -->
+              <li class="page-item" th:if="${currentPage > 2}">
+                <a
+                  class="page-link"
+                  th:href="@{/pos(page=0, color=${color}, type=${type}, category=${category}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
+                  >1</a
+                >
+              </li>
+              <li class="page-item disabled" th:if="${currentPage > 3}">
+                <span class="page-link">...</span>
+              </li>
+              <!-- Các trang lân cận -->
               <li
                 class="page-item"
-                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:each="i : ${#numbers.sequence(currentPage-2 > 0 ? currentPage-2 : 0, currentPage+2 < totalPages-1 ? currentPage+2 : totalPages-1)}"
                 th:classappend="${currentPage == i} ? 'active'"
               >
                 <a
                   class="page-link"
                   th:href="@{/pos(page=${i}, color=${color}, type=${type}, category=${category}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
-                  th:text="${i + 1}"
+                  th:text="${i+1}"
+                ></a>
+              </li>
+              <!-- Trang cuối -->
+              <li
+                class="page-item disabled"
+                th:if="${currentPage < totalPages-4}"
+              >
+                <span class="page-link">...</span>
+              </li>
+              <li class="page-item" th:if="${currentPage < totalPages-3}">
+                <a
+                  class="page-link"
+                  th:href="@{/pos(page=${totalPages-1}, color=${color}, type=${type}, category=${category}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
+                  th:text="${totalPages}"
                 ></a>
               </li>
               <li
@@ -211,9 +248,8 @@
                 <a
                   class="page-link"
                   th:href="@{/pos(page=${currentPage + 1}, color=${color}, type=${type}, category=${category}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
-                >
-                  <i class="fa fa-angle-right"></i>
-                </a>
+                  ><i class="fa fa-angle-right"></i
+                ></a>
               </li>
               <li
                 class="page-item"
@@ -222,9 +258,8 @@
                 <a
                   class="page-link"
                   th:href="@{/pos(page=${totalPages - 1}, color=${color}, type=${type}, category=${category}, keyword=${keyword}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
-                >
-                  <i class="fa fa-angle-double-right"></i>
-                </a>
+                  ><i class="fa fa-angle-double-right"></i
+                ></a>
               </li>
             </ul>
           </nav>
@@ -245,8 +280,7 @@
                 <th></th>
               </tr>
             </thead>
-            <tbody id="cartRows">
-            </tbody>
+            <tbody id="cartRows"></tbody>
           </table>
         </div>
         <div class="mb-3">
@@ -255,10 +289,19 @@
         </div>
         <div class="mb-3">
           <label class="form-label">Phương thức thanh toán</label>
-          <select name="paymentMethod" class="form-control">
-            <option value="cash">Tiền mặt</option>
-            <option value="qr_code">QR Code chuyển khoản</option>
+          <select
+            name="paymentMethod"
+            class="form-control"
+            id="paymentMethodSelect"
+          >
+            <option value="cash">💵 Tiền mặt (thanh toán ngay)</option>
+            <option value="qr_code">🏦 Chuyển khoản QR (cần xác nhận)</option>
           </select>
+          <small class="form-text text-muted">
+            <span id="paymentNote"
+              >Thanh toán tiền mặt sẽ hoàn tất đơn hàng ngay lập tức.</span
+            >
+          </small>
         </div>
         <input type="hidden" name="orderType" value="offline" />
         <button type="submit" class="btn btn-success w-100">
@@ -307,7 +350,6 @@
     box-shadow: 0 4px 10px rgba(212, 165, 230, 0.3);
   }
 </style>
-<script src="/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/pos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>

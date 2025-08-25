@@ -138,11 +138,18 @@
 </div>
 
     
-  </form>
-</aside>
+    </form>
+   </aside>
 
-      </th:block>
-      <article th:class="${pro_ca != null} ? 'col-9' : 'col-12'">
+  </th:block>
+      <article th:class="${pro_ca != null} ? 'col-9' : 'col-12'" th:if="${#lists.isEmpty(page.content)}">
+         <p   colspan="4"
+              style="text-align: center; font-style: italic; color: gray"
+            >
+              Không có sản phẩm phù hợp!
+            </p>
+      </article>
+      <article th:class="${pro_ca != null} ? 'col-9' : 'col-12'" th:if="${!#lists.isEmpty(page.content)}">
           <div class="row">
             <th:block th:each="item:${page.content}">
               <div class="col-md-3 mb-4">
@@ -207,68 +214,18 @@
             <div class="container">
               <nav aria-label="Phân trang sản phẩm">
                 <ul class="page-numbers nav-pagination links text-center">
-                  <li>
+                   <li>
                     <a
                       class="btn"
-                      th:href="@{/ProductUser(id=${pro_ca.id}, p=0, min=${min}, max=${max}, filter=${filter})}"
+                      th:href="@{/ProductUser(id=${pro_ca.id},p=0,categoryId=${selectedCategoryId},color=${selectedColor},min=${selectedMin},max=${selectedMax})}"
                       th:classappend="${page.number == 0} ? 'disabled' : ''"
-                      >First</a
-                    >
+                      >First
+                    </a>
                   </li>
                   <li>
                     <a
                       class="btn"
-                      th:href="@{/ProductUser(id=${pro_ca.id}, p=${page.number - 1}, min=${min}, max=${max}, filter=${filter})}"
-                      th:classappend="${page.number == 0} ? 'disabled' : ''"
-                      ><i class="fas fa-angle-left"></i
-                    ></a>
-                  </li>
-                  <li
-                    th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
-                  >
-                    <a
-                      class="btn"
-                      th:href="@{/ProductUser(id=${pro_ca.id}, p=${i}, min=${min}, max=${max}, filter=${filter})}"
-                      th:classappend="${i == page.number} ? 'active' : ''"
-                      th:text="${i + 1}"
-                    ></a>
-                  </li>
-                  <li>
-                    <a
-                      class="btn"
-                      th:href="@{/ProductUser(id=${pro_ca.id}, p=${page.number + 1}, min=${min}, max=${max}, filter=${filter})}"
-                      th:classappend="${page.number == page.totalPages - 1} ? 'disabled' : ''"
-                      ><i class="fas fa-angle-right"></i
-                    ></a>
-                  </li>
-                  <li>
-                    <a
-                      class="btn"
-                      th:href="@{/ProductUser(id=${pro_ca.id}, p=${page.totalPages - 1}, min=${min}, max=${max}, filter=${filter})}"
-                      th:classappend="${page.number == page.totalPages - 1} ? 'disabled' : ''"
-                      >Last</a
-                    >
-                  </li>
-                </ul>
-              </nav>
-            </div>
-          </th:block>
-          <th:block th:if="${pro_ca == null}">
-            <div class="container">
-              <nav aria-label="Phân trang tìm kiếm">
-                <ul class="page-numbers nav-pagination links text-center">
-                  <li>
-                    <a
-                      class="btn"
-                      th:href="@{/search(keyword=${searchKeyword}, p=0)}"
-                      th:classappend="${page.number == 0} ? 'disabled' : ''"
-                      >First</a
-                    >
-                  </li>
-                  <li>
-                    <a
-                      class="btn"
-                      th:href="@{/search(keyword=${searchKeyword}, p=${page.number - 1})}"
+                      th:href="@{/ProductUser(id=${pro_ca.id},p=${page.number - 1},categoryId=${selectedCategoryId},color=${selectedColor},min=${selectedMin},max=${selectedMax})}"
                       th:classappend="${page.number == 0} ? 'disabled' : ''"
                       ><i class="fas fa-angle-left"></i
                     ></a>
@@ -278,7 +235,7 @@
                   >
                     <a
                       class="btn"
-                      th:href="@{/search(keyword=${searchKeyword}, p=${i})}"
+                      th:href="@{/ProductUser(id=${pro_ca.id},p=${i},categoryId=${selectedCategoryId},color=${selectedColor},min=${selectedMin},max=${selectedMax})}"                  
                       th:classappend="${i == page.number} ? 'active' : ''"
                       th:text="${i + 1}"
                     ></a>
@@ -286,7 +243,7 @@
                   <li>
                     <a
                       class="btn"
-                      th:href="@{/search(keyword=${searchKeyword}, p=${page.number + 1})}"
+                      th:href="@{/ProductUser(id=${pro_ca.id},p=${page.number + 1},categoryId=${selectedCategoryId},color=${selectedColor},min=${selectedMin},max=${selectedMax})}"                                      
                       th:classappend="${page.number == page.totalPages - 1} ? 'disabled' : ''"
                       ><i class="fas fa-angle-right"></i
                     ></a>
@@ -294,7 +251,7 @@
                   <li>
                     <a
                       class="btn"
-                      th:href="@{/search(keyword=${searchKeyword}, p=${page.totalPages - 1})}"
+                      th:href="@{/ProductUser(id=${pro_ca.id},p=${page.totalPages - 1},categoryId=${selectedCategoryId},color=${selectedColor},min=${selectedMin},max=${selectedMax})}"                                                          
                       th:classappend="${page.number == page.totalPages - 1} ? 'disabled' : ''"
                       >Last</a
                     >
