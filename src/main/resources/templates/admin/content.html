@@ -17,7 +17,8 @@
           <div class="admin-user-avatar">A</div>
           <div class="admin-user-info text-start">
             <h6 th:text="${session.user.name}" class="mb-0">Admin</h6>
-            <span class="small ">Quản trị viên</span>
+            <span class="small" th:if="${session.user.role == 1}">Quản trị viên</span>
+            <span class="small" th:if="${session.user.role == 3}">Nhân viên</span>
           </div>
         </button>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminUserDropdown"
