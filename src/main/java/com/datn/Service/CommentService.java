@@ -2,6 +2,9 @@ package com.datn.Service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.datn.model.Comment;
 
 public interface CommentService {
@@ -14,11 +17,10 @@ public interface CommentService {
     void deleteComment(Long id);
 
     void updateComment(Long id, Comment comment);
-
-    ///find by status
-    List<Comment> findByStatusInactive();
     // Thêm phương thức để lấy 3 bình luận mới nhất
     List<Comment> getTop3Comments();
+
+    Page<Comment> findByStatusInactive(Pageable pageable);
 
     Comment findById(Long id);
 

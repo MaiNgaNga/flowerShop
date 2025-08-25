@@ -234,7 +234,6 @@ public class OrderServiceImpl implements OrderService {
         if (order != null && shipper != null && "Đang giao".equals(order.getStatus())) {
             order.setStatus("Đã giao");
             order.setShipper(shipper);
-            order.setDeliveryDate(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
             dao.save(order);
         }
     }

@@ -1,6 +1,8 @@
 package com.datn.Service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.datn.Service.CommentService;
@@ -64,8 +66,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Comment> findByStatusInactive() {
-        return commentDAO.findByStatusInactive();
+    public Page<Comment> findByStatusInactive(Pageable pageable) {
+        return commentDAO.findByStatusInactive(pageable);
     }
 
     @Override
@@ -78,4 +80,5 @@ public class CommentServiceImpl implements CommentService {
         return commentDAO.findById(id).orElse(null);
     }
 
+   
 }

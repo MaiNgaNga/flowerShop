@@ -32,10 +32,10 @@ public class OrderCRUD {
     @Autowired
     OrderService orderService;
 
-    // Hiển thị danh sách đơn hàng theo trạng thái (mặc định là "Chưa xác nhận")
+    // Hiển thị danh sách đơn hàng theo trạng thái (mặc định là "Chờ xác nhận")
     @GetMapping
     public String index(Model model,
-        @RequestParam(value = "orderStatus", required = false, defaultValue = "Chưa xác nhận") String orderStatus) {
+        @RequestParam(value = "orderStatus", required = false, defaultValue = "Chờ xác nhận") String orderStatus) {
         
         // Lấy tất cả danh mục sản phẩm để hiển thị trên giao diện
         List<ProductCategory> productCategories = pro_ca_dao.findAll();
@@ -74,8 +74,8 @@ public class OrderCRUD {
             // Dựa vào trạng thái đầu vào để cập nhật
             switch (status) {
                 case "Chờ giao":
-                    // Nếu đơn hàng đang ở trạng thái "Chưa xác nhận", cho phép cập nhật sang "Đã xác nhận"
-                    if (order.getStatus().equals("Chưa xác nhận")) {
+                    // Nếu đơn hàng đang ở trạng thái "Chờ xác nhận", cho phép cập nhật sang "Đã xác nhận"
+                    if (order.getStatus().equals("Chờ xác nhận")) {
                         orderService.updateStatus(orderId, "Đã xác nhận");
 
 

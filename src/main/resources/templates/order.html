@@ -1,4 +1,43 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+// Detect khi user quay lại trang order từ PayOS và cập nhật đơn hàng thành "Thất bại"
+$(document).ready(function() {
+    // Kiểm tra nếu user vừa quay lại từ trang thanh toán
+    if (document.referrer && (document.referrer.includes('payos') || document.referrer.includes('payment'))) {
+        console.log('User quay lại từ trang thanh toán, đang cập nhật trạng thái...');
+        
+        // Gọi API để cập nhật đơn hàng thành "Thất bại"
+        $.ajax({
+            url: '/payment-status/mark-abandoned',
+            type: 'POST',
+            success: function(response) {
+                console.log('Đã cập nhật trạng thái đơn hàng:', response);
+            },
+            error: function(xhr, status, error) {
+                console.error('Lỗi khi cập nhật trạng thái:', error);
+            }
+        });
+    }
+    
+    // Backup: Cũng kiểm tra khi trang được load từ browser back button
+    if (performance.navigation.type === 2) { // TYPE_BACK_FORWARD
+        console.log('User sử dụng nút back, kiểm tra đơn hàng...');
+        
+        setTimeout(function() {
+            $.ajax({
+                url: '/payment-status/mark-abandoned',
+                type: 'POST',
+                success: function(response) {
+                    console.log('Đã kiểm tra và cập nhật đơn hàng:', response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Lỗi khi kiểm tra đơn hàng:', error);
+                }
+            });
+        }, 500); // Delay 500ms để đảm bảo trang đã load xong
+    }
+});
+</script>
 <link rel="stylesheet" th:href="@{/css/order.css}" />
 <div class="order-page-container">
   <div class="container mt-4">
@@ -20,7 +59,7 @@
         <!-- Cột Thông tin Đặt hàng -->
         <div class="col-md-7">
           <div class="card p-4 mb-4">
-            <h5 class="mb-3 mau">Thông Tin Người Đặt Hàng</h5>
+            <h5 class="mb-3 mau">Người Đặt Hàng</h5>
 
             <div class="mb-3">
               <label class="form-label">Họ và tên </label>
@@ -31,28 +70,44 @@
                 readonly
               />
             </div>
+
             <div class="mb-3">
-              <label class="form-label">Email </label>
+              <label class="form-label">Số điện thoại *</label>
               <input
-                type="email"
-                readonly
-                th:value="${user.email}"
+                type="text"
+                th:field="*{user.sdt}"
                 class="form-control"
+                placeholder="Nhập số điện thoại"
+                readonly
               />
             </div>
+          </div>
+          <div class="card p-4 mb-4">
+            <!-- Thêm phần chọn địa chỉ -->
+            <h5 class="mb-3 mau">Người Nhận Hàng</h5>
             <th:block th:object="${orderRequest}">
               <div class="mb-3">
-                <label class="form-label">Số điện thoại *</label>
+                <label class="form-label">Người nhận *</label>
                 <input
                   type="text"
-                  th:field="*{sdt}"
+                  th:field="*{receiverName}"
                   class="form-control"
-                  placeholder="Nhập số điện thoại"
+                  placeholder="Nhập tên người nhận"
                 />
-                <i class="error text-danger" th:errors="*{sdt}"></i>
+                <i class="error text-danger" th:errors="*{receiverName}"></i>
               </div>
 
-              <!-- Thêm phần chọn địa chỉ -->
+              <!-- Số điện thoại người nhận -->
+              <div class="mb-3">
+                <label class="form-label">Số điện thoại người nhận *</label>
+                <input
+                  type="text"
+                  th:field="*{receiverPhone}"
+                  class="form-control"
+                  placeholder="Nhập số điện thoại người nhận"
+                />
+                <i class="error text-danger" th:errors="*{receiverPhone}"></i>
+              </div>
 
               <div class="mb-3">
                 <label class="form-label">Xã/Phường *</label>
@@ -67,7 +122,6 @@
                   </th:block>
                 </select>
               </div>
-
               <div class="mb-3">
                 <label class="form-label">Địa chỉ cụ thể *</label>
                 <input
@@ -83,13 +137,42 @@
                 <i class="error text-danger" th:errors="*{address}"></i>
               </div>
               <div class="mb-3">
-                <label class="form-label">Ngày giao hàng *</label>
+                <label class="form-label">Ngày nhận hàng *</label>
                 <input
                   type="date"
+                  id="deliveryDate"
                   th:field="*{deliveryDate}"
                   class="form-control"
+                  onchange="validateDeliveryTime()"
                 />
                 <i class="error text-danger" th:errors="*{deliveryDate}"></i>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Giờ nhận hàng *</label>
+                <select
+                  id="deliveryTime"
+                  th:field="*{deliveryTime}"
+                  class="form-control"
+                  onchange="validateDeliveryTime()"
+                >
+                  <option value="">-- Chọn giờ --</option>
+                  <option value="08:00">08:00</option>
+                  <option value="09:00">09:00</option>
+                  <option value="10:00">10:00</option>
+                  <option value="11:00">11:00</option>
+                  <option value="12:00">12:00</option>
+                  <option value="13:00">13:00</option>
+                  <option value="14:00">14:00</option>
+                  <option value="15:00">15:00</option>
+                  <option value="16:00">16:00</option>
+                  <option value="17:00">17:00</option>
+                  <option value="18:00">18:00</option>
+                  <option value="19:00">19:00</option>
+                  <option value="20:00">20:00</option>
+                </select>
+                <i class="error text-danger" th:errors="*{deliveryTime}"></i>
+                <div id="deliveryTimeError" class="text-danger"></div>
               </div>
 
               <div class="mb-3">
@@ -264,6 +347,48 @@
     <div th:insert="~{/fragments/chatbot}"></div>
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script>
+      function validateDeliveryTime() {
+        const deliveryDateInput = document.getElementById("deliveryDate").value;
+        const deliveryTimeSelect =
+          document.getElementById("deliveryTime").value;
+        const errorElement = document.getElementById("deliveryTimeError");
+
+        // Clear previous error message
+        errorElement.textContent = "";
+
+        if (!deliveryDateInput || !deliveryTimeSelect) {
+          return; // Exit if date or time is not selected
+        }
+
+        // Get current date and time
+        const now = new Date();
+        const currentDate = now.toISOString().split("T")[0]; // Format: YYYY-MM-DD
+        const currentHours = now.getHours();
+        const currentMinutes = now.getMinutes();
+
+        // Parse selected date and time
+        const selectedDate = new Date(deliveryDateInput);
+        const selectedTime = deliveryTimeSelect.split(":");
+        const selectedHours = parseInt(selectedTime[0], 10);
+        const selectedMinutes = parseInt(selectedTime[1], 10);
+
+        // Check if selected date is today
+        if (deliveryDateInput === currentDate) {
+          // Calculate minimum allowed time (current time + 3 hours)
+          const minHours = (currentHours + 3) % 24;
+          const minMinutes = currentMinutes;
+
+          // Compare selected time with minimum allowed time
+          if (
+            selectedHours < minHours ||
+            (selectedHours === minHours && selectedMinutes < minMinutes)
+          ) {
+            errorElement.textContent =
+              "Giờ nhận hàng phải sau giờ hiện tại ít nhất 3 tiếng.";
+            document.getElementById("deliveryTime").value = ""; // Reset invalid time
+          }
+        }
+      }
       AOS.init();
 
       const wardSelect = document.getElementById("ward");

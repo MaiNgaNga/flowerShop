@@ -47,6 +47,7 @@
                         <th>Mã đơn</th>
                         <th>Tổng tiền</th>
                         <th>Ngày bán</th>
+
                         <th>PT Thanh toán</th>
                         <th>Trạng thái TT</th>
                         <th>Trạng thái</th>
@@ -77,6 +78,7 @@
                           th:text="${order.status}"
                         ></span>
                       </td>
+
                       <td>
                         <a th:href="@{/admin/pos/index(orderId=${order.id})}" class="btn btn-sm btn-info">Chi tiết</a>
                         <a 
