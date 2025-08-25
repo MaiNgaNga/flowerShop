@@ -171,12 +171,17 @@ public class OrderController {
         Order order = new Order();
         order.setUser(user);
         order.setCreateDate(new Date());
-        order.setSdt(orderRequest.getSdt());
+        order.setSdt(user.getSdt());
         order.setAddress(orderRequest.getAddress());
         order.setStatus("Chưa xác nhận");
         order.setPaymentMethod(paymentMethod);
         order.setShipFee(shippingFee);
 
+        order.setDescription(orderRequest.getDescription());
+        order.setDeliveryDate(orderRequest.getDeliveryDate());
+        order.setDeliveryTime(orderRequest.getDeliveryTime());
+        order.setReceiverName(orderRequest.getReceiverName());
+        order.setReceiverPhone(orderRequest.getReceiverPhone());
         // Kiểm tra xem có mã giảm không
         Double finalAmount = (Double) session.getAttribute("finalAmount");
         if (finalAmount == null) {

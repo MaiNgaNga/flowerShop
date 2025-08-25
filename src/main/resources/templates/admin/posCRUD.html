@@ -47,7 +47,7 @@
                         <th>Mã đơn</th>
                         <th>Tổng tiền</th>
                         <th>Ngày bán</th>
-                        <th>Trạng thái</th>
+                        <th>Phương thức TT</th>
                         <th>Thao tác</th>
                       </tr>
                     </thead>
@@ -57,7 +57,7 @@
                       <td th:text="${order.orderCode}"></td>
                       <td th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'"></td>
                       <td th:text="${#dates.format(order.createDate, 'dd/MM/yyyy')}"></td>
-                      <td th:text="${order.status}"></td>
+                      <td th:text="${order.paymentMethod}"></td>
                       <td>
                         <a th:href="@{/admin/pos/index(orderId=${order.id})}" class="btn btn-sm btn-info">Chi tiết</a>
                         <a 
