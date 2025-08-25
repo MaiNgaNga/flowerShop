@@ -13,10 +13,10 @@
       onchange="this.form.submit()"
     >
       <option
-        value="Chưa xác nhận"
-        th:selected="${orderStatus == 'Chưa xác nhận'}"
+        value="Chờ xác nhận"
+        th:selected="${orderStatus == 'Chờ xác nhận'}"
       >
-        Chưa xác nhận
+        Chờ xác nhận
       </option>
       <option value="Đã xác nhận" th:selected="${orderStatus == 'Đã xác nhận'}">
         Đã xác nhận
@@ -151,7 +151,7 @@
             <button
               type="submit"
               class="btn btn-primary btn-sm mt-3"
-              th:if="${order.status == 'Chưa xác nhận'}"
+              th:if="${order.status == 'Chờ xác nhận'}"
               style="padding: 0.25rem 1rem"
             >
               Xác nhận
