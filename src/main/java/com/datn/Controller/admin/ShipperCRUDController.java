@@ -33,7 +33,6 @@ public class ShipperCRUDController {
     @ModelAttribute("users")
     public List<User> getAllUsers() {
         return userService.findAllNonShipper();
-
     }
 
     @ModelAttribute("shippers")
@@ -52,11 +51,12 @@ public class ShipperCRUDController {
         Shipper shipper = new Shipper();
         shipper.setUser(new User()); // Khởi tạo user để tránh NullPointerException
         model.addAttribute("shipper", shipper);
-        model.addAttribute("currentPage", page);
+        model.addAttribute("currentPage", shipperPage.getNumber());
         model.addAttribute("totalPages", shipperPage.getTotalPages());
+        model.addAttribute("totalElements", shipperPage.getTotalElements());
+        model.addAttribute("hasPrevious", shipperPage.hasPrevious());
+        model.addAttribute("hasNext", shipperPage.hasNext());
         model.addAttribute("shippers", shipperPage.getContent());
-
-        model.addAttribute("shipper", new Shipper()); // dùng cho form thêm mới
         model.addAttribute("view", "admin/shipperCRUD");
         return "admin/layout";
     }
@@ -77,27 +77,25 @@ public class ShipperCRUDController {
             return "admin/layout";
         }
 
-        if (shipper.getUser().getId() == 0) { // hoặc giá trị mặc định bạn gán từ <option>
+        if (shipper.getUser().getId() == 0) {
             model.addAttribute("error", "Vui lòng chọn người dùng hợp lệ!");
             model.addAttribute("view", "admin/shipperCRUD");
             return "admin/layout";
         }
-        // kiểm tra xem user đã có vai trò shipper chưa
+
         if (shipperService.existsByUserId(shipper.getUser().getId())) {
             model.addAttribute("error", "Người dùng này đã là shipper!");
-
             model.addAttribute("view", "admin/shipperCRUD");
             return "admin/layout";
         }
 
         User user = userService.findByID(shipper.getUser().getId());
         if (user != null) {
-            user.setRole(2); // hoặc true nếu bạn dùng boolean
-            userService.update(user); // Cập nhật lại user
+            user.setRole(2);
+            userService.update(user);
         }
 
         shipperService.save(shipper);
-
         redirectAttributes.addFlashAttribute("success", "Thêm shipper thành công!");
         return "redirect:/Shipper/index";
     }
@@ -108,12 +106,15 @@ public class ShipperCRUDController {
             Model model) {
         Shipper shipper = shipperService.findById(id);
         Pageable pageable = PageRequest.of(page, 10);
-        Page<Shipper> result = shipperService.findByAllShippers(pageable);
+        Page<Shipper> shipperPage = shipperService.findByAllShippers(pageable);
 
         model.addAttribute("shipper", shipper);
-        model.addAttribute("shippers", result.getContent());
-        model.addAttribute("currentPage", result.getNumber());
-        model.addAttribute("totalPages", result.getTotalPages());
+        model.addAttribute("shippers", shipperPage.getContent());
+        model.addAttribute("currentPage", shipperPage.getNumber());
+        model.addAttribute("totalPages", shipperPage.getTotalPages());
+        model.addAttribute("totalElements", shipperPage.getTotalElements());
+        model.addAttribute("hasPrevious", shipperPage.hasPrevious());
+        model.addAttribute("hasNext", shipperPage.hasNext());
         model.addAttribute("view", "admin/shipperCRUD");
         return "admin/layout";
     }
@@ -135,25 +136,19 @@ public class ShipperCRUDController {
             model.addAttribute("view", "admin/shipperCRUD");
             return "admin/layout";
         }
-        ;
 
         if (!CCCDValidator.isValidCCCD(shipper.getCccd())) {
             model.addAttribute("errorCCCD", "CCCD không hợp lệ! Phải gồm 12 chữ số và mã tỉnh hợp lệ.");
             model.addAttribute("view", "admin/shipperCRUD");
             return "admin/layout";
-
         }
 
-        // nếu không thay đổi trạng thái, giữ nguyên
         if (shipper.getStatus() == null) {
             shipper.setStatus(existing.getStatus());
         } else {
-            // nếu có thay đổi trạng thái, cập nhật lại
             existing.setStatus(shipper.getStatus());
         }
-        // Lấy lại User từ DB nếu form không gửi đủ dữ liệu
-        shipper.setUser(existing.getUser()); // Giữ nguyên User đã có
-
+        shipper.setUser(existing.getUser());
         shipperService.update(shipper);
         redirectAttributes.addFlashAttribute("success", "Cập nhật shipper thành công!");
         return "redirect:/Shipper/edit/" + shipper.getId();
@@ -165,17 +160,13 @@ public class ShipperCRUDController {
         try {
             Shipper shipper = shipperService.findById(id);
             if (shipper != null) {
-                // Cập nhật trạng thái nếu cần
-                // Cập nhật lại shipper
-                shipperService.save(shipper);
-
-                redirectAttributes.addFlashAttribute("success", "Đã gỡ shipper thành công!");
-                // Cập nhật vai trò của User về "user thường"
                 User user = userService.findByID(shipper.getUser().getId());
                 if (user != null) {
-                    user.setRole(0); // hoặc giá trị tương ứng với "user thường"
+                    user.setRole(0);
                     userService.update(user);
                 }
+                shipperService.save(shipper);
+                redirectAttributes.addFlashAttribute("success", "Đã gỡ shipper thành công!");
             } else {
                 redirectAttributes.addFlashAttribute("error", "Không tìm thấy shipper để xóa.");
             }
@@ -206,12 +197,15 @@ public class ShipperCRUDController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             Model model) {
         Pageable pageable = PageRequest.of(page, 10);
-        Page<Shipper> result = shipperService.searchByStatus(status, pageable);
+        Page<Shipper> shipperPage = shipperService.searchByStatus(status, pageable);
 
         model.addAttribute("status", status);
-        model.addAttribute("shippers", result.getContent());
-        model.addAttribute("currentPage", result.getNumber());
-        model.addAttribute("totalPages", result.getTotalPages());
+        model.addAttribute("shippers", shipperPage.getContent());
+        model.addAttribute("currentPage", shipperPage.getNumber());
+        model.addAttribute("totalPages", shipperPage.getTotalPages());
+        model.addAttribute("totalElements", shipperPage.getTotalElements());
+        model.addAttribute("hasPrevious", shipperPage.hasPrevious());
+        model.addAttribute("hasNext", shipperPage.hasNext());
         model.addAttribute("shipper", new Shipper());
         model.addAttribute("view", "admin/shipperCRUD");
         return "admin/layout";
