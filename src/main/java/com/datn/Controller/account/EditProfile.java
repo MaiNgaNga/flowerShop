@@ -57,7 +57,18 @@ public String postMethodName(Model model,@Valid @ModelAttribute User user,Errors
 
     public String showEditForm(Model model){
         model.addAttribute("productCategories", pro_ca_Service.findAll());
-        model.addAttribute("view", "account/profile");
-        return "layouts/layout";
+        User user = authService.getUser();
+        model.addAttribute("user", user);
+
+        if (user.getRole() == 0) {
+            model.addAttribute("view", "account/profile");
+            return "layouts/layout";
+        }else if (user.getRole()== 3 || user.getRole()==1) {
+            model.addAttribute("view", "account/profile");
+            return "layouts/pos-layout";
+        }
+        
+        return "redirect:/login";
+       
     }
 }

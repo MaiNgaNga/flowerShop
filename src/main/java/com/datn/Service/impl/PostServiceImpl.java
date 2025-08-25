@@ -42,19 +42,19 @@ public class PostServiceImpl implements PostService {
 
         if (!imageFile.isEmpty()) {
             entity.setImage(
-                    param.save(imageFile, "D:\\Vs_Java5\\Assignment\\src\\main\\resources\\static\\images")
+                    param.save(imageFile, "D:\\Graduation Project\\Git2\\src\\main\\resources\\static\\images")
                             .getName());
         }
 
         return dao.save(entity);
-    }
+    }   
 
     @Override
     public Post update(Post entity, MultipartFile imageFile, String oldImage) {
         if (dao.existsById(entity.getId())) {
             if (!imageFile.isEmpty()) {
                 entity.setImage(
-                        param.save(imageFile, "D:\\Vs_Java5\\Assignment\\src\\main\\resources\\static\\images")
+                        param.save(imageFile, "D:\\Graduation Project\\Git2\\src\\main\\resources\\static\\images")
                                 .getName());
             } else {
                 entity.setImage(oldImage);

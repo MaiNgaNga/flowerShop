@@ -65,7 +65,7 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Override
     public Page<Promotion> findByAllPromotion(Pageable pageable) {
-        return promotionDAO.findAll(pageable);
+        return promotionDAO.findAllPromotions(pageable);
     }
 
     @Override

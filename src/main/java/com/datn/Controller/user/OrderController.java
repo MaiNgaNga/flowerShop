@@ -87,6 +87,7 @@ public class OrderController {
     @PostMapping("/apply-voucher")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> applyVoucher(@RequestParam("voucher") String code, HttpSession session) {
+       
         Map<String, Object> response = new HashMap<>();
         User user = authService.getUser();
         double totalAmount = cartItemService.getTotalAmount(user.getId());

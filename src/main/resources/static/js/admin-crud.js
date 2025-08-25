@@ -313,12 +313,12 @@ function validateProductForm() {
 }
 
 // Xác nhận xóa sản phẩm
-function confirmDelete(element) {
-  const url = element.getAttribute("data-url");
-  if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
-    window.location.href = url;
-  }
-}
+// function confirmDelete(element) {
+//   const url = element.getAttribute("data-url");
+//   if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
+//     window.location.href = url;
+//   }
+// }
 
 // Xóa bộ lọc sản phẩm
 function clearProductFilter() {
@@ -1098,14 +1098,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const deleteButtons = document.querySelectorAll(
     ".btn-danger, .delete-btn, a[href*='delete']"
   );
-  deleteButtons.forEach(function (btn) {
-    btn.addEventListener("click", function (e) {
-      if (!confirm("Bạn có chắc chắn muốn thực hiện hành động này?")) {
-        e.preventDefault();
-        return false;
-      }
-    });
-  });
 
   // 10. Xử lý nút "Làm mới" - không trigger validation
   const refreshButtons = document.querySelectorAll(

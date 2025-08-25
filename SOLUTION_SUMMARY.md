@@ -19,7 +19,7 @@
 - Fallback mechanism cho compatibility
 
 ### 2. Enhanced Image Refresh System
-**File: `ProductCRUD.html`**
+**File: `ProductCRUD.html`**``   
 - **Multiple Refresh Strategies**: 
   - Clear src trước khi reload
   - Timestamp parameters để bypass cache
