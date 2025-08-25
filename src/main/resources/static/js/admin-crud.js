@@ -363,7 +363,7 @@ function checkBackendValidationErrors() {
         return;
       }
     }
-    
+
     // Logic thông thường cho các CRUD khác
     if (errors.length === 1) {
       showCustomAlert(errors[0], "error");
@@ -450,10 +450,10 @@ function validateProductCategoryForm() {
 
   // Clear all previous errors
   clearAllFieldErrors();
-  
+
   // Xóa luôn cả backend errors để tránh hiển thị chồng chéo
   const backendErrors = document.querySelectorAll("i.error");
-  backendErrors.forEach(error => {
+  backendErrors.forEach((error) => {
     error.textContent = "";
     error.style.display = "none";
   });
@@ -695,15 +695,17 @@ function validateUserForm() {
     if (isNewUser) {
       showFieldError("password", "Vui lòng nhập mật khẩu");
     }
-    
+
     // Hiển thị lỗi role ngay từ đầu
-    const roleContainer = document.querySelector('input[name="role"]').closest('.d-flex');
+    const roleContainer = document
+      .querySelector('input[name="role"]')
+      .closest(".d-flex");
     if (roleContainer) {
       roleContainer.style.border = "1px solid #dc3545";
       roleContainer.style.borderRadius = "4px";
       roleContainer.style.padding = "5px";
     }
-    
+
     const roleErrorElement = document.createElement("i");
     roleErrorElement.className = "error";
     roleErrorElement.textContent = "Vui lòng chọn vai trò";
@@ -712,14 +714,14 @@ function validateUserForm() {
     roleErrorElement.style.display = "block";
     roleErrorElement.style.marginTop = "5px";
     roleErrorElement.id = "role-error";
-    
+
     const oldError = document.getElementById("role-error");
     if (oldError) oldError.remove();
-    
+
     if (roleContainer) {
       roleContainer.parentNode.appendChild(roleErrorElement);
     }
-    
+
     return false;
   }
 
@@ -917,12 +919,12 @@ document.addEventListener("DOMContentLoaded", function () {
       let isValid = true;
 
       // Kiểm tra xem có phải là click vào nút "Làm mới" không
-      const isRefreshAction = e.submitter && (
-        e.submitter.textContent.includes("Làm Mới") ||
-        e.submitter.querySelector(".fa-sync") ||
-        (e.submitter.href && e.submitter.href.includes("index"))
-      );
-      
+      const isRefreshAction =
+        e.submitter &&
+        (e.submitter.textContent.includes("Làm Mới") ||
+          e.submitter.querySelector(".fa-sync") ||
+          (e.submitter.href && e.submitter.href.includes("index")));
+
       if (isRefreshAction) {
         // Không validate cho nút "Làm mới"
         clearAllFieldErrors();
@@ -1105,8 +1107,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // Kiểm tra nếu là nút "Làm mới" dựa vào text hoặc icon
     const btnText = btn.textContent.trim().toLowerCase();
     const hasRefreshIcon = btn.querySelector(".fa-sync, .fa-refresh");
-    
-    if (btnText.includes("làm mới") || btnText.includes("refresh") || hasRefreshIcon) {
+
+    if (
+      btnText.includes("làm mới") ||
+      btnText.includes("refresh") ||
+      hasRefreshIcon
+    ) {
       btn.addEventListener("click", function (e) {
         // Xóa tất cả lỗi trước khi chuyển trang
         clearAllFieldErrors();

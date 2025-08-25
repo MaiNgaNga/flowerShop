@@ -16,6 +16,38 @@
     </div>
   </div>
 </div>
+
+<!-- Modal xác nhận hủy đơn hàng -->
+<div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cancelOrderModalLabel">
+          <i class="fas fa-exclamation-triangle text-warning"></i> Xác nhận hủy đơn hàng
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-warning">
+          <i class="fas fa-info-circle"></i>
+          <strong>Bạn có chắc chắn muốn hủy đơn hàng này không?</strong>
+        </div>
+        <p>Đơn hàng <strong th:text="${orderCode}"></strong> sẽ bị hủy và không thể khôi phục.</p>
+        <p class="text-muted mb-0">
+          <i class="fas fa-arrow-left"></i> Sau khi hủy, bạn sẽ được chuyển về trang POS để tạo đơn hàng mới.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="fas fa-times"></i> Không, tiếp tục chờ
+        </button>
+        <button type="button" class="btn btn-danger" id="confirmCancelBtn">
+          <i class="fas fa-trash-alt"></i> Có, hủy đơn hàng
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 <link rel="stylesheet" th:href="@{/css/pos-payment-qr.css}" />
 <div class="qr-main-container">
   <div class="qr-left">
@@ -128,15 +160,22 @@
       <button class="btn btn-info" id="printQRBtn">
         <i class="fas fa-print"></i> In mã QR
       </button>
+      <button 
+        type="button" 
+        class="btn btn-outline-danger"
+        data-bs-toggle="modal"
+        data-bs-target="#cancelOrderModal"
+      >
+        <i class="fas fa-times"></i> Hủy & Quay lại POS
+      </button>
+      <!-- Form ẩn để submit sau khi xác nhận -->
       <form
+        id="cancelOrderForm"
         th:action="@{/pos/cancel-order}"
         method="post"
-        style="display: inline"
+        style="display: none"
       >
         <input type="hidden" name="orderCode" th:value="${orderCode}" />
-        <button type="submit" class="btn btn-outline-danger">
-          <i class="fas fa-times"></i> Hủy & Quay lại POS
-        </button>
       </form>
     </div>
   </div>

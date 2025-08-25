@@ -1,6 +1,7 @@
 package com.datn.Service.impl;
 
 import com.datn.utils.StringUtils;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,23 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductCategoryService productCategoryService;
 
+    /**
+     * Tạo đường dẫn thư mục images một cách nhất quán
+     */
+    private String getImagesPath() {
+        String path = System.getProperty("user.dir") + "/src/main/resources/static/images";
+        System.out.println("Images path: " + path);
+        
+        // Kiểm tra và tạo thư mục nếu chưa tồn tại
+        File directory = new File(path);
+        if (!directory.exists()) {
+            boolean created = directory.mkdirs();
+            System.out.println("Created images directory: " + created);
+        }
+        
+        return path;
+    }
+
     @Override
     public List<Product> findAll() {
         return dao.findAll();
@@ -55,17 +73,34 @@ public class ProductServiceImpl implements ProductService {
             throw new IllegalArgumentException("ID sản phẩm này đã tồn tại!");
         }
 
+        String imagePath = getImagesPath();
+        
         if (image1 != null && !image1.isEmpty()) {
-            entity.setImage_url(param.save(image1,
-                    "D:\\Graduation Project\\Git2\\src\\main\\resources\\static\\images").getName());
+            File savedFile = param.save(image1, imagePath);
+            if (savedFile != null) {
+                entity.setImage_url(savedFile.getName());
+                System.out.println("Saved image1: " + savedFile.getName());
+            } else {
+                System.err.println("Failed to save image1");
+            }
         }
         if (image2 != null && !image2.isEmpty()) {
-            entity.setImage_url2(param.save(image2,
-                    "D:\\Graduation Project\\Git2\\src\\main\\resources\\static\\images").getName());
+            File savedFile = param.save(image2, imagePath);
+            if (savedFile != null) {
+                entity.setImage_url2(savedFile.getName());
+                System.out.println("Saved image2: " + savedFile.getName());
+            } else {
+                System.err.println("Failed to save image2");
+            }
         }
         if (image3 != null && !image3.isEmpty()) {
-            entity.setImage_url3(param.save(image3,
-                    "D:\\Graduation Project\\Git2\\src\\main\\resources\\static\\images").getName());
+            File savedFile = param.save(image3, imagePath);
+            if (savedFile != null) {
+                entity.setImage_url3(savedFile.getName());
+                System.out.println("Saved image3: " + savedFile.getName());
+            } else {
+                System.err.println("Failed to save image3");
+            }
         }
         return dao.save(entity);
     }
@@ -75,30 +110,49 @@ public class ProductServiceImpl implements ProductService {
             String[] oldImages) {
 
         if (dao.existsById(entity.getId())) {
+            String imagePath = getImagesPath();
+            
             // Ảnh 1
             if (image1 != null && !image1.isEmpty()) {
-                entity.setImage_url(param.save(image1,
-                        "D:\\Graduation Project\\Git2\\src\\main\\resources\\static\\images").getName());
+                File savedFile = param.save(image1, imagePath);
+                if (savedFile != null) {
+                    entity.setImage_url(savedFile.getName());
+                    System.out.println("Updated image1: " + savedFile.getName());
+                } else {
+                    System.err.println("Failed to update image1");
+                }
             } else {
                 String oldImage1 = (oldImages != null && oldImages.length > 0 && !oldImages[0].isEmpty()) ? oldImages[0]
                         : null;
                 entity.setImage_url(oldImage1);
+                System.out.println("Keeping old image1: " + oldImage1);
             }
 
             // Ảnh 2
             if (image2 != null && !image2.isEmpty()) {
-                entity.setImage_url2(param.save(image2,
-                        "D:\\Graduation Project\\Git2\\src\\main\\resources\\static\\images").getName());
+                File savedFile = param.save(image2, imagePath);
+                if (savedFile != null) {
+                    entity.setImage_url2(savedFile.getName());
+                    System.out.println("Updated image2: " + savedFile.getName());
+                } else {
+                    System.err.println("Failed to update image2");
+                }
             } else {
                 String oldImage2 = (oldImages != null && oldImages.length > 1 && !oldImages[1].isEmpty()) ? oldImages[1]
                         : null;
                 entity.setImage_url2(oldImage2);
+                System.out.println("Keeping old image2: " + oldImage2);
             }
 
             // Ảnh 3 - Fixed logic
             if (image3 != null && !image3.isEmpty()) {
-                entity.setImage_url3(param.save(image3,
-                        "D:\\Graduation Project\\Git2\\src\\main\\resources\\static\\images").getName());
+                File savedFile = param.save(image3, imagePath);
+                if (savedFile != null) {
+                    entity.setImage_url3(savedFile.getName());
+                    System.out.println("Updated image3: " + savedFile.getName());
+                } else {
+                    System.err.println("Failed to update image3");
+                }
             } else {
                 // Fix: Kiểm tra chính xác oldImages array
                 String oldImage3 = null;
@@ -109,6 +163,7 @@ public class ProductServiceImpl implements ProductService {
                     }
                 }
                 entity.setImage_url3(oldImage3);
+                System.out.println("Keeping old image3: " + oldImage3);
             }
             dao.save(entity);
         } else {

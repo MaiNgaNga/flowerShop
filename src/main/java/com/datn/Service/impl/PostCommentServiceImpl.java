@@ -50,4 +50,9 @@ public class PostCommentServiceImpl implements PostCommentService {
     public void deleteComment(Long id) {
         postCommentDAO.deleteById(id);
     }
+
+    @Override
+    public List<PostComment> findByPostId(Long postId) {
+        return postCommentDAO.findByPostId(postId);
+    }
 }

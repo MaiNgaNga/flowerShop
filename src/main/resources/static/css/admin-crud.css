@@ -1140,7 +1140,7 @@ input[type="file"] {
 /* 2. THÔNG BÁO ALERT */
 .custom-alert {
   position: fixed;
-  top: 20px;
+  top: 80px;
   right: 20px;
   min-width: 300px;
   max-width: 500px;
