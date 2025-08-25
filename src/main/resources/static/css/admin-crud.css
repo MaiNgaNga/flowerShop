@@ -995,9 +995,6 @@ input[type="file"] {
   transition: box-shadow 0.3s ease;
 }
 
-.searchName {
-  border: 2px solid #90cdf4;
-}
 
 .filter-form form label {
   font-weight: 500;
@@ -1027,9 +1024,7 @@ input[type="file"] {
   background-color: #3ab0d4;
 }
 
-.filter-form form .form-control {
-  min-width: 160px;
-}
+
 
 .filter-form .btn-custom {
   background-color: #e2e2e2;

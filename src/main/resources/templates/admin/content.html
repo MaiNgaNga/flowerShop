@@ -14,7 +14,6 @@
       <div class="admin-user-menu dropdown">
         <button class="btn btn-light admin-log d-flex align-items-center gap-2" type="button" id="adminUserDropdown"
           data-bs-toggle="dropdown" aria-expanded="false">
-          <div class="admin-user-avatar">A</div>
           <div class="admin-user-info text-start">
             <h6 th:text="${session.user.name}" class="mb-0">Admin</h6>
             <span class="small" th:if="${session.user.role == 1}">Quản trị viên</span>
@@ -23,6 +22,13 @@
         </button>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminUserDropdown"
           style="margin-left:15px; min-width:130px;">
+          
+          <li>
+            <a class="dropdown-item" th:href="@{/editProfile}">Hồ sơ</a>
+          </li>
+          <li>
+            <a class="dropdown-item" th:href="@{/changPassword}">Đổi mật khẩu</a>
+          </li>
           <li>
             <form action="/logout" method="post" style="margin:0;">
               <button type="submit" class="dropdown-item text-danger" style="padding-left:18px;">
@@ -173,38 +179,40 @@
         <span class="admin-nav-item-text">Khuyến mãi</span>
       </a>
 
-      <!-- Phân vùng -->
-      <a
-        href="/Zone/index"
-        class="admin-nav-item standalone"
-        data-tooltip="Phân vùng"
-      >
-        <i class="fas fa-map-marked-alt"></i>
-        <span class="admin-nav-item-text">Phân vùng</span>
-      </a>
-
-      <!-- Xã -->
-      <a href="/Ward/index" class="admin-nav-item standalone" data-tooltip="Xã">
-        <i class="fas fa-map-marker-alt"></i>
-        <span class="admin-nav-item-text">Xã</span>
-      </a>
-
-      <!-- Liên hệ -->
-      <a
-        href="/Contact/index/admin"
-        class="admin-nav-item standalone"
-        data-tooltip="Liên hệ"
-      >
-        <i class="fas fa-envelope"></i>
-        <span class="admin-nav-item-text">Liên hệ</span>
-      </a>
-
-
-      <a href="/admin/reviews/index" class="admin-nav-item standalone" data-tooltip="Liên hệ">
-      <i class="fa-solid fa-thumbs-up"></i>
-        <span class="admin-nav-item-text">Đánh giá</span>
-      </a>
+      <!-- Quản lý khu vực -->
+      <div class="admin-nav-group">
+        <div class="admin-nav-group-header">
+          <i class="fas fa-map-marked-alt group-icon"></i>
+          <span class="group-text">Quản lý khu vực</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="admin-nav-group-items">
+          <a href="/Zone/index" class="admin-nav-item" data-tooltip="Phân vùng">
+            <span class="admin-nav-item-text">Phân vùng</span>
+          </a>
+          <a href="/Ward/index" class="admin-nav-item" data-tooltip="Xã">
+            <span class="admin-nav-item-text">Xã</span>
+          </a>
+        </div>
+      </div>
       
+      <!-- Hỗ trợ khách hàng -->
+      <div class="admin-nav-group">
+        <div class="admin-nav-group-header">
+          <i class="fas fa-headset group-icon"></i>
+          <span class="group-text">Hỗ trợ khách hàng</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="admin-nav-group-items">
+          <a href="/Contact/index/admin" class="admin-nav-item" data-tooltip="Liên hệ">
+            <span class="admin-nav-item-text">Liên hệ</span>
+          </a>
+          <a href="/admin/reviews/index" class="admin-nav-item" data-tooltip="Đánh giá">
+          
+            <span class="admin-nav-item-text">Đánh giá</span>
+          </a>
+        </div>
+      </div>
 
       
     </nav>
