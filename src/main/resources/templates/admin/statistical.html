@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
        <!-- Style css -->
     <link rel="stylesheet" th:href="@{/css/statistical.css}" />
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
    
 </head>
     <body>
@@ -56,27 +56,38 @@
         </li>
     </ul>
 
-    <!-- Bộ lọc năm & tháng -->
-    <div class="filter-container mb-3 d-flex justify-content-center">
-        <select id="yearSelect" class="form-select w-auto">
-            <option value="2024" th:selected="${selectedYear == 2024}">2024</option>
-            <option value="2025" th:selected="${selectedYear == 2025}">2025</option>
-        </select>
-        <select id="monthSelect" class="form-select w-auto">
-            <option value="1" th:selected="${selectedMonth == 1}">Tháng 1</option>
-            <option value="2" th:selected="${selectedMonth == 2}">Tháng 2</option>
-            <option value="3" th:selected="${selectedMonth == 3}">Tháng 3</option>
-            <option value="4" th:selected="${selectedMonth == 4}">Tháng 4</option>
-            <option value="5" th:selected="${selectedMonth == 5}">Tháng 5</option>
-            <option value="6" th:selected="${selectedMonth == 6}">Tháng 6</option>
-            <option value="7" th:selected="${selectedMonth == 7}">Tháng 7</option>
-            <option value="8" th:selected="${selectedMonth == 8}">Tháng 8</option>
-            <option value="9" th:selected="${selectedMonth == 9}">Tháng 9</option>
-            <option value="10" th:selected="${selectedMonth == 10}">Tháng 10</option>
-            <option value="11" th:selected="${selectedMonth == 11}">Tháng 11</option>
-            <option value="12" th:selected="${selectedMonth == 12}">Tháng 12</option>
-        </select>
+<div class="filter-section">
+    <div class="filter-container">
+        <div class="filter-group">
+            <label for="yearSelect" class="filter-label">
+                <i class="bi bi-calendar-year"></i> Năm
+            </label>
+            <select id="yearSelect" class="filter-select">
+                <option value="2024" th:selected="${selectedYear == 2024}">2024</option>
+                <option value="2025" th:selected="${selectedYear == 2025}">2025</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="monthSelect" class="filter-label">
+                <i class="bi bi-calendar-month"></i> Tháng
+            </label>
+            <select id="monthSelect" class="filter-select">
+                <option value="1" th:selected="${selectedMonth == 1}">Tháng 1</option>
+                <option value="2" th:selected="${selectedMonth == 2}">Tháng 2</option>
+                <option value="3" th:selected="${selectedMonth == 3}">Tháng 3</option>
+                <option value="4" th:selected="${selectedMonth == 4}">Tháng 4</option>
+                <option value="5" th:selected="${selectedMonth == 5}">Tháng 5</option>
+                <option value="6" th:selected="${selectedMonth == 6}">Tháng 6</option>
+                <option value="7" th:selected="${selectedMonth == 7}">Tháng 7</option>
+                <option value="8" th:selected="${selectedMonth == 8}">Tháng 8</option>
+                <option value="9" th:selected="${selectedMonth == 9}">Tháng 9</option>
+                <option value="10" th:selected="${selectedMonth == 10}">Tháng 10</option>
+                <option value="11" th:selected="${selectedMonth == 11}">Tháng 11</option>
+                <option value="12" th:selected="${selectedMonth == 12}">Tháng 12</option>
+            </select>
+        </div>
     </div>
+</div>
 
     <script>
         document.getElementById("monthSelect").addEventListener("change", redirectToStatistical);
@@ -102,48 +113,84 @@
       aria-labelledby="edit-tab"
     >
      
-    <!-- 4 Thẻ thống kê -->
-    <center>
-        <div class="stats-container">
-            <div class="card green">
-                <div class="card-content">
-                    <div class="number" id="monthlyRevenue" th:text="${#numbers.formatDecimal(monthlyRevenue, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</div>
-                    <div class="label">Tổng doanh thu trong tháng [[${selectedMonth}]]</div>
-                </div>  
-            </div>
-            <div class="card purple">
-                <div class="card-content">
-                    <div class="number" id="canceledOrders" th:text="${canceledOrders}">0</div>
-                    <div class="label">Đơn giao hàng thành công trong tháng [[${selectedMonth}]]</div>
-                </div>
-            </div>
-            <div class="card orange">
-                <div class="card-content">
-                    <div class="number" id="totalOrders" th:text="${totalOrders}">0</div>
-                    <div class="label">Số lượng đơn đặt hàng trong tháng [[${selectedMonth}]]</div>
-                </div>
-            </div>
-            <div class="card pink">
-                <div class="card-content">
-                    <div class="number" id="totalOrdersByMonth" th:text="${totalOrdersByMonth}">0</div>
-                    <div class="label">Số lượng đơn đặt dịch vụ trong tháng [[${selectedMonth}]]</div>
-                </div>
-            </div>
-        </div>  
-    </center>
 
+<!--   4 thẻ tháng-->
+     <!-- 4 thẻ thống kê tháng -->
+<div class="statistics-dashboard">
+    <div class="stats-grid">
+        <!-- Tổng doanh thu tháng -->
+        <div class="stat-card revenue">
+            <div class="stat-content">
+                <div class="stat-icon">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value revenue-value" id="monthlyRevenue" 
+                         th:text="${#numbers.formatDecimal(monthlyRevenue, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</div>
+                    <div class="stat-label">Tổng doanh thu trong  tháng [[${selectedMonth}]]</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Đơn giao thành công tháng -->
+        <div class="stat-card orders">
+            <div class="stat-content">
+                <div class="stat-icon">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+                <div class="stat-info">
+               
+                    <div class="stat-value" id="canceledOrders" th:text="${canceledOrders}">0</div>
+
+                    <div class="stat-label">Đơn giao thành công trong tháng [[${selectedMonth}]]</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Đơn dịch vụ tháng -->
+        <div class="stat-card services">
+            <div class="stat-content">
+                <div class="stat-icon">
+                    <i class="bi bi-gift"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="totalOrdersByMonth" th:text="${totalOrdersByMonth}">0</div>
+                    <div class="stat-label">Đơn dịch vụ trong tháng [[${selectedMonth}]]</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Đơn đặt hàng tháng -->
+        <div class="stat-card sales">
+            <div class="stat-content">
+                <div class="stat-icon">
+                    <i class="bi bi-bag"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="totalOrders" th:text="${totalOrders}">0</div>
+                    <div class="stat-label">Đơn đặt trong  tháng [[${selectedMonth}]]</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+ 
+ 
     <!-- Biểu đồ doanh thu theo ngày trong tháng -->
     <div class="container">
         <div class="row">
             <div class="col-md-8 mb-4">
                 <div class="chart-card">
                     <h4 class="text-center">Doanh thu theo ngày trong tháng [[${selectedMonth}]] năm [[${selectedYear}]]</h4>
-                    <canvas id="dailyRevenueChart"></canvas>
+              
+    <canvas  style="width: 100%; height: 430px;  position: relative;" id="dailyRevenueChart"></canvas>
+
                 </div>
             </div>
             <div class="col-md-4 mb-4">
                 <div class="chart-card">
-                    <h4 class="text-center">6 danh mục bán chạy tháng [[${selectedMonth}]] năm [[${selectedYear}]]</h4>
+                    <h4 class="text-center">6 danh mục bán chạy trong  tháng [[${selectedMonth}]] năm [[${selectedYear}]]</h4>
                     <div style="max-width: 300px; margin: 0 auto; height: 300px; position: relative;">
                         <canvas id="topProductsByMonthChart"></canvas>
                     </div>
@@ -162,43 +209,77 @@
       role="tabpanel"
       aria-labelledby="list-tab"
     >
-    
-    <center>
-        <div class="stats-container">
-            <div class="card blue">
-                <div class="card-content">
-                    <div class="number" id="totalRevenue" th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</div>
-                    <div class="label">Tổng doanh thu trong năm [[${selectedYear}]]</div>
+    <!-- // 4 thẻ năm -->
+     
+ 
+<!-- 4 thẻ thống kê năm -->
+<div class="statistics-dashboard">
+    <div class="stats-grid">
+        <!-- Tổng doanh thu năm -->
+        <div class="stat-card revenue">
+            <div class="stat-content">
+                <div class="stat-icon">
+                    <i class="bi bi-cash-stack"></i>
                 </div>
-            </div>
-            <div class="card purple">
-                <div class="card-content">
-                    <div class="number" id="totalOrdersInYear1" th:text="${totalOrdersInYear1}">0</div>
-                    <div class="label">Tổng số đơn đặt dịch vụ trong năm [[${selectedYear}]]</div>
-                </div>
-            </div>
-            <div class="card pink">
-                <div class="card-content">
-                    <div class="number" id="totalOrdersInYear" th:text="${totalOrdersInYear}">0</div>
-                    <div class="label">Tổng số đơn đặt hàng trong năm [[${selectedYear}]]</div>
-                </div>
-            </div>
-            <div class="card orange">
-                <div class="card-content">
-                    <div class="number" id="deliveredOrdersInYear" th:text="${deliveredOrdersInYear}">0</div>
-                    <div class="label">Số lượng đơn đã giao trong năm [[${selectedYear}]]</div>
+                <div class="stat-info">
+                  <div class="stat-value revenue-value" id="totalRevenue" 
+     th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</div>
+                    <div class="stat-label">Tổng doanh thu trong  năm [[${selectedYear}]]</div>
                 </div>
             </div>
         </div>
-    </center>
+
+        <!-- Đơn giao thành công năm -->
+        <div class="stat-card orders">
+            <div class="stat-content">
+                <div class="stat-icon">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="deliveredOrdersInYear" th:text="${deliveredOrdersInYear}">0</div>
+                    <div class="stat-label">Đơn giao thành công trong năm [[${selectedYear}]]</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Đơn dịch vụ năm -->
+        <div class="stat-card services">
+            <div class="stat-content">
+                <div class="stat-icon">
+                    <i class="bi bi-gift"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="totalOrdersInYear1" th:text="${totalOrdersInYear1}">0</div>
+                    <div class="stat-label">Đơn dịch vụ trong  năm [[${selectedYear}]]</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Đơn đặt hàng năm -->
+        <div class="stat-card sales">
+            <div class="stat-content">
+                <div class="stat-icon">
+                    <i class="bi bi-bag"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" id="totalOrdersInYear" th:text="${totalOrdersInYear}">0</div>
+                    <div class="stat-label">Đơn đặt hàng trong  năm [[${selectedYear}]]</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
     <!-- Biểu đồ xu hướng doanh số và danh mục -->
     <div class="container">
         <div class="row">
             <div class="col-md-8 mb-4">
                 <div class="chart-card">
-                    <h4 class="text-center">Xu hướng doanh số năm: [[${selectedYear}]]</h4>
-                    <canvas id="lineChart"></canvas>
+                    <h4 class="text-center">Xu hướng doanh số trong năm: [[${selectedYear}]]</h4>
+                    <canvas  style="width: 100%; height: 173px;  position: relative;"  id="lineChart"></canvas>
+                      
+
                 </div>
             </div>
             <div class="col-md-4 mb-4">
@@ -328,24 +409,26 @@
     fetchDailyRevenueData(defaultMonth, defaultYear);
     fetchTopProductsByMonth(defaultMonth, defaultYear); // Thêm để tải dữ liệu top danh mục theo tháng
 
-    // Cập nhật biểu đồ khi thay đổi tháng hoặc năm
-    document.getElementById('monthSelect').addEventListener('change', function () {
-        const month = this.value;
-        const year = document.getElementById('yearSelect').value;
-        fetchDailyRevenueData(month, year);
-        fetchTopProductsByMonth(month, year); // Thêm để cập nhật biểu đồ top danh mục
-        redirectToStatistical(); // Tải lại trang
-    });
+ // Thay đổi event listeners cho monthSelect và yearSelect
+document.getElementById('monthSelect').addEventListener('change', function () {
+    const month = this.value;
+    const year = document.getElementById('yearSelect').value;
+    fetchDailyRevenueData(month, year);
+    fetchTopProductsByMonth(month, year);
+    window.location.href = `/statistical?month=${month}&year=${year}`; // Di chuyển redirect xuống cuối
+});
 
-    document.getElementById('yearSelect').addEventListener('change', function () {
-        const year = this.value;
-        const month = document.getElementById('monthSelect').value;
-        fetchRevenueData(year);
-        fetchTopProducts(year);
-        fetchDailyRevenueData(month, year);
-        fetchTopProductsByMonth(month, year); // Thêm để cập nhật biểu đồ top danh mục
-        redirectToStatistical(); // Tải lại trang
-    });
+document.getElementById('yearSelect').addEventListener('change', function () {
+    const year = this.value;
+    const month = document.getElementById('monthSelect').value;
+    fetchRevenueData(year);
+    fetchTopProducts(year);
+    fetchDailyRevenueData(month, year);
+    fetchTopProductsByMonth(month, year);
+    window.location.href = `/statistical?month=${month}&year=${year}`; // Di chuyển redirect xuống cuối
+});
+
+// Xóa hàm redirectToStatistical() vì không cần thiết nữa
 
       const pieCtx = document.getElementById('topProductsChart').getContext('2d');
 let pieChart;
