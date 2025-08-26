@@ -266,6 +266,7 @@
               <i class="fa fa-trash me-1"></i> Xóa
             </button>
             <button
+            style="width: 150px;"
               type="submit"
               class="btn btn-success btn-sm"
               th:formaction="@{/User/index}"
@@ -314,7 +315,7 @@
                 <option value="3" th:selected="${role == '3'}">Staff</option>
               </select>
               <a
-                style="width: 160px; height: 40px"
+                style="width: 200px; height: 40px"
                 th:href="@{'/User/index#list'}"
                 class="btn btn-custom ms-2"
                 >Làm mới</a
@@ -343,12 +344,12 @@
                 th:value="${name}"
                 placeholder="Tên người dùng"
                 class="form-control form-control-sm searchName"
-                style="max-width: 180px"
+                style="max-width: 300px;height: 40px;"
               />
               <button
                 class="btn btn-primary btn-sm"
                 type="submit"
-                style="width: 70px; height: 40px"
+                style="width: 100px; height: 40px"
               >
                 Tìm
               </button>
