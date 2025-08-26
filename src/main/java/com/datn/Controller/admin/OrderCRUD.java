@@ -87,7 +87,7 @@ public String checkout(@PathVariable("orderId") Long orderId,
                        RedirectAttributes redirectAttributes) {
     Order order = orderService.getOrderById(orderId);
     if (order == null) {
-        redirectAttributes.addFlashAttribute("errorMessage", "Đơn hàng không tồn tại!");
+        redirectAttributes.addFlashAttribute("error", "Đơn hàng không tồn tại!");
         return "redirect:/orderAdmin";
     }
 
@@ -95,21 +95,21 @@ public String checkout(@PathVariable("orderId") Long orderId,
         case "Chờ giao":
             if (order.getStatus().equals("Chờ xác nhận")) {
                 orderService.updateStatus(orderId, "Chờ giao");
-                redirectAttributes.addFlashAttribute("successMessage", "Xác nhận đơn hàng "+ orderId+" thành công!");
+                redirectAttributes.addFlashAttribute("success", "Xác nhận đơn hàng "+ orderId+" thành công!");
             }
             break;
         case "Hủy đơn":
                 orderService.updateStatus(orderId, "Đã hủy");
-                redirectAttributes.addFlashAttribute("successMessage", "Đã hủy đơn hàng "+ orderId+" !");
+                redirectAttributes.addFlashAttribute("success", "Đã hủy đơn hàng "+ orderId+" !");
             break;
         case "Hoàn tất":
             if (order.getStatus().equals("Chờ giao")) {
                 orderService.updateStatus(orderId, "Hoàn tất");
-                redirectAttributes.addFlashAttribute("successMessage", "Đơn hàng "+ orderId+" đã được giao!");
+                redirectAttributes.addFlashAttribute("success", "Đơn hàng "+ orderId+" đã được giao!");
             }
              if (order.getStatus().equals("Giao thất bại")) {
                 orderService.updateStatus(orderId, "Hoàn tất");
-                redirectAttributes.addFlashAttribute("successMessage", "Đơn hàng "+ orderId+" đã hoàn tất!");
+                redirectAttributes.addFlashAttribute("success", "Đơn hàng "+ orderId+" đã hoàn tất!");
             }
             break;
         default:
@@ -124,14 +124,14 @@ public String checkout(@PathVariable("orderId") Long orderId,
 public String recreateOrder(@PathVariable("orderId") Long orderId, RedirectAttributes redirectAttributes) {
     try {
         orderService.recreateOrder(orderId);
-        redirectAttributes.addFlashAttribute("successMessage", "Tạo lại đơn hàng thành công!");
-        String encodedStatus = URLEncoder.encode("Đang giao lại", StandardCharsets.UTF_8);
+        redirectAttributes.addFlashAttribute("success", "Tạo lại đơn hàng thành công!");
+        String encodedStatus = URLEncoder.encode("Giao lại", StandardCharsets.UTF_8);
         return "redirect:/orderAdmin?orderStatus=" + encodedStatus;
     } catch (IllegalStateException e) {
         redirectAttributes.addFlashAttribute("toastError", e.getMessage());
         return "redirect:/orderAdmin?orderStatus=Giao thất bại";
     } catch (IllegalArgumentException e) {
-        redirectAttributes.addFlashAttribute("errorMessage", "Đơn hàng không tồn tại!");
+        redirectAttributes.addFlashAttribute("error", "Đơn hàng không tồn tại!");
         return "redirect:/orderAdmin?orderStatus=Giao thất bại";
     }
 }

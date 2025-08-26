@@ -267,6 +267,7 @@ public class OrderController {
             // Thanh toán COD
             cartItemService.clearCartByUserId(user.getId());
             model.addAttribute("success", "Đặt hàng thành công! Bạn sẽ thanh toán khi nhận hàng.");
+
         }
 
         session.removeAttribute("finalAmount");
@@ -299,6 +300,7 @@ public class OrderController {
 
                     redirectAttributes.addFlashAttribute("success",
                             "Thanh toán thành công! Đơn hàng của bạn đã được xác nhận.");
+                            
                 } else {
                     redirectAttributes.addFlashAttribute("error", "Không tìm thấy thông tin đơn hàng.");
                 }

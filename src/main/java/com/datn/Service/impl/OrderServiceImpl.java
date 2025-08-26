@@ -81,7 +81,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     // ServiceImpl: Thống kê doanh thu theo ngày trong tháng/năm (chỉ lấy đơn hàng
-    // 'Đã giao')
+    // 'Hoàn tất')
     @Override
     public Map<Integer, Double> getDailyRevenueByMonthAndYear(int month, int year) {
         List<Object[]> results = dao.getDailyRevenueByMonthAndYear(month, year);
@@ -193,8 +193,8 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("Shipper không tồn tại"));
 
         // Kiểm tra trạng thái hợp lệ
-        if (!order.getStatus().equals("Đã xác nhận") && !order.getStatus().equals("Đang giao lại")) {
-            throw new IllegalStateException("Chỉ có thể nhận đơn hàng ở trạng thái 'Đã xác nhận' hoặc 'Đang giao lại'");
+        if (!order.getStatus().equals("Chờ giao") && !order.getStatus().equals("Giao lại")) {
+            throw new IllegalStateException("Chỉ có thể nhận đơn hàng ở trạng thái 'Chờ giao' hoặc 'Giao lại'");
         }
 
         order.setStatus("Đang giao");
@@ -219,7 +219,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getHistoryOrders(int shipperId) {
-        return dao.findByStatusInAndShipperId(List.of("Đã giao"), shipperId);
+        return dao.findByStatusInAndShipperId(List.of("Hoàn tất"), shipperId);
     }
 
     @Override
@@ -232,7 +232,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = dao.findById(orderId).orElse(null);
         User shipper = userDAO.findById(shipperId).orElse(null);
         if (order != null && shipper != null && "Đang giao".equals(order.getStatus())) {
-            order.setStatus("Đã giao");
+            order.setStatus("Hoàn tất");
             order.setShipper(shipper);
             dao.save(order);
         }
@@ -317,7 +317,7 @@ public class OrderServiceImpl implements OrderService {
         dao.save(canceledOrder);
         // Tạo đơn hàng mới
         Order newOrder = new Order();
-        newOrder.setStatus("Đang giao lại");
+        newOrder.setStatus("Giao lại");
         newOrder.setOriginalId(canceledOrder.getId()); // Gán ID đơn hàng gốc
         newOrder.setTotalAmount(canceledOrder.getTotalAmount());
         newOrder.setAddress(canceledOrder.getAddress());

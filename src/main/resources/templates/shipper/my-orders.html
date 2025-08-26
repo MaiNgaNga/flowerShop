@@ -1,3 +1,8 @@
+<style>
+  .accordion-button::after {
+    display: none !important;
+  }
+</style>
 <div class="container mt-4" th:fragment="content">
   <h2 class="mb-4">Đơn hàng đang giao</h2>
   <div class="accordion" id="myOrdersAccordion" style="width: 90%">
@@ -23,23 +28,37 @@
             th:attr="data-bs-target='#order' + ${iterStat.index}"
             style="font-weight: 500; color: #333"
           >
-            <span class="badge bg-purple me-2">ID Đơn hàng</span>
-            <span th:text="${order.id}" class="fw-bold"></span>
-            <span
-              class="fw-bold text-primary ms-3"
-              th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
-            ></span>
-            <span class="ms-2">- 📅</span>
-            <span
-              th:text="${#dates.format(order.deliveryDate, 'dd/MM/yyyy')}"
-            ></span>
+            <div class="d-flex flex-wrap align-items-center gap-3">
+              <!-- Mã đơn -->
+              🆔 <span th:text="${order.id}" class="fw-bold"></span>
+
+              <!-- Tổng tiền -->
+              <span
+                class="fw-bold text-primary"
+                th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+              ></span>
+              <span class="ms-2"> 📅</span>
+              <span
+                th:text="${#temporals.format(order.deliveryDate, 'dd/MM/yyyy')}"
+              ></span>
+              <!-- Đơn gốc -->
+              <span
+                th:if="${order.originalId != null}"
+                class="text-muted"
+                th:text="'(Gốc: ' + ${order.originalId} + ')'"
+              ></span>
+            </div>
+
+            <!-- Right side: COD -->
+            <div class="small ms-auto" th:if="${order.paymentMethod=='COD'}">
+              💵 COD
+            </div>
           </button>
         </h2>
         <div
           th:id="'order' + ${iterStat.index}"
           class="accordion-collapse collapse"
-          th:attr="aria-labelledby='heading' + ${iterStat.index}"
-          data-bs-parent="#myOrdersAccordion"
+          th:attr="data-bs-parent='#myOrdersAccordion'"
         >
           <div class="accordion-body p-4 bg-white">
             <table class="table table-hover">
@@ -48,8 +67,6 @@
                   <th class="text-start">Sản phẩm</th>
                   <th>Hình ảnh</th>
                   <th>Số lượng</th>
-                  <th>Đơn giá</th>
-                  <th>Thành tiền</th>
                 </tr>
               </thead>
               <tbody>
@@ -59,40 +76,85 @@
                 >
                   <td class="text-start" th:text="${detail.product.name}"></td>
                   <td>
-                    <img
-                      th:src="@{/images/{image}(image=${detail.product.image_url})}"
-                      alt=""
-                      width="70px"
-                      class="rounded"
-                    />
+                    <a th:href="@{/detail(id=${detail.product.id})}">
+                      <img
+                        th:src="@{/images/{image}(image=${detail.product.image_url})}"
+                        alt=""
+                        width="70px"
+                        class="rounded"
+                      />
+                    </a>
                   </td>
                   <td th:text="${detail.quantity}" class="text-center"></td>
-                  <td
-                    th:text="${#numbers.formatDecimal(detail.price, 0, 'COMMA', 0, 'POINT')} + ' VND'"
-                    class="text-end"
-                  ></td>
-                  <td
-                    th:text="${#numbers.formatDecimal(detail.price * detail.quantity, 0, 'COMMA', 0, 'POINT')} + ' VND'"
-                    class="text-end"
-                  ></td>
                 </tr>
               </tbody>
             </table>
             <div class="card mt-3">
               <div class="card-body p-3">
-                <h6 class="card-title fw-bold text-success mb-2">
-                  Thông tin khách hàng
-                </h6>
-                <p class="mb-1" th:text="'Address: ' + ${order.address}"></p>
-                <p class="mb-1" th:text="'Name: ' + ${order.user.name}"></p>
-                <p class="mb-0" th:text="'Phone: ' + ${order.sdt}"></p>
-              </div>
-              <div class="card-body p-3">
-                <p class="mb-1" th:text="'Mô tả: ' + ${order.description}"></p>
-                <p
-                  class="mb-1"
-                  th:text="'Ngày đặt hàng: ' + ${#dates.format(order.createDate, 'dd/MM/yyyy')}"
-                ></p>
+                <div class="row">
+                  <!-- Khối 1 -->
+                  <div class="col-md-6">
+                    <h6 class="card-title fw-bold text-success mb-2">
+                      Thông tin người đặt
+                    </h6>
+                    <p class="mb-1" th:text="'Name: ' + ${order.user.name}"></p>
+                    <p class="mb-0" th:text="'Phone: ' + ${order.user.sdt}"></p>
+                  </div>
+
+                  <!-- Khối 2 -->
+                  <div class="col-md-6">
+                    <h6 class="card-title fw-bold text-success mb-2">
+                      Thông tin người nhận
+                    </h6>
+
+                    <p
+                      class="mb-1"
+                      th:text="'Name: ' + ${order.receiverName}"
+                    ></p>
+                    <p
+                      class="mb-0"
+                      th:text="'Phone: ' + ${order.receiverPhone}"
+                    ></p>
+                    <p
+                      class="mb-1"
+                      th:text="'Address: ' + ${order.address}"
+                    ></p>
+                  </div>
+                </div>
+
+                <!-- Khối 3 (rơi xuống dưới, chiếm full row) -->
+                <div class="row mt-3">
+                  <!-- Khối 1 -->
+                  <div class="col-md-6">
+                    <p
+                      class="mb-1"
+                      th:text="'Mô tả: ' + ${order.description}"
+                    ></p>
+                    <p>
+                      <span
+                        th:text="'Ngày giao hàng: ' + ${#temporals.format(order.deliveryTime, 'HH:mm')}"
+                      ></span>
+                      <span
+                        th:text="${#temporals.format(order.deliveryDate, 'dd/MM/yyyy')}"
+                      ></span>
+                    </p>
+
+                    <p
+                      class="mb-1"
+                      th:text="'Ngày đặt hàng: ' + ${#dates.format(order.createDate, 'dd/MM/yyyy')}"
+                    >
+                      >
+                    </p>
+                  </div>
+                  <div
+                    class="col-md-6"
+                    th:if="${order.reason != null and !#strings.isEmpty(order.reason)}"
+                  >
+                    <h6 class="card-title fw-bold text-danger mb-2">Lí do:</h6>
+
+                    <p class="mb-1" th:text="${order.reason}"></p>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="mt-4 text-end">
@@ -112,9 +174,9 @@
                 <button
                   type="submit"
                   class="btn btn-success btn-sm me-2"
-                  title="Đã giao"
+                  title="Hoàn tất"
                 >
-                  <i class="bi bi-check-circle"></i> Đã giao
+                  <i class="bi bi-check-circle"></i> Hoàn tất
                 </button>
               </form>
 

@@ -9,6 +9,33 @@
 </style>
 <div class=" ">
   <h4 class="mb-4">Quản Lý đơn hàng online</h4>
+  <div
+    th:if="${success}"
+    class="alert alert-success alert-dismissible fade show d-none"
+    role="alert"
+    data-message="success"
+  >
+    <span th:text="${success}"></span>
+  </div>
+
+  <div
+    th:if="${error}"
+    class="alert alert-danger alert-dismissible fade show d-none"
+    role="alert"
+    data-message="error"
+  >
+    <span th:text="${error}"></span>
+  </div>
+
+  <div
+    th:if="${warning}"
+    class="alert alert-warning alert-dismissible fade show"
+    role="alert"
+  >
+    <span th:text="${warning}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
   <div class="card mb-3 p-3">
     <form
       method="get"
@@ -50,11 +77,8 @@
             Giao thất bại
           </option>
 
-          <option
-            value="Đang giao lại"
-            th:selected="${orderStatus == 'Đang giao lại'}"
-          >
-            Đang giao lại
+          <option value="Giao lại" th:selected="${orderStatus == 'Giao lại'}">
+            Giao lại
           </option>
         </select>
       </div>
@@ -129,20 +153,6 @@
             <!-- Mã đơn -->
             🆔 <span th:text="${order.id}" class="fw-bold"></span>
 
-            <!-- Đơn gốc -->
-            <span
-              th:if="${order.originalId != null}"
-              class="text-muted"
-              th:text="'(Gốc: ' + ${order.originalId} + ')'"
-            ></span>
-
-            <!-- Trạng thái -->
-            <span
-              class="badge bg-dark"
-              style="font-size: 0.9rem"
-              th:text="${order.status}"
-            ></span>
-
             <!-- Tổng tiền -->
             <span
               class="fw-bold text-primary"
@@ -159,6 +169,12 @@
               class="text-danger"
               th:if="${order.discount != null and order.discount > 0}"
               th:text="'- ' + ${#numbers.formatDecimal(order.discount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+            ></span>
+            <!-- Đơn gốc -->
+            <span
+              th:if="${order.originalId != null}"
+              class="text-muted"
+              th:text="'(Gốc: ' + ${order.originalId} + ')'"
             ></span>
           </div>
 
@@ -244,10 +260,6 @@
               <div class="row mt-3">
                 <!-- Khối 1 -->
                 <div class="col-md-6">
-                  <p
-                    class="mb-1"
-                    th:text="'Mô tả: ' + ${order.description}"
-                  ></p>
                   <p>
                     <span
                       th:text="'Ngày giao hàng: ' + ${#temporals.format(order.deliveryTime, 'HH:mm')}"
@@ -257,17 +269,24 @@
                     ></span>
                   </p>
 
-                  <!-- Shipper -->
-                  <p
-                    class="text-muted"
-                    th:text="${order.shipper != null ? 'Shipper: '+order.shipper.name : ''}"
-                  ></p>
                   <p
                     class="mb-1"
                     th:text="'Ngày đặt hàng: ' + ${#dates.format(order.createDate, 'dd/MM/yyyy')}"
                   >
                     >
                   </p>
+                  <p class="mb-1" th:text="'Trạng thái: ' + ${order.status}">
+                    >
+                  </p>
+                  <!-- Shipper -->
+                  <p
+                    class="mb-1"
+                    th:text="${order.shipper != null ? 'Shipper: '+order.shipper.name : ''}"
+                  ></p>
+                  <p
+                    class="mb-1"
+                    th:text="'Mô tả: ' + ${order.description}"
+                  ></p>
                 </div>
                 <div
                   class="col-md-6"
@@ -281,7 +300,7 @@
             </div>
           </div>
         </div>
-        <div class="d-flex flex-wrap gap-2 m-3">
+        <div class="d-flex flex-wrap justify-content-end gap-2 m-3 end-0">
           <!-- Nút Xác nhận -->
           <form
             th:action="@{/orderAdmin/update/{orderId}(orderId=${order.id})}"
@@ -305,7 +324,7 @@
             method="post"
             style="display: inline"
           >
-            <input type="hidden" name="status" value="Đang giao lại" />
+            <input type="hidden" name="status" value="Giao lại" />
             <button
               type="submit"
               class="btn btn-primary btn-sm"
@@ -341,7 +360,6 @@
               type="submit"
               class="btn btn-success btn-sm"
               th:if="${order.status == 'Giao thất bại'}"
-              onclick="return confirm('Xác nhận hoàn tất đơn hàng này?')"
             >
               Hoàn tất
             </button>

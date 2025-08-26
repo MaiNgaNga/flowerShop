@@ -42,6 +42,7 @@ public interface OrderService {
 
   Order updateStatus(Long orderId, String status);
 
+
   List<Order> getOrdersByUser(int id);
 
   List<Order> findByStatus(String status);
@@ -121,7 +122,7 @@ public interface OrderService {
   Long countPaidOrdersByYear(int year);
 
   // Service interface: Thống kê doanh thu theo ngày trong tháng/năm (chỉ lấy đơn
-  // hàng 'Đã giao')
+  // hàng 'Hoàn tất')
   Map<Integer, Double> getDailyRevenueByMonthAndYear(int month, int year);
 
 

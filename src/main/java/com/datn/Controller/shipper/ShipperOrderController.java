@@ -35,8 +35,8 @@ public class ShipperOrderController {
 
     @GetMapping("/pending-orders")
     public String pendingOrders(Model model) {
-        List<Order> confirmedOrders = orderService.getOrdersByStatus("Đã xác nhận");
-        List<Order> deliveringOrders = orderService.getOrdersByStatus("Đang giao lại");
+        List<Order> confirmedOrders = orderService.getOrdersByStatus("Chờ giao");
+        List<Order> deliveringOrders = orderService.getOrdersByStatus("Giao lại");
 
         List<Order> pendingOrders = new ArrayList<>();
         pendingOrders.addAll(confirmedOrders);
@@ -114,7 +114,7 @@ public class ShipperOrderController {
                 model.addAttribute("selectedYear", year);
                 model.addAttribute("orders", historyOrders);
             } else {
-                orderPage = orderService.getOrdersByStatusAndShipper("Đã giao", shipper.getId(), pageable);
+                orderPage = orderService.getOrdersByStatusAndShipper("Hoàn tất", shipper.getId(), pageable);
                 totalAmount = orderService.getTotalCompletedOrdersAmount(shipper.getId());
                 model.addAttribute("orders", orderPage.getContent());
                 model.addAttribute("orderPage", orderPage);
@@ -152,7 +152,7 @@ public class ShipperOrderController {
     public String returnOrder(@PathVariable("orderId") Long orderId) {
         User shipper = authService.getUser();
         if (shipper != null && shipper.getRole() == 2) {
-            orderService.updateStatus(orderId, "Đã xác nhận");
+            orderService.updateStatus(orderId, "Chờ giao");
         }
         return "redirect:/shipper/my-orders";
     }
