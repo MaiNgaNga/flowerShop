@@ -59,23 +59,52 @@
           </span>
           <p class="mb-1" th:text="${comment.content}">Nội dung bình luận</p>
         </div>
-  
-        <!-- Nút 3 chấm -->
-        <div class="dropdown">
-          <button class="btn btn-sm btn-light" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            <i class="bi bi-three-dots-vertical"></i> <!-- icon bootstrap -->
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-            <li>
-              <form th:action="@{/post-comments/delete/{id}(id=${comment.id})}" method="post"
-                onsubmit="return confirm('Bạn có chắc muốn xóa bình luận này không?')">
-                <input type="hidden" name="postId" th:value="${post.id}" />
-                <button type="submit" class="dropdown-item text-danger">Xóa</button>
-              </form>
-            </li>
-          </ul>
+        
+<div class="dropdown" th:if="${currentUser != null and comment.user.id == currentUser.id}">
+  <button class="btn btn-sm btn-light" type="button" id="dropdownMenuButton_${comment.id}" 
+    data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="bi bi-three-dots-vertical"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton_${comment.id}">
+    <li>
+      <button class="dropdown-item text-danger" 
+        data-bs-toggle="modal" 
+        data-bs-target="#deleteCommentModal_${comment.id}">
+        Xóa
+      </button>
+    </li>
+  </ul>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade" id="deleteCommentModal_${comment.id}" tabindex="-1" 
+    aria-labelledby="deleteCommentModalLabel_${comment.id}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" style="margin-top: 0;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteCommentModalLabel_${comment.id}">
+            Xác nhận xóa bình luận
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" 
+            aria-label="Close"></button>
         </div>
+        <div class="modal-body">
+          Bạn có chắc chắn muốn xóa bình luận này không?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Hủy
+          </button>
+          <form th:action="@{/post-comments/delete/{id}(id=${comment.id})}" method="post">
+            <input type="hidden" name="postId" th:value="${post.id}" />
+            <button type="submit" class="btn btn-danger">Xóa</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
       </div>
     </div>
   </div>
@@ -168,6 +197,33 @@ backToTopBtn.addEventListener("click", function (e) {
     
   </script>
 
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const dropdownButtons = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+    dropdownButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        const dropdownMenu = this.nextElementSibling;
+        if (dropdownMenu.classList.contains('show')) {
+          dropdownMenu.classList.remove('show');
+        } else {
+          setTimeout(() => {
+            dropdownMenu.classList.add('show');
+          }, 100); // Delay 100ms trước khi hiển thị
+        }
+      });
+    });
+
+    // Đóng dropdown khi click ra ngoài
+    document.addEventListener('click', function (event) {
+      dropdownButtons.forEach(button => {
+        const dropdownMenu = button.nextElementSibling;
+        if (!button.contains(event.target) && !dropdownMenu.contains(event.target)) {
+          dropdownMenu.classList.remove('show');
+        }
+      });
+    });
+  });
+</script>
   
 </body>
 </html>

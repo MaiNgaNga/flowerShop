@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostCommentServiceImpl implements PostCommentService {
@@ -54,5 +55,11 @@ public class PostCommentServiceImpl implements PostCommentService {
     @Override
     public List<PostComment> findByPostId(Long postId) {
         return postCommentDAO.findByPostId(postId);
+    }
+
+    @Override
+    public PostComment findById(Long id) {
+        Optional<PostComment> comment = postCommentDAO.findById(id);
+        return comment.orElse(null);
     }
 }
