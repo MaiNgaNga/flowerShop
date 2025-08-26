@@ -3,6 +3,7 @@ package com.datn.Controller.admin;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -151,6 +152,10 @@ public class CategoryController {
             categoryService.deleteById(id);
             redirectAttributes.addFlashAttribute("success", "Đã xóa loại hoa!");
             return "redirect:/Category/index?tab=list";
+
+        }catch(DataIntegrityViolationException e){
+            redirectAttributes.addFlashAttribute("error", "Không thể xóa loại hoa này vì có liên quan đến sản phẩm.");
+            return "redirect:/Category/edit/" + category.getId() + "?tab=" + tab;
 
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

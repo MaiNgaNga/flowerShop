@@ -153,6 +153,7 @@
                 class="form-control form-control-sm"
               />
               <small class="text-danger" th:errors="*{startDate}"></small>
+              <small class="text-danger" th:text="${errorStartDate}"></small>
             </div>
           </div>
 
@@ -314,6 +315,7 @@
               <div class="flex-grow-1">
                 <label for="title" class="form-label">Tìm theo tên:</label>
                 <input
+                style="width: 250px;"
                   type="text"
                   id="title"
                   name="title"
