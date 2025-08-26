@@ -38,7 +38,6 @@
     font-weight: bolder;
     color: gray;
     font-size: 20px;
-
   }
   .review-date {
     color: #888;
@@ -112,49 +111,47 @@
     display: block;
   }
   /* Danh sách bình luận */
-.commentlist {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+  .commentlist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
 
-.review-item {
-  border-bottom: 1px solid #eee;
-  padding: 15px 0;
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
+  .review-item {
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
 
-.comment-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
+  .comment-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
 
+  .review-content .meta {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 6px;
+  }
 
-.review-content .meta {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 6px;
-}
+  .review-author {
+    font-weight: bold;
+    color: #333;
+  }
 
-.review-author {
-  font-weight: bold;
-  color: #333;
-}
+  .review-date {
+    font-style: italic;
+    color: #999;
+  }
 
-.review-date {
-  font-style: italic;
-  color: #999;
-}
-
-.review-text {
-  margin: 0;
-  color: #444;
-  line-height: 1.5;
-}
-
+  .review-text {
+    margin: 0;
+    color: #444;
+    line-height: 1.5;
+  }
 </style>
 
 <link
@@ -280,21 +277,49 @@
                         <div class="comment-container">
                           <div class="review-content">
                             <p class="meta">
-                              <strong class="review-author" th:text="${item.user.name}"></strong>
+                              <strong
+                                class="review-author"
+                                th:text="${item.user.name}"
+                              ></strong>
                               -
-                              <time class="review-date" th:text="${#temporals.format(item.createdAt, 'dd/MM/yyyy')}"></time>
+                              <time
+                                class="review-date"
+                                th:text="${#temporals.format(item.createdAt, 'dd/MM/yyyy')}"
+                              ></time>
                             </p>
                             <p class="review-text" th:text="${item.content}">
                               Tư vấn nhiệt tình, dịch vụ khá hài lòng.
                             </p>
                           </div>
                           <!-- Nút 3 chấm -->
-                          <div class="dropdown ms-auto" style="position: absolute; top: 25px; right: 350px;min-width: 70px;">
-                            <button class="btn btn-link text-dark p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          <div
+                            class="dropdown ms-auto"
+                            style="
+                              position: absolute;
+                              top: 25px;
+                              right: 350px;
+                              min-width: 70px;
+                            "
+                          >
+                            <button
+                              class="btn btn-link text-dark p-0"
+                              type="button"
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false"
+                            >
                               <i class="fas fa-ellipsis-v"></i>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end" style="min-width: 70px !important;">
-                              <li><a class="dropdown-item text-danger" th:href="@{/history/comment/delete/{id}(id=${item.id})}"><i class="fa-solid fa-trash"></i></a></li>
+                            <ul
+                              class="dropdown-menu dropdown-menu-end"
+                              style="min-width: 70px !important"
+                            >
+                              <li>
+                                <a
+                                  class="dropdown-item text-danger"
+                                  th:href="@{/history/comment/delete/{id}(id=${item.id})}"
+                                  ><i class="fa-solid fa-trash"></i
+                                ></a>
+                              </li>
                             </ul>
                           </div>
                         </div>
@@ -306,7 +331,6 @@
                       <h4 class="fw-bold">Thêm đánh giá</h4>
                       <form th:action="@{/history/comment}" method="post">
                         <div class="star-rating">
-                          
                           <!-- Đổi id thành class -->
                           <div class="star-rating-custom">
                             <span data-value="1">&#9733;</span>
@@ -315,7 +339,12 @@
                             <span data-value="4">&#9733;</span>
                             <span data-value="5">&#9733;</span>
                           </div>
-                          <input type="hidden" name="rating" class="ratingInput" required />
+                          <input
+                            type="hidden"
+                            name="rating"
+                            class="ratingInput"
+                            required
+                          />
                         </div>
                         <i
                           class="error text-danger"
@@ -377,8 +406,12 @@
   AOS.init();
 
   document.addEventListener("DOMContentLoaded", function () {
-      // Duyệt từng form đánh giá
-      document.querySelectorAll('form[th\\:action="@{/history/comment}"], form[action="/history/comment"]').forEach(function (reviewForm) {
+    // Duyệt từng form đánh giá
+    document
+      .querySelectorAll(
+        'form[th\\:action="@{/history/comment}"], form[action="/history/comment"]'
+      )
+      .forEach(function (reviewForm) {
         const stars = reviewForm.querySelectorAll(".star-rating-custom span");
         const ratingInput = reviewForm.querySelector(".ratingInput");
         let selected = 0;
@@ -416,5 +449,5 @@
           });
         });
       });
-    });
+  });
 </script>
