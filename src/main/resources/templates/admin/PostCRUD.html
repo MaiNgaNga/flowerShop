@@ -35,74 +35,83 @@
     <main class="container mt-3">
       <h3>Quản Lý Bài Viết</h3>
 
-   
       <form
-  action="/Post/index"
-  method="get"
-  class="search-filter-row"
-  style="display: flex; gap: 10px; align-items: center; width: 100%;"
-  id="productFilterForm"
->
-  <input type="hidden" name="tab" value="list" />
-  <div class="search-box" style="position: relative; flex-grow: 1;">
+        action="/Post/index"
+        method="get"
+        class="search-filter-row"
+        style="display: flex; gap: 10px; align-items: center; width: 100%"
+        id="productFilterForm"
+      >
+        <input type="hidden" name="tab" value="list" />
+        <div class="search-box" style="position: relative; flex-grow: 1">
+          <input
+            type="text"
+            name="keyword"
+            th:value="${keyword}"
+            class="product-crud-input form-control form-control-sm custom-search-input"
+            placeholder="Tìm theo tiêu đề ..."
+            style="padding-left: 30px; width: 100%"
+          />
+        </div>
+        <div
+          class="product-crud-filter-buttons"
+          style="display: flex; gap: 10px; align-items: center"
+        >
+          <button
+            type="submit"
+            class="product-crud-btn-action product-crud-btn-filter btn btn-outline-secondary btn-sm"
+            title="Lọc"
+          >
+            <i class="fas fa-filter"></i>
+          </button>
+          <a class="btn" th:href="@{/Post/index }">
+            <button
+              type="button"
+              class="product-crud-btn-action product-crud-btn-clear btn btn-outline-secondary btn-sm"
+              title="Xóa lọc"
+              onclick="clearProductFilter()"
+            >
+              <i class="fas fa-times-circle"></i>
+            </button>
+          </a>
+        </div>
+      </form>
 
-    <input
-      type="text"
-      name="keyword"
-      th:value="${keyword}"
-      class="product-crud-input form-control form-control-sm custom-search-input"
-      placeholder="Tìm theo tiêu đề ..."
-      style="padding-left: 30px; width: 100%;"
-    />
+      <script>
+        function clearProductFilter() {
+          const form = document.getElementById("productFilterForm");
+          form.querySelector('input[name="keyword"]').value = "";
+          form.submit();
+        }
+      </script>
 
-  </div>
-  <div class="product-crud-filter-buttons" style="display: flex; gap: 10px; align-items: center;">
-    <button
-      type="submit"
-      class="product-crud-btn-action product-crud-btn-filter btn btn-outline-secondary btn-sm"
-      title="Lọc"
-    >
-      <i class="fas fa-filter"></i>
-    </button>
-        <a class="btn " th:href="@{/Post/index }">
-                  <button
-
-      type="button"
-      class="product-crud-btn-action product-crud-btn-clear btn btn-outline-secondary btn-sm"
-      title="Xóa lọc"
-      onclick="clearProductFilter()"
-    >
-      <i class="fas fa-times-circle"></i>
-    </button>
-                </a>
- 
-  </div>
-</form>
-
-<script>
-function clearProductFilter() {
-  const form = document.getElementById('productFilterForm');
-  form.querySelector('input[name="keyword"]').value = '';
-  form.submit();
-}
-</script>
-
-<script>
-function clearProductFilter() {
-  const form = document.getElementById('productFilterForm');
-  form.querySelector('select[name="productCategoryId"]').value = '';
-  form.querySelector('input[name="keyword"]').value = '';
-  form.submit();
-}
-</script>
+      <script>
+        function clearProductFilter() {
+          const form = document.getElementById("productFilterForm");
+          form.querySelector('select[name="productCategoryId"]').value = "";
+          form.querySelector('input[name="keyword"]').value = "";
+          form.submit();
+        }
+      </script>
       <hr />
 
       <div
-        class="alert alert-success"
         th:if="${success}"
-        th:text="${success}"
-      ></div>
+        class="alert alert-success alert-dismissible fade show d-none"
+        role="alert"
+        data-message="success"
+      >
+        <span th:text="${success}"></span>
+      </div>
 
+      <div
+        th:if="${error}"
+        class="alert alert-danger alert-dismissible fade show d-none"
+        role="alert"
+        data-message="error"
+      >
+        <span th:text="${error}"></span>
+      </div>
       <!-- Tab Navigation -->
       <ul class="nav nav-tabs" id="postTab" role="tablist">
         <li class="nav-item">

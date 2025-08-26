@@ -250,7 +250,7 @@ public class PostCRUDController {
             redirectAttributes.addFlashAttribute("success", "Đã xoá bài viết!");
             return "redirect:/Post/index";
         }catch(DataIntegrityViolationException e ){
-            redirectAttributes.addFlashAttribute("error", "Không thể xóa bài viết vì có liên kết với các thực thể khác!");
+            redirectAttributes.addFlashAttribute("error", "Không thể xóa bài viết đã có bình luận!");
             return "redirect:/Post/edit/" + post.getId();
         }catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

@@ -2,17 +2,29 @@
   <h3>Quản Lý Danh Mục Sản Phẩm</h3>
   <hr />
   <!-- Hiển thị thông báo flash messages từ controller -->
-  <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+  <div
+    th:if="${success}"
+    class="alert alert-success alert-dismissible fade show d-none"
+    role="alert"
+    data-message="success"
+  >
     <span th:text="${success}"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
-  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+  <div
+    th:if="${error}"
+    class="alert alert-danger alert-dismissible fade show"
+    role="alert"
+  >
     <span th:text="${error}"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
-  <div th:if="${warning}" class="alert alert-warning alert-dismissible fade show" role="alert">
+  <div
+    th:if="${warning}"
+    class="alert alert-warning alert-dismissible fade show"
+    role="alert"
+  >
     <span th:text="${warning}"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
@@ -51,7 +63,6 @@
 
   <!-- Tab Content -->
   <div class="tab-content" id="productCategoryTabContent">
-
     <!-- Tab: Chỉnh sửa -->
     <div
       class="tab-pane fade show active"
@@ -60,87 +71,91 @@
       aria-labelledby="edit-tab"
     >
       <form
-  action="/ProductCategory/index"
-  th:object="${productCategory}"
-  method="post"
-  class="p-4 bg-white border rounded shadow-sm"
->
-  <div class="row g-3">
-    <div class="col-md-6">
-      <div class="mb-3">
-        <label for="id" class="form-label fw-medium text-muted">ID</label>
-        <input
-          type="text"
-          id="id"
-          th:field="*{id}"
-          readonly
-          class="form-control form-control-sm bg-light"
-        />
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="mb-3">
-        <label for="name" class="form-label fw-medium text-muted">Tên Danh Mục</label>
-        <input
-          type="text"
-          th:field="*{name}"
-          id="name"
-          class="form-control form-control-sm"
-          placeholder="Tên Danh Mục"
-        />
-        <i class="error" th:errors="*{name}"></i>
-      </div>
-    </div>
-    <div class="col-12">
-      <div class="mb-3">
-        <label for="description" class="form-label fw-medium text-muted">Mô tả</label>
-        <textarea
-          th:field="*{description}"
-          id="description"
-          class="form-control form-control-sm"
-          placeholder="Mô tả"
-          rows="3"
-        ></textarea>
-        <i class="error" th:errors="*{description}"></i>
-      </div>
-    </div>
-  </div>
-  <div class="row mt-4 text-end">
-    <div class="col">
-      <button
-        th:if="${productCategory.id == 0}"
-        type="submit"
-        class="btn btn-primary btn-sm me-2"
-        th:formaction="@{/ProductCategory/create}"
+        action="/ProductCategory/index"
+        th:object="${productCategory}"
+        method="post"
+        class="p-4 bg-white border rounded shadow-sm"
       >
-        <i class="fa fa-plus me-1"></i> Thêm
-      </button>
-      <button
-        th:if="${productCategory.id != 0}"
-        type="submit"
-        class="btn btn-warning btn-sm me-2"
-        th:formaction="@{/ProductCategory/update}"
-      >
-        <i class="fa fa-edit me-1"></i> Cập Nhật
-      </button>
-      <button
-        th:if="${productCategory.id != 0}"
-        type="button"
-        class="btn btn-danger btn-sm me-2"
-        onclick="confirmDelete(this)"
-        th:data-url="@{/ProductCategory/delete/{id}(id=${productCategory.id})}"
-      >
-        <i class="fa fa-trash me-1"></i> Xóa
-      </button>
-      <a
-        class="btn btn-success btn-sm"
-        th:href="@{/ProductCategory/index}"
-      >
-        <i class="fa fa-sync me-1"></i> Làm Mới
-      </a>
-    </div>
-  </div>
-</form>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="id" class="form-label fw-medium text-muted">ID</label>
+              <input
+                type="text"
+                id="id"
+                th:field="*{id}"
+                readonly
+                class="form-control form-control-sm bg-light"
+              />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="name" class="form-label fw-medium text-muted"
+                >Tên Danh Mục</label
+              >
+              <input
+                type="text"
+                th:field="*{name}"
+                id="name"
+                class="form-control form-control-sm"
+                placeholder="Tên Danh Mục"
+              />
+              <i class="error" th:errors="*{name}"></i>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="mb-3">
+              <label for="description" class="form-label fw-medium text-muted"
+                >Mô tả</label
+              >
+              <textarea
+                th:field="*{description}"
+                id="description"
+                class="form-control form-control-sm"
+                placeholder="Mô tả"
+                rows="3"
+              ></textarea>
+              <i class="error" th:errors="*{description}"></i>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-4 text-end">
+          <div class="col">
+            <button
+              th:if="${productCategory.id == 0}"
+              type="submit"
+              class="btn btn-primary btn-sm me-2"
+              th:formaction="@{/ProductCategory/create}"
+            >
+              <i class="fa fa-plus me-1"></i> Thêm
+            </button>
+            <button
+              th:if="${productCategory.id != 0}"
+              type="submit"
+              class="btn btn-warning btn-sm me-2"
+              th:formaction="@{/ProductCategory/update}"
+            >
+              <i class="fa fa-edit me-1"></i> Cập Nhật
+            </button>
+            <button
+              th:if="${productCategory.id != 0}"
+              type="button"
+              class="btn btn-danger btn-sm me-2"
+              onclick="confirmDelete(this)"
+              th:data-url="@{/ProductCategory/delete/{id}(id=${productCategory.id})}"
+            >
+              <i class="fa fa-trash me-1"></i> Xóa
+            </button>
+            <a
+              class="btn btn-success btn-sm"
+              th:href="@{/ProductCategory/index}"
+            >
+              <i class="fa fa-sync me-1"></i> Làm Mới
+            </a>
+          </div>
+        </div>
+      </form>
     </div>
 
     <!-- Tab: Danh sách -->
@@ -161,7 +176,9 @@
             </tr>
           </thead>
           <tbody>
-            <tr th:if="${productCategories == null or #lists.isEmpty(productCategories)}">
+            <tr
+              th:if="${productCategories == null or #lists.isEmpty(productCategories)}"
+            >
               <td colspan="4" class="text-center text-muted">
                 Không có danh mục sản phẩm nào.
               </td>
@@ -196,73 +213,120 @@
       </div>
 
       <!-- Phân trang chuyên nghiệp -->
-      <div class="pagination-wrapper" th:if="${productCategories != null and #lists.size(productCategories) > 0}">
+      <div
+        class="pagination-wrapper"
+        th:if="${productCategories != null and #lists.size(productCategories) > 0}"
+      >
         <div class="d-flex justify-content-between align-items-center">
           <div class="pagination-info">
-            Hiển thị <strong th:text="${#lists.size(productCategories)}"></strong> trong tổng số
-            <strong th:text="${totalElements != null ? totalElements : #lists.size(productCategories)}"></strong> danh mục sản phẩm
+            Hiển thị
+            <strong th:text="${#lists.size(productCategories)}"></strong> trong
+            tổng số
+            <strong
+              th:text="${totalElements != null ? totalElements : #lists.size(productCategories)}"
+            ></strong>
+            danh mục sản phẩm
           </div>
-          
-          <nav aria-label="ProductCategory pagination" th:if="${totalPages != null and totalPages > 1}">
+
+          <nav
+            aria-label="ProductCategory pagination"
+            th:if="${totalPages != null and totalPages > 1}"
+          >
             <ul class="pagination simple-pagination">
               <!-- Nút về trang đầu -->
-              <li class="page-item" th:classappend="${currentPage == null or currentPage == 0} ? 'disabled'">
-                <a class="page-link" 
-                   th:href="@{/ProductCategory/index(page=0, size=10, tab='list')}"
-                   th:unless="${currentPage == null or currentPage == 0}"
-                   title="Trang đầu">
+              <li
+                class="page-item"
+                th:classappend="${currentPage == null or currentPage == 0} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/ProductCategory/index(page=0, size=10, tab='list')}"
+                  th:unless="${currentPage == null or currentPage == 0}"
+                  title="Trang đầu"
+                >
                   <i class="fas fa-angle-double-left"></i>
                 </a>
-                <span class="page-link" th:if="${currentPage == null or currentPage == 0}">
+                <span
+                  class="page-link"
+                  th:if="${currentPage == null or currentPage == 0}"
+                >
                   <i class="fas fa-angle-double-left"></i>
                 </span>
               </li>
 
               <!-- Nút trang trước -->
-              <li class="page-item" th:classappend="${currentPage == null or currentPage == 0} ? 'disabled'">
-                <a class="page-link" 
-                   th:href="@{/ProductCategory/index(page=${(currentPage != null ? currentPage : 0) - 1}, size=10, tab='list')}"
-                   th:unless="${currentPage == null or currentPage == 0}"
-                   title="Trang trước">
+              <li
+                class="page-item"
+                th:classappend="${currentPage == null or currentPage == 0} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/ProductCategory/index(page=${(currentPage != null ? currentPage : 0) - 1}, size=10, tab='list')}"
+                  th:unless="${currentPage == null or currentPage == 0}"
+                  title="Trang trước"
+                >
                   <i class="fas fa-chevron-left"></i>
                 </a>
-                <span class="page-link" th:if="${currentPage == null or currentPage == 0}">
+                <span
+                  class="page-link"
+                  th:if="${currentPage == null or currentPage == 0}"
+                >
                   <i class="fas fa-chevron-left"></i>
                 </span>
               </li>
 
               <!-- Các trang số -->
-              <li class="page-item"
-                  th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
-                  th:if="${pageNum >= (currentPage != null ? currentPage : 0) - 1 && pageNum <= (currentPage != null ? currentPage : 0) + 1}"
-                  th:classappend="${pageNum == (currentPage != null ? currentPage : 0)} ? 'active'">
-                <a class="page-link"
-                   th:href="@{/ProductCategory/index(page=${pageNum}, size=10, tab='list')}"
-                   th:text="${pageNum + 1}"></a>
+              <li
+                class="page-item"
+                th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+                th:if="${pageNum >= (currentPage != null ? currentPage : 0) - 1 && pageNum <= (currentPage != null ? currentPage : 0) + 1}"
+                th:classappend="${pageNum == (currentPage != null ? currentPage : 0)} ? 'active'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/ProductCategory/index(page=${pageNum}, size=10, tab='list')}"
+                  th:text="${pageNum + 1}"
+                ></a>
               </li>
 
               <!-- Nút trang sau -->
-              <li class="page-item" th:classappend="${currentPage != null and currentPage + 1 >= totalPages} ? 'disabled'">
-                <a class="page-link"
-                   th:href="@{/ProductCategory/index(page=${(currentPage != null ? currentPage : 0) + 1}, size=10, tab='list')}"
-                   th:unless="${currentPage != null and currentPage + 1 >= totalPages}"
-                   title="Trang sau">
+              <li
+                class="page-item"
+                th:classappend="${currentPage != null and currentPage + 1 >= totalPages} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/ProductCategory/index(page=${(currentPage != null ? currentPage : 0) + 1}, size=10, tab='list')}"
+                  th:unless="${currentPage != null and currentPage + 1 >= totalPages}"
+                  title="Trang sau"
+                >
                   <i class="fas fa-chevron-right"></i>
                 </a>
-                <span class="page-link" th:if="${currentPage != null and currentPage + 1 >= totalPages}">
+                <span
+                  class="page-link"
+                  th:if="${currentPage != null and currentPage + 1 >= totalPages}"
+                >
                   <i class="fas fa-chevron-right"></i>
                 </span>
               </li>
 
               <!-- Nút về trang cuối -->
-              <li class="page-item" th:classappend="${currentPage != null and currentPage == totalPages - 1} ? 'disabled'">
-                <a class="page-link" 
-                   th:href="@{/ProductCategory/index(page=${totalPages - 1}, size=10, tab='list')}"
-                   th:unless="${currentPage != null and currentPage == totalPages - 1}"
-                   title="Trang cuối">
+              <li
+                class="page-item"
+                th:classappend="${currentPage != null and currentPage == totalPages - 1} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/ProductCategory/index(page=${totalPages - 1}, size=10, tab='list')}"
+                  th:unless="${currentPage != null and currentPage == totalPages - 1}"
+                  title="Trang cuối"
+                >
                   <i class="fas fa-angle-double-right"></i>
                 </a>
-                <span class="page-link" th:if="${currentPage != null and currentPage == totalPages - 1}">
+                <span
+                  class="page-link"
+                  th:if="${currentPage != null and currentPage == totalPages - 1}"
+                >
                   <i class="fas fa-angle-double-right"></i>
                 </span>
               </li>

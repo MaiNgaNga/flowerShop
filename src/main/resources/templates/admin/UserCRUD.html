@@ -1,23 +1,22 @@
 <main class="container mt-3">
   <h3>Quản Lý Người Dùng</h3>
   <hr />
-  <!-- Hiển thị thông báo flash messages từ controller -->
   <div
     th:if="${success}"
-    class="alert alert-success alert-dismissible fade show"
+    class="alert alert-success alert-dismissible fade show d-none"
     role="alert"
+    data-message="success"
   >
     <span th:text="${success}"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
   <div
     th:if="${error}"
-    class="alert alert-danger alert-dismissible fade show"
+    class="alert alert-danger alert-dismissible fade show d-none"
     role="alert"
+    data-message="error"
   >
     <span th:text="${error}"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
   <div
@@ -426,94 +425,105 @@
         </table>
       </div>
       <!-- Phân trang -->
-    
-<div class="pagination-wrapper" th:if="${totalElements > 0}">
-  <div class="d-flex justify-content-between align-items-center mt-4">
-    <div class="pagination-info">
-      Hiển thị <strong th:text="${#lists.size(Users)}"></strong> trong
-      tổng số <strong th:text="${totalElements}"></strong> người dùng
-    </div>
 
-    <nav aria-label="User pagination" th:if="${totalPages > 1}">
-      <ul class="pagination simple-pagination">
-        <!-- Nút về trang đầu -->
-        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-          <a
-            class="page-link"
-            th:href="@{/User/index(page=0, size=${size}, role=${role}, name=${name}, tab='list')}"
-            th:unless="${currentPage == 0}"
-            title="Trang đầu"
-          >
-            <i class="fas fa-angle-double-left"></i>
-          </a>
-          <span class="page-link" th:if="${currentPage == 0}">
-            <i class="fas fa-angle-double-left"></i>
-          </span>
-        </li>
+      <div class="pagination-wrapper" th:if="${totalElements > 0}">
+        <div class="d-flex justify-content-between align-items-center mt-4">
+          <div class="pagination-info">
+            Hiển thị <strong th:text="${#lists.size(Users)}"></strong> trong
+            tổng số <strong th:text="${totalElements}"></strong> người dùng
+          </div>
 
-        <!-- Nút trang trước -->
-        <li class="page-item" th:classappend="${!hasPrevious} ? 'disabled'">
-          <a
-            class="page-link"
-            th:href="@{/User/index(page=${currentPage - 1}, size=${size}, role=${role}, name=${name}, tab='list')}"
-            th:if="${hasPrevious}"
-            title="Trang trước"
-          >
-            <i class="fas fa-chevron-left"></i>
-          </a>
-          <span class="page-link" th:unless="${hasPrevious}">
-            <i class="fas fa-chevron-left"></i>
-          </span>
-        </li>
+          <nav aria-label="User pagination" th:if="${totalPages > 1}">
+            <ul class="pagination simple-pagination">
+              <!-- Nút về trang đầu -->
+              <li
+                class="page-item"
+                th:classappend="${currentPage == 0} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/User/index(page=0, size=${size}, role=${role}, name=${name}, tab='list')}"
+                  th:unless="${currentPage == 0}"
+                  title="Trang đầu"
+                >
+                  <i class="fas fa-angle-double-left"></i>
+                </a>
+                <span class="page-link" th:if="${currentPage == 0}">
+                  <i class="fas fa-angle-double-left"></i>
+                </span>
+              </li>
 
-        <!-- Các trang số -->
-        <li
-          class="page-item"
-          th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
-          th:if="${pageNum >= currentPage - 1 && pageNum <= currentPage + 1}"
-          th:classappend="${pageNum == currentPage} ? 'active'"
-        >
-          <a
-            class="page-link"
-            th:href="@{/User/index(page=${pageNum}, size=${size}, role=${role}, name=${name}, tab='list')}"
-            th:text="${pageNum + 1}"
-          ></a>
-        </li>
+              <!-- Nút trang trước -->
+              <li
+                class="page-item"
+                th:classappend="${!hasPrevious} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/User/index(page=${currentPage - 1}, size=${size}, role=${role}, name=${name}, tab='list')}"
+                  th:if="${hasPrevious}"
+                  title="Trang trước"
+                >
+                  <i class="fas fa-chevron-left"></i>
+                </a>
+                <span class="page-link" th:unless="${hasPrevious}">
+                  <i class="fas fa-chevron-left"></i>
+                </span>
+              </li>
 
-        <!-- Nút trang sau -->
-        <li class="page-item" th:classappend="${!hasNext} ? 'disabled'">
-          <a
-            class="page-link"
-            th:href="@{/User/index(page=${currentPage + 1}, size=${size}, role=${role}, name=${name}, tab='list')}"
-            th:if="${hasNext}"
-            title="Trang sau"
-          >
-            <i class="fas fa-chevron-right"></i>
-          </a>
-          <span class="page-link" th:unless="${hasNext}">
-            <i class="fas fa-chevron-right"></i>
-          </span>
-        </li>
+              <!-- Các trang số -->
+              <li
+                class="page-item"
+                th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+                th:if="${pageNum >= currentPage - 1 && pageNum <= currentPage + 1}"
+                th:classappend="${pageNum == currentPage} ? 'active'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/User/index(page=${pageNum}, size=${size}, role=${role}, name=${name}, tab='list')}"
+                  th:text="${pageNum + 1}"
+                ></a>
+              </li>
 
-        <!-- Nút về trang cuối -->
-        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-          <a
-            class="page-link"
-            th:href="@{/User/index(page=${totalPages - 1}, size=${size}, role=${role}, name=${name}, tab='list')}"
-            th:unless="${currentPage == totalPages - 1}"
-            title="Trang cuối"
-          >
-            <i class="fas fa-angle-double-right"></i>
-          </a>
-          <span class="page-link" th:if="${currentPage == totalPages - 1}">
-            <i class="fas fa-angle-double-right"></i>
-          </span>
-        </li>
-      </ul>
-    </nav>
-  </div>
-</div>
+              <!-- Nút trang sau -->
+              <li class="page-item" th:classappend="${!hasNext} ? 'disabled'">
+                <a
+                  class="page-link"
+                  th:href="@{/User/index(page=${currentPage + 1}, size=${size}, role=${role}, name=${name}, tab='list')}"
+                  th:if="${hasNext}"
+                  title="Trang sau"
+                >
+                  <i class="fas fa-chevron-right"></i>
+                </a>
+                <span class="page-link" th:unless="${hasNext}">
+                  <i class="fas fa-chevron-right"></i>
+                </span>
+              </li>
 
+              <!-- Nút về trang cuối -->
+              <li
+                class="page-item"
+                th:classappend="${currentPage == totalPages - 1} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/User/index(page=${totalPages - 1}, size=${size}, role=${role}, name=${name}, tab='list')}"
+                  th:unless="${currentPage == totalPages - 1}"
+                  title="Trang cuối"
+                >
+                  <i class="fas fa-angle-double-right"></i>
+                </a>
+                <span
+                  class="page-link"
+                  th:if="${currentPage == totalPages - 1}"
+                >
+                  <i class="fas fa-angle-double-right"></i>
+                </span>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
     </div>
   </div>
 </main>

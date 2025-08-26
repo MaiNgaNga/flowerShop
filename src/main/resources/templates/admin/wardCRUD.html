@@ -2,10 +2,22 @@
   <h3>Quản Lý Xã/Phường</h3>
   <hr />
   <div
-    class="success alert alert-success"
     th:if="${success}"
-    th:text="${success}"
-  ></div>
+    class="alert alert-success alert-dismissible fade show d-none"
+    role="alert"
+    data-message="success"
+  >
+    <span th:text="${success}"></span>
+  </div>
+
+  <div
+    th:if="${error}"
+    class="alert alert-danger alert-dismissible fade show d-none"
+    role="alert"
+    data-message="error"
+  >
+    <span th:text="${error}"></span>
+  </div>
   <!-- Tab Navigation -->
   <ul class="nav nav-tabs" id="wardTab" role="tablist">
     <li class="nav-item" role="presentation">
