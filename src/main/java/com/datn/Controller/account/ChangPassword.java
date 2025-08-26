@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.datn.Service.ProductCategoryService;
 import com.datn.Service.UserService;
+import com.datn.model.User;
 import com.datn.utils.AuthService;
 
 
@@ -76,9 +77,20 @@ public class ChangPassword {
 
 public String showChangPassForm(Model model){
     model.addAttribute("productCategories", pro_ca_Service.findAll());
+    User user = authService.getUser();
+    
+    if (user.getRole()== 0) {
+        model.addAttribute("view", "account/changPassword");
+        return "layouts/layout";
+    }else if (user.getRole()== 3 || user.getRole()==1) {
+        model.addAttribute("view", "account/changPassword");
+        return "layouts/pos-layout";
+        
+    }
 
     model.addAttribute("status", status);
-    model.addAttribute("view", "account/changPassword");
-    return "layouts/layout";
+    
+   
+    return "redirect:/login";
 }
 }

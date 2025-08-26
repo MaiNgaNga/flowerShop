@@ -308,7 +308,7 @@ public class List_Order_Service {
             });
 
             Map<String, String> response = new HashMap<>();
-            response.put("success", "Đã tạo đơn hàng và xác nhận yêu cầu thành công.");
+            response.put("success", "Đã tạo đơn hàng thành công!");
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
@@ -517,6 +517,43 @@ public class List_Order_Service {
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();
             error.put("error", "Có lỗi xảy ra: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(error);
+        }
+    }
+
+    // API endpoint để refresh dữ liệu tab đơn hàng (AJAX)
+    @GetMapping("/orders/refresh")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> refreshOrdersData(
+            @RequestParam(value = "orderStatus", required = false) ServiceOrderStatus orderStatus,
+            @RequestParam(value = "orderKeyword", required = false) String orderKeyword,
+            @RequestParam(value = "month", required = false) String month,
+            @RequestParam(value = "orderPage", defaultValue = "0") int orderPage) {
+
+        try {
+            // Tạo Pageable cho orders (10 items per page, sắp xếp theo ngày xác nhận mới nhất)
+            Pageable orderPageable = PageRequest.of(orderPage, 10,
+                    Sort.by(Sort.Direction.DESC, "confirmedAt").and(Sort.by(Sort.Direction.DESC, "id")));
+
+            // Lấy danh sách đơn hàng với phân trang và lọc
+            Page<ServiceOrder> orderListPage = serviceOrderService.findByFilters(orderStatus, orderKeyword, month,
+                    orderPageable);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("orders", orderListPage.getContent());
+            response.put("currentPage", orderListPage.getNumber());
+            response.put("totalPages", orderListPage.getTotalPages());
+            response.put("totalElements", orderListPage.getTotalElements());
+            response.put("hasNext", orderListPage.hasNext());
+            response.put("hasPrevious", orderListPage.hasPrevious());
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("error", "Có lỗi xảy ra khi tải dữ liệu: " + e.getMessage());
             return ResponseEntity.internalServerError().body(error);
         }
     }

@@ -3,6 +3,7 @@ package com.datn.Controller.admin;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -238,7 +239,6 @@ public class PromotionCRUDController {
 
         Pageable pageable = PageRequest.of(page, size);
         Page<Promotion> promotionPage;
-
         if (title != null && !title.trim().isEmpty()) {
             promotionPage = promotionService.searchByName(title.trim(), pageable);
             model.addAttribute("title", title);
@@ -250,82 +250,142 @@ public class PromotionCRUDController {
             promotionPage = promotionService.findByAllPromotion(pageable);
         }
 
-        if (errors.hasErrors()) {
-            model.addAttribute("promotions", promotionPage.getContent());
-            model.addAttribute("currentPage", page);
-            model.addAttribute("totalPages", promotionPage.getTotalPages());
-            model.addAttribute("totalElements", promotionPage.getTotalElements());
-            model.addAttribute("hasPrevious", promotionPage.hasPrevious());
-            model.addAttribute("hasNext", promotionPage.hasNext());
-            model.addAttribute("view", "admin/promotionCRUD");
-            return "admin/layout";
-        }
-
-        if (promotion.getEndDate() != null && promotion.getStartDate() != null
-                && promotion.getEndDate().isBefore(promotion.getStartDate())) {
-            model.addAttribute("errorEndDate", "Ngày kết thúc phải sau ngày bắt đầu!");
-            model.addAttribute("promotions", promotionPage.getContent());
-            model.addAttribute("currentPage", page);
-            model.addAttribute("totalPages", promotionPage.getTotalPages());
-            model.addAttribute("totalElements", promotionPage.getTotalElements());
-            model.addAttribute("hasPrevious", promotionPage.hasPrevious());
-            model.addAttribute("hasNext", promotionPage.hasNext());
-            model.addAttribute("view", "admin/promotionCRUD");
-            return "admin/layout";
-        }
-
-        String type = promotion.getDiscountType();
-        Double value = promotion.getDiscountValue();
-        if ("percent".equalsIgnoreCase(type)) {
-            if (value <= 0 || value > 100) {
-                model.addAttribute("errorDiscount", "Giá trị giảm giá phần trăm phải nằm trong khoảng 0 - 100!");
-                model.addAttribute("promotions", promotionPage.getContent());
-                model.addAttribute("currentPage", page);
-                model.addAttribute("totalPages", promotionPage.getTotalPages());
-                model.addAttribute("totalElements", promotionPage.getTotalElements());
-                model.addAttribute("hasPrevious", promotionPage.hasPrevious());
-                model.addAttribute("hasNext", promotionPage.hasNext());
-                model.addAttribute("view", "admin/promotionCRUD");
-                return "admin/layout";
-            }
-        } else if ("amount".equalsIgnoreCase(type)) {
-            if (value <= 0) {
-                model.addAttribute("errorDiscount", "Giá trị giảm giá tiền tệ phải lớn hơn 0!");
-                model.addAttribute("promotions", promotionPage.getContent());
-                model.addAttribute("currentPage", page);
-                model.addAttribute("totalPages", promotionPage.getTotalPages());
-                model.addAttribute("totalElements", promotionPage.getTotalElements());
-                model.addAttribute("hasPrevious", promotionPage.hasPrevious());
-                model.addAttribute("hasNext", promotionPage.hasNext());
-                model.addAttribute("view", "admin/promotionCRUD");
-                return "admin/layout";
-            }
-        } else {
-            model.addAttribute("error", "Loại giảm giá không hợp lệ! Chỉ chấp nhận 'percent' hoặc 'amount'.");
-            model.addAttribute("promotions", promotionPage.getContent());
-            model.addAttribute("currentPage", page);
-            model.addAttribute("totalPages", promotionPage.getTotalPages());
-            model.addAttribute("totalElements", promotionPage.getTotalElements());
-            model.addAttribute("hasPrevious", promotionPage.hasPrevious());
-            model.addAttribute("hasNext", promotionPage.hasNext());
-            model.addAttribute("view", "admin/promotionCRUD");
-            return "admin/layout";
-        }
-
         try {
+            // 1) Lấy bản ghi hiện tại
             Promotion existing = promotionService.findByID(promotion.getId());
-            existing = promotionService.findByID(promotion.getId());
             if (existing == null) {
                 throw new IllegalArgumentException("Không tìm thấy khuyến mãi để cập nhật");
             }
 
+            // 2) Xác định có đổi ngày hay không
+            boolean startChanged = false;
+            boolean endChanged = false;
+
+            // Chỉ coi là thay đổi nếu form gửi giá trị mới khác null
+            if (promotion.getStartDate() != null) {
+                startChanged = !promotion.getStartDate().isEqual(existing.getStartDate());
+            }
+            if (promotion.getEndDate() != null) {
+                endChanged = !promotion.getEndDate().isEqual(existing.getEndDate());
+            }
+
+            boolean dateChanged = startChanged || endChanged;
+
+            // 3) Kiểm tra lỗi validation
+            org.springframework.validation.BindingResult br = (org.springframework.validation.BindingResult) errors;
+            if (errors.hasErrors()) {
+                // Chỉ kiểm tra các lỗi không liên quan đến ngày nếu ngày không thay đổi
+                boolean hasNonDateErrors = br.getFieldErrors().stream()
+                        .anyMatch(fe -> !("startDate".equals(fe.getField()) || "endDate".equals(fe.getField())))
+                        || br.getGlobalErrors().stream()
+                                .anyMatch(
+                                        ge -> !ge.getCode().contains("startDate") && !ge.getCode().contains("endDate"));
+
+                if (hasNonDateErrors || dateChanged) {
+                    // Có lỗi không liên quan đến ngày hoặc ngày bị thay đổi -> trả về lỗi
+                    model.addAttribute("promotions", promotionPage.getContent());
+                    model.addAttribute("currentPage", page);
+                    model.addAttribute("totalPages", promotionPage.getTotalPages());
+                    model.addAttribute("totalElements", promotionPage.getTotalElements());
+                    model.addAttribute("hasPrevious", promotionPage.hasPrevious());
+                    model.addAttribute("hasNext", promotionPage.hasNext());
+                    model.addAttribute("view", "admin/promotionCRUD");
+                    return "admin/layout";
+                }
+                // Nếu chỉ có lỗi liên quan đến ngày và không thay đổi ngày -> bỏ qua lỗi
+            }
+
+            // 4) Xử lý giá trị ngày
+            if (dateChanged) {
+                // Nếu ngày bị thay đổi, validate quan hệ giữa ngày
+                LocalDate finalStartDate = promotion.getStartDate() != null ? promotion.getStartDate()
+                        : existing.getStartDate();
+                LocalDate finalEndDate = promotion.getEndDate() != null ? promotion.getEndDate()
+                        : existing.getEndDate();
+
+                // Thêm kiểm tra: Ngày bắt đầu phải là hôm nay hoặc ngày mai trở đi
+                LocalDate today = LocalDate.now();
+                LocalDate tomorrow = today.plusDays(1);
+                if (finalStartDate != null && (finalStartDate.isBefore(today) || finalStartDate.isAfter(tomorrow))) {
+                    model.addAttribute("errorStartDate", "Ngày bắt đầu phải là ngày hôm nay hoặc tương lai!");
+                    model.addAttribute("promotions", promotionPage.getContent());
+                    model.addAttribute("currentPage", page);
+                    model.addAttribute("totalPages", promotionPage.getTotalPages());
+                    model.addAttribute("totalElements", promotionPage.getTotalElements());
+                    model.addAttribute("hasPrevious", promotionPage.hasPrevious());
+                    model.addAttribute("hasNext", promotionPage.hasNext());
+                    model.addAttribute("view", "admin/promotionCRUD");
+                    return "admin/layout";
+                }
+
+                if (finalStartDate != null && finalEndDate != null && finalEndDate.isBefore(finalStartDate)) {
+                    model.addAttribute("errorEndDate", "Ngày kết thúc phải sau ngày bắt đầu!");
+                    model.addAttribute("promotions", promotionPage.getContent());
+                    model.addAttribute("currentPage", page);
+                    model.addAttribute("totalPages", promotionPage.getTotalPages());
+                    model.addAttribute("totalElements", promotionPage.getTotalElements());
+                    model.addAttribute("hasPrevious", promotionPage.hasPrevious());
+                    model.addAttribute("hasNext", promotionPage.hasNext());
+                    model.addAttribute("view", "admin/promotionCRUD");
+                    return "admin/layout";
+                }
+
+                promotion.setStartDate(finalStartDate);
+                promotion.setEndDate(finalEndDate);
+            } else {
+                // Không thay đổi ngày, giữ nguyên giá trị cũ
+                promotion.setStartDate(existing.getStartDate());
+                promotion.setEndDate(existing.getEndDate());
+            }
+
+            // 5) Validate loại và giá trị giảm giá
+            String type = promotion.getDiscountType();
+            Double value = promotion.getDiscountValue();
+            if ("percent".equalsIgnoreCase(type)) {
+                if (value == null || value <= 0 || value > 100) {
+                    model.addAttribute("errorDiscount", "Giá trị giảm giá phần trăm phải nằm trong khoảng 1 - 100!");
+                    model.addAttribute("promotions", promotionPage.getContent());
+                    model.addAttribute("currentPage", page);
+                    model.addAttribute("totalPages", promotionPage.getTotalPages());
+                    model.addAttribute("totalElements", promotionPage.getTotalElements());
+                    model.addAttribute("hasPrevious", promotionPage.hasPrevious());
+                    model.addAttribute("hasNext", promotionPage.hasNext());
+                    model.addAttribute("view", "admin/promotionCRUD");
+                    return "admin/layout";
+                }
+            } else if ("amount".equalsIgnoreCase(type)) {
+                if (value == null || value <= 0) {
+                    model.addAttribute("errorDiscount", "Giá trị giảm giá tiền tệ phải lớn hơn 0!");
+                    model.addAttribute("promotions", promotionPage.getContent());
+                    model.addAttribute("currentPage", page);
+                    model.addAttribute("totalPages", promotionPage.getTotalPages());
+                    model.addAttribute("totalElements", promotionPage.getTotalElements());
+                    model.addAttribute("hasPrevious", promotionPage.hasPrevious());
+                    model.addAttribute("hasNext", promotionPage.hasNext());
+                    model.addAttribute("view", "admin/promotionCRUD");
+                    return "admin/layout";
+                }
+            } else {
+                model.addAttribute("error", "Loại giảm giá không hợp lệ! Chỉ chấp nhận 'percent' hoặc 'amount'.");
+                model.addAttribute("promotions", promotionPage.getContent());
+                model.addAttribute("currentPage", page);
+                model.addAttribute("totalPages", promotionPage.getTotalPages());
+                model.addAttribute("totalElements", promotionPage.getTotalElements());
+                model.addAttribute("hasPrevious", promotionPage.hasPrevious());
+                model.addAttribute("hasNext", promotionPage.hasNext());
+                model.addAttribute("view", "admin/promotionCRUD");
+                return "admin/layout";
+            }
+
+            // 6) Giữ createdDate, set updatedDate và cập nhật
             promotion.setCreatedDate(existing.getCreatedDate());
             promotion.setUpdatedDate(LocalDateTime.now());
+
             promotionService.update(promotion);
             redirectAttributes.addFlashAttribute("success", "Cập nhật khuyến mãi thành công!");
-            return "redirect:/Promotion/edit/" + promotion.getId() + "?page=" + page + "&size=" + size
-                    + (title != null ? "&title=" + title : "") + (fromDate != null ? "&fromDate=" + fromDate : "")
-                    + (toDate != null ? "&toDate=" + toDate : "");
+
+            return "redirect:/Promotion/edit/" + promotion.getId();
+
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("promotions", promotionPage.getContent());
@@ -350,6 +410,10 @@ public class PromotionCRUDController {
             promotionService.deleteById(id);
             redirectAttributes.addFlashAttribute("success", "Xóa khuyến mãi thành công!");
             return "redirect:/Promotion/index";
+        }catch(DataIntegrityViolationException e ){
+            redirectAttributes.addFlashAttribute("error", "Không thể xóa khuyến mãi vì có liên kết với các thực thể khác!");
+            return "redirect:/Promotion/edit/" + promotion.getId();
+
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/Promotion/edit/" + promotion.getId();

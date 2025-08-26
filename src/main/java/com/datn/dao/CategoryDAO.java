@@ -15,4 +15,7 @@ public interface CategoryDAO extends JpaRepository<Category,Integer> {
       @Query("SELECT p FROM Category p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
         Page<Category> searchByName(@Param("keyword") String keyword, Pageable pageable);
 
+    @Query("SELECT c FROM Category c ORDER BY c.id DESC")
+    Page<Category> findAll(Pageable pageable);
+
 }

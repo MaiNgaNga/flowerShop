@@ -11,4 +11,6 @@ public interface PostCommentDAO extends JpaRepository<PostComment, Long> {
 
     List<PostComment> findByPost_IdOrderByCreatedAtDesc(Long postId);
 
-}
+    List<PostComment> findByPostId(Long postId);
+
+}   

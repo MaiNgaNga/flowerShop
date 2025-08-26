@@ -11,9 +11,9 @@
     style="gap:10px; margin-bottom:15px;">
     <!-- Dropdown lọc trạng thái -->
     <div class="search-box me-2">
-      <select name="status" class="form-control form-control-sm custom-search-input" onchange="this.form.submit()"
+      <select name="status" class="product-crud-select form-select" onchange="this.form.submit()"
         style="min-width:120px">
-        <option value="">-- Tất cả --</option>
+        <option value="">Tất cả</option>
         <option value="false" th:selected="${status == 'false'}">Chưa xử lý</option>
         <option value="true" th:selected="${status == 'true'}">Đã xử lý</option>
       </select>
@@ -36,9 +36,9 @@
     </select>
 
     
-    <a class="btn btn-custom" th:href="@{/Contact/index/admin}">Làm mới</a>
+    <a class="btn btn-custom " th:href="@{/Contact/index/admin}">Làm mới</a>
     <!-- Tổng kết quả -->
-    <div class="count-box ms-auto" th:text="'Tổng: ' + ${totalItems} + ' Liên hệ'"></div>
+    <div class="count-box ms-auto" th:text="'Tổng: ' + ${totalElements} + ' Liên hệ'"></div>
   </form>
     <div class="table-responsive">
       <table class="table table-striped table-hover">

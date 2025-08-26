@@ -313,12 +313,12 @@ function validateProductForm() {
 }
 
 // Xác nhận xóa sản phẩm
-function confirmDelete(element) {
-  const url = element.getAttribute("data-url");
-  if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
-    window.location.href = url;
-  }
-}
+// function confirmDelete(element) {
+//   const url = element.getAttribute("data-url");
+//   if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
+//     window.location.href = url;
+//   }
+// }
 
 // Xóa bộ lọc sản phẩm
 function clearProductFilter() {
@@ -363,7 +363,7 @@ function checkBackendValidationErrors() {
         return;
       }
     }
-    
+
     // Logic thông thường cho các CRUD khác
     if (errors.length === 1) {
       showCustomAlert(errors[0], "error");
@@ -450,10 +450,10 @@ function validateProductCategoryForm() {
 
   // Clear all previous errors
   clearAllFieldErrors();
-  
+
   // Xóa luôn cả backend errors để tránh hiển thị chồng chéo
   const backendErrors = document.querySelectorAll("i.error");
-  backendErrors.forEach(error => {
+  backendErrors.forEach((error) => {
     error.textContent = "";
     error.style.display = "none";
   });
@@ -594,30 +594,6 @@ function validatePromotionForm() {
     }
   }
 
-  if (!startDate) {
-    showFieldError("startDate", "Vui lòng chọn ngày bắt đầu");
-    missingFields.push("ngày bắt đầu");
-    isValid = false;
-  } else {
-    const start = new Date(startDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    if (start < today) {
-      showFieldError(
-        "startDate",
-        "Ngày bắt đầu không được là ngày trong quá khứ"
-      );
-      invalidFields.push("ngày bắt đầu");
-      isValid = false;
-    }
-  }
-
-  if (!endDate) {
-    showFieldError("endDate", "Vui lòng chọn ngày kết thúc");
-    missingFields.push("ngày kết thúc");
-    isValid = false;
-  }
 
   if (!useCount) {
     showFieldError("useCount", "Vui lòng nhập số lượng sử dụng");
@@ -632,17 +608,6 @@ function validatePromotionForm() {
     }
   }
 
-  // Validate logic ngày
-  if (startDate && endDate) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    if (end <= start) {
-      showFieldError("endDate", "Ngày kết thúc phải sau ngày bắt đầu");
-      invalidFields.push("ngày kết thúc");
-      isValid = false;
-    }
-  }
 
   // Show summary alert
   if (missingFields.length > 0 || invalidFields.length > 0) {
@@ -695,15 +660,17 @@ function validateUserForm() {
     if (isNewUser) {
       showFieldError("password", "Vui lòng nhập mật khẩu");
     }
-    
+
     // Hiển thị lỗi role ngay từ đầu
-    const roleContainer = document.querySelector('input[name="role"]').closest('.d-flex');
+    const roleContainer = document
+      .querySelector('input[name="role"]')
+      .closest(".d-flex");
     if (roleContainer) {
       roleContainer.style.border = "1px solid #dc3545";
       roleContainer.style.borderRadius = "4px";
       roleContainer.style.padding = "5px";
     }
-    
+
     const roleErrorElement = document.createElement("i");
     roleErrorElement.className = "error";
     roleErrorElement.textContent = "Vui lòng chọn vai trò";
@@ -712,14 +679,14 @@ function validateUserForm() {
     roleErrorElement.style.display = "block";
     roleErrorElement.style.marginTop = "5px";
     roleErrorElement.id = "role-error";
-    
+
     const oldError = document.getElementById("role-error");
     if (oldError) oldError.remove();
-    
+
     if (roleContainer) {
       roleContainer.parentNode.appendChild(roleErrorElement);
     }
-    
+
     return false;
   }
 
@@ -917,12 +884,12 @@ document.addEventListener("DOMContentLoaded", function () {
       let isValid = true;
 
       // Kiểm tra xem có phải là click vào nút "Làm mới" không
-      const isRefreshAction = e.submitter && (
-        e.submitter.textContent.includes("Làm Mới") ||
-        e.submitter.querySelector(".fa-sync") ||
-        (e.submitter.href && e.submitter.href.includes("index"))
-      );
-      
+      const isRefreshAction =
+        e.submitter &&
+        (e.submitter.textContent.includes("Làm Mới") ||
+          e.submitter.querySelector(".fa-sync") ||
+          (e.submitter.href && e.submitter.href.includes("index")));
+
       if (isRefreshAction) {
         // Không validate cho nút "Làm mới"
         clearAllFieldErrors();
@@ -1096,14 +1063,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const deleteButtons = document.querySelectorAll(
     ".btn-danger, .delete-btn, a[href*='delete']"
   );
-  deleteButtons.forEach(function (btn) {
-    btn.addEventListener("click", function (e) {
-      if (!confirm("Bạn có chắc chắn muốn thực hiện hành động này?")) {
-        e.preventDefault();
-        return false;
-      }
-    });
-  });
 
   // 10. Xử lý nút "Làm mới" - không trigger validation
   const refreshButtons = document.querySelectorAll(
@@ -1113,8 +1072,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // Kiểm tra nếu là nút "Làm mới" dựa vào text hoặc icon
     const btnText = btn.textContent.trim().toLowerCase();
     const hasRefreshIcon = btn.querySelector(".fa-sync, .fa-refresh");
-    
-    if (btnText.includes("làm mới") || btnText.includes("refresh") || hasRefreshIcon) {
+
+    if (
+      btnText.includes("làm mới") ||
+      btnText.includes("refresh") ||
+      hasRefreshIcon
+    ) {
       btn.addEventListener("click", function (e) {
         // Xóa tất cả lỗi trước khi chuyển trang
         clearAllFieldErrors();

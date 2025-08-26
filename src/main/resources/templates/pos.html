@@ -1,4 +1,5 @@
 <link rel="stylesheet" th:href="@{/css/pos.css}" th:if="${view == 'pos'}" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
 <div class="pos-center">
   <div class="pos-flex">
     <div class="pos-left">
@@ -289,10 +290,19 @@
         </div>
         <div class="mb-3">
           <label class="form-label">Phương thức thanh toán</label>
-          <select name="paymentMethod" class="form-control">
-            <option value="cash">Tiền mặt</option>
-            <option value="qr_code">QR Code chuyển khoản</option>
+          <select
+            name="paymentMethod"
+            class="form-control"
+            id="paymentMethodSelect"
+          >
+            <option value="cash">💵 Tiền mặt (thanh toán ngay)</option>
+            <option value="qr_code">🏦 Chuyển khoản QR (cần xác nhận)</option>
           </select>
+          <small class="form-text text-muted">
+            <span id="paymentNote"
+              >Thanh toán tiền mặt sẽ hoàn tất đơn hàng ngay lập tức.</span
+            >
+          </small>
         </div>
         <input type="hidden" name="orderType" value="offline" />
         <button type="submit" class="btn btn-success w-100">

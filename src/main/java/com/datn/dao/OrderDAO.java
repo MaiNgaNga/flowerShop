@@ -1,6 +1,8 @@
 package com.datn.dao;
 
 import java.util.List;
+import java.util.List;
+
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
@@ -36,15 +38,13 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         List<Integer> getAvailableYearsForShipper(@Param("shipperId") Integer shipperId);
 
         // Tìm kiếm đơn hàng POS theo mã đơn hàng, có phân trang, lọc ngày, loại đơn
-        @Query("SELECT o FROM Order o WHERE o.orderType = :orderType "
-                        + "AND (:fromDate IS NULL OR o.createDate >= :fromDate) "
-                        + "AND (:toDate IS NULL OR o.createDate <= :toDate) "
-
-                        + "AND o.orderCode LIKE %:orderCode%")
-
+        @Query(value = "SELECT * FROM orders o WHERE o.order_type = :orderType "
+                        + "AND (:fromDate IS NULL OR o.create_date >= :fromDate) "
+                        + "AND (:toDate IS NULL OR o.create_date <= :toDate) "
+                        + "AND o.order_code LIKE CONCAT('%', :orderCode, '%') "
+                        + "ORDER BY o.create_date DESC", nativeQuery = true)
         Page<Order> searchPosOrdersByOrderCode(
                         @Param("orderType") String orderType,
-
                         @Param("orderCode") String orderCode,
                         @Param("fromDate") LocalDate fromDate,
                         @Param("toDate") LocalDate toDate,
@@ -109,17 +109,17 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         List<Order> findByOrderTypeIgnoreCase(String orderType);
 
         // Lấy đơn hàng tại quầy, lọc theo ngày bán và loại đơn hàng
-        @Query("SELECT o FROM Order o WHERE o.orderType = :orderType "
-                        + "AND (:fromDate IS NULL OR o.createDate >= :fromDate) "
-                        + "AND (:toDate IS NULL OR o.createDate <= :toDate) "
-                        + "ORDER BY o.createDate DESC")
+        @Query(value = "SELECT * FROM orders o WHERE o.order_type = :orderType "
+                        + "AND (:fromDate IS NULL OR o.create_date >= :fromDate) "
+                        + "AND (:toDate IS NULL OR o.create_date <= :toDate) "
+                        + "ORDER BY o.create_date DESC", nativeQuery = true)
         Page<Order> findPosOrders(@Param("orderType") String orderType,
                         @Param("fromDate") LocalDate fromDate,
                         @Param("toDate") LocalDate toDate,
                         Pageable pageable);
 
         // thống kê đơn hàng thành công theo tháng / năm
-        @Query(value = "SELECT COUNT(*) FROM orders WHERE status = N'Đã giao' AND MONTH(create_date) = :month AND YEAR(create_date) = :year", nativeQuery = true)
+        @Query(value = "SELECT COUNT(*) FROM orders WHERE status = N'Hoàn tất' AND MONTH(create_date) = :month AND YEAR(create_date) = :year", nativeQuery = true)
         Long countCanceledOrdersByMonthAndYear(@Param("month") int month, @Param("year") int year);
 
         // thống kê Đếm tổng số đơn hàng trong tháng/năm
@@ -131,7 +131,8 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
                         "FROM ( " +
                         "    SELECT SUM(o.total_amount) AS revenue " +
                         "    FROM orders o " +
-                        "    WHERE YEAR(o.create_date) = :year AND (o.status = N'Đã giao' OR o.payment_status = N'Đã thanh toán') " +
+                        "    WHERE YEAR(o.create_date) = :year AND (o.status = N'Hoàn tất' ) "
+                        +
                         "    UNION ALL " +
                         "    SELECT SUM(s.quoted_price) AS revenue " +
                         "    FROM service_orders s " +
@@ -147,7 +148,8 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
                         "LEFT JOIN ( " +
                         "    SELECT MONTH(o.create_date) AS month, SUM(o.total_amount) AS revenue " +
                         "    FROM orders o " +
-                        "    WHERE YEAR(o.create_date) = :year AND (o.status = N'Đã giao' OR o.payment_status = N'Đã thanh toán') " +
+                        "    WHERE YEAR(o.create_date) = :year AND (o.status = N'Hoàn tất' ) "
+                        +
                         "    GROUP BY MONTH(o.create_date) " +
                         "    UNION ALL " +
                         "    SELECT MONTH(s.confirmed_at) AS month, SUM(s.quoted_price) AS revenue " +
@@ -172,7 +174,7 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
                         "FROM ( " +
                         "    SELECT o.create_date AS create_date, SUM(o.total_amount) AS revenue " +
                         "    FROM orders o " +
-                        "    WHERE YEAR(o.create_date) = :year AND MONTH(o.create_date) = :month AND (o.status = N'Đã giao' OR o.payment_status = N'Đã thanh toán') "
+                        "    WHERE YEAR(o.create_date) = :year AND MONTH(o.create_date) = :month AND (o.status = N'Hoàn tất' ) "
                         +
                         "    GROUP BY o.create_date " +
                         "    UNION ALL " +
@@ -197,7 +199,7 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         // @Param("year") int year);
 
         // Đếm đơn giao trong năm
-        @Query(value = "SELECT COUNT(*) FROM orders WHERE status = N'Đã giao' AND YEAR(create_date) = :year", nativeQuery = true)
+        @Query(value = "SELECT COUNT(*) FROM orders WHERE status = N'Hoàn tất' AND YEAR(create_date) = :year", nativeQuery = true)
         Long countDeliveredOrdersByYear(@Param("year") int year);
 
         // Đếm tổng số đơn đặt hàng trong năm

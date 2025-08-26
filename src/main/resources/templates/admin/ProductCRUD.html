@@ -1,32 +1,32 @@
 <main class="container mt-3">
   <h3>Quản Lý Sản Phẩm</h3>
   <hr />
-  <!-- Hiển thị thông báo flash messages từ controller -->
+  <!-- Hiển thị thông báo flash messages từ controller - sẽ được convert thành custom alert bởi admin-crud.js -->
   <div
     th:if="${success}"
-    class="alert alert-success alert-dismissible fade show"
+    class="alert alert-success alert-dismissible fade show d-none"
     role="alert"
+    data-message="success"
   >
     <span th:text="${success}"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
   <div
     th:if="${error}"
-    class="alert alert-danger alert-dismissible fade show"
+    class="alert alert-danger alert-dismissible fade show d-none"
     role="alert"
+    data-message="error"
   >
     <span th:text="${error}"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
   <div
     th:if="${warning}"
-    class="alert alert-warning alert-dismissible fade show"
+    class="alert alert-warning alert-dismissible fade show d-none"
     role="alert"
+    data-message="warning"
   >
     <span th:text="${warning}"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
   <!-- Tab Navigation -->
@@ -621,4 +621,83 @@
     // Submit form để reload trang với filter rỗng
     document.getElementById("productFilterForm").submit();
   }
+
+  // Advanced image refresh với multiple strategies
+  function forceRefreshImages() {
+    const images = document.querySelectorAll("#list-tab-pane img");
+    console.log("Force refreshing " + images.length + " images");
+
+    images.forEach((img, index) => {
+      const originalSrc = img.src;
+      const timestamp = Date.now() + index;
+
+      // Strategy 1: Clear src và reload
+      img.src = "";
+
+      // Strategy 2: Thêm timestamp parameter
+      setTimeout(() => {
+        let newSrc = originalSrc;
+        if (originalSrc.includes("?")) {
+          newSrc = originalSrc.split("?")[0] + "?v=" + timestamp;
+        } else {
+          newSrc = originalSrc + "?v=" + timestamp;
+        }
+        img.src = newSrc;
+
+        // Strategy 3: Force reload nếu vẫn không load được
+        img.onerror = function () {
+          console.log("Image failed to load, retrying: " + newSrc);
+          setTimeout(() => {
+            this.src = newSrc + "&retry=" + Math.random();
+          }, 100);
+        };
+      }, 50 + index * 10);
+    });
+  }
+
+  // API call để refresh images từ server
+  function refreshImagesFromServer() {
+    fetch("/api/images/refresh", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          console.log("Server refresh successful, updating images...");
+          setTimeout(forceRefreshImages, 100);
+        } else {
+          console.error("Server refresh failed:", data.message);
+          // Fallback to client-side refresh
+          forceRefreshImages();
+        }
+      })
+      .catch((error) => {
+        console.error("Error calling refresh API:", error);
+        // Fallback to client-side refresh
+        forceRefreshImages();
+      });
+  }
+
+  // Enhanced auto refresh khi load trang với success
+  document.addEventListener("DOMContentLoaded", function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const successAlert = document.querySelector(".alert-success");
+
+    // Nếu có success và đang ở tab list
+    if (
+      (successAlert || urlParams.get("success")) &&
+      urlParams.get("tab") === "list"
+    ) {
+      console.log("Success detected - performing enhanced image refresh");
+
+      // Multiple refresh attempts với increasing delays
+      setTimeout(refreshImagesFromServer, 100);
+      setTimeout(forceRefreshImages, 300);
+      setTimeout(forceRefreshImages, 800);
+      setTimeout(forceRefreshImages, 1500);
+    }
+  });
 </script>

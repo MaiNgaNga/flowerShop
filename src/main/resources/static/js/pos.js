@@ -1,4 +1,44 @@
-// Xử lý mở bill ở cửa sổ mới khi thanh toán tiền mặt
+// ==========================================
+// HỆ THỐNG THÔNG BÁO ALERT ĐẸP
+// ==========================================
+function showCustomAlert(message, type = "success") {
+  // Xóa các alert cũ
+  document.querySelectorAll(".custom-alert").forEach((alert) => alert.remove());
+
+  const alertDiv = document.createElement("div");
+  alertDiv.className = `custom-alert alert-${type}`;
+
+  const icon =
+    type === "success"
+      ? "bi-check-circle-fill"
+      : type === "error"
+      ? "bi-x-circle-fill"
+      : type === "warning"
+      ? "bi-exclamation-triangle-fill"
+      : "bi-info-circle-fill";
+
+  alertDiv.innerHTML = `
+    <i class="alert-icon bi ${icon}"></i>
+    <span class="alert-message">${message}</span>
+    <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+  `;
+
+  document.body.appendChild(alertDiv);
+  
+  // Tự động ẩn sau 6 giây
+  setTimeout(() => {
+    if (alertDiv.parentElement) {
+      alertDiv.style.animation = "slideOutRight 0.3s ease-in";
+      setTimeout(() => alertDiv.remove(), 300);
+    }
+  }, 6000);
+}
+
+function showAlert(message, type = "info") {
+  showCustomAlert(message, type);
+}
+
+// Xử lý mở bill ở cửa sổ mới khi thanh toán tiền mặt và thông báo phương thức thanh toán
 document.addEventListener("DOMContentLoaded", function () {
   const posForm = document.getElementById("posForm");
   if (posForm) {
@@ -34,8 +74,26 @@ document.addEventListener("DOMContentLoaded", function () {
             }
           })
           .catch(() => {
-            alert("Có lỗi khi xác nhận bán hàng!");
+            showCustomAlert("Có lỗi khi xác nhận bán hàng!", "error");
           });
+      }
+    });
+  }
+
+  // Cập nhật thông báo khi chọn phương thức thanh toán
+  const paymentSelect = document.getElementById("paymentMethodSelect");
+  const paymentNote = document.getElementById("paymentNote");
+
+  if (paymentSelect && paymentNote) {
+    paymentSelect.addEventListener("change", function () {
+      if (this.value === "cash") {
+        paymentNote.textContent =
+          "Thanh toán tiền mặt sẽ hoàn tất đơn hàng ngay lập tức.";
+        paymentNote.className = "form-text text-success";
+      } else if (this.value === "qr_code") {
+        paymentNote.textContent =
+          "Chuyển khoản cần nhân viên xác nhận sau khi khách thanh toán.";
+        paymentNote.className = "form-text text-warning";
       }
     });
   }
@@ -72,12 +130,12 @@ function addToCart(btn) {
       if (Array.isArray(cart)) {
         renderCart(cart);
       } else {
-        alert("Có lỗi khi thêm vào giỏ hàng!");
+        showCustomAlert("Có lỗi khi thêm vào giỏ hàng!", "error");
         console.error(cart);
       }
     })
     .catch((err) => {
-      alert("Có lỗi khi thêm vào giỏ hàng: " + err.message);
+      showCustomAlert("Có lỗi khi thêm vào giỏ hàng: " + err.message, "error");
       console.error(err);
     });
 }
@@ -124,12 +182,12 @@ function removeFromCart(productId) {
       if (Array.isArray(cart)) {
         renderCart(cart);
       } else {
-        alert("Có lỗi khi xóa sản phẩm!");
+        showCustomAlert("Có lỗi khi xóa sản phẩm!", "error");
         console.error(cart);
       }
     })
     .catch((err) => {
-      alert("Có lỗi khi xóa sản phẩm: " + err.message);
+      showCustomAlert("Có lỗi khi xóa sản phẩm: " + err.message, "error");
       console.error(err);
     });
 }
@@ -143,6 +201,35 @@ function resetFilterForm() {
 }
 
 window.onload = function () {
+  // Xử lý thông báo từ backend (Thymeleaf)
+  const successElements = document.querySelectorAll(".alert-success");
+  successElements.forEach(function (element) {
+    const message = element.textContent.trim();
+    if (message) {
+      showCustomAlert(message, "success");
+      element.style.display = "none"; // Ẩn alert Bootstrap gốc
+    }
+  });
+
+  const errorElements = document.querySelectorAll(".alert-danger");
+  errorElements.forEach(function (element) {
+    const message = element.textContent.trim();
+    if (message) {
+      showCustomAlert(message, "error");
+      element.style.display = "none"; // Ẩn alert Bootstrap gốc
+    }
+  });
+
+  const warningElements = document.querySelectorAll(".alert-warning");
+  warningElements.forEach(function (element) {
+    const message = element.textContent.trim();
+    if (message) {
+      showCustomAlert(message, "warning");
+      element.style.display = "none"; // Ẩn alert Bootstrap gốc
+    }
+  });
+
+  // Load giỏ hàng
   fetch("/pos/cart")
     .then((res) => {
       if (!res.ok) {
@@ -162,4 +249,39 @@ window.onload = function () {
     .catch((err) => {
       console.error("Lỗi khi lấy giỏ hàng:", err);
     });
+
+  // Xử lý thông báo từ URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  
+  // Xử lý success messages
+  if (urlParams.get('success') === 'payment_completed') {
+    showCustomAlert("Thanh toán thành công!", "success");
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+  
+  // Xử lý error messages
+  const errorParam = urlParams.get('error');
+  if (errorParam) {
+    let errorMessage = "Có lỗi xảy ra";
+    
+    switch(errorParam) {
+      case 'empty_cart':
+        errorMessage = "Giỏ hàng trống! Vui lòng chọn sản phẩm trước khi thanh toán.";
+        break;
+      case 'qr_generation_failed':
+        errorMessage = "Không thể tạo mã QR thanh toán. Vui lòng thử lại hoặc liên hệ hỗ trợ.";
+        break;
+      case 'system_error':
+        errorMessage = "Lỗi hệ thống! Vui lòng thử lại sau.";
+        break;
+      case 'invalid_request':
+        errorMessage = "Yêu cầu không hợp lệ!";
+        break;
+      default:
+        errorMessage = "Có lỗi xảy ra: " + errorParam;
+    }
+    
+    showCustomAlert(errorMessage, "error");
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
 };

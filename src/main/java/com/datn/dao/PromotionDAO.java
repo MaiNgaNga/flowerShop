@@ -32,4 +32,7 @@ public interface PromotionDAO extends JpaRepository<Promotion, Long> {
     @Query("SELECT p FROM Promotion p WHERE p.useCount > 0 AND CURRENT_DATE BETWEEN p.startDate AND p.endDate and p.status = true")
     List<Promotion> findValidPromotions();
 
+    @Query("SELECT p FROM Promotion p ORDER BY p.createdDate DESC")
+    Page<Promotion> findAllPromotions(Pageable pageable);
+
 }

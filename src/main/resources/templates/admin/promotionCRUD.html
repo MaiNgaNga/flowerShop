@@ -1,33 +1,11 @@
 <main class="container mt-3">
   <h3>Quản Lý Khuyến Mãi</h3>
   <hr />
-  <!-- Hiển thị thông báo flash messages từ controller -->
   <div
+    class="success alert alert-success"
     th:if="${success}"
-    class="alert alert-success alert-dismissible fade show"
-    role="alert"
-  >
-    <span th:text="${success}"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-  </div>
-
-  <div
-    th:if="${error}"
-    class="alert alert-danger alert-dismissible fade show"
-    role="alert"
-  >
-    <span th:text="${error}"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-  </div>
-
-  <div
-    th:if="${warning}"
-    class="alert alert-warning alert-dismissible fade show"
-    role="alert"
-  >
-    <span th:text="${warning}"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-  </div>
+    th:text="${success}"
+  ></div>
   <!-- Tab Navigation -->
   <ul class="nav nav-tabs" id="flowerTab" role="tablist">
     <li class="nav-item" role="presentation">
@@ -62,6 +40,8 @@
 
   <!-- Tab Content -->
   <div class="tab-content" id="flowerTabContent">
+    <i class="error" th:if="${error}" th:text="${error}"></i>
+
     <!-- Tab: Chỉnh sửa -->
     <div
       class="tab-pane fade show active"
@@ -101,7 +81,7 @@
                 class="form-control form-control-sm"
                 placeholder="Tên khuyến mãi"
               />
-              <i class="error" th:errors="*{title}"></i>
+              <small class="text-danger" th:errors="*{title}"></small>
             </div>
           </div>
 
@@ -118,7 +98,7 @@
                 placeholder="Mô tả"
                 rows="3"
               ></textarea>
-              <i class="error" th:errors="*{description}"></i>
+              <small class="text-danger" th:errors="*{description}"></small>
             </div>
           </div>
 
@@ -137,7 +117,7 @@
                 <option value="percent">Phần trăm (%)</option>
                 <option value="amount">Số tiền (VNĐ)</option>
               </select>
-              <i class="error" th:errors="*{discountType}"></i>
+              <small class="text-danger" th:errors="*{discountType}"></small>
             </div>
           </div>
 
@@ -155,7 +135,7 @@
                 class="form-control form-control-sm"
                 placeholder="VD: 10 hoặc 100000"
               />
-              <i class="error" th:errors="*{discountValue}"></i>
+              <small class="text-danger" th:errors="*{discountValue}"></small>
               <small class="text-danger" th:text="${errorDiscount}"></small>
             </div>
           </div>
@@ -172,7 +152,8 @@
                 th:field="*{startDate}"
                 class="form-control form-control-sm"
               />
-              <i class="error" th:errors="*{startDate}"></i>
+              <small class="text-danger" th:errors="*{startDate}"></small>
+              <small class="text-danger" th:text="${errorStartDate}"></small>
             </div>
           </div>
 
@@ -188,7 +169,7 @@
                 th:field="*{endDate}"
                 class="form-control form-control-sm"
               />
-              <i class="error" th:errors="*{endDate}"></i>
+              <small class="text-danger" th:errors="*{endDate}"></small>
               <small class="text-danger" th:text="${errorEndDate}"></small>
             </div>
           </div>
@@ -203,7 +184,7 @@
                 <option value="true">Đang hoạt động</option>
                 <option value="false">Ngưng hoạt động</option>
               </select>
-              <i class="error" th:errors="*{status}"></i>
+              <small class="text-danger" th:errors="*{status}"></small>
             </div>
           </div>
 
@@ -220,7 +201,7 @@
                 class="form-control form-control-sm"
                 placeholder="Nhập số lượng sử dụng của voucher"
               />
-              <i class="error" th:errors="*{useCount}"></i>
+              <small class="text-danger" th:errors="*{useCount}"></small>
             </div>
           </div>
         </div>
@@ -334,12 +315,13 @@
               <div class="flex-grow-1">
                 <label for="title" class="form-label">Tìm theo tên:</label>
                 <input
+                  style="width: 250px"
                   type="text"
                   id="title"
                   name="title"
                   th:value="${title}"
                   placeholder="Tên khuyến mãi"
-                  class="form-control searchName"
+                  class="form-control product-crud-admin searchName"
                 />
               </div>
               <button class="btn btn-primary" type="submit">Tìm</button>
@@ -467,106 +449,71 @@
           </tbody>
         </table>
       </div>
-
-      <!-- Phân trang chuyên nghiệp -->
-      <div class="pagination-wrapper" th:if="${totalElements > 0}">
-        <div class="d-flex justify-content-between align-items-center">
-          <div class="pagination-info">
-            Hiển thị
-            <strong th:text="${#lists.size(promotions)}"></strong> trong tổng số
-            <strong th:text="${totalElements}"></strong> khuyến mãi
-          </div>
-
-          <nav aria-label="Promotion pagination" th:if="${totalPages > 1}">
-            <ul class="pagination simple-pagination">
-              <!-- Nút về trang đầu -->
-              <li
-                class="page-item"
-                th:classappend="${currentPage == 0} ? 'disabled'"
+      <!-- phan trang -->
+      <div
+        class="d-flex justify-content-center mt-4"
+        th:if="${totalPages >= 1}"
+      >
+        <nav>
+          <ul class="pagination custom-pagination">
+            <li
+              class="page-item"
+              th:classappend="${currentPage == 0} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{'/Promotion/index?page=0' + '#list'}"
               >
-                <a
-                  class="page-link"
-                  th:href="@{/Promotion/index(page=0, size=10, keyword=${keyword})} + '#list'"
-                  th:unless="${currentPage == 0}"
-                  title="Trang đầu"
-                >
-                  <i class="fas fa-angle-double-left"></i>
-                </a>
-                <span class="page-link" th:if="${currentPage == 0}">
-                  <i class="fas fa-angle-double-left"></i>
-                </span>
-              </li>
-
-              <!-- Nút trang trước -->
-              <li
-                class="page-item"
-                th:classappend="${!hasPrevious} ? 'disabled'"
+                <i class="fa fa-angle-double-left"></i>
+              </a>
+            </li>
+            <li
+              class="page-item"
+              th:classappend="${currentPage == 0} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{'/Promotion/index?page=' + (${currentPage - 1}) + '#list'}"
               >
-                <a
-                  class="page-link"
-                  th:href="@{/Promotion/index(page=${currentPage - 1}, size=10, keyword=${keyword})} + '#list'"
-                  th:if="${hasPrevious}"
-                  title="Trang trước"
-                >
-                  <i class="fas fa-chevron-left"></i>
-                </a>
-                <span class="page-link" th:unless="${hasPrevious}">
-                  <i class="fas fa-chevron-left"></i>
-                </span>
-              </li>
-
-              <!-- Các trang số -->
-              <li
-                class="page-item"
-                th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
-                th:if="${pageNum >= currentPage - 1 && pageNum <= currentPage + 1}"
-                th:classappend="${pageNum == currentPage} ? 'active'"
+                <i class="fa fa-angle-left"></i>
+              </a>
+            </li>
+            <li
+              class="page-item"
+              th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+              th:classappend="${currentPage == i} ? 'active'"
+            >
+              <a
+                class="page-link"
+                th:href="@{'/Promotion/index?page=' + ${i} + '#list'}"
+                th:text="${i + 1}"
               >
-                <a
-                  class="page-link"
-                  th:href="@{/Promotion/index(page=${pageNum}, size=10, keyword=${keyword})} + '#list'"
-                  th:text="${pageNum + 1}"
-                ></a>
-              </li>
-
-              <!-- Nút trang sau -->
-              <li class="page-item" th:classappend="${!hasNext} ? 'disabled'">
-                <a
-                  class="page-link"
-                  th:href="@{/Promotion/index(page=${currentPage + 1}, size=10, keyword=${keyword})} + '#list'"
-                  th:if="${hasNext}"
-                  title="Trang sau"
-                >
-                  <i class="fas fa-chevron-right"></i>
-                </a>
-                <span class="page-link" th:unless="${hasNext}">
-                  <i class="fas fa-chevron-right"></i>
-                </span>
-              </li>
-
-              <!-- Nút về trang cuối -->
-              <li
-                class="page-item"
-                th:classappend="${currentPage == totalPages - 1} ? 'disabled'"
+              </a>
+            </li>
+            <li
+              class="page-item"
+              th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{'/Promotion/index?page=' + (${currentPage + 1}) + '#list'}"
               >
-                <a
-                  class="page-link"
-                  th:href="@{/Promotion/index(page=${totalPages - 1}, size=10, keyword=${keyword})} + '#list'"
-                  th:unless="${currentPage == totalPages - 1}"
-                  title="Trang cuối"
-                >
-                  <i class="fas fa-angle-double-right"></i>
-                </a>
-                <span
-                  class="page-link"
-                  th:if="${currentPage == totalPages - 1}"
-                >
-                  <i class="fas fa-angle-double-right"></i>
-                </span>
-              </li>
-            </ul>
-          </nav>
-        </div>
+                <i class="fa fa-angle-right"></i>
+              </a>
+            </li>
+            <li
+              class="page-item"
+              th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{'/Promotion/index?page=' + (${totalPages - 1}) + '#list'}"
+              >
+                <i class="fa fa-angle-double-right"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
     </div>
     <!-- tab tìm kiếm -->

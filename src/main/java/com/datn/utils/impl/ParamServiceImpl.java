@@ -81,9 +81,40 @@ public class ParamServiceImpl implements ParamService {
                 directory.mkdirs();
             }
 
-            File destination = new File(directory, file.getOriginalFilename());
+            String originalFilename = file.getOriginalFilename();
+            if (originalFilename == null || originalFilename.trim().isEmpty()) {
+                throw new RuntimeException("Tên file không hợp lệ");
+            }
+
+            // Xử lý tên file trùng lặp bằng cách thêm timestamp
+            String fileName = originalFilename;
+            String fileExtension = "";
+            int lastDotIndex = originalFilename.lastIndexOf('.');
+            if (lastDotIndex > 0) {
+                fileName = originalFilename.substring(0, lastDotIndex);
+                fileExtension = originalFilename.substring(lastDotIndex);
+            }
+
+            File destination = new File(directory, originalFilename);
+            
+            // Nếu file đã tồn tại, thêm timestamp để tránh trùng lặp
+            if (destination.exists()) {
+                long timestamp = System.currentTimeMillis();
+                String newFileName = fileName + "_" + timestamp + fileExtension;
+                destination = new File(directory, newFileName);
+            }
+
+            // Lưu file
             file.transferTo(destination);
+            
+            // Kiểm tra file đã được lưu thành công
+            if (!destination.exists() || destination.length() == 0) {
+                throw new RuntimeException("File không được lưu thành công");
+            }
+            
+            System.out.println("File đã được lưu thành công: " + destination.getAbsolutePath());
             return destination;
+            
         } catch (IOException e) {
             throw new RuntimeException("Lỗi lưu file: " + e.getMessage());
         }

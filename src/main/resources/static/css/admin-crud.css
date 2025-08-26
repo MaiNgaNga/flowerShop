@@ -891,7 +891,6 @@ input[type="file"] {
   background-color: #edf2f7;
   box-shadow: 0 0 8px rgba(66, 153, 225, 0.3);
 }
-
 /* ========================================
    14. ICON HÀNH ĐỘNG (SỬA / XÓA)
    ======================================== */
@@ -1003,9 +1002,6 @@ input[type="file"] {
   transition: box-shadow 0.3s ease;
 }
 
-.searchName {
-  border: 2px solid #90cdf4;
-}
 
 .filter-form form label {
   font-weight: 500;
@@ -1015,7 +1011,6 @@ input[type="file"] {
 }
 
 .filter-form input[type="date"] {
-  border: 2px solid #90cdf4;
   padding: 6px 10px;
   border-radius: 6px;
   margin-right: 8px;
@@ -1035,11 +1030,9 @@ input[type="file"] {
   background-color: #3ab0d4;
 }
 
-.filter-form form .form-control {
-  min-width: 160px;
-}
 
-.filter-form .btn-custom {
+
+.btn-custom {
   background-color: #e2e2e2;
   color: #333;
   border: 1px solid #ccc;
@@ -1153,7 +1146,7 @@ input[type="file"] {
 /* 2. THÔNG BÁO ALERT */
 .custom-alert {
   position: fixed;
-  top: 20px;
+  top: 80px;
   right: 20px;
   min-width: 300px;
   max-width: 500px;
