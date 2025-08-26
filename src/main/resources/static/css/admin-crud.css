@@ -7,14 +7,6 @@
   border-radius: 5px;
   transition: all 0.3s ease-in-out;
 }
-.pagination-wrapper {
-  border: none !important;
-  box-shadow: none !important;
-  background: transparent !important;
-}
-.page-item .page-link {
-  border: none !important;
-}
 
 /* ========================================
    2. THANH TÌM KIẾM TRÊN ĐẦU (SEARCH BAR)
@@ -891,6 +883,7 @@ input[type="file"] {
   background-color: #edf2f7;
   box-shadow: 0 0 8px rgba(66, 153, 225, 0.3);
 }
+
 /* ========================================
    14. ICON HÀNH ĐỘNG (SỬA / XÓA)
    ======================================== */
@@ -1002,7 +995,6 @@ input[type="file"] {
   transition: box-shadow 0.3s ease;
 }
 
-
 .filter-form form label {
   font-weight: 500;
   margin-bottom: 4px;
@@ -1011,6 +1003,7 @@ input[type="file"] {
 }
 
 .filter-form input[type="date"] {
+  border: 2px solid #90cdf4;
   padding: 6px 10px;
   border-radius: 6px;
   margin-right: 8px;
@@ -1030,9 +1023,7 @@ input[type="file"] {
   background-color: #3ab0d4;
 }
 
-
-
-.btn-custom {
+.filter-form .btn-custom {
   background-color: #e2e2e2;
   color: #333;
   border: 1px solid #ccc;

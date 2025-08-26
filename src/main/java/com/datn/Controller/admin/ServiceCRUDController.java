@@ -3,6 +3,7 @@ package com.datn.Controller.admin;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,13 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
-import jakarta.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/Service")
@@ -194,48 +189,19 @@ public class ServiceCRUDController {
     public String delete(@ModelAttribute("service") ServiceEntity service,
             @PathVariable("id") long id,
             @RequestParam(value = "tab", defaultValue = "edit") String tab,
-            RedirectAttributes redirectAttributes,
-            HttpServletRequest request) {
+            RedirectAttributes redirectAttributes) {
         try {
             serviceService.deleteById(id);
             redirectAttributes.addFlashAttribute("success", "Đã xóa dịch vụ!");
             return "redirect:/Service/index?tab=" + tab;
-        } catch (IllegalArgumentException e) {
-            // Kiểm tra nếu là AJAX request
-            String requestedWith = request.getHeader("X-Requested-With");
-            if ("XMLHttpRequest".equals(requestedWith)) {
-                // Ném exception để được xử lý bởi AJAX error handler
-                throw new RuntimeException(e.getMessage());
-            } else {
-                redirectAttributes.addFlashAttribute("error", e.getMessage());
-                return "redirect:/Service/edit/" + service.getId() + "?tab=" + tab;
-            }
-        }
-    }
+        } catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Không thể xóa dịch vụ vì có liên kết với các thực thể khác!");
+            return "redirect:/Service/index?tab=" + tab;
 
-    /**
-     * API endpoint riêng để xử lý AJAX delete request
-     */
-    @PostMapping("/api/delete/{id}")
-    @ResponseBody
-    public ResponseEntity<Map<String, Object>> deleteServiceAjax(@PathVariable("id") long id) {
-        Map<String, Object> response = new HashMap<>();
-        
-        try {
-            // Gọi service xóa dịch vụ theo ID
-            serviceService.deleteById(id);
-            response.put("success", true);
-            response.put("message", "Đã xóa dịch vụ thành công!");
-            return ResponseEntity.ok(response);
-            
         } catch (IllegalArgumentException e) {
-            response.put("success", false);
-            response.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "Có lỗi xảy ra khi xóa dịch vụ: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/Service/edit/" + service.getId() + "?tab=" + tab;
         }
     }
 }

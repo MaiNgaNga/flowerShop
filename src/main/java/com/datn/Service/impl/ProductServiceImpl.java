@@ -24,7 +24,6 @@ import com.datn.model.Product;
 import com.datn.utils.ParamService;
 import com.datn.Service.CategoryService;
 import com.datn.Service.ProductCategoryService;
-import org.springframework.dao.DataIntegrityViolationException;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -46,14 +45,14 @@ public class ProductServiceImpl implements ProductService {
     private String getImagesPath() {
         String path = System.getProperty("user.dir") + "/src/main/resources/static/images";
         System.out.println("Images path: " + path);
-        
+
         // Kiểm tra và tạo thư mục nếu chưa tồn tại
         File directory = new File(path);
         if (!directory.exists()) {
             boolean created = directory.mkdirs();
             System.out.println("Created images directory: " + created);
         }
-        
+
         return path;
     }
 
@@ -75,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         String imagePath = getImagesPath();
-        
+
         if (image1 != null && !image1.isEmpty()) {
             File savedFile = param.save(image1, imagePath);
             if (savedFile != null) {
@@ -112,7 +111,7 @@ public class ProductServiceImpl implements ProductService {
 
         if (dao.existsById(entity.getId())) {
             String imagePath = getImagesPath();
-            
+
             // Ảnh 1
             if (image1 != null && !image1.isEmpty()) {
                 File savedFile = param.save(image1, imagePath);
@@ -174,37 +173,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteById(long id) {
-        if (!dao.existsById(id)) {
+        if (dao.existsById(id)) {
+            dao.deleteById(id);
+        } else {
             throw new IllegalArgumentException("Không xác định được sản phẩm cần xóa!");
         }
-        
-        try {
-            // Kiểm tra xem sản phẩm có đang được sử dụng không
-            if (isProductInUse(id)) {
-                throw new IllegalArgumentException("Không thể xóa sản phẩm này vì đã có đơn hàng hoặc đang có trong giỏ hàng của khách hàng!");
-            }
-            
-            dao.deleteById(id);
-        } catch (DataIntegrityViolationException e) {
-            // Bắt lỗi khóa ngoại từ database
-            throw new IllegalArgumentException("Không thể xóa sản phẩm này vì đã có đơn hàng hoặc đang có trong giỏ hàng của khách hàng!");
-        } catch (Exception e) {
-            // Bắt các lỗi khác
-            throw new IllegalArgumentException("Có lỗi xảy ra khi xóa sản phẩm: " + e.getMessage());
-        }
-    }
-    
-    /**
-     * Kiểm tra xem sản phẩm có đang được sử dụng trong đơn hàng hoặc giỏ hàng không
-     */
-    private boolean isProductInUse(long productId) {
-        // Kiểm tra trong OrderDetail
-        boolean hasOrders = dao.existsInOrderDetails(productId);
-        
-        // Kiểm tra trong CartItem  
-        boolean hasCartItems = dao.existsInCartItems(productId);
-        
-        return hasOrders || hasCartItems;
     }
 
     @Override
@@ -403,8 +376,9 @@ public class ProductServiceImpl implements ProductService {
     public List<Map<String, Object>> getTop6SellingProductsByYearAndMonth(int year, int month) {
         return dao.getTop6SellingProductsByYearAndMonth(year, month);
     }
+
     @Override
-    public List<Category> findCategoriesByProductCategoryId(@Param("productCategoryId") int productCategoryId){
+    public List<Category> findCategoriesByProductCategoryId(@Param("productCategoryId") int productCategoryId) {
         return dao.findCategoriesByProductCategoryId(productCategoryId);
     }
 }

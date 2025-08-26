@@ -353,8 +353,32 @@ function checkBackendValidationErrors() {
     }
   });
 
-  // Hiển thị alert phù hợp - với logic đặc biệt cho ProductCategory
+  // Hiển thị alert phù hợp
   if (errors.length > 0) {
+    // Xử lý thông báo lỗi đặc biệt
+    for (let i = 0; i < errors.length; i++) {
+      let error = errors[i];
+
+      // Làm đẹp thông báo lỗi khóa ngoại và các lỗi thường gặp
+      if (error.includes("đã có đơn hàng") || error.includes("giỏ hàng")) {
+        error = "Không thể xóa vì đã có dữ liệu liên quan!";
+      } else if (
+        error.includes("foreign key") ||
+        error.includes("constraint")
+      ) {
+        error = "Không thể xóa vì đã có dữ liệu liên quan!";
+      } else if (error.includes("duplicate") || error.includes("trùng lặp")) {
+        error = "Dữ liệu đã tồn tại!";
+      } else if (
+        error.includes("not found") ||
+        error.includes("không tìm thấy")
+      ) {
+        error = "Không tìm thấy dữ liệu!";
+      }
+
+      errors[i] = error;
+    }
+
     // Đặc biệt cho ProductCategory: thay đổi thông báo
     if (currentUrl.includes("/ProductCategory/") && errors.length === 1) {
       const error = errors[0];
@@ -385,7 +409,7 @@ function checkFlashMessages() {
   successElements.forEach(function (element) {
     const messageSpan = element.querySelector("span");
     if (messageSpan) {
-      const message = messageSpan.textContent.trim();
+      let message = messageSpan.textContent.trim();
       if (message) {
         showCustomAlert(message, "success");
         element.style.display = "none"; // Ẩn alert Bootstrap gốc
@@ -398,8 +422,31 @@ function checkFlashMessages() {
   errorElements.forEach(function (element) {
     const messageSpan = element.querySelector("span");
     if (messageSpan) {
-      const message = messageSpan.textContent.trim();
+      let message = messageSpan.textContent.trim();
       if (message) {
+        // Làm đẹp thông báo lỗi flash message
+        if (
+          message.includes("đã có đơn hàng") ||
+          message.includes("giỏ hàng")
+        ) {
+          message = "Không thể xóa vì đã có dữ liệu liên quan!";
+        } else if (
+          message.includes("foreign key") ||
+          message.includes("constraint")
+        ) {
+          message = "Không thể xóa vì đã có dữ liệu liên quan!";
+        } else if (
+          message.includes("duplicate") ||
+          message.includes("trùng lặp")
+        ) {
+          message = "Dữ liệu đã tồn tại!";
+        } else if (
+          message.includes("not found") ||
+          message.includes("không tìm thấy")
+        ) {
+          message = "Không tìm thấy dữ liệu!";
+        }
+
         showCustomAlert(message, "error");
         element.style.display = "none"; // Ẩn alert Bootstrap gốc
       }
@@ -411,13 +458,41 @@ function checkFlashMessages() {
   warningElements.forEach(function (element) {
     const messageSpan = element.querySelector("span");
     if (messageSpan) {
-      const message = messageSpan.textContent.trim();
+      let message = messageSpan.textContent.trim();
       if (message) {
         showCustomAlert(message, "warning");
         element.style.display = "none"; // Ẩn alert Bootstrap gốc
       }
     }
   });
+}
+
+// 5. HÀM TIỆN ÍCH ĐỂ LÀM ĐẸP THÔNG BÁO LỖI
+function beautifyErrorMessage(message) {
+  if (!message) return message;
+
+  // Làm đẹp các thông báo lỗi thường gặp
+  if (message.includes("đã có đơn hàng") || message.includes("giỏ hàng")) {
+    return "Không thể xóa vì đã có dữ liệu liên quan!";
+  } else if (
+    message.includes("foreign key") ||
+    message.includes("constraint")
+  ) {
+    return "Không thể xóa vì đã có dữ liệu liên quan!";
+  } else if (message.includes("duplicate") || message.includes("trùng lặp")) {
+    return "Dữ liệu đã tồn tại!";
+  } else if (
+    message.includes("not found") ||
+    message.includes("không tìm thấy")
+  ) {
+    return "Không tìm thấy dữ liệu!";
+  } else if (message.includes("DataIntegrityViolationException")) {
+    return "Không thể xóa vì đã có dữ liệu liên quan!";
+  } else if (message.includes("ConstraintViolationException")) {
+    return "Dữ liệu không hợp lệ!";
+  }
+
+  return message;
 }
 
 // 5. VALIDATION ĐỒNG BỘ CHO TẤT CẢ CRUD (trừ ProductCRUD)
@@ -594,6 +669,30 @@ function validatePromotionForm() {
     }
   }
 
+  if (!startDate) {
+    showFieldError("startDate", "Vui lòng chọn ngày bắt đầu");
+    missingFields.push("ngày bắt đầu");
+    isValid = false;
+  } else {
+    const start = new Date(startDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (start < today) {
+      showFieldError(
+        "startDate",
+        "Ngày bắt đầu không được là ngày trong quá khứ"
+      );
+      invalidFields.push("ngày bắt đầu");
+      isValid = false;
+    }
+  }
+
+  if (!endDate) {
+    showFieldError("endDate", "Vui lòng chọn ngày kết thúc");
+    missingFields.push("ngày kết thúc");
+    isValid = false;
+  }
 
   if (!useCount) {
     showFieldError("useCount", "Vui lòng nhập số lượng sử dụng");
@@ -608,6 +707,17 @@ function validatePromotionForm() {
     }
   }
 
+  // Validate logic ngày
+  if (startDate && endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (end <= start) {
+      showFieldError("endDate", "Ngày kết thúc phải sau ngày bắt đầu");
+      invalidFields.push("ngày kết thúc");
+      isValid = false;
+    }
+  }
 
   // Show summary alert
   if (missingFields.length > 0 || invalidFields.length > 0) {
