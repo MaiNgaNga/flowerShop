@@ -38,7 +38,7 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
                         ") sales ON p.id = sales.product_id " +
                         "ORDER BY COALESCE(sales.total_sold, 0) DESC", nativeQuery = true)
         // Top 10 san pham ban chay nhat (dua tren so luong da ban)
-        List<Product> findBestSellingProductPerCategory(); 
+        List<Product> findBestSellingProductPerCategory();
 
     @Query("select p from Product p order by p.quantity desc")
     List<Product> findByProductOrderByQuantityDesc();
