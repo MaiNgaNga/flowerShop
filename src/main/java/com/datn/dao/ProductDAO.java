@@ -27,12 +27,16 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
         @Query("SELECT p FROM Product p WHERE p.productCategory.name LIKE :name order by p.id desc")
         List<Product> findProductByNameProductCategory(@Param("name") String name);
 
-        @Query(value = "SELECT p.* FROM products p " +
-                        "JOIN (SELECT p2.product_Category_Id, MAX(p2.quantity) AS max_quantity " +
-                        "FROM products p2 GROUP BY p2.product_Category_Id) temp " +
-                        "ON p.product_Category_Id = temp.product_Category_Id " +
-                        "AND p.quantity = temp.max_quantity", nativeQuery = true)
-        // so luong nhieu nhat
+        @Query(value = "SELECT TOP 10 p.* FROM products p " +
+                        "LEFT JOIN ( " +
+                        "    SELECT od.product_id, SUM(od.quantity) as total_sold " +
+                        "    FROM order_details od " +
+                        "    JOIN orders o ON od.order_id = o.id " +
+                        "    WHERE o.status = N'Hoàn tất' " +
+                        "    GROUP BY od.product_id " +
+                        ") sales ON p.id = sales.product_id " +
+                        "ORDER BY COALESCE(sales.total_sold, 0) DESC", nativeQuery = true)
+        // Top 10 san pham ban chay nhat (dua tren so luong da ban)
         List<Product> findBestSellingProductPerCategory();
 
         @Query("select p from Product p order by p.quantity desc")
@@ -91,8 +95,17 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
                         @Param("maxPrice") Double maxPrice,
                         Pageable pageable);
 
-        // Method để tìm best seller theo product category name (giới hạn 10 sản phẩm)
-        @Query(value = "SELECT TOP 10 p.* FROM products p INNER JOIN product_categories pc ON p.product_Category_Id = pc.id WHERE pc.name = :categoryName ORDER BY p.quantity DESC", nativeQuery = true)
+       @Query(value = "SELECT TOP 10 p.* FROM products p " +
+                        "INNER JOIN product_categories pc ON p.product_Category_Id = pc.id " +
+                        "LEFT JOIN ( " +
+                        "    SELECT od.product_id, SUM(od.quantity) as total_sold " +
+                        "    FROM order_details od " +
+                        "    JOIN orders o ON od.order_id = o.id " +
+                        "    WHERE o.status = N'Hoàn tất' " +
+                        "    GROUP BY od.product_id " +
+                        ") sales ON p.id = sales.product_id " +
+                        "WHERE pc.name = :categoryName " +
+                        "ORDER BY COALESCE(sales.total_sold, 0) DESC", nativeQuery = true)
         List<Product> findBestSellerByCategory(@Param("categoryName") String categoryName);
 
         @Query(value = """
