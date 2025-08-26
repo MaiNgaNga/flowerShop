@@ -24,6 +24,7 @@ import com.datn.model.Product;
 import com.datn.utils.ParamService;
 import com.datn.Service.CategoryService;
 import com.datn.Service.ProductCategoryService;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -173,11 +174,37 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteById(long id) {
-        if (dao.existsById(id)) {
-            dao.deleteById(id);
-        } else {
+        if (!dao.existsById(id)) {
             throw new IllegalArgumentException("Không xác định được sản phẩm cần xóa!");
         }
+        
+        try {
+            // Kiểm tra xem sản phẩm có đang được sử dụng không
+            if (isProductInUse(id)) {
+                throw new IllegalArgumentException("Không thể xóa sản phẩm này vì đã có đơn hàng hoặc đang có trong giỏ hàng của khách hàng!");
+            }
+            
+            dao.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            // Bắt lỗi khóa ngoại từ database
+            throw new IllegalArgumentException("Không thể xóa sản phẩm này vì đã có đơn hàng hoặc đang có trong giỏ hàng của khách hàng!");
+        } catch (Exception e) {
+            // Bắt các lỗi khác
+            throw new IllegalArgumentException("Có lỗi xảy ra khi xóa sản phẩm: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Kiểm tra xem sản phẩm có đang được sử dụng trong đơn hàng hoặc giỏ hàng không
+     */
+    private boolean isProductInUse(long productId) {
+        // Kiểm tra trong OrderDetail
+        boolean hasOrders = dao.existsInOrderDetails(productId);
+        
+        // Kiểm tra trong CartItem  
+        boolean hasCartItems = dao.existsInCartItems(productId);
+        
+        return hasOrders || hasCartItems;
     }
 
     @Override

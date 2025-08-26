@@ -204,4 +204,16 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
                         + "ORDER BY p.discountPercent DESC")
         List<Product> findDiscountProductsExcludeCategory(@Param("minDiscount") int minDiscount,
                         @Param("exclude") String exclude);
+
+        /**
+         * Kiểm tra xem sản phẩm có tồn tại trong bảng OrderDetail không
+         */
+        @Query("SELECT CASE WHEN COUNT(od) > 0 THEN true ELSE false END FROM OrderDetail od WHERE od.product.id = :productId")
+        boolean existsInOrderDetails(@Param("productId") long productId);
+
+        /**
+         * Kiểm tra xem sản phẩm có tồn tại trong bảng CartItem không
+         */
+        @Query("SELECT CASE WHEN COUNT(ci) > 0 THEN true ELSE false END FROM CartItem ci WHERE ci.product.id = :productId")
+        boolean existsInCartItems(@Param("productId") long productId);
 }
