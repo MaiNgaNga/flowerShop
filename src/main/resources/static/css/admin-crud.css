@@ -883,7 +883,6 @@ input[type="file"] {
   background-color: #edf2f7;
   box-shadow: 0 0 8px rgba(66, 153, 225, 0.3);
 }
-
 /* ========================================
    14. ICON HÀNH ĐỘNG (SỬA / XÓA)
    ======================================== */
@@ -1004,7 +1003,6 @@ input[type="file"] {
 }
 
 .filter-form input[type="date"] {
-  border: 2px solid #90cdf4;
   padding: 6px 10px;
   border-radius: 6px;
   margin-right: 8px;
@@ -1026,7 +1024,7 @@ input[type="file"] {
 
 
 
-.filter-form .btn-custom {
+.btn-custom {
   background-color: #e2e2e2;
   color: #333;
   border: 1px solid #ccc;
