@@ -290,11 +290,6 @@ public class ProductServiceImpl implements ProductService {
      */
 
     @Override
-    public List<Product> findBestSellerByCategory(String categoryName) {
-        return dao.findBestSellerByCategory(categoryName);
-    }
-
-    @Override
     public List<Product> findProductByProductCategory(Integer id) {
         return dao.findProductByProductCategory(id);
     }

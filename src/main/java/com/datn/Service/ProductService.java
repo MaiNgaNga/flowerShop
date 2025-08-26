@@ -61,9 +61,6 @@ public interface ProductService {
         // Tìm kiếm theo danh mục hoa (productCategory)
         Page<Product> searchByProductCategoryName(String productCategoryName, Pageable pageable);
 
-        // Method để tìm best seller theo category name
-        List<Product> findBestSellerByCategory(String categoryName);
-
         List<Product> findProductByProductCategory(Integer id);
 
         Page<Product> findByProductCategoryIdPage(
