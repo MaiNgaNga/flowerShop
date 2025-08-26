@@ -1,50 +1,18 @@
 <main class="container mt-3">
   <h3>Quản Lý Khuyến Mãi</h3>
   <hr />
-  <div
-    th:if="${success}"
-    class="alert alert-success alert-dismissible fade show d-none"
-    role="alert"
-    data-message="success"
-  >
-    <span th:text="${success}"></span>
-  </div>
-
-  <div
-    th:if="${error}"
-    class="alert alert-danger alert-dismissible fade show d-none"
-    role="alert"
-    data-message="error"
-  >
-    <span th:text="${error}"></span>
-  </div>
+  <div class="success alert alert-success" th:if="${success}" th:text="${success}"></div>
   <!-- Tab Navigation -->
   <ul class="nav nav-tabs" id="flowerTab" role="tablist">
     <li class="nav-item" role="presentation">
-      <button
-        class="nav-link active"
-        id="edit-tab"
-        data-bs-toggle="tab"
-        data-bs-target="#edit"
-        type="button"
-        role="tab"
-        aria-controls="edit"
-        aria-selected="true"
-      >
+      <button class="nav-link active" id="edit-tab" data-bs-toggle="tab" data-bs-target="#edit" type="button" role="tab"
+        aria-controls="edit" aria-selected="true">
         Chỉnh sửa
       </button>
     </li>
     <li class="nav-item" role="presentation">
-      <button
-        class="nav-link"
-        id="list-tab"
-        data-bs-toggle="tab"
-        data-bs-target="#list"
-        type="button"
-        role="tab"
-        aria-controls="list"
-        aria-selected="false"
-      >
+      <button class="nav-link" id="list-tab" data-bs-toggle="tab" data-bs-target="#list" type="button" role="tab"
+        aria-controls="list" aria-selected="false">
         Danh sách
       </button>
     </li>
@@ -52,45 +20,26 @@
 
   <!-- Tab Content -->
   <div class="tab-content" id="flowerTabContent">
+    <i class="error" th:if="${error}" th:text="${error}"></i>
+
     <!-- Tab: Chỉnh sửa -->
-    <div
-      class="tab-pane fade show active"
-      id="edit"
-      role="tabpanel"
-      aria-labelledby="edit-tab"
-    >
-      <form
-        th:object="${promotion}"
-        method="post"
-        class="p-4 bg-white border rounded shadow-sm"
-      >
+    <div class="tab-pane fade show active" id="edit" role="tabpanel" aria-labelledby="edit-tab">
+      <form th:object="${promotion}" method="post" class="p-4 bg-white border rounded shadow-sm">
         <div class="row g-3">
           <!-- ID -->
           <div class="col-md-6">
             <div class="mb-3">
               <label for="id" class="form-label fw-medium text-muted">ID</label>
-              <input
-                type="text"
-                id="id"
-                th:field="*{id}"
-                class="form-control form-control-sm bg-light"
-              />
+              <input type="text" id="id" th:field="*{id}" class="form-control form-control-sm bg-light" />
             </div>
           </div>
 
           <!-- Title -->
           <div class="col-md-6">
             <div class="mb-3">
-              <label for="title" class="form-label fw-medium text-muted"
-                >Tên Khuyến Mãi</label
-              >
-              <input
-                type="text"
-                id="title"
-                th:field="*{title}"
-                class="form-control form-control-sm"
-                placeholder="Tên khuyến mãi"
-              />
+              <label for="title" class="form-label fw-medium text-muted">Tên Khuyến Mãi</label>
+              <input type="text" id="title" th:field="*{title}" class="form-control form-control-sm"
+                placeholder="Tên khuyến mãi" />
               <small class="text-danger" th:errors="*{title}"></small>
             </div>
           </div>
@@ -98,16 +47,9 @@
           <!-- Description -->
           <div class="col-12">
             <div class="mb-3">
-              <label for="description" class="form-label fw-medium text-muted"
-                >Mô tả</label
-              >
-              <textarea
-                id="description"
-                th:field="*{description}"
-                class="form-control form-control-sm"
-                placeholder="Mô tả"
-                rows="3"
-              ></textarea>
+              <label for="description" class="form-label fw-medium text-muted">Mô tả</label>
+              <textarea id="description" th:field="*{description}" class="form-control form-control-sm"
+                placeholder="Mô tả" rows="3"></textarea>
               <small class="text-danger" th:errors="*{description}"></small>
             </div>
           </div>
@@ -115,14 +57,8 @@
           <!-- Discount Type -->
           <div class="col-md-6">
             <div class="mb-3">
-              <label for="discountType" class="form-label fw-medium text-muted"
-                >Loại giảm giá</label
-              >
-              <select
-                th:field="*{discountType}"
-                id="discountType"
-                class="form-control form-control-sm"
-              >
+              <label for="discountType" class="form-label fw-medium text-muted">Loại giảm giá</label>
+              <select th:field="*{discountType}" id="discountType" class="form-control form-control-sm">
                 <option value="">-- Chọn loại giảm giá --</option>
                 <option value="percent">Phần trăm (%)</option>
                 <option value="amount">Số tiền (VNĐ)</option>
@@ -134,17 +70,9 @@
           <!-- Discount Value -->
           <div class="col-md-6">
             <div class="mb-3">
-              <label for="discountValue" class="form-label fw-medium text-muted"
-                >Giá trị giảm</label
-              >
-              <input
-                type="number"
-                step="0.01"
-                id="discountValue"
-                th:field="*{discountValue}"
-                class="form-control form-control-sm"
-                placeholder="VD: 10 hoặc 100000"
-              />
+              <label for="discountValue" class="form-label fw-medium text-muted">Giá trị giảm</label>
+              <input type="number" step="0.01" id="discountValue" th:field="*{discountValue}"
+                class="form-control form-control-sm" placeholder="VD: 10 hoặc 100000" />
               <small class="text-danger" th:errors="*{discountValue}"></small>
               <small class="text-danger" th:text="${errorDiscount}"></small>
             </div>
@@ -153,32 +81,17 @@
           <!-- Start Date -->
           <div class="col-md-6">
             <div class="mb-3">
-              <label for="startDate" class="form-label fw-medium text-muted"
-                >Ngày bắt đầu</label
-              >
-              <input
-                type="date"
-                id="startDate"
-                th:field="*{startDate}"
-                class="form-control form-control-sm"
-              />
+              <label for="startDate" class="form-label fw-medium text-muted">Ngày bắt đầu</label>
+              <input type="date" id="startDate" th:field="*{startDate}" class="form-control form-control-sm" />
               <small class="text-danger" th:errors="*{startDate}"></small>
-              <small class="text-danger" th:text="${errorStartDate}"></small>
             </div>
           </div>
 
           <!-- End Date -->
           <div class="col-md-6">
             <div class="mb-3">
-              <label for="endDate" class="form-label fw-medium text-muted"
-                >Ngày kết thúc</label
-              >
-              <input
-                type="date"
-                id="endDate"
-                th:field="*{endDate}"
-                class="form-control form-control-sm"
-              />
+              <label for="endDate" class="form-label fw-medium text-muted">Ngày kết thúc</label>
+              <input type="date" id="endDate" th:field="*{endDate}" class="form-control form-control-sm" />
               <small class="text-danger" th:errors="*{endDate}"></small>
               <small class="text-danger" th:text="${errorEndDate}"></small>
             </div>
@@ -187,9 +100,7 @@
           <!-- Status -->
           <div class="col-md-6">
             <div class="mb-3">
-              <label for="status" class="form-label fw-medium text-muted"
-                >Trạng thái</label
-              >
+              <label for="status" class="form-label fw-medium text-muted">Trạng thái</label>
               <select th:field="*{status}" class="form-control form-control-sm">
                 <option value="true">Đang hoạt động</option>
                 <option value="false">Ngưng hoạt động</option>
@@ -201,16 +112,9 @@
           <!-- Use Count -->
           <div class="col-md-6">
             <div class="mb-3">
-              <label for="useCount" class="form-label fw-medium text-muted"
-                >Số lượng sử dụng</label
-              >
-              <input
-                type="number"
-                id="useCount"
-                th:field="*{useCount}"
-                class="form-control form-control-sm"
-                placeholder="Nhập số lượng sử dụng của voucher"
-              />
+              <label for="useCount" class="form-label fw-medium text-muted">Số lượng sử dụng</label>
+              <input type="number" id="useCount" th:field="*{useCount}" class="form-control form-control-sm"
+                placeholder="Nhập số lượng sử dụng của voucher" />
               <small class="text-danger" th:errors="*{useCount}"></small>
             </div>
           </div>
@@ -219,29 +123,16 @@
         <!-- Buttons -->
         <div class="row mt-4 text-end">
           <div class="col">
-            <button
-              type="submit"
-              class="btn btn-primary btn-sm me-2"
-              th:if="*{id} == null"
-              th:formaction="@{/Promotion/create}"
-            >
+            <button type="submit" class="btn btn-primary btn-sm me-2" th:if="*{id} == null"
+              th:formaction="@{/Promotion/create}">
               <i class="fa fa-plus me-1"></i> Thêm
             </button>
-            <button
-              type="submit"
-              class="btn btn-warning btn-sm me-2"
-              th:if="*{id} != null"
-              th:formaction="@{/Promotion/update}"
-            >
+            <button type="submit" class="btn btn-warning btn-sm me-2" th:if="*{id} != null"
+              th:formaction="@{/Promotion/update}">
               <i class="fa fa-edit me-1"></i> Cập Nhật
             </button>
-            <button
-              th:if="*{id} != null"
-              type="button"
-              class="btn btn-danger btn-sm me-2"
-              onclick="confirmDelete(this)"
-              th:data-url="@{/Promotion/delete/{id}(id=*{id})}"
-            >
+            <button th:if="*{id} != null" type="button" class="btn btn-danger btn-sm me-2" onclick="confirmDelete(this)"
+              th:data-url="@{/Promotion/delete/{id}(id=*{id})}">
               <i class="fa fa-trash me-1"></i> Xóa
             </button>
             <a class="btn btn-success btn-sm" th:href="@{/Promotion/index}">
@@ -256,10 +147,12 @@
           border-color: #ced4da;
           transition: border-color 0.15s ease-in-out;
         }
+
         .form-control-sm:focus {
           border-color: #007bff;
           box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
         }
+
         .bg-light {
           background-color: #f8f9fa;
         }
@@ -267,72 +160,40 @@
     </div>
 
     <!-- Tab: Danh sách -->
-    <div
-      class="tab-pane fade"
-      id="list"
-      role="tabpanel"
-      aria-labelledby="list-tab"
-    >
+    <div class="tab-pane fade" id="list" role="tabpanel" aria-labelledby="list-tab">
       <div class="filter-form">
         <div class="row align-items-end g-3">
           <!-- Form lọc theo ngày -->
           <div class="col-md-8">
-            <form
-              th:action="@{/Promotion/search}"
-              id="filterForm"
-              method="get"
-              class="row g-2 align-items-end seach-filter-row"
-            >
+            <form th:action="@{/Promotion/search}" id="filterForm" method="get"
+              class="row g-2 align-items-end seach-filter-row">
               <div class="col-md-4">
                 <label for="fromDate" class="form-label">Từ ngày:</label>
-                <input
-                  type="date"
-                  id="fromDate"
-                  name="fromDate"
-                  th:value="${fromDate}"
-                  class="form-control form-control-sm"
-                />
+                <input type="date" id="fromDate" name="fromDate" th:value="${fromDate}"
+                  class="form-control form-control-sm" />
               </div>
 
               <div class="col-md-4">
                 <label for="toDate" class="form-label">Đến ngày:</label>
-                <input
-                  type="date"
-                  id="toDate"
-                  name="toDate"
-                  th:value="${toDate}"
-                  class="form-control form-control-sm"
-                />
+                <input type="date" id="toDate" name="toDate" th:value="${toDate}"
+                  class="form-control form-control-sm" />
               </div>
 
               <div class="col-md-4 d-flex gap-2">
                 <button class="btn btn-primary" type="submit">Lọc</button>
-                <a th:href="@{'/Promotion/index#list'}" class="btn btn-custom"
-                  >Làm mới</a
-                >
+                <a th:href="@{'/Promotion/index#list'}" class="btn btn-custom">Làm mới</a>
               </div>
             </form>
           </div>
 
           <!-- Form tìm kiếm theo tên -->
           <div class="col-md-4">
-            <form
-              th:action="@{/Promotion/searchByTitle}"
-              id="filterForm"
-              method="get"
-              class="d-flex align-items-end gap-2"
-            >
+            <form th:action="@{/Promotion/searchByTitle}" id="filterForm" method="get"
+              class="d-flex align-items-end gap-2">
               <div class="flex-grow-1">
                 <label for="title" class="form-label">Tìm theo tên:</label>
-                <input
-                  style="width: 250px"
-                  type="text"
-                  id="title"
-                  name="title"
-                  th:value="${title}"
-                  placeholder="Tên khuyến mãi"
-                  class="form-control product-crud-admin searchName"
-                />
+                <input type="text" id="title" name="title" th:value="${title}" placeholder="Tên khuyến mãi"
+                  class="form-control searchName" />
               </div>
               <button class="btn btn-primary" type="submit">Tìm</button>
             </form>
@@ -344,8 +205,7 @@
           Các khuyến mãi theo: "<b th:text="${title}"></b>"
         </span>
         <span
-          th:if="${(title == null or title == '') and fromDate != null and fromDate != '' and toDate != null and toDate != ''}"
-        >
+          th:if="${(title == null or title == '') and fromDate != null and fromDate != '' and toDate != null and toDate != ''}">
           Các khuyến mãi từ ngày:
           <b th:text="${#temporals.format(fromDate, 'dd-MM-YYYY')}"></b>
           đến
@@ -374,48 +234,23 @@
                 <td class="text-start" th:text="${item.title}"></td>
                 <td th:text="${item.useCount}"></td>
 
-                <td
-                  th:text="${item.discountType == 'percent' 
+                <td th:text="${item.discountType == 'percent' 
           ? item.discountValue + '%'
-          : #numbers.formatDecimal(item.discountValue,0,'COMMA',0,'POINT') + ' VNĐ'}"
-                ></td>
-                <td
-                  th:text="${#temporals.format(item.startDate, 'dd-MM-YYYY ')}"
-                ></td>
-                <td
-                  th:text="${#temporals.format(item.endDate, 'dd-MM-YYYY ')}"
-                ></td>
+          : #numbers.formatDecimal(item.discountValue,0,'COMMA',0,'POINT') + ' VNĐ'}"></td>
+                <td th:text="${#temporals.format(item.startDate, 'dd-MM-YYYY ')}"></td>
+                <td th:text="${#temporals.format(item.endDate, 'dd-MM-YYYY ')}"></td>
                 <td>
-                  <span
-                    th:class="${item.status ? 'badge badge-success' : 'badge badge-danger'}"
-                    style="
-                      display: inline-block;
-                      min-width: 70px;
-                      padding: 4px 12px;
-                      border-radius: 12px;
-                      font-size: 13px;
-                      font-weight: 600;
-                      color: #fff;
-                    "
-                    th:text="${item.status ? 'Active' : 'Inactive'}"
-                  >
+                  <span th:class="${item.status ? 'badge badge-success' : 'badge badge-danger'}"
+                    style="display:inline-block;min-width:70px;padding:4px 12px;border-radius:12px;font-size:13px;font-weight:600;color:#fff;"
+                    th:text="${item.status ? 'Active' : 'Inactive'}">
                   </span>
                 </td>
                 <td class="action-icons">
-                  <a
-                    th:href="@{'/Promotion/edit/' + ${item.id} + '?tab=edit'}"
-                    class="edit-icon"
-                    title="Sửa sản phẩm"
-                  >
+                  <a th:href="@{'/Promotion/edit/' + ${item.id} + '?tab=edit'}" class="edit-icon" title="Sửa sản phẩm">
                     <i class="fa fa-edit"></i>
                   </a>
-                  <a
-                    href="#"
-                    class="delete-icon"
-                    onclick="confirmDelete(this)"
-                    th:data-url="@{'/Promotion/delete/' + ${item.id} + '?tab=list'}"
-                    title="Xóa sản phẩm"
-                  >
+                  <a href="#" class="delete-icon" onclick="confirmDelete(this)"
+                    th:data-url="@{'/Promotion/delete/' + ${item.id} + '?tab=list'}" title="Xóa sản phẩm">
                     <i class="fa fa-trash"></i>
                   </a>
                 </td>
@@ -429,28 +264,21 @@
                 <td colspan="9" class="text-center text-muted py-3">
                   <!-- Nếu có lọc theo tên -->
                   <span th:if="${title != null and title != ''}">
-                    Không có khuyến mãi nào được tìm thấy theo từ khóa "<b
-                      th:text="${title}"
-                    ></b
-                    >".
+                    Không có khuyến mãi nào được tìm thấy theo từ khóa "<b th:text="${title}"></b>".
                   </span>
 
                   <!-- Nếu có lọc theo ngày -->
-                  <span
-                    th:if="${(title == null or title == '') 
+                  <span th:if="${(title == null or title == '') 
                     and fromDate != null and fromDate != '' 
-                    and toDate != null and toDate != ''}"
-                  >
+                    and toDate != null and toDate != ''}">
                     Không có khuyến mãi nào được tìm thấy trong khoảng ngày đã
                     chọn.
                   </span>
 
                   <!-- Nếu không lọc gì hết -->
-                  <span
-                    th:if="${(title == null or title == '') 
+                  <span th:if="${(title == null or title == '') 
                     and (fromDate == null or fromDate == '') 
-                    and (toDate == null or toDate == '')}"
-                  >
+                    and (toDate == null or toDate == '')}">
                     Hiện chưa có mã khuyến mãi nào.
                   </span>
                 </td>
@@ -459,71 +287,75 @@
           </tbody>
         </table>
       </div>
-      <!-- phan trang -->
-      <div
-        class="d-flex justify-content-center mt-4"
-        th:if="${totalPages >= 1}"
-      >
-        <nav>
-          <ul class="pagination custom-pagination">
-            <li
-              class="page-item"
-              th:classappend="${currentPage == 0} ? 'disabled'"
-            >
-              <a
-                class="page-link"
-                th:href="@{'/Promotion/index?page=0' + '#list'}"
-              >
-                <i class="fa fa-angle-double-left"></i>
-              </a>
-            </li>
-            <li
-              class="page-item"
-              th:classappend="${currentPage == 0} ? 'disabled'"
-            >
-              <a
-                class="page-link"
-                th:href="@{'/Promotion/index?page=' + (${currentPage - 1}) + '#list'}"
-              >
-                <i class="fa fa-angle-left"></i>
-              </a>
-            </li>
-            <li
-              class="page-item"
-              th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-              th:classappend="${currentPage == i} ? 'active'"
-            >
-              <a
-                class="page-link"
-                th:href="@{'/Promotion/index?page=' + ${i} + '#list'}"
-                th:text="${i + 1}"
-              >
-              </a>
-            </li>
-            <li
-              class="page-item"
-              th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
-            >
-              <a
-                class="page-link"
-                th:href="@{'/Promotion/index?page=' + (${currentPage + 1}) + '#list'}"
-              >
-                <i class="fa fa-angle-right"></i>
-              </a>
-            </li>
-            <li
-              class="page-item"
-              th:classappend="${currentPage + 1 == totalPages} ? 'disabled'"
-            >
-              <a
-                class="page-link"
-                th:href="@{'/Promotion/index?page=' + (${totalPages - 1}) + '#list'}"
-              >
-                <i class="fa fa-angle-double-right"></i>
-              </a>
-            </li>
-          </ul>
-        </nav>
+
+      <!-- Phân trang chuyên nghiệp -->
+      <div class="pagination-wrapper" th:if="${totalElements > 0}">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="pagination-info">
+            Hiển thị <strong th:text="${#lists.size(promotions)}"></strong> trong
+            tổng số <strong th:text="${totalElements}"></strong> khuyến mãi
+          </div>
+
+          <nav aria-label="Promotion pagination" th:if="${totalPages > 1}">
+            <ul class="pagination simple-pagination">
+              <!-- Nút về trang đầu -->
+              <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/Promotion/index(page=0, size=10, keyword=${keyword})} + '#list'"
+                  th:unless="${currentPage == 0}" title="Trang đầu">
+                  <i class="fas fa-angle-double-left"></i>
+                </a>
+                <span class="page-link" th:if="${currentPage == 0}">
+                  <i class="fas fa-angle-double-left"></i>
+                </span>
+              </li>
+
+              <!-- Nút trang trước -->
+              <li class="page-item" th:classappend="${!hasPrevious} ? 'disabled'">
+                <a class="page-link"
+                  th:href="@{/Promotion/index(page=${currentPage - 1}, size=10, keyword=${keyword})} + '#list'"
+                  th:if="${hasPrevious}" title="Trang trước">
+                  <i class="fas fa-chevron-left"></i>
+                </a>
+                <span class="page-link" th:unless="${hasPrevious}">
+                  <i class="fas fa-chevron-left"></i>
+                </span>
+              </li>
+
+              <!-- Các trang số -->
+              <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+                th:if="${pageNum >= currentPage - 1 && pageNum <= currentPage + 1}"
+                th:classappend="${pageNum == currentPage} ? 'active'">
+                <a class="page-link"
+                  th:href="@{/Promotion/index(page=${pageNum}, size=10, keyword=${keyword})} + '#list'"
+                  th:text="${pageNum + 1}"></a>
+              </li>
+
+              <!-- Nút trang sau -->
+              <li class="page-item" th:classappend="${!hasNext} ? 'disabled'">
+                <a class="page-link"
+                  th:href="@{/Promotion/index(page=${currentPage + 1}, size=10, keyword=${keyword})} + '#list'"
+                  th:if="${hasNext}" title="Trang sau">
+                  <i class="fas fa-chevron-right"></i>
+                </a>
+                <span class="page-link" th:unless="${hasNext}">
+                  <i class="fas fa-chevron-right"></i>
+                </span>
+              </li>
+
+              <!-- Nút về trang cuối -->
+              <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                <a class="page-link"
+                  th:href="@{/Promotion/index(page=${totalPages - 1}, size=10, keyword=${keyword})} + '#list'"
+                  th:unless="${currentPage == totalPages - 1}" title="Trang cuối">
+                  <i class="fas fa-angle-double-right"></i>
+                </a>
+                <span class="page-link" th:if="${currentPage == totalPages - 1}">
+                  <i class="fas fa-angle-double-right"></i>
+                </span>
+              </li>
+            </ul>
+          </nav>
+        </div>
       </div>
     </div>
     <!-- tab tìm kiếm -->
