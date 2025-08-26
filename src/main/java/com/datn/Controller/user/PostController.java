@@ -87,23 +87,31 @@ public class PostController {
 
     @RequestMapping("/postDetail")
     public String detail(Model model, @RequestParam("id") Long id) {
+        // Lấy bài viết
         Post post = postService.findById(id);
         if (post == null) {
             return "redirect:/PostUser";
         }
-
         model.addAttribute("post", post);
 
+        // Lấy các bài viết liên quan
         List<Post> relatedPosts = postService.findRelatedPosts(id);
         model.addAttribute("relatedPosts", relatedPosts);
 
-        // ✅ Truyền danh sách bình luận theo bài viết
+        // ✅ Lấy user hiện tại để Thymeleaf so sánh quyền xóa comment
+        User currentUser = authService.getUser();
+        model.addAttribute("currentUser", currentUser);
+
+        // ✅ Lấy danh sách bình luận theo bài viết
         List<PostComment> comments = postCommentService.getCommentsByPostId(id);
         model.addAttribute("postComments", comments);
 
+        // Lấy danh mục sản phẩm (có vẻ bạn dùng cho sidebar/menu)
         model.addAttribute("productCategories", pro_ca_service.findAll());
 
+        // View
         model.addAttribute("view", "post-detail");
         return "layouts/layout";
     }
+
 }
