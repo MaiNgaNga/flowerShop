@@ -197,10 +197,10 @@
           </div>
         </div>
 
-        <!-- Nhóm 4: Loại hoa, Màu sắc, Danh mục -->
+        <!-- Nhóm 4: Loại, Màu sắc, Danh mục -->
         <div class="row form-group">
           <div class="col-md-4">
-            <label for="category" class="form-label">Loại hoa</label>
+            <label for="category" class="form-label">Loại</label>
             <select
               id="category"
               th:field="*{category}"
@@ -427,7 +427,7 @@
             <tr>
               <th>ID</th>
               <th>Tên sản phẩm</th>
-              <th>Loại hoa</th>
+              <th>Loại</th>
               <th>Hình ảnh</th>
               <th>Số lượng</th>
               <th>Giá sản phẩm</th>
@@ -624,72 +624,75 @@
 
   // Advanced image refresh với multiple strategies
   function forceRefreshImages() {
-    const images = document.querySelectorAll('#list-tab-pane img');
-    console.log('Force refreshing ' + images.length + ' images');
-    
+    const images = document.querySelectorAll("#list-tab-pane img");
+    console.log("Force refreshing " + images.length + " images");
+
     images.forEach((img, index) => {
       const originalSrc = img.src;
       const timestamp = Date.now() + index;
-      
+
       // Strategy 1: Clear src và reload
-      img.src = '';
-      
+      img.src = "";
+
       // Strategy 2: Thêm timestamp parameter
       setTimeout(() => {
         let newSrc = originalSrc;
-        if (originalSrc.includes('?')) {
-          newSrc = originalSrc.split('?')[0] + '?v=' + timestamp;
+        if (originalSrc.includes("?")) {
+          newSrc = originalSrc.split("?")[0] + "?v=" + timestamp;
         } else {
-          newSrc = originalSrc + '?v=' + timestamp;
+          newSrc = originalSrc + "?v=" + timestamp;
         }
         img.src = newSrc;
-        
+
         // Strategy 3: Force reload nếu vẫn không load được
-        img.onerror = function() {
-          console.log('Image failed to load, retrying: ' + newSrc);
+        img.onerror = function () {
+          console.log("Image failed to load, retrying: " + newSrc);
           setTimeout(() => {
-            this.src = newSrc + '&retry=' + Math.random();
+            this.src = newSrc + "&retry=" + Math.random();
           }, 100);
         };
-      }, 50 + (index * 10));
+      }, 50 + index * 10);
     });
   }
 
   // API call để refresh images từ server
   function refreshImagesFromServer() {
-    fetch('/api/images/refresh', {
-      method: 'POST',
+    fetch("/api/images/refresh", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-      }
+        "Content-Type": "application/json",
+      },
     })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        console.log('Server refresh successful, updating images...');
-        setTimeout(forceRefreshImages, 100);
-      } else {
-        console.error('Server refresh failed:', data.message);
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          console.log("Server refresh successful, updating images...");
+          setTimeout(forceRefreshImages, 100);
+        } else {
+          console.error("Server refresh failed:", data.message);
+          // Fallback to client-side refresh
+          forceRefreshImages();
+        }
+      })
+      .catch((error) => {
+        console.error("Error calling refresh API:", error);
         // Fallback to client-side refresh
         forceRefreshImages();
-      }
-    })
-    .catch(error => {
-      console.error('Error calling refresh API:', error);
-      // Fallback to client-side refresh
-      forceRefreshImages();
-    });
+      });
   }
 
   // Enhanced auto refresh khi load trang với success
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener("DOMContentLoaded", function () {
     const urlParams = new URLSearchParams(window.location.search);
-    const successAlert = document.querySelector('.alert-success');
-    
+    const successAlert = document.querySelector(".alert-success");
+
     // Nếu có success và đang ở tab list
-    if ((successAlert || urlParams.get('success')) && urlParams.get('tab') === 'list') {
-      console.log('Success detected - performing enhanced image refresh');
-      
+    if (
+      (successAlert || urlParams.get("success")) &&
+      urlParams.get("tab") === "list"
+    ) {
+      console.log("Success detected - performing enhanced image refresh");
+
       // Multiple refresh attempts với increasing delays
       setTimeout(refreshImagesFromServer, 100);
       setTimeout(forceRefreshImages, 300);

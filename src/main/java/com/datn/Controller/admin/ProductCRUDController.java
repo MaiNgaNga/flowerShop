@@ -15,8 +15,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 import jakarta.validation.Valid;
 import com.datn.Service.CategoryService;
@@ -304,7 +310,8 @@ public class ProductCRUDController {
             @ModelAttribute("product") Product product, Errors errors,
             @PathVariable("id") long id,
             @RequestParam(value = "tab", defaultValue = "edit") String tab,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request) {
 
         try {
             // Gọi service xóa sản phẩm theo ID
@@ -314,9 +321,42 @@ public class ProductCRUDController {
             return "redirect:/Product/index?tab=list";
 
         } catch (IllegalArgumentException e) {
-            // Nếu xóa thất bại thì chuyển hướng về lại form chỉnh sửa
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/Product/edit/" + product.getId() + "?tab=" + tab;
+            // Kiểm tra nếu là AJAX request
+            String requestedWith = request.getHeader("X-Requested-With");
+            if ("XMLHttpRequest".equals(requestedWith)) {
+                // Ném exception để được xử lý bởi AJAX error handler
+                throw new RuntimeException(e.getMessage());
+            } else {
+                // Nếu xóa thất bại thì chuyển hướng về lại form chỉnh sửa
+                redirectAttributes.addFlashAttribute("error", e.getMessage());
+                return "redirect:/Product/edit/" + product.getId() + "?tab=" + tab;
+            }
+        }
+    }
+
+    /**
+     * API endpoint riêng để xử lý AJAX delete request
+     */
+    @PostMapping("/api/delete/{id}")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> deleteProductAjax(@PathVariable("id") long id) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            // Gọi service xóa sản phẩm theo ID
+            productService.deleteById(id);
+            response.put("success", true);
+            response.put("message", "Đã xóa sản phẩm thành công!");
+            return ResponseEntity.ok(response);
+            
+        } catch (IllegalArgumentException e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Có lỗi xảy ra khi xóa sản phẩm: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
