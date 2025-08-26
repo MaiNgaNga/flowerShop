@@ -4,9 +4,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -46,7 +48,8 @@ public class PostCRUDController {
             @RequestParam(value = "size", defaultValue = "10") int size,
             @RequestParam(value = "keyword", required = false) String keyword) {
 
-        Pageable pageable = PageRequest.of(page, size);
+               Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "postDate"));
+
         Page<Post> postPage;
 
         if (keyword != null && !keyword.trim().isEmpty()) {
@@ -246,7 +249,10 @@ public class PostCRUDController {
             postService.deleteById(id);
             redirectAttributes.addFlashAttribute("success", "Đã xoá bài viết!");
             return "redirect:/Post/index";
-        } catch (IllegalArgumentException e) {
+        }catch(DataIntegrityViolationException e ){
+            redirectAttributes.addFlashAttribute("error", "Không thể xóa bài viết đã có bình luận!");
+            return "redirect:/Post/edit/" + post.getId();
+        }catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/Post/edit/" + post.getId();
         }

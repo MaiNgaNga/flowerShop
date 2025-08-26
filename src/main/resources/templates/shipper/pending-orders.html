@@ -31,8 +31,9 @@
               th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
             ></span>
             <span class="ms-2">- 📅</span>
+
             <span
-              th:text="${#dates.format(order.deliveryDate, 'dd/MM/yyyy')}"
+              th:text="${#temporals.format(order.deliveryDate, 'dd/MM/yyyy')}"
             ></span>
           </button>
         </h2>

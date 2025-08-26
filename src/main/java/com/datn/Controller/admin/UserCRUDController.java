@@ -3,6 +3,7 @@ package com.datn.Controller.admin;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -236,6 +237,9 @@ public class UserCRUDController {
             redirectAttributes.addFlashAttribute("success", "Đã xóa User!");
             return "redirect:/User/index";
 
+        }catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("error", "Không thể xóa User vì có liên kết với các thực thể khác!");
+            return "redirect:/User/index";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/User/index";

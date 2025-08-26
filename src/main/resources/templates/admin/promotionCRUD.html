@@ -2,10 +2,22 @@
   <h3>Quản Lý Khuyến Mãi</h3>
   <hr />
   <div
-    class="success alert alert-success"
     th:if="${success}"
-    th:text="${success}"
-  ></div>
+    class="alert alert-success alert-dismissible fade show d-none"
+    role="alert"
+    data-message="success"
+  >
+    <span th:text="${success}"></span>
+  </div>
+
+  <div
+    th:if="${error}"
+    class="alert alert-danger alert-dismissible fade show d-none"
+    role="alert"
+    data-message="error"
+  >
+    <span th:text="${error}"></span>
+  </div>
   <!-- Tab Navigation -->
   <ul class="nav nav-tabs" id="flowerTab" role="tablist">
     <li class="nav-item" role="presentation">
@@ -40,8 +52,6 @@
 
   <!-- Tab Content -->
   <div class="tab-content" id="flowerTabContent">
-    <i class="error" th:if="${error}" th:text="${error}"></i>
-
     <!-- Tab: Chỉnh sửa -->
     <div
       class="tab-pane fade show active"
@@ -153,6 +163,7 @@
                 class="form-control form-control-sm"
               />
               <small class="text-danger" th:errors="*{startDate}"></small>
+              <small class="text-danger" th:text="${errorStartDate}"></small>
             </div>
           </div>
 
@@ -314,6 +325,7 @@
               <div class="flex-grow-1">
                 <label for="title" class="form-label">Tìm theo tên:</label>
                 <input
+                  style="width: 250px"
                   type="text"
                   id="title"
                   name="title"
@@ -374,9 +386,19 @@
                   th:text="${#temporals.format(item.endDate, 'dd-MM-YYYY ')}"
                 ></td>
                 <td>
-                  <span th:class="${item.status ? 'badge badge-success' : 'badge badge-danger'}"
-                    style="display:inline-block;min-width:70px;padding:4px 12px;border-radius:12px;font-size:13px;font-weight:600;color:#fff;"
-                    th:text="${item.status ? 'Active' : 'Inactive'}">
+                  <span
+                    th:class="${item.status ? 'badge badge-success' : 'badge badge-danger'}"
+                    style="
+                      display: inline-block;
+                      min-width: 70px;
+                      padding: 4px 12px;
+                      border-radius: 12px;
+                      font-size: 13px;
+                      font-weight: 600;
+                      color: #fff;
+                    "
+                    th:text="${item.status ? 'Active' : 'Inactive'}"
+                  >
                   </span>
                 </td>
                 <td class="action-icons">

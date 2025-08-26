@@ -2,9 +2,14 @@ package com.datn.Controller.admin;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,89 +39,100 @@ public class OrderCRUD {
 
     // Hiển thị danh sách đơn hàng theo trạng thái (mặc định là "Chờ xác nhận")
     @GetMapping
-    public String index(Model model,
-        @RequestParam(value = "orderStatus", required = false, defaultValue = "Chờ xác nhận") String orderStatus) {
-        
-        // Lấy tất cả danh mục sản phẩm để hiển thị trên giao diện
-        List<ProductCategory> productCategories = pro_ca_dao.findAll();
-        model.addAttribute("productCategories", productCategories);
-
-        // Gửi trạng thái đang chọn về giao diện
-        model.addAttribute("orderStatus", orderStatus);
-
-        // Lấy danh sách đơn hàng theo trạng thái
-        List<Order> orders = orderService.findByStatus(orderStatus);
-        model.addAttribute("orders", orders);
-
-        // Tổng số đơn hàng được tìm thấy
-        model.addAttribute("totalOrders", orders.size());
-
-        // Thiết lập view cho layout
-        model.addAttribute("view", "admin/order");
-
-        // Trả về layout chung
-        return "admin/layout";
+    public String orderAdmin(
+        Model model,
+        @RequestParam(required = false) String keyword,
+        @RequestParam(required = false) String orderStatus,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "8") int size
+) {
+    if (orderStatus != null && orderStatus.isBlank()) {
+        orderStatus = null; // chuyển "" thành null
     }
+    Pageable pageable = PageRequest.of(page, size);
 
-    // Cập nhật trạng thái đơn hàng từ admin
-    @PostMapping("/update/{orderId}")
+    // Lấy danh sách đơn hàng theo filter từ repository (query with fromDate/toDate)
+    Page<Order> orders = orderService.findOrdersWithFilter(orderStatus, keyword, fromDate, toDate, pageable);
 
-    public String checkout(
-        @PathVariable("orderId") Long orderId, 
-        @RequestParam("status") String status,
-        RedirectAttributes redirectAttributes) {
+    // Lấy tất cả danh mục sản phẩm
+    List<ProductCategory> productCategories = pro_ca_dao.findAll();
 
-        // Lấy đơn hàng theo ID
+    // Add vào model để Thymeleaf giữ trạng thái
+    model.addAttribute("orders", orders);
+    model.addAttribute("totalOrders", orders.getTotalElements());
+    model.addAttribute("orderStatus", orderStatus);
+    model.addAttribute("keyword", keyword);
+    model.addAttribute("fromDate", fromDate);
+    model.addAttribute("toDate", toDate);
+    model.addAttribute("page", page);
+    model.addAttribute("size", size);
+    model.addAttribute("productCategories", productCategories);
 
-        Order order = orderService.getOrderById(orderId);
-        
-        if (order != null) {
-            // Dựa vào trạng thái đầu vào để cập nhật
-            switch (status) {
-                case "Chờ giao":
-                    // Nếu đơn hàng đang ở trạng thái "Chờ xác nhận", cho phép cập nhật sang "Đã xác nhận"
-                    if (order.getStatus().equals("Chờ xác nhận")) {
-                        orderService.updateStatus(orderId, "Đã xác nhận");
+    model.addAttribute("currentPage", orders.getNumber());
+    model.addAttribute("totalPages", orders.getTotalPages());
+    model.addAttribute("hasPrevious", orders.hasPrevious());
+    model.addAttribute("hasNext", orders.hasNext());
+    // View chính để layout include fragment
+    model.addAttribute("view", "admin/order"); // fragment admin/order.html
 
-
-                        // Thêm thông báo flash để hiển thị sau redirect
-
-                        redirectAttributes.addFlashAttribute("toastSuccess", "Xác nhận đơn hàng thành công!");
-                    }
-                    break;
-                case "Đã xác nhận":
-                    // Nếu đơn hàng đã được xác nhận, cập nhật thành "Đã giao"
-                    if (order.getStatus().equals("Đã xác nhận")) {
-                        orderService.updateStatus(orderId, "Đã giao");
-                        redirectAttributes.addFlashAttribute("toastSuccess", "Cập nhật trạng thái thành công!");
-                    }
-                    break;
-                default:
-                    // Trường hợp khác không xử lý
-                    break;
-            }
-        }
-
-        String encodedStatus = URLEncoder.encode(order.getStatus(), StandardCharsets.UTF_8);
-        return "redirect:/orderAdmin?orderStatus=" + encodedStatus;
-    }
-
-    @PostMapping("/recreate/{orderId}")
-    public String recreateOrder(@PathVariable("orderId") Long orderId, RedirectAttributes redirectAttributes) {
-        try {
-            orderService.recreateOrder(orderId);
-            redirectAttributes.addFlashAttribute("toastSuccess", "Tạo lại đơn hàng thành công!");
-            String encodedStatus = URLEncoder.encode("Đang giao lại", StandardCharsets.UTF_8);
-            return "redirect:/orderAdmin?orderStatus=" + encodedStatus;
-        } catch (IllegalStateException e) {
-            redirectAttributes.addFlashAttribute("toastSuccess", e.getMessage());
-            String encodedStatus = URLEncoder.encode("Đã hủy", StandardCharsets.UTF_8);
-            return "redirect:/orderAdmin?orderStatus=" + encodedStatus;
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("toastSuccess", "Đơn hàng không tồn tại!");
-            String encodedStatus = URLEncoder.encode("Đã hủy", StandardCharsets.UTF_8);
-            return "redirect:/orderAdmin?orderStatus=" + encodedStatus;
-        }
-    }
+    return "admin/layout"; // layout chung
 }
 
+
+@PostMapping("/update/{orderId}")
+public String checkout(@PathVariable("orderId") Long orderId,
+                       @RequestParam("status") String status,
+                       RedirectAttributes redirectAttributes) {
+    Order order = orderService.getOrderById(orderId);
+    if (order == null) {
+        redirectAttributes.addFlashAttribute("errorMessage", "Đơn hàng không tồn tại!");
+        return "redirect:/orderAdmin";
+    }
+
+    switch (status) {
+        case "Chờ giao":
+            if (order.getStatus().equals("Chờ xác nhận")) {
+                orderService.updateStatus(orderId, "Chờ giao");
+                redirectAttributes.addFlashAttribute("successMessage", "Xác nhận đơn hàng "+ orderId+" thành công!");
+            }
+            break;
+        case "Hủy đơn":
+                orderService.updateStatus(orderId, "Đã hủy");
+                redirectAttributes.addFlashAttribute("successMessage", "Đã hủy đơn hàng "+ orderId+" !");
+            break;
+        case "Hoàn tất":
+            if (order.getStatus().equals("Chờ giao")) {
+                orderService.updateStatus(orderId, "Hoàn tất");
+                redirectAttributes.addFlashAttribute("successMessage", "Đơn hàng "+ orderId+" đã được giao!");
+            }
+             if (order.getStatus().equals("Giao thất bại")) {
+                orderService.updateStatus(orderId, "Hoàn tất");
+                redirectAttributes.addFlashAttribute("successMessage", "Đơn hàng "+ orderId+" đã hoàn tất!");
+            }
+            break;
+        default:
+            break;
+    }
+
+    String encodedStatus = URLEncoder.encode(order.getStatus(), StandardCharsets.UTF_8);
+    return "redirect:/orderAdmin?orderStatus=" + encodedStatus;
+}
+
+@PostMapping("/recreate/{orderId}")
+public String recreateOrder(@PathVariable("orderId") Long orderId, RedirectAttributes redirectAttributes) {
+    try {
+        orderService.recreateOrder(orderId);
+        redirectAttributes.addFlashAttribute("successMessage", "Tạo lại đơn hàng thành công!");
+        String encodedStatus = URLEncoder.encode("Đang giao lại", StandardCharsets.UTF_8);
+        return "redirect:/orderAdmin?orderStatus=" + encodedStatus;
+    } catch (IllegalStateException e) {
+        redirectAttributes.addFlashAttribute("toastError", e.getMessage());
+        return "redirect:/orderAdmin?orderStatus=Giao thất bại";
+    } catch (IllegalArgumentException e) {
+        redirectAttributes.addFlashAttribute("errorMessage", "Đơn hàng không tồn tại!");
+        return "redirect:/orderAdmin?orderStatus=Giao thất bại";
+    }
+}
+}

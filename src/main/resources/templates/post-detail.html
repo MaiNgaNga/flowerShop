@@ -50,11 +50,36 @@
   <!-- Danh sách bình luận -->
   <div id="comment-list">
     <div class="mb-3 border-bottom pb-2" th:each="comment : ${postComments}">
-      <strong th:text="${comment.user.name}">Người dùng</strong>
-      <span class="text-muted small ms-2" th:text="${#temporals.format(comment.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2025 10:00</span>
-      <p class="mb-1" th:text="${comment.content}">Nội dung bình luận</p>
+      <div class="d-flex justify-content-between align-items-start">
+        <input type="text" th:value="${comment.content}" name="id" class="id" hidden />
+        <div>
+          <strong th:text="${comment.user.name}">Người dùng</strong>
+          <span class="text-muted small ms-2" th:text="${#temporals.format(comment.createdAt, 'dd/MM/yyyy HH:mm')}">
+            01/01/2025 10:00
+          </span>
+          <p class="mb-1" th:text="${comment.content}">Nội dung bình luận</p>
+        </div>
+  
+        <!-- Nút 3 chấm -->
+        <div class="dropdown">
+          <button class="btn btn-sm btn-light" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            <i class="bi bi-three-dots-vertical"></i> <!-- icon bootstrap -->
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+            <li>
+              <form th:action="@{/post-comments/delete/{id}(id=${comment.id})}" method="post"
+                onsubmit="return confirm('Bạn có chắc muốn xóa bình luận này không?')">
+                <input type="hidden" name="postId" th:value="${post.id}" />
+                <button type="submit" class="dropdown-item text-danger">Xóa</button>
+              </form>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
+
 
   <!-- Form bình luận -->
   <form method="post" th:action="@{/post-comments}" class="mt-4">

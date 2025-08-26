@@ -34,6 +34,9 @@ public class ContactPageController {
         if (user != null) {
             Integer userId = user.getId();
             cartCount = cartItemService.getCartItemsByUserId(userId).size();
+            contact.setName(user.getName());
+            contact.setEmail(user.getEmail());
+            contact.setSdt(user.getSdt());
         }
         model.addAttribute("cartCount", cartCount);
         model.addAttribute("view", "contact");

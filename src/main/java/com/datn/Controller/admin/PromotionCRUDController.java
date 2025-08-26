@@ -3,6 +3,7 @@ package com.datn.Controller.admin;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -257,25 +258,31 @@ public class PromotionCRUDController {
             }
 
             // 2) Xác định có đổi ngày hay không
-            boolean startChanged = promotion.getStartDate() != null
-                    && existing.getStartDate() != null
-                    && !promotion.getStartDate().isEqual(existing.getStartDate());
+            boolean startChanged = false;
+            boolean endChanged = false;
 
-            boolean endChanged = promotion.getEndDate() != null
-                    && existing.getEndDate() != null
-                    && !promotion.getEndDate().isEqual(existing.getEndDate());
+            // Chỉ coi là thay đổi nếu form gửi giá trị mới khác null
+            if (promotion.getStartDate() != null) {
+                startChanged = !promotion.getStartDate().isEqual(existing.getStartDate());
+            }
+            if (promotion.getEndDate() != null) {
+                endChanged = !promotion.getEndDate().isEqual(existing.getEndDate());
+            }
 
             boolean dateChanged = startChanged || endChanged;
 
-            // 3) Nếu có lỗi, nhưng ONLY lỗi ở start/end date và KHÔNG đổi ngày -> bỏ qua
+            // 3) Kiểm tra lỗi validation
             org.springframework.validation.BindingResult br = (org.springframework.validation.BindingResult) errors;
             if (errors.hasErrors()) {
+                // Chỉ kiểm tra các lỗi không liên quan đến ngày nếu ngày không thay đổi
                 boolean hasNonDateErrors = br.getFieldErrors().stream()
                         .anyMatch(fe -> !("startDate".equals(fe.getField()) || "endDate".equals(fe.getField())))
-                        || !br.getGlobalErrors().isEmpty();
+                        || br.getGlobalErrors().stream()
+                                .anyMatch(
+                                        ge -> !ge.getCode().contains("startDate") && !ge.getCode().contains("endDate"));
 
                 if (hasNonDateErrors || dateChanged) {
-                    // Có lỗi khác, hoặc có đổi ngày thì không bỏ qua
+                    // Có lỗi không liên quan đến ngày hoặc ngày bị thay đổi -> trả về lỗi
                     model.addAttribute("promotions", promotionPage.getContent());
                     model.addAttribute("currentPage", page);
                     model.addAttribute("totalPages", promotionPage.getTotalPages());
@@ -285,13 +292,33 @@ public class PromotionCRUDController {
                     model.addAttribute("view", "admin/promotionCRUD");
                     return "admin/layout";
                 }
-                // else: chỉ có lỗi ngày nhưng không đổi ngày -> tiếp tục update (bỏ qua lỗi)
+                // Nếu chỉ có lỗi liên quan đến ngày và không thay đổi ngày -> bỏ qua lỗi
             }
 
-            // 4) Nếu NGÀY BỊ ĐỔI thì mới validate quan hệ ngày
+            // 4) Xử lý giá trị ngày
             if (dateChanged) {
-                if (promotion.getStartDate() != null && promotion.getEndDate() != null
-                        && promotion.getEndDate().isBefore(promotion.getStartDate())) {
+                // Nếu ngày bị thay đổi, validate quan hệ giữa ngày
+                LocalDate finalStartDate = promotion.getStartDate() != null ? promotion.getStartDate()
+                        : existing.getStartDate();
+                LocalDate finalEndDate = promotion.getEndDate() != null ? promotion.getEndDate()
+                        : existing.getEndDate();
+
+                // Thêm kiểm tra: Ngày bắt đầu phải là hôm nay hoặc ngày mai trở đi
+                LocalDate today = LocalDate.now();
+                LocalDate tomorrow = today.plusDays(1);
+                if (finalStartDate != null && (finalStartDate.isBefore(today) || finalStartDate.isAfter(tomorrow))) {
+                    model.addAttribute("errorStartDate", "Ngày bắt đầu phải là ngày hôm nay hoặc tương lai!");
+                    model.addAttribute("promotions", promotionPage.getContent());
+                    model.addAttribute("currentPage", page);
+                    model.addAttribute("totalPages", promotionPage.getTotalPages());
+                    model.addAttribute("totalElements", promotionPage.getTotalElements());
+                    model.addAttribute("hasPrevious", promotionPage.hasPrevious());
+                    model.addAttribute("hasNext", promotionPage.hasNext());
+                    model.addAttribute("view", "admin/promotionCRUD");
+                    return "admin/layout";
+                }
+
+                if (finalStartDate != null && finalEndDate != null && finalEndDate.isBefore(finalStartDate)) {
                     model.addAttribute("errorEndDate", "Ngày kết thúc phải sau ngày bắt đầu!");
                     model.addAttribute("promotions", promotionPage.getContent());
                     model.addAttribute("currentPage", page);
@@ -302,12 +329,13 @@ public class PromotionCRUDController {
                     model.addAttribute("view", "admin/promotionCRUD");
                     return "admin/layout";
                 }
+
+                promotion.setStartDate(finalStartDate);
+                promotion.setEndDate(finalEndDate);
             } else {
-                // Không đổi ngày: nếu người dùng để trống trên form, giữ lại ngày cũ
-                if (promotion.getStartDate() == null)
-                    promotion.setStartDate(existing.getStartDate());
-                if (promotion.getEndDate() == null)
-                    promotion.setEndDate(existing.getEndDate());
+                // Không thay đổi ngày, giữ nguyên giá trị cũ
+                promotion.setStartDate(existing.getStartDate());
+                promotion.setEndDate(existing.getEndDate());
             }
 
             // 5) Validate loại và giá trị giảm giá
@@ -356,11 +384,7 @@ public class PromotionCRUDController {
             promotionService.update(promotion);
             redirectAttributes.addFlashAttribute("success", "Cập nhật khuyến mãi thành công!");
 
-            return "redirect:/Promotion/edit/" + promotion.getId()
-                    + "?page=" + page + "&size=" + size
-                    + (title != null ? "&title=" + title : "")
-                    + (fromDate != null ? "&fromDate=" + fromDate : "")
-                    + (toDate != null ? "&toDate=" + toDate : "");
+            return "redirect:/Promotion/edit/" + promotion.getId();
 
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
@@ -386,6 +410,10 @@ public class PromotionCRUDController {
             promotionService.deleteById(id);
             redirectAttributes.addFlashAttribute("success", "Xóa khuyến mãi thành công!");
             return "redirect:/Promotion/index";
+        }catch(DataIntegrityViolationException e ){
+            redirectAttributes.addFlashAttribute("error", "Không thể xóa khuyến mãi vì có liên kết với các thực thể khác!");
+            return "redirect:/Promotion/edit/" + promotion.getId();
+
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/Promotion/edit/" + promotion.getId();

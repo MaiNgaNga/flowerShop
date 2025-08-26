@@ -208,6 +208,18 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
     @Query("SELECT p FROM Product p WHERE p.discountEnd IS NOT NULL AND p.discountEnd < :date")
     List<Product> findByDiscountEndBefore(@Param("date") LocalDate date);
 
+    // // Tìm tất cả sản phẩm sắp xếp theo ID giảm dần (sản phẩm mới nhất trước)
+    // @Query("SELECT p FROM Product p ORDER BY p.id DESC")
+    // Page<Product> findAllOrderByIdDesc(Pageable pageable);
+
+    // @Query("SELECT p FROM Product p WHERE p.discountPercent > :minDiscount AND p.available = true "
+    //         + "AND (p.discountStart IS NULL OR CURRENT_DATE >= p.discountStart) "
+    //         + "AND (p.discountEnd IS NULL OR CURRENT_DATE <= p.discountEnd) "
+    //         + "AND (p.productCategory IS NULL OR LOWER(p.productCategory.name) NOT LIKE %:exclude%) "
+    //         + "ORDER BY p.discountPercent DESC")
+    // List<Product> findDiscountProductsExcludeCategory(@Param("minDiscount") int minDiscount,
+    //         @Param("exclude") String exclude);
+
     // Tìm tất cả sản phẩm sắp xếp theo ID giảm dần (sản phẩm mới nhất trước)
     @Query("SELECT p FROM Product p ORDER BY p.id DESC")
     Page<Product> findAllOrderByIdDesc(Pageable pageable);
@@ -219,4 +231,16 @@ public interface ProductDAO extends JpaRepository<Product, Long> {
             + "ORDER BY p.discountPercent DESC")
     List<Product> findDiscountProductsExcludeCategory(@Param("minDiscount") int minDiscount,
             @Param("exclude") String exclude);
+
+    /**
+     * Kiểm tra xem sản phẩm có tồn tại trong bảng OrderDetail không
+     */
+    @Query("SELECT CASE WHEN COUNT(od) > 0 THEN true ELSE false END FROM OrderDetail od WHERE od.product.id = :productId")
+    boolean existsInOrderDetails(@Param("productId") long productId);
+
+    /**
+     * Kiểm tra xem sản phẩm có tồn tại trong bảng CartItem không
+     */
+    @Query("SELECT CASE WHEN COUNT(ci) > 0 THEN true ELSE false END FROM CartItem ci WHERE ci.product.id = :productId")
+    boolean existsInCartItems(@Param("productId") long productId);
 }

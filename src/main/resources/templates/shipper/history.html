@@ -7,22 +7,49 @@
 
     <!-- Alert thông báo - Fixed position bên phải -->
     <div class="alert-container-fixed">
-      <div th:if="${success}" class="alert alert-success alert-dismissible fade show custom-alert" role="alert">
+      <div
+        th:if="${success}"
+        class="alert alert-success alert-dismissible fade show custom-alert"
+        role="alert"
+      >
         <i class="fas fa-check-circle me-2"></i>
         <span th:text="${success}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
       </div>
 
-      <div th:if="${error}" class="alert alert-danger alert-dismissible fade show custom-alert" role="alert">
+      <div
+        th:if="${error}"
+        class="alert alert-danger alert-dismissible fade show custom-alert"
+        role="alert"
+      >
         <i class="fas fa-exclamation-circle me-2"></i>
         <span th:text="${error}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
       </div>
 
-      <div th:if="${warning}" class="alert alert-warning alert-dismissible fade show custom-alert" role="alert">
+      <div
+        th:if="${warning}"
+        class="alert alert-warning alert-dismissible fade show custom-alert"
+        role="alert"
+      >
         <i class="fas fa-exclamation-triangle me-2"></i>
         <span th:text="${warning}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
       </div>
     </div>
 
@@ -133,9 +160,10 @@
                   th:text="${order.id != null ? order.id : ''}"
                 ></td>
                 <td th:text="${order.user != null ? order.user.name : ''}"></td>
+
                 <td
                   class="text-center"
-                  th:text="${order.deliveryDate != null ? #dates.format(order.deliveryDate, 'dd-MM-yyyy') : ''}"
+                  th:text="${order.deliveryDate != null ? #temporals.format(order.deliveryDate, 'dd/MM/yyyy') : ''}"
                 ></td>
                 <td class="text-center">
                   <span th:if="${order.status != null}">
@@ -336,7 +364,7 @@
       animation: slideInRight 0.4s ease-out;
       position: relative;
     }
-    
+
     @keyframes slideInRight {
       from {
         transform: translateX(100%);
@@ -347,30 +375,30 @@
         opacity: 1;
       }
     }
-    
+
     .alert-success.custom-alert {
       background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       color: #ffffff;
       border-left: 5px solid #047857;
     }
-    
+
     .alert-danger.custom-alert {
       background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
       color: #ffffff;
       border-left: 5px solid #b91c1c;
     }
-    
+
     .alert-warning.custom-alert {
       background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
       color: #ffffff;
       border-left: 5px solid #b45309;
     }
-    
+
     .custom-alert i {
       font-size: 1.2rem;
       margin-right: 0.5rem;
     }
-    
+
     .custom-alert .btn-close {
       position: absolute;
       top: 1rem;
@@ -387,11 +415,11 @@
       height: auto;
       line-height: 1;
     }
-    
+
     .custom-alert .btn-close::before {
       content: "×";
     }
-    
+
     .custom-alert .btn-close:hover {
       opacity: 1;
     }
@@ -399,95 +427,100 @@
 
   <script>
     function validateForm() {
-      const dateValue = document.getElementById('date').value;
-      const monthValue = document.getElementById('month').value;
-      const yearValue = document.getElementById('year').value;
-      
+      const dateValue = document.getElementById("date").value;
+      const monthValue = document.getElementById("month").value;
+      const yearValue = document.getElementById("year").value;
+
       // Kiểm tra phải chọn ít nhất một tiêu chí
       if (!dateValue && !monthValue && !yearValue) {
-        showAlert('error', 'Vui lòng chọn ít nhất một tiêu chí lọc!');
+        showAlert("error", "Vui lòng chọn ít nhất một tiêu chí lọc!");
         return false;
       }
-      
+
       // Không được chọn ngày + tháng/năm cùng lúc
       if (dateValue && (monthValue || yearValue)) {
-        showAlert('error', 'Không thể chọn ngày cùng với tháng hoặc năm!');
+        showAlert("error", "Không thể chọn ngày cùng với tháng hoặc năm!");
         return false;
       }
-      
+
       // Chọn tháng phải có năm
       if (monthValue && !yearValue) {
-        showAlert('error', 'Vui lòng chọn năm khi đã chọn tháng!');
+        showAlert("error", "Vui lòng chọn năm khi đã chọn tháng!");
         return false;
       }
-      
+
       // Kiểm tra không chọn tương lai
       const now = new Date();
       const currentYear = now.getFullYear();
       const currentMonth = now.getMonth() + 1;
-      
+
       if (yearValue && parseInt(yearValue) > currentYear) {
-        showAlert('error', 'Không thể chọn năm trong tương lai!');
+        showAlert("error", "Không thể chọn năm trong tương lai!");
         return false;
       }
-      
-      if (monthValue && yearValue && parseInt(yearValue) === currentYear && parseInt(monthValue) > currentMonth) {
-        showAlert('error', 'Không thể chọn tháng trong tương lai!');
+
+      if (
+        monthValue &&
+        yearValue &&
+        parseInt(yearValue) === currentYear &&
+        parseInt(monthValue) > currentMonth
+      ) {
+        showAlert("error", "Không thể chọn tháng trong tương lai!");
         return false;
       }
-      
+
       if (dateValue && new Date(dateValue) > now) {
-        showAlert('error', 'Không thể chọn ngày trong tương lai!');
+        showAlert("error", "Không thể chọn ngày trong tương lai!");
         return false;
       }
-      
+
       return true;
     }
-    
+
     function showAlert(type, message) {
       // Xóa alert cũ nếu có
-      const existingAlert = document.querySelector('.dynamic-alert');
+      const existingAlert = document.querySelector(".dynamic-alert");
       if (existingAlert) {
         existingAlert.remove();
       }
-      
+
       // Tạo alert mới với class custom
-      const alertDiv = document.createElement('div');
-      const alertType = type === 'error' ? 'danger' : type;
+      const alertDiv = document.createElement("div");
+      const alertType = type === "error" ? "danger" : type;
       alertDiv.className = `alert alert-${alertType} alert-dismissible fade show custom-alert dynamic-alert`;
-      alertDiv.setAttribute('role', 'alert');
-      
-      let iconClass = '';
-      switch(type) {
-        case 'success':
-          iconClass = 'fas fa-check-circle';
+      alertDiv.setAttribute("role", "alert");
+
+      let iconClass = "";
+      switch (type) {
+        case "success":
+          iconClass = "fas fa-check-circle";
           break;
-        case 'error':
-        case 'danger':
-          iconClass = 'fas fa-exclamation-circle';
+        case "error":
+        case "danger":
+          iconClass = "fas fa-exclamation-circle";
           break;
-        case 'warning':
-          iconClass = 'fas fa-exclamation-triangle';
+        case "warning":
+          iconClass = "fas fa-exclamation-triangle";
           break;
       }
-      
+
       alertDiv.innerHTML = `
         <i class="${iconClass}"></i>
         <span>${message}</span>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       `;
-      
+
       // Tạo hoặc tìm container alert fixed
-      let alertContainer = document.querySelector('.alert-container-fixed');
+      let alertContainer = document.querySelector(".alert-container-fixed");
       if (!alertContainer) {
-        alertContainer = document.createElement('div');
-        alertContainer.className = 'alert-container-fixed';
+        alertContainer = document.createElement("div");
+        alertContainer.className = "alert-container-fixed";
         document.body.appendChild(alertContainer);
       }
-      
+
       // Chèn alert vào container fixed
       alertContainer.appendChild(alertDiv);
-      
+
       // Tự động ẩn sau 5 giây
       setTimeout(() => {
         if (alertDiv && alertDiv.parentNode) {
@@ -495,15 +528,15 @@
         }
       }, 5000);
     }
-    
+
     // Reset form khi click "Làm mới"
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener("DOMContentLoaded", function () {
       const refreshBtn = document.querySelector('a[href="/shipper/history"]');
       if (refreshBtn) {
-        refreshBtn.addEventListener('click', function() {
-          document.getElementById('date').value = '';
-          document.getElementById('month').value = '';
-          document.getElementById('year').value = '';
+        refreshBtn.addEventListener("click", function () {
+          document.getElementById("date").value = "";
+          document.getElementById("month").value = "";
+          document.getElementById("year").value = "";
         });
       }
     });

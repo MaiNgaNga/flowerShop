@@ -139,7 +139,8 @@ public class OrderController {
     public String checkout(@Valid @ModelAttribute("orderRequest") OrderRequest orderRequest, BindingResult result,
             Model model, HttpSession session, @RequestParam(value = "wardID", required = false) Long wardId,
             @RequestParam(value = "specific", required = false) String specific,
-            @RequestParam(value = "paymentMethod", defaultValue = "COD") String paymentMethod) {
+            @RequestParam(value = "paymentMethod", defaultValue = "COD") String paymentMethod,
+            @RequestParam(value="discount", required = false) Double discountAmount) {
 
         // Debug logging
         System.out.println("Checkout called with wardID: " + wardId + ", paymentMethod: " + paymentMethod);
@@ -177,11 +178,12 @@ public class OrderController {
         order.setCreateDate(new Date());
         order.setSdt(user.getSdt());
         order.setAddress(orderRequest.getAddress());
-        order.setDeliveryDate(orderRequest.getDeliveryDate()); // Thêm dòng này để lưu ngày giao
-        order.setDescription(orderRequest.getDescription()); // Thêm dòng này để lưu mô tả
         order.setStatus("Chờ xác nhận");
         order.setPaymentMethod(paymentMethod);
         order.setShipFee(shippingFee);
+        order.setDiscount(discountAmount);
+        order.setOrderType("online");
+ 
 
         order.setDescription(orderRequest.getDescription());
         order.setDeliveryDate(orderRequest.getDeliveryDate());

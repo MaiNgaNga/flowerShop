@@ -594,30 +594,6 @@ function validatePromotionForm() {
     }
   }
 
-  if (!startDate) {
-    showFieldError("startDate", "Vui lòng chọn ngày bắt đầu");
-    missingFields.push("ngày bắt đầu");
-    isValid = false;
-  } else {
-    const start = new Date(startDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    if (start < today) {
-      showFieldError(
-        "startDate",
-        "Ngày bắt đầu không được là ngày trong quá khứ"
-      );
-      invalidFields.push("ngày bắt đầu");
-      isValid = false;
-    }
-  }
-
-  if (!endDate) {
-    showFieldError("endDate", "Vui lòng chọn ngày kết thúc");
-    missingFields.push("ngày kết thúc");
-    isValid = false;
-  }
 
   if (!useCount) {
     showFieldError("useCount", "Vui lòng nhập số lượng sử dụng");
@@ -632,17 +608,6 @@ function validatePromotionForm() {
     }
   }
 
-  // Validate logic ngày
-  if (startDate && endDate) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    if (end <= start) {
-      showFieldError("endDate", "Ngày kết thúc phải sau ngày bắt đầu");
-      invalidFields.push("ngày kết thúc");
-      isValid = false;
-    }
-  }
 
   // Show summary alert
   if (missingFields.length > 0 || invalidFields.length > 0) {
