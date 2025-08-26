@@ -20,7 +20,8 @@ public interface ServiceDAO extends JpaRepository<ServiceEntity, Long> {
     @Query("SELECT s FROM ServiceEntity s ORDER BY s.id DESC")
     Page<ServiceEntity> findAll(Pageable pageable);
 
-    // Lấy danh sách dịch vụ đang hoạt động (có phân trang) - sắp xếp theo ID giảm dần
+    // Lấy danh sách dịch vụ đang hoạt động (có phân trang) - sắp xếp theo ID giảm
+    // dần
     @Query("SELECT s FROM ServiceEntity s WHERE s.available = true ORDER BY s.id DESC")
     Page<ServiceEntity> findByAvailableTrue(Pageable pageable);
 
@@ -40,12 +41,7 @@ public interface ServiceDAO extends JpaRepository<ServiceEntity, Long> {
 
     // Tìm kiếm theo tên và lọc theo trạng thái - sắp xếp theo ID giảm dần
     @Query("SELECT s FROM ServiceEntity s WHERE LOWER(s.name) LIKE LOWER(CONCAT('%', :keyword, '%')) AND s.available = :available ORDER BY s.id DESC")
-    Page<ServiceEntity> searchByNameAndStatus(@Param("keyword") String keyword, @Param("available") Boolean available, Pageable pageable);
-
-    /**
-     * Kiểm tra xem dịch vụ có tồn tại trong bảng ServiceRequest không
-     */
-    @Query("SELECT CASE WHEN COUNT(sr) > 0 THEN true ELSE false END FROM ServiceRequest sr WHERE sr.service.id = :serviceId")
-    boolean existsInServiceRequests(@Param("serviceId") long serviceId);
+    Page<ServiceEntity> searchByNameAndStatus(@Param("keyword") String keyword, @Param("available") Boolean available,
+            Pageable pageable);
 
 }
