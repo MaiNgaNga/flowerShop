@@ -1,4 +1,3 @@
-// Filter Functions Script
 // Hàm xóa lọc cho tab yêu cầu
 function clearRequestFilter() {
   const form = document.getElementById("requestFilterForm");
@@ -43,7 +42,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const ordersTab = document.getElementById("orders-tab");
       if (ordersTab) {
         ordersTab.click();
-        console.log("🎯 Switched to orders tab after order creation");
       }
     }, 100);
   } else {
@@ -76,11 +74,7 @@ function updateFilterResults() {
 
   // Cập nhật số lượng cho tab đơn hàng
   const orderTab = document.getElementById("orders-tab");
-  if (orderTotalElements > 0) {
-    orderTab.innerHTML = `Đơn hàng dịch vụ (${orderTotalElements})`;
-  } else {
-    orderTab.innerHTML = "Đơn hàng dịch vụ";
-  }
+  orderTab.innerHTML = "Đơn hàng dịch vụ";
 }
 
 // Hàm hiển thị filter summary
@@ -178,8 +172,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Hàm refresh dữ liệu tab đơn hàng dịch vụ
 async function refreshOrdersTab() {
-  console.log("🔄 Refreshing orders tab data...");
-
   try {
     // Lấy các filter hiện tại từ form
     const orderForm = document.getElementById("orderFilterForm");
@@ -226,16 +218,10 @@ async function refreshOrdersTab() {
 
     // Cập nhật số lượng trên tab title
     const orderTab = document.getElementById("orders-tab");
-    if (data.totalElements > 0) {
-      orderTab.innerHTML = `Đơn hàng dịch vụ (${data.totalElements})`;
-    } else {
-      orderTab.innerHTML = "Đơn hàng dịch vụ";
-    }
+    orderTab.innerHTML = "Đơn hàng dịch vụ";
 
-    console.log("✅ Orders tab refreshed successfully");
     return true;
   } catch (error) {
-    console.error("❌ Error refreshing orders tab:", error);
     throw error;
   }
 }
@@ -245,7 +231,6 @@ function renderOrdersTable(orders, paginationData) {
   const tbody = document.querySelector("#orders tbody");
 
   if (!tbody) {
-    console.error("Could not find orders table tbody");
     return;
   }
 
@@ -356,8 +341,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Force cleanup modal hoàn toàn
     forceCleanupModal: function () {
-      console.log("🧹 Force cleanup modal...");
-
       // 1. Hủy tất cả requests đang chạy
       if (this.loadingPromise) {
         this.loadingPromise.abort?.();
@@ -399,23 +382,17 @@ document.addEventListener("DOMContentLoaded", function () {
       // 7. Reset state
       this.isProcessing = false;
       this.currentRequestId = null;
-
-      console.log("✅ Modal cleanup completed");
     },
 
     // Kiểm tra có thể mở modal không
     canOpenModal: function () {
       // Nếu vừa thực hiện restore action, luôn cho phép mở modal
       if (this.isRestoreAction) {
-        console.log(
-          "✅ Restore action detected, allowing immediate modal open"
-        );
         return true;
       }
 
       // Chỉ block nếu đang xử lý request
       if (this.isProcessing) {
-        console.log("❌ Modal đang xử lý, không thể mở");
         return false;
       }
 
@@ -431,7 +408,6 @@ document.addEventListener("DOMContentLoaded", function () {
         // Auto reset sau 10 giây
         setTimeout(() => {
           this.justCompletedContactAction = false;
-          console.log("🔄 Contact action flag auto-reset");
         }, 10000);
       }
       this.forceCleanupModal();
@@ -439,7 +415,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Đánh dấu restore action hoàn thành
     markRestoreCompleted: function () {
-      console.log("🔄 Restore action completed");
       this.isRestoreAction = true;
       this.isProcessing = false;
       this.currentRequestId = null;
@@ -448,13 +423,11 @@ document.addEventListener("DOMContentLoaded", function () {
       // Auto reset sau 3 giây
       setTimeout(() => {
         this.isRestoreAction = false;
-        console.log("🔄 Restore flag auto-reset");
       }, 3000);
     },
 
     // Reset hoàn toàn
     reset: function () {
-      console.log("🔄 Reset modal manager");
       this.isProcessing = false;
       this.currentRequestId = null;
       this.loadingPromise = null;
@@ -463,11 +436,8 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   modal.addEventListener("show.bs.modal", function (event) {
-    console.log("🚀 Attempting to open modal...");
-
     // Kiểm tra có thể mở modal không
     if (!modalManager.canOpenModal()) {
-      console.log("❌ Modal bị block, preventing open");
       event.preventDefault();
       return;
     }
@@ -491,8 +461,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Add event listener for when modal is fully shown
   modal.addEventListener("shown.bs.modal", function (event) {
-    console.log("✅ Modal fully shown - applying z-index fixes");
-
     // Ensure modal displays correctly after it's fully shown
     ensureModalDisplay();
 
@@ -586,8 +554,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Cập nhật state
     modalManager.currentRequestId = requestId;
 
-    console.log(`📊 Loading data for request ${requestId}...`);
-
     // Hiển thị loading state
     showModalLoading(modal, true);
 
@@ -598,9 +564,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const loadDelay = modalManager.justCompletedContactAction ? 800 : 0;
 
     if (loadDelay > 0) {
-      console.log(
-        "⏳ Delaying load after contact action to ensure data is saved..."
-      );
     }
 
     // Load dữ liệu từ server với cache busting cực mạnh
@@ -613,12 +576,8 @@ document.addEventListener("DOMContentLoaded", function () {
       ? `t=${Date.now()}&r=${Math.random()}&restore=1&force=${Date.now()}&contact=1&fresh=${Date.now()}`
       : `t=${Date.now()}&r=${Math.random()}`;
     const fetchUrl = `/admin/service-requests/${requestId}/draft?${cacheParam}`;
-    console.log("📡 Fetching fresh data from:", fetchUrl);
 
     if (isAfterContactAction) {
-      console.log(
-        "🔄 Loading data after contact/restore action - using aggressive cache busting"
-      );
     }
 
     const fetchPromise = fetch(fetchUrl, {
@@ -644,18 +603,12 @@ document.addEventListener("DOMContentLoaded", function () {
       try {
         const res = await fetchPromise;
         const data = await res.json();
-        console.log("Dữ liệu nhận được:", data);
 
         // Kiểm tra nếu là CONTACTED nhưng thiếu dữ liệu draft và còn retry
         if (data.status === "CONTACTED" && retryCount < maxRetries) {
           const hasIncompleteData =
             !data.quotedPrice || !data.district || !data.addressDetail;
           if (hasIncompleteData) {
-            console.log(
-              `⚠️ Incomplete CONTACTED data, retrying... (${
-                retryCount + 1
-              }/${maxRetries})`
-            );
             // Delay và retry với cache busting mới
             await new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -694,7 +647,6 @@ document.addEventListener("DOMContentLoaded", function () {
           btnCancel.style.display = "inline-flex";
 
           // Load dữ liệu bản nháp - LUÔN LUÔN load nếu có
-          console.log("Loading draft data:", data);
 
           // Load dữ liệu ngay lập tức
           if (data.quotedPrice !== undefined && data.quotedPrice !== null) {
@@ -725,16 +677,10 @@ document.addEventListener("DOMContentLoaded", function () {
               );
               if (districtSelect && districtSelect.options.length > 1) {
                 districtSelect.value = data.district;
-                console.log("District loaded:", data.district);
               } else if (districtRetryCount < maxDistrictRetries) {
                 districtRetryCount++;
                 setTimeout(loadDistrict, 100);
               } else {
-                console.warn(
-                  "Could not load district after",
-                  maxDistrictRetries,
-                  "retries"
-                );
               }
             };
 
@@ -752,10 +698,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return data;
       } catch (error) {
         if (retryCount < maxRetries && error.name !== "AbortError") {
-          console.log(
-            `⚠️ Fetch error, retrying... (${retryCount + 1}/${maxRetries}):`,
-            error
-          );
           await new Promise((resolve) => setTimeout(resolve, 500));
           return loadDataWithRetry(retryCount + 1);
         }
@@ -769,7 +711,6 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch((err) => {
           // Chỉ xử lý lỗi nếu không phải do abort
           if (err.name !== "AbortError") {
-            console.error("Lỗi load dữ liệu:", err);
             // Fallback: hiển thị nút mặc định cho PENDING
             btnContact.style.display = "inline-flex";
             btnUpdate.style.display = "none";
@@ -780,14 +721,10 @@ document.addEventListener("DOMContentLoaded", function () {
         .finally(() => {
           // Chỉ tắt loading nếu đây là request hiện tại
           if (modalManager.currentRequestId === requestId) {
-            console.log(`✅ Data loaded for request ${requestId}`);
             showModalLoading(modal, false);
             modalManager.isProcessing = false;
             modalManager.loadingPromise = null;
           } else {
-            console.log(
-              `⚠️ Stale request ${requestId}, current: ${modalManager.currentRequestId}`
-            );
           }
         });
     }, loadDelay);
@@ -795,8 +732,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Reset state khi modal đóng
   modal.addEventListener("hidden.bs.modal", function () {
-    console.log("🔒 Modal hidden event triggered");
-
     // Force cleanup hoàn toàn
     modalManager.forceCleanupModal();
 
@@ -812,8 +747,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Tắt loading state
     showModalLoading(modal, false);
-
-    console.log("🧹 Modal cleanup on hidden completed");
   });
 
   // Hàm cập nhật UI sau khi thực hiện action
@@ -878,7 +811,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // *** QUAN TRỌNG: Reset modal manager sau khi hủy ***
       modalManager.reset();
-      console.log("🔄 Modal manager reset after cancel action");
     }
   };
 
@@ -908,11 +840,14 @@ document.addEventListener("DOMContentLoaded", function () {
         time
       );
       if (!requestValidation.isValid) {
-        showCustomAlert(
-          "Vui lòng kiểm tra lại thông tin: " +
-            requestValidation.errors.join(", "),
-          "error"
-        );
+        // Kiểm tra xem có phải tất cả field đều trống không
+        const allFieldsEmpty = !price && !district && !address && !time;
+
+        if (allFieldsEmpty) {
+          showCustomAlert("Vui lòng nhập đầy đủ thông tin", "error");
+        } else {
+          showCustomAlert("Vui lòng kiểm tra lại thông tin", "error");
+        }
         return;
       }
 
@@ -929,11 +864,7 @@ document.addEventListener("DOMContentLoaded", function () {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("Response data:", data);
-
         if (data.success) {
-          console.log(`✅ Action ${type} successful for request ${id}`);
-
           // Đánh dấu action hoàn thành và cleanup modal
           modalManager.markActionCompleted(type);
 
@@ -959,17 +890,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
               }
               showCustomAlert(message, "success");
-              
+
               // Đánh dấu đã hiển thị thông báo
               modalManager.justShowedSuccessAlert = true;
-              
+
               // Auto reset sau 3 giây
               setTimeout(() => {
                 modalManager.justShowedSuccessAlert = false;
-                console.log("🔄 Success alert flag reset");
               }, 3000);
             } else {
-              console.log("⚠️ Skipped duplicate success alert");
             }
 
             // *** XỬ LÝ ĐẶC BIỆT CHO CONFIRM - TẠO ĐƠN HÀNG ***
@@ -986,17 +915,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     const ordersTab = document.getElementById("orders-tab");
                     if (ordersTab) {
                       ordersTab.click();
-                      console.log(
-                        "🎯 Successfully refreshed and switched to orders tab"
-                      );
                     }
                   })
                   .catch((error) => {
                     // Fallback: reload trang nếu refresh thất bại
-                    console.warn(
-                      "⚠️ Refresh failed, switching to orders tab without reload:",
-                      error
-                    );
                     // Chỉ chuyển tab mà không reload để tránh thông báo duplicate
                     const ordersTab = document.getElementById("orders-tab");
                     if (ordersTab) {
@@ -1007,10 +929,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
           }, 200);
         } else if (data.error) {
-          console.log(
-            `❌ Action ${type} failed for request ${id}: ${data.error}`
-          );
-
           // Đánh dấu action hoàn thành và cleanup modal
           modalManager.markActionCompleted(type);
 
@@ -1021,8 +939,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       })
       .catch((err) => {
-        console.error("❌ Network/Exception error:", err);
-
         // Đánh dấu action hoàn thành và cleanup modal
         modalManager.markActionCompleted(type);
 
@@ -1060,15 +976,12 @@ document.addEventListener("DOMContentLoaded", function () {
       const serviceName = button.getAttribute("data-service-name");
 
       showCustomConfirm("Bạn có chắc muốn khôi phục yêu cầu này không?", () => {
-        console.log("🔄 Starting restore action for request:", requestId);
-
         fetch(`/admin/service-requests/${requestId}/restore`, {
           method: "POST",
         })
           .then((res) => res.json())
           .then((data) => {
             if (data.success) {
-              console.log("✅ Restore successful:", data.success);
               showCustomAlert(data.success, "success");
 
               // Cập nhật UI: thay đổi trạng thái dựa trên response
@@ -1103,16 +1016,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
               // *** QUAN TRỌNG: Đánh dấu restore action hoàn thành ***
               modalManager.markRestoreCompleted();
-              console.log(
-                "🎯 Modal manager marked restore completed - modal can now open immediately"
-              );
             } else if (data.error) {
-              console.log("❌ Restore failed:", data.error);
               showCustomAlert("Lỗi: " + data.error, "error");
             }
           })
           .catch((err) => {
-            console.error("❌ Restore error:", err);
             showCustomAlert("Có lỗi xảy ra khi khôi phục yêu cầu.", "error");
           });
       });
@@ -1294,18 +1202,42 @@ function validateRequestForm(price, district, address, time) {
   });
   form.querySelectorAll(".invalid-feedback").forEach((el) => el.remove());
 
+  // Kiểm tra xem có trường nào được điền không
+  const hasInput = price || district || address || time;
+
+  // Nếu chưa điền gì cả
+  if (!hasInput) {
+    addValidationErrorToElement(
+      form.querySelector("input[name='quotedPrice']"),
+      "Vui lòng nhập giá"
+    );
+    addValidationErrorToElement(
+      form.querySelector("select[name='district']"),
+      "Vui lòng chọn quận/huyện"
+    );
+    addValidationErrorToElement(
+      form.querySelector("input[name='addressDetail']"),
+      "Vui lòng nhập địa chỉ chi tiết"
+    );
+    addValidationErrorToElement(
+      form.querySelector("input[name='executionTime']"),
+      "Vui lòng chọn thời gian thực hiện"
+    );
+    return { isValid: false, errors: ["Vui lòng nhập đầy đủ thông tin"] };
+  }
+
   // Validate quoted price
   const priceStr = price.toString().trim();
   const priceInput = form.querySelector("input[name='quotedPrice']");
   if (!priceStr) {
     addValidationErrorToElement(priceInput, "Vui lòng nhập giá");
-    errors.push("Vui lòng nhập giá");
+    errors.push("giá");
     isValid = false;
   } else {
     // Check for invalid characters (chỉ cho phép số và dấu phẩy, chấm)
     if (!/^[\d,.\s]+$/.test(priceStr)) {
       addValidationErrorToElement(priceInput, "Giá chỉ được chứa số");
-      errors.push("Giá chỉ được chứa số");
+      errors.push("giá không hợp lệ");
       isValid = false;
     } else {
       const numericPrice = parseFloat(priceStr.replace(/[,\s]/g, ""));
@@ -1314,14 +1246,14 @@ function validateRequestForm(price, district, address, time) {
           priceInput,
           "Giá phải là số dương lớn hơn 0"
         );
-        errors.push("Giá phải là số dương lớn hơn 0");
+        errors.push("giá không hợp lệ");
         isValid = false;
       } else if (numericPrice > 999999999) {
         addValidationErrorToElement(
           priceInput,
           "Giá không được vượt quá 999,999,999 VNĐ"
         );
-        errors.push("Giá không được vượt quá 999,999,999 VNĐ");
+        errors.push("giá quá lớn");
         isValid = false;
       }
     }
@@ -1331,7 +1263,7 @@ function validateRequestForm(price, district, address, time) {
   const districtSelect = form.querySelector("select[name='district']");
   if (!district || district.trim() === "") {
     addValidationErrorToElement(districtSelect, "Vui lòng chọn quận/huyện");
-    errors.push("Vui lòng chọn quận/huyện");
+    errors.push("quận/huyện");
     isValid = false;
   }
 
@@ -1339,21 +1271,21 @@ function validateRequestForm(price, district, address, time) {
   const addressInput = form.querySelector("input[name='addressDetail']");
   if (!address || address.trim() === "") {
     addValidationErrorToElement(addressInput, "Vui lòng nhập địa chỉ chi tiết");
-    errors.push("Vui lòng nhập địa chỉ chi tiết");
+    errors.push("địa chỉ chi tiết");
     isValid = false;
   } else if (address.trim().length < 5) {
     addValidationErrorToElement(
       addressInput,
       "Địa chỉ chi tiết phải có ít nhất 5 ký tự"
     );
-    errors.push("Địa chỉ chi tiết phải có ít nhất 5 ký tự");
+    errors.push("địa chỉ chi tiết quá ngắn");
     isValid = false;
   } else if (address.trim().length > 255) {
     addValidationErrorToElement(
       addressInput,
       "Địa chỉ chi tiết không được vượt quá 255 ký tự"
     );
-    errors.push("Địa chỉ chi tiết không được vượt quá 255 ký tự");
+    errors.push("địa chỉ chi tiết quá dài");
     isValid = false;
   }
 
@@ -1361,7 +1293,7 @@ function validateRequestForm(price, district, address, time) {
   const timeInput = form.querySelector("input[name='executionTime']");
   if (!time) {
     addValidationErrorToElement(timeInput, "Vui lòng chọn thời gian thực hiện");
-    errors.push("Vui lòng chọn thời gian thực hiện");
+    errors.push("thời gian thực hiện");
     isValid = false;
   } else {
     const selectedDate = new Date(time);
@@ -1373,7 +1305,7 @@ function validateRequestForm(price, district, address, time) {
         timeInput,
         "Thời gian thực hiện không được là ngày trong quá khứ"
       );
-      errors.push("Thời gian thực hiện không được là ngày trong quá khứ");
+      errors.push("thời gian thực hiện không hợp lệ");
       isValid = false;
     }
 
@@ -1385,7 +1317,7 @@ function validateRequestForm(price, district, address, time) {
         timeInput,
         "Thời gian thực hiện không được quá 1 năm từ hiện tại"
       );
-      errors.push("Thời gian thực hiện không được quá 1 năm từ hiện tại");
+      errors.push("thời gian thực hiện quá xa");
       isValid = false;
     }
   }
@@ -1403,17 +1335,42 @@ function validateOrderForm() {
   });
   document.querySelectorAll(".invalid-feedback").forEach((el) => el.remove());
 
-  // Validate quoted price
+  // Lấy giá trị các trường
   const priceInput = document.getElementById("modal-quoted-price").value.trim();
+  const performDate = document.getElementById("modal-perform-date").value;
+  const province =
+    document.getElementById("modal-province-select").style.display !== "none"
+      ? document.getElementById("modal-province-select").value
+      : document.getElementById("modal-province").value;
+  const address = document.getElementById("modal-address").value.trim();
+  const note = document.getElementById("modal-note").value.trim();
+
+  // Kiểm tra xem có trường nào được điền không
+  const hasInput = priceInput || performDate || province || address;
+
+  // Nếu chưa điền gì cả
+  if (!hasInput) {
+    addValidationError("modal-quoted-price", "Vui lòng nhập giá");
+    addValidationError("modal-perform-date", "Vui lòng chọn ngày thực hiện");
+    const targetElement =
+      document.getElementById("modal-province-select").style.display !== "none"
+        ? "modal-province-select"
+        : "modal-province";
+    addValidationError(targetElement, "Vui lòng chọn địa điểm");
+    addValidationError("modal-address", "Vui lòng nhập địa chỉ chi tiết");
+    return { isValid: false, errors: ["Vui lòng nhập đầy đủ thông tin"] };
+  }
+
+  // Validate quoted price
   if (!priceInput) {
     addValidationError("modal-quoted-price", "Vui lòng nhập giá");
-    errors.push("Chưa nhập giá");
+    errors.push("giá");
     isValid = false;
   } else {
     // Check for invalid characters (chỉ cho phép số và dấu phẩy, chấm)
     if (!/^[\d,.\s]+$/.test(priceInput)) {
       addValidationError("modal-quoted-price", "Giá chỉ được chứa số");
-      errors.push("Giá chứa ký tự không hợp lệ");
+      errors.push("giá không hợp lệ");
       isValid = false;
     } else {
       const numericPrice = parseFloat(priceInput.replace(/[,\s]/g, ""));
@@ -1422,24 +1379,23 @@ function validateOrderForm() {
           "modal-quoted-price",
           "Giá phải là số dương lớn hơn 0"
         );
-        errors.push("Giá không hợp lệ");
+        errors.push("giá không hợp lệ");
         isValid = false;
       } else if (numericPrice > 999999999) {
         addValidationError(
           "modal-quoted-price",
           "Giá không được vượt quá 999,999,999 VNĐ"
         );
-        errors.push("Giá quá lớn");
+        errors.push("giá quá lớn");
         isValid = false;
       }
     }
   }
 
   // Validate execution date
-  const performDate = document.getElementById("modal-perform-date").value;
   if (!performDate) {
     addValidationError("modal-perform-date", "Vui lòng chọn ngày thực hiện");
-    errors.push("Chưa chọn ngày thực hiện");
+    errors.push("ngày thực hiện");
     isValid = false;
   } else {
     const selectedDate = new Date(performDate);
@@ -1451,7 +1407,7 @@ function validateOrderForm() {
         "modal-perform-date",
         "Ngày thực hiện không được là ngày trong quá khứ"
       );
-      errors.push("Ngày thực hiện không hợp lệ");
+      errors.push("ngày thực hiện không hợp lệ");
       isValid = false;
     }
 
@@ -1463,53 +1419,47 @@ function validateOrderForm() {
         "modal-perform-date",
         "Ngày thực hiện không được quá 1 năm từ hiện tại"
       );
-      errors.push("Ngày thực hiện quá xa");
+      errors.push("ngày thực hiện quá xa");
       isValid = false;
     }
   }
 
   // Validate province/district
-  const province =
-    document.getElementById("modal-province-select").style.display !== "none"
-      ? document.getElementById("modal-province-select").value
-      : document.getElementById("modal-province").value;
   if (!province || province.trim() === "") {
     const targetElement =
       document.getElementById("modal-province-select").style.display !== "none"
         ? "modal-province-select"
         : "modal-province";
     addValidationError(targetElement, "Vui lòng chọn địa điểm");
-    errors.push("Chưa chọn địa điểm");
+    errors.push("địa điểm");
     isValid = false;
   }
 
   // Validate address detail
-  const address = document.getElementById("modal-address").value.trim();
   if (!address) {
     addValidationError("modal-address", "Vui lòng nhập địa chỉ chi tiết");
-    errors.push("Chưa nhập địa chỉ chi tiết");
+    errors.push("địa chỉ chi tiết");
     isValid = false;
   } else if (address.length < 5) {
     addValidationError(
       "modal-address",
       "Địa chỉ chi tiết phải có ít nhất 5 ký tự"
     );
-    errors.push("Địa chỉ chi tiết phải có ít nhất 5 ký tự");
+    errors.push("địa chỉ chi tiết quá ngắn");
     isValid = false;
   } else if (address.length > 255) {
     addValidationError(
       "modal-address",
       "Địa chỉ chi tiết không được vượt quá 255 ký tự"
     );
-    errors.push("Địa chỉ quá dài");
+    errors.push("địa chỉ quá dài");
     isValid = false;
   }
 
   // Validate description (optional but if provided, check length)
-  const note = document.getElementById("modal-note").value.trim();
   if (note && note.length > 1000) {
     addValidationError("modal-note", "Mô tả không được vượt quá 1000 ký tự");
-    errors.push("Mô tả quá dài");
+    errors.push("mô tả quá dài");
     isValid = false;
   }
 
@@ -1587,7 +1537,6 @@ function loadOrderDetail(orderId) {
       }
     },
     error: function (xhr, status, error) {
-      console.error("Lỗi:", error);
       showCustomAlert("Không thể tải dữ liệu đơn hàng.", "error");
     },
     complete: function () {
@@ -1715,12 +1664,9 @@ $(document).ready(function () {
 
   // Xử lý nút chỉnh sửa đơn hàng
   $(document).on("click", "#btn-edit", function () {
-    console.log("Edit button clicked");
     const isReadonly = $("#modal-quoted-price").prop("readonly");
-    console.log("Is currently readonly:", isReadonly);
 
     if (isReadonly) {
-      console.log("Switching to edit mode");
       // Chuyển sang chế độ chỉnh sửa
       $("#modal-quoted-price").prop("readonly", false);
       $("#modal-perform-date").prop("readonly", false).attr("type", "date");
@@ -1740,13 +1686,6 @@ $(document).ready(function () {
         let numericPrice = currentPrice.replace(/[^\d]/g, "");
         $("#modal-quoted-price").val(numericPrice);
       }
-
-      console.log("Fields should now be editable");
-      console.log(
-        "Quoted price readonly:",
-        $("#modal-quoted-price").prop("readonly")
-      );
-      console.log("Province readonly:", $("#modal-province").prop("readonly"));
 
       // Thay đổi icon và title
       $(this)
@@ -1775,10 +1714,15 @@ $(document).ready(function () {
       // Validate form trước khi lưu
       const validation = validateOrderForm();
       if (!validation.isValid) {
-        showCustomAlert(
-          "Vui lòng kiểm tra lại thông tin: " + validation.errors.join(", "),
-          "error"
-        );
+        // Kiểm tra xem có phải tất cả field đều trống không
+        const allFieldsEmpty =
+          !quotedPrice && !performDate && !province && !address;
+
+        if (allFieldsEmpty) {
+          showCustomAlert("Vui lòng nhập đầy đủ thông tin", "error");
+        } else {
+          showCustomAlert("Vui lòng kiểm tra lại thông tin", "error");
+        }
         return;
       }
 
@@ -1802,7 +1746,6 @@ $(document).ready(function () {
             }, 1500); // Delay 1.5 giây để thấy thông báo
           })
           .fail(function (xhr, status, error) {
-            console.error("Lỗi:", error);
             showCustomAlert(
               "Lỗi khi cập nhật đơn hàng: " + (xhr.responseText || error),
               "error"
@@ -1876,7 +1819,6 @@ $(document).ready(function () {
             }, 500);
           })
           .fail(function (xhr, status, error) {
-            console.error("Lỗi:", error);
             // Cleanup modal khi có lỗi
             $(".modal").modal("hide");
             $(".modal-backdrop").remove();
@@ -1903,12 +1845,10 @@ document.addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll(".modal").forEach((modal) => {
     modal.addEventListener("show.bs.modal", function () {
       modalCount++;
-      console.log("Modal opened, count:", modalCount);
     });
 
     modal.addEventListener("hidden.bs.modal", function () {
       modalCount--;
-      console.log("Modal closed, count:", modalCount);
 
       // Chỉ cleanup khi không còn modal nào mở
       setTimeout(() => {
@@ -2079,4 +2019,59 @@ document.addEventListener("DOMContentLoaded", function () {
       }, 10);
     });
   });
+});
+
+// Thêm event listener để xóa lỗi validation khi người dùng nhập vào
+document.addEventListener("DOMContentLoaded", function () {
+  // Function để xóa lỗi validation của một field cụ thể
+  function clearFieldValidationError(element) {
+    if (!element) return;
+
+    // Xóa class báo lỗi
+    element.classList.remove("is-invalid");
+
+    // Xóa thông báo lỗi
+    const feedback = element.parentNode.querySelector(".invalid-feedback");
+    if (feedback) {
+      feedback.remove();
+    }
+  }
+
+  // Xóa lỗi validation khi người dùng nhập vào các field trong modal tạo đơn hàng
+  const createOrderForm = document.getElementById("createOrderForm");
+  if (createOrderForm) {
+    const formInputs = createOrderForm.querySelectorAll(
+      "input, select, textarea"
+    );
+    formInputs.forEach(function (input) {
+      // Event khi người dùng nhập vào
+      input.addEventListener("input", function () {
+        clearFieldValidationError(this);
+      });
+
+      // Event khi người dùng thay đổi (cho select)
+      input.addEventListener("change", function () {
+        clearFieldValidationError(this);
+      });
+    });
+  }
+
+  // Xóa lỗi validation khi người dùng nhập vào các field trong modal chỉnh sửa đơn hàng
+  const orderDetailsModal = document.getElementById("orderDetailsModal");
+  if (orderDetailsModal) {
+    const modalInputs = orderDetailsModal.querySelectorAll(
+      "input, select, textarea"
+    );
+    modalInputs.forEach(function (input) {
+      // Event khi người dùng nhập vào
+      input.addEventListener("input", function () {
+        clearFieldValidationError(this);
+      });
+
+      // Event khi người dùng thay đổi (cho select)
+      input.addEventListener("change", function () {
+        clearFieldValidationError(this);
+      });
+    });
+  }
 });
