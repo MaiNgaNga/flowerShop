@@ -12,4 +12,6 @@ public interface PostCommentService {
     void deleteComment(Long id);
 
     List<PostComment> findByPostId(Long postId); // ✅ Thêm phương thức tìm bình luận theo ID bài viết
+
+    PostComment findById(Long id);
 }

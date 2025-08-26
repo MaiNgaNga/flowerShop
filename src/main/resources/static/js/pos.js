@@ -24,7 +24,7 @@ function showCustomAlert(message, type = "success") {
   `;
 
   document.body.appendChild(alertDiv);
-  
+
   // Tự động ẩn sau 6 giây
   setTimeout(() => {
     if (alertDiv.parentElement) {
@@ -252,35 +252,37 @@ window.onload = function () {
 
   // Xử lý thông báo từ URL parameters
   const urlParams = new URLSearchParams(window.location.search);
-  
+
   // Xử lý success messages
-  if (urlParams.get('success') === 'payment_completed') {
+  if (urlParams.get("success") === "payment_completed") {
     showCustomAlert("Thanh toán thành công!", "success");
     window.history.replaceState({}, document.title, window.location.pathname);
   }
-  
+
   // Xử lý error messages
-  const errorParam = urlParams.get('error');
+  const errorParam = urlParams.get("error");
   if (errorParam) {
     let errorMessage = "Có lỗi xảy ra";
-    
-    switch(errorParam) {
-      case 'empty_cart':
-        errorMessage = "Giỏ hàng trống! Vui lòng chọn sản phẩm trước khi thanh toán.";
+
+    switch (errorParam) {
+      case "empty_cart":
+        errorMessage =
+          "Giỏ hàng trống! Vui lòng chọn sản phẩm trước khi thanh toán.";
         break;
-      case 'qr_generation_failed':
-        errorMessage = "Không thể tạo mã QR thanh toán. Vui lòng thử lại hoặc liên hệ hỗ trợ.";
+      case "qr_generation_failed":
+        errorMessage =
+          "Không thể tạo mã QR thanh toán. Vui lòng thử lại hoặc liên hệ hỗ trợ.";
         break;
-      case 'system_error':
+      case "system_error":
         errorMessage = "Lỗi hệ thống! Vui lòng thử lại sau.";
         break;
-      case 'invalid_request':
+      case "invalid_request":
         errorMessage = "Yêu cầu không hợp lệ!";
         break;
       default:
         errorMessage = "Có lỗi xảy ra: " + errorParam;
     }
-    
+
     showCustomAlert(errorMessage, "error");
     window.history.replaceState({}, document.title, window.location.pathname);
   }

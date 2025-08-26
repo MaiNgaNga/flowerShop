@@ -13,7 +13,6 @@ import com.datn.Service.ServiceService;
 import com.datn.dao.ServiceDAO;
 import com.datn.model.ServiceEntity;
 import com.datn.utils.ParamService;
-import org.springframework.dao.DataIntegrityViolationException;
 
 @Service
 public class ServiceServiceImpl implements ServiceService {
@@ -102,31 +101,7 @@ public class ServiceServiceImpl implements ServiceService {
         if (!dao.existsById(id)) {
             throw new IllegalArgumentException("Dịch vụ không tồn tại.");
         }
-        
-        try {
-            // Kiểm tra xem dịch vụ có đang được sử dụng không
-            if (isServiceInUse(id)) {
-                throw new IllegalArgumentException("Không thể xóa dịch vụ này vì đã có yêu cầu dịch vụ được tạo!");
-            }
-            
-            dao.deleteById(id);
-        } catch (DataIntegrityViolationException e) {
-            // Bắt lỗi khóa ngoại từ database
-            throw new IllegalArgumentException("Không thể xóa dịch vụ này vì đã có yêu cầu dịch vụ được tạo!");
-        } catch (Exception e) {
-            // Bắt các lỗi khác
-            throw new IllegalArgumentException("Có lỗi xảy ra khi xóa dịch vụ: " + e.getMessage());
-        }
-    }
-    
-    /**
-     * Kiểm tra xem dịch vụ có đang được sử dụng trong ServiceRequest không
-     */
-    private boolean isServiceInUse(long serviceId) {
-        // Kiểm tra trong ServiceRequest
-        boolean hasServiceRequests = dao.existsInServiceRequests(serviceId);
-        
-        return hasServiceRequests;
+        dao.deleteById(id);
     }
 
     @Override

@@ -229,21 +229,23 @@ public class UserCRUDController {
 
     // Xử lý xóa user
     @RequestMapping("/delete/{id}")
-    public String delete(Model model, @ModelAttribute("User") User user,
-            Errors errors, @PathVariable("id") int id, RedirectAttributes redirectAttributes) {
-
-        try {
+    public String deleteUser(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+       
+        try{
             userService.deleteById(id);
-            redirectAttributes.addFlashAttribute("success", "Đã xóa User!");
-            return "redirect:/User/index";
+            redirectAttributes.addFlashAttribute("success", "Xóa thành công!");
 
-        }catch (DataIntegrityViolationException e) {
-            redirectAttributes.addFlashAttribute("error", "Không thể xóa User vì có liên kết với các thực thể khác!");
-            return "redirect:/User/index";
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/User/index";
+        } catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Không thể xóa người dùng vì có liên kết với các thực thể khác!");
+            return "redirect:/User/edit/" + id;
+
+        } 
+        catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Xóa không thành công!");
         }
+
+        return "redirect:/User/index";
     }
 
     // Tìm kiếm user theo tên
