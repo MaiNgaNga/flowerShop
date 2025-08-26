@@ -11,122 +11,6 @@
     />
   </head>
   <body>
-    <!-- Toast thông báo lỗi -->
-    <div
-      id="errorToast"
-      th:if="${errorMessage != null}"
-      class="toast align-items-center text-bg-danger border-0 show"
-      role="alert"
-      aria-live="assertive"
-      aria-atomic="true"
-      style="
-        position: fixed;
-        top: 30px;
-        right: 30px;
-        min-width: 300px;
-        z-index: 9999;
-        transform: translateX(120%);
-        opacity: 0;
-        transition: transform 0.5s, opacity 0.5s;
-      "
-    >
-      <div class="d-flex">
-        <div class="toast-body">
-          <span th:text="${errorMessage}"></span>
-        </div>
-        <button
-          type="button"
-          class="btn-close btn-close-white me-2 m-auto"
-          data-bs-dismiss="toast"
-          aria-label="Close"
-          onclick="hideToast('errorToast')"
-        ></button>
-      </div>
-    </div>
-    <!-- Toast thông báo thành công -->
-    <div
-      id="successToast"
-      th:if="${successMessage != null}"
-      class="toast align-items-center text-bg-success border-0 show"
-      role="alert"
-      aria-live="assertive"
-      aria-atomic="true"
-      style="
-        position: fixed;
-        top: 90px;
-        right: 30px;
-        min-width: 300px;
-        z-index: 9999;
-        transform: translateX(120%);
-        opacity: 0;
-        transition: transform 0.5s, opacity 0.5s;
-      "
-    >
-      <div class="d-flex">
-        <div class="toast-body">
-          <span th:text="${successMessage}"></span>
-        </div>
-        <button
-          type="button"
-          class="btn-close btn-close- me-2 m-auto"
-          data-bs-dismiss="toast"
-          aria-label="Close"
-          onclick="hideToast('successToast')"
-        ></button>
-      </div>
-    </div>
-
-    <div
-      id="customToast"
-      class="toast align-items-center border-0 position-fixed"
-      style="
-        top: 100px;
-        right: 30px;
-        min-width: 300px;
-        z-index: 99999;
-        display: block !important;
-        opacity: 0;
-        transform: translateX(120%);
-        background: #fffbe6;
-        color: #856404;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        transition: transform 0.5s, opacity 0.5s;
-      "
-    >
-      <div class="toast-body">&nbsp;</div>
-    </div>
-    <!-- DEBUG: warningMessage = [[${warningMessage}]] -->
-    <div
-      id="warningToast"
-      th:if="${warningMessage != null}"
-      class="toast align-items-center text-bg-warning border-0 show"
-      role="alert"
-      aria-live="assertive"
-      aria-atomic="true"
-      style="
-        position: fixed;
-        top: 150px;
-        right: 30px;
-        min-width: 300px;
-        z-index: 9999;
-        transform: translateX(120%);
-        opacity: 0;
-        transition: transform 0.5s, opacity 0.5s;
-      "
-    >
-      <div class="d-flex">
-        <div class="toast-body">
-          <span th:text="${warningMessage}"></span>
-        </div>
-        <button
-          type="button"
-          class="btn-close btn-close-white me-2 m-auto"
-          data-bs-dismiss="toast"
-          aria-label="Close"
-          onclick="hideToast('warningToast')"
-        ></button>
-      </div>
-    </div>
     <div class="bodi">
       <div class="container-fluid" th:insert="~{/admin/content}"></div>
     </div>
@@ -191,21 +75,35 @@
       </div>
     </div>
     <!-- Modal confirm xử lý review  -->
-    <div class="modal fade" id="confirmReviewModal" tabindex="-1" aria-hidden="true">
+    <div
+      class="modal fade"
+      id="confirmReviewModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Duyệt đánh giá ?</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Hủy
+            </button>
             <a id="confirmReviewBtn" class="btn btn-danger"> Duyệt</a>
           </div>
         </div>
       </div>
     </div>
-
 
     <script th:src="@{/js/layout-page.js}"></script>
     <!-- Load admin-crud.js chung cho tất cả trang admin -->

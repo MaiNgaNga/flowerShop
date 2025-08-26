@@ -31,7 +31,7 @@
             ></span>
             <span class="ms-2">- 📅</span>
             <span
-              th:text="${#temporals.format(order.deliveryDate, 'dd/MM/yyyy')}"
+              th:text="${#dates.format(order.deliveryDate, 'dd/MM/yyyy')}"
             ></span>
           </button>
         </h2>
