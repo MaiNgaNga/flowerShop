@@ -31,46 +31,50 @@
   <!-- ============================ LIST & SIDEBAR ============================ -->
   <div class="content-section container my-5">
     <div class="row">
-      <h2 class="section-heading mb-4">Bài viết mới nhất</h2>
-      <!-- Thông báo khi không có kết quả -->
-      <div th:if="${noResults}" class="alert alert-info text-center">
-        <span th:text="${noResults}"></span>
-      </div>
-      <!-- ======== Lưới bài viết ======== -->
-      <div class="post-grid row" data-aos="fade-up">
-        <!-- Sử dụng page.content để hỗ trợ phân trang -->
-        <div class="col-md-4 mb-4" th:each="post : ${page.content}">
-          <a
-            th:href="@{/postDetail(id=${post.id})}"
-            class="post-card d-block border rounded-4 overflow-hidden h-100 text-dark text-decoration-none shadow-sm"
-          >
-            <img
-              th:src="@{/images/{img}(img=${post.image})}"
-              class="post-card-image w-100"
-              style="height: 220px; object-fit: cover"
-              alt="Ảnh bài viết"
-            />
-            <div class="post-card-content p-3">
-              <h3
-                class="post-card-title h5 fw-bold mb-2"
-                th:text="${post.title}"
-              >
-                Tiêu đề
-              </h3>
-              <div class="post-card-meta text-muted small mb-2">
-                <span class="me-2">
-                  <i class="fa fa-user"></i>
-                  <span th:text="${post.user != null ? post.user.name : 'Tác giả'}">Tác giả</span>
-                </span>
-                <span>
-                  <i class="fa fa-calendar"></i>
-                  <span th:text="${#temporals.format(post.postDate,'dd/MM/yyyy')}">01/01/25</span>
-                </span>
-              </div>
+          <div class="col-12 text-center mb-5">
+            <h2 class="section-title">Bài viết mới nhất</h2>
+            <div class="section-divider">
+                <span class="divider-icon">🌸</span>
             </div>
-          </a>
         </div>
-      </div>
+
+        <!-- Thông báo không có kết quả -->
+        <div th:if="${noResults}" class="alert alert-light text-center py-4 border shadow-sm">
+            <i class="fas fa-info-circle me-2"></i>
+            <span th:text="${noResults}"></span>
+        </div>
+
+        <!-- Lưới bài viết -->
+        <div class="row g-4" data-aos="fade-up" data-aos-duration="1000">
+            <div class="col-lg-4 col-md-6" th:each="post : ${page.content}">
+                <article class="blog-card h-100">
+                    <div class="blog-card-img-wrapper">
+                       <a th:href="@{/postDetail(id=${post.id})}" class="btn btn-link stretched-link">
+                        <img th:src="@{/images/{img}(img=${post.image})}"
+                             class="blog-card-img"
+                             th:alt="${post.title}"/>
+                        </a>
+                       
+                        <div class="blog-card-date">
+                            <span th:text="${#temporals.format(post.postDate,'dd')}">01</span>
+                            <small th:text="${#temporals.format(post.postDate,'MM/yyyy')}">01/2025</small>
+                        </div>
+                    </div>
+                    <div class="blog-card-body">
+                        <h3 class="blog-card-title" th:text="${post.title}">Tiêu đề</h3>
+                        <div class="blog-card-meta">
+                            <span class="author">
+                                <i class="fas fa-user-circle"></i>
+                                <span th:text="${post.user != null ? post.user.name : 'Tác giả'}">Tác giả</span>
+                            </span>
+                        </div>
+                        <a th:href="@{/postDetail(id=${post.id})}" class="btn btn-link stretched-link">
+                            Đọc thêm <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </article>
+            </div>
+        </div>
       <!-- ======== Phân trang mới ======== -->
       <nav
         class="mt-5 d-flex justify-content-center"
@@ -120,6 +124,7 @@
       </nav>
     </div>
   </div>
+ 
 
   <!-- ============================ Nút về đầu trang ============================ -->
   <!-- <a

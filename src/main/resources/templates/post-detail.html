@@ -44,7 +44,7 @@
     </div>
     <!-- Comments Section -->
      <!-- Bình luận bài viết -->
-<div class="mt-5">
+<div class="mt-5" id="comments-section">
   <h4 class="mb-4">Bình luận</h4>
 
   <!-- Danh sách bình luận -->
@@ -111,7 +111,7 @@
 
 
   <!-- Form bình luận -->
-  <form method="post" th:action="@{/post-comments}" class="mt-4">
+  <form method="post" th:action="@{/post-comments}" class="mt-4" >
     <input type="hidden" name="postId" th:value="${post.id}" />
     <div class="mb-3">
       <label for="commentContent" class="form-label">Viết bình luận:</label>
@@ -151,6 +151,8 @@
     </div>
   </div>
 </div>
+
+
 
 <div th:insert="~{/fragments/chatbot}"></div>
 

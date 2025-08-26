@@ -126,12 +126,14 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         @Query(value = "SELECT COUNT(*) FROM orders WHERE MONTH(create_date) = :month AND YEAR(create_date) = :year", nativeQuery = true)
         Long countTotalOrdersByMonthAndYear(@Param("month") int month, @Param("year") int year);
 
-        // Thống kê doanh thu trong năm (bao gồm cả đơn hàng Hoàn tất và dịch vụ đã thanh
+        // Thống kê doanh thu trong năm (bao gồm cả đơn hàng Hoàn tất và dịch vụ đã
+        // thanh
         @Query(value = "SELECT SUM(revenue) AS total_revenue " +
                         "FROM ( " +
                         "    SELECT SUM(o.total_amount) AS revenue " +
                         "    FROM orders o " +
-                        "    WHERE YEAR(o.create_date) = :year AND (o.status = N'Hoàn tất' OR o.payment_status = N'Đã thanh toán') " +
+                        "    WHERE YEAR(o.create_date) = :year AND (o.status = N'Hoàn tất' OR o.payment_status = N'Đã thanh toán') "
+                        +
                         "    UNION ALL " +
                         "    SELECT SUM(s.quoted_price) AS revenue " +
                         "    FROM service_orders s " +
@@ -147,7 +149,8 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
                         "LEFT JOIN ( " +
                         "    SELECT MONTH(o.create_date) AS month, SUM(o.total_amount) AS revenue " +
                         "    FROM orders o " +
-                        "    WHERE YEAR(o.create_date) = :year AND (o.status = N'Hoàn tất' OR o.payment_status = N'Đã thanh toán') " +
+                        "    WHERE YEAR(o.create_date) = :year AND (o.status = N'Hoàn tất' OR o.payment_status = N'Đã thanh toán') "
+                        +
                         "    GROUP BY MONTH(o.create_date) " +
                         "    UNION ALL " +
                         "    SELECT MONTH(s.confirmed_at) AS month, SUM(s.quoted_price) AS revenue " +
@@ -212,31 +215,27 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         @Query(value = "SELECT COUNT(*) FROM service_orders WHERE status = 'PAID' AND YEAR(confirmed_at) = :year", nativeQuery = true)
         Long countPaidOrdersByYear(@Param("year") int year);
 
-        // Lọc đơn hàng online theo status, keyword (user.name, receiverName, receiverPhone, sdt) và tháng/năm
+        // Lọc đơn hàng online theo status, keyword (user.name, receiverName,
+        // receiverPhone, sdt) và tháng/năm
 
-    @Query("SELECT o FROM Order o " +
-           "WHERE o.orderType = 'Online' " +
-           "AND (:status IS NULL OR o.status = :status) " +
-           "AND (:keyword IS NULL OR " +
-           "      LOWER(o.user.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-           "      LOWER(o.receiverName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-           "      LOWER(o.receiverPhone) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-           "      LOWER(STR(o.id)) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-           "      LOWER(o.sdt) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-           ") " +
-           "AND (:fromDate IS NULL OR o.deliveryDate >= :fromDate) " +
-           "AND (:toDate IS NULL OR o.deliveryDate <= :toDate) " +
-           "ORDER BY o.id DESC")
-    Page<Order> findOrdersWithFilter(
-            @Param("status") String status,
-            @Param("keyword") String keyword,
-            @Param("fromDate") LocalDate fromDate,
-            @Param("toDate") LocalDate toDate,
-            Pageable pageable
-    );
+        @Query("SELECT o FROM Order o " +
+                        "WHERE o.orderType = 'Online' " +
+                        "AND (:status IS NULL OR o.status = :status) " +
+                        "AND (:keyword IS NULL OR " +
+                        "      LOWER(o.user.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+                        "      LOWER(o.receiverName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+                        "      LOWER(o.receiverPhone) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+                        "      LOWER(STR(o.id)) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+                        "      LOWER(o.sdt) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+                        ") " +
+                        "AND (:fromDate IS NULL OR o.deliveryDate >= :fromDate) " +
+                        "AND (:toDate IS NULL OR o.deliveryDate <= :toDate) " +
+                        "ORDER BY o.id DESC")
+        Page<Order> findOrdersWithFilter(
+                        @Param("status") String status,
+                        @Param("keyword") String keyword,
+                        @Param("fromDate") LocalDate fromDate,
+                        @Param("toDate") LocalDate toDate,
+                        Pageable pageable);
 
 }
-
-
-
-

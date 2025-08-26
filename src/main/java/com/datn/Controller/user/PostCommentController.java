@@ -27,10 +27,10 @@ public class PostCommentController {
         try {
             postCommentService.saveComment(content, postId);
         } catch (IllegalStateException e) {
-            // Nếu chưa đăng nhập, bắt lỗi và chuyển hướng lại với thông báo
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
-        return "redirect:/postDetail?id=" + postId;
+        // Thêm fragment identifier #comments-section vào URL redirect
+        return "redirect:/postDetail?id=" + postId + "#comments-section";
     }
 
     // Xử lý xóa bình luận
@@ -38,6 +38,7 @@ public class PostCommentController {
     public String deleteComment(@PathVariable("id") Long id,
             @RequestParam("postId") Long postId,
             RedirectAttributes redirectAttributes) {
+        // ...existing code...
         // Lấy thông tin người dùng hiện tại
         User currentUser = authService.getUser();
 
@@ -63,6 +64,7 @@ public class PostCommentController {
         // Xóa bình luận
         postCommentService.deleteComment(id);
         redirectAttributes.addFlashAttribute("successMessage", "Bình luận đã được xóa thành công.");
-        return "redirect:/postDetail?id=" + postId;
+        // Thêm fragment identifier #comments-section vào URL redirect
+        return "redirect:/postDetail?id=" + postId + "#comments-section";
     }
 }
