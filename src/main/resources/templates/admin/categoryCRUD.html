@@ -2,17 +2,29 @@
   <h3>Quản Lý Loại Hoa</h3>
   <hr />
   <!-- Hiển thị thông báo flash messages từ controller -->
-  <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+  <div
+    th:if="${success}"
+    class="alert alert-success alert-dismissible fade show"
+    role="alert"
+  >
     <span th:text="${success}"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
-  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+  <div
+    th:if="${error}"
+    class="alert alert-danger alert-dismissible fade show"
+    role="alert"
+  >
     <span th:text="${error}"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
-  <div th:if="${warning}" class="alert alert-warning alert-dismissible fade show" role="alert">
+  <div
+    th:if="${warning}"
+    class="alert alert-warning alert-dismissible fade show"
+    role="alert"
+  >
     <span th:text="${warning}"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
@@ -50,7 +62,6 @@
 
   <!-- Tab Content -->
   <div class="tab-content" id="flowerTabContent">
-
     <!-- Tab: Chỉnh sửa -->
     <div
       class="tab-pane fade show active"
@@ -237,73 +248,119 @@
         </table>
       </div>
       <!-- Phân trang chuyên nghiệp -->
-      <div class="pagination-wrapper" th:if="${categorys != null and #lists.size(categorys) > 0}">
+      <div
+        class="pagination-wrapper"
+        th:if="${categorys != null and #lists.size(categorys) > 0}"
+      >
         <div class="d-flex justify-content-between align-items-center">
           <div class="pagination-info">
-            Hiển thị <strong th:text="${#lists.size(categorys)}"></strong> trong tổng số
-            <strong th:text="${totalElements != null ? totalElements : #lists.size(categorys)}"></strong> loại hoa
+            Hiển thị <strong th:text="${#lists.size(categorys)}"></strong> trong
+            tổng số
+            <strong
+              th:text="${totalElements != null ? totalElements : #lists.size(categorys)}"
+            ></strong>
+            loại hoa
           </div>
-          
-          <nav aria-label="Category pagination" th:if="${totalPages != null and totalPages > 1}">
+
+          <nav
+            aria-label="Category pagination"
+            th:if="${totalPages != null and totalPages > 1}"
+          >
             <ul class="pagination simple-pagination">
               <!-- Nút về trang đầu -->
-              <li class="page-item" th:classappend="${currentPage == null or currentPage == 0} ? 'disabled'">
-                <a class="page-link" 
-                   th:href="@{/Category/index(page=0, size=10, keyword=${keyword}, tab='list')}"
-                   th:unless="${currentPage == null or currentPage == 0}"
-                   title="Trang đầu">
+              <li
+                class="page-item"
+                th:classappend="${currentPage == null or currentPage == 0} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/Category/index(page=0, size=10, keyword=${keyword}, tab='list')}"
+                  th:unless="${currentPage == null or currentPage == 0}"
+                  title="Trang đầu"
+                >
                   <i class="fas fa-angle-double-left"></i>
                 </a>
-                <span class="page-link" th:if="${currentPage == null or currentPage == 0}">
+                <span
+                  class="page-link"
+                  th:if="${currentPage == null or currentPage == 0}"
+                >
                   <i class="fas fa-angle-double-left"></i>
                 </span>
               </li>
 
               <!-- Nút trang trước -->
-              <li class="page-item" th:classappend="${currentPage == null or currentPage == 0} ? 'disabled'">
-                <a class="page-link" 
-                   th:href="@{/Category/index(page=${(currentPage != null ? currentPage : 0) - 1}, size=10, keyword=${keyword}, tab='list')}"
-                   th:unless="${currentPage == null or currentPage == 0}"
-                   title="Trang trước">
+              <li
+                class="page-item"
+                th:classappend="${currentPage == null or currentPage == 0} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/Category/index(page=${(currentPage != null ? currentPage : 0) - 1}, size=10, keyword=${keyword}, tab='list')}"
+                  th:unless="${currentPage == null or currentPage == 0}"
+                  title="Trang trước"
+                >
                   <i class="fas fa-chevron-left"></i>
                 </a>
-                <span class="page-link" th:if="${currentPage == null or currentPage == 0}">
+                <span
+                  class="page-link"
+                  th:if="${currentPage == null or currentPage == 0}"
+                >
                   <i class="fas fa-chevron-left"></i>
                 </span>
               </li>
 
               <!-- Các trang số -->
-              <li class="page-item"
-                  th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
-                  th:if="${pageNum >= (currentPage != null ? currentPage : 0) - 1 && pageNum <= (currentPage != null ? currentPage : 0) + 1}"
-                  th:classappend="${pageNum == (currentPage != null ? currentPage : 0)} ? 'active'">
-                <a class="page-link"
-                   th:href="@{/Category/index(page=${pageNum}, size=10, keyword=${keyword}, tab='list')}"
-                   th:text="${pageNum + 1}"></a>
+              <li
+                class="page-item"
+                th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+                th:if="${pageNum >= (currentPage != null ? currentPage : 0) - 1 && pageNum <= (currentPage != null ? currentPage : 0) + 1}"
+                th:classappend="${pageNum == (currentPage != null ? currentPage : 0)} ? 'active'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/Category/index(page=${pageNum}, size=10, keyword=${keyword}, tab='list')}"
+                  th:text="${pageNum + 1}"
+                ></a>
               </li>
 
               <!-- Nút trang sau -->
-              <li class="page-item" th:classappend="${currentPage != null and currentPage + 1 >= totalPages} ? 'disabled'">
-                <a class="page-link"
-                   th:href="@{/Category/index(page=${(currentPage != null ? currentPage : 0) + 1}, size=10, keyword=${keyword}, tab='list')}"
-                   th:unless="${currentPage != null and currentPage + 1 >= totalPages}"
-                   title="Trang sau">
+              <li
+                class="page-item"
+                th:classappend="${currentPage != null and currentPage + 1 >= totalPages} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/Category/index(page=${(currentPage != null ? currentPage : 0) + 1}, size=10, keyword=${keyword}, tab='list')}"
+                  th:unless="${currentPage != null and currentPage + 1 >= totalPages}"
+                  title="Trang sau"
+                >
                   <i class="fas fa-chevron-right"></i>
                 </a>
-                <span class="page-link" th:if="${currentPage != null and currentPage + 1 >= totalPages}">
+                <span
+                  class="page-link"
+                  th:if="${currentPage != null and currentPage + 1 >= totalPages}"
+                >
                   <i class="fas fa-chevron-right"></i>
                 </span>
               </li>
 
               <!-- Nút về trang cuối -->
-              <li class="page-item" th:classappend="${currentPage != null and currentPage == totalPages - 1} ? 'disabled'">
-                <a class="page-link" 
-                   th:href="@{/Category/index(page=${totalPages - 1}, size=10, keyword=${keyword}, tab='list')}"
-                   th:unless="${currentPage != null and currentPage == totalPages - 1}"
-                   title="Trang cuối">
+              <li
+                class="page-item"
+                th:classappend="${currentPage != null and currentPage == totalPages - 1} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/Category/index(page=${totalPages - 1}, size=10, keyword=${keyword}, tab='list')}"
+                  th:unless="${currentPage != null and currentPage == totalPages - 1}"
+                  title="Trang cuối"
+                >
                   <i class="fas fa-angle-double-right"></i>
                 </a>
-                <span class="page-link" th:if="${currentPage != null and currentPage == totalPages - 1}">
+                <span
+                  class="page-link"
+                  th:if="${currentPage != null and currentPage == totalPages - 1}"
+                >
                   <i class="fas fa-angle-double-right"></i>
                 </span>
               </li>
@@ -316,25 +373,25 @@
 </main>
 
 <script>
-function clearCategoryFilter() {
-  // Reset form về trạng thái ban đầu
-  document.querySelector('input[name="keyword"]').value = '';
-  
-  // Submit form để reload trang với filter rỗng
-  document.getElementById('categoryFilterForm').submit();
-}
+  function clearCategoryFilter() {
+    // Reset form về trạng thái ban đầu
+    document.querySelector('input[name="keyword"]').value = "";
 
-// Xử lý khi nhấn Enter trong ô tìm kiếm
-document.addEventListener('DOMContentLoaded', function() {
-  const keywordInput = document.querySelector('input[name="keyword"]');
-  
-  if (keywordInput) {
-    keywordInput.addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        document.getElementById('categoryFilterForm').submit();
-      }
-    });
+    // Submit form để reload trang với filter rỗng
+    document.getElementById("categoryFilterForm").submit();
   }
-});
+
+  // Xử lý khi nhấn Enter trong ô tìm kiếm
+  document.addEventListener("DOMContentLoaded", function () {
+    const keywordInput = document.querySelector('input[name="keyword"]');
+
+    if (keywordInput) {
+      keywordInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          document.getElementById("categoryFilterForm").submit();
+        }
+      });
+    }
+  });
 </script>

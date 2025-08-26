@@ -2,17 +2,29 @@
   <h3>Quản Lý Sản Phẩm</h3>
   <hr />
   <!-- Hiển thị thông báo flash messages từ controller -->
-  <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+  <div
+    th:if="${success}"
+    class="alert alert-success alert-dismissible fade show"
+    role="alert"
+  >
     <span th:text="${success}"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
-  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+  <div
+    th:if="${error}"
+    class="alert alert-danger alert-dismissible fade show"
+    role="alert"
+  >
     <span th:text="${error}"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
-  <div th:if="${warning}" class="alert alert-warning alert-dismissible fade show" role="alert">
+  <div
+    th:if="${warning}"
+    class="alert alert-warning alert-dismissible fade show"
+    role="alert"
+  >
     <span th:text="${warning}"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
@@ -51,7 +63,6 @@
 
   <!-- Tab Content -->
   <div class="tab-content" id="productTabContent">
-
     <!-- Tab: Chỉnh sửa -->
     <div
       class="tab-pane fade show active"
@@ -263,7 +274,9 @@
             </div>
             <!-- Hiển thị tên file tạm thời khi có lỗi validation -->
             <div th:if="${tempImage1}" class="temp-image-info">
-              <small class="text-info">Đã chọn: <span th:text="${tempImage1}"></span></small>
+              <small class="text-info"
+                >Đã chọn: <span th:text="${tempImage1}"></span
+              ></small>
             </div>
             <label
               for="image1"
@@ -460,16 +473,18 @@
                     && item.discountEnd != null
                     && T(java.time.LocalDate).now().compareTo(item.discountEnd) > 0}"
                   class="text-muted"
-                  style="font-style: italic;"
-                >Hết hạn</span>
+                  style="font-style: italic"
+                  >Hết hạn</span
+                >
                 <!-- Hiển thị trạng thái chưa bắt đầu nếu có giảm giá nhưng chưa tới ngày -->
                 <span
                   th:if="${item.discountPercent != null && item.discountPercent > 0
                     && item.discountStart != null
                     && T(java.time.LocalDate).now().compareTo(item.discountStart) < 0}"
                   class="text-warning"
-                  style="font-style: italic;"
-                >Chưa bắt đầu</span>
+                  style="font-style: italic"
+                  >Chưa bắt đầu</span
+                >
               </td>
               <td class="action-icons">
                 <a

@@ -2,17 +2,29 @@
   <h3>Quản Lý Người Dùng</h3>
   <hr />
   <!-- Hiển thị thông báo flash messages từ controller -->
-  <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+  <div
+    th:if="${success}"
+    class="alert alert-success alert-dismissible fade show"
+    role="alert"
+  >
     <span th:text="${success}"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
-  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+  <div
+    th:if="${error}"
+    class="alert alert-danger alert-dismissible fade show"
+    role="alert"
+  >
     <span th:text="${error}"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
-  <div th:if="${warning}" class="alert alert-warning alert-dismissible fade show" role="alert">
+  <div
+    th:if="${warning}"
+    class="alert alert-warning alert-dismissible fade show"
+    role="alert"
+  >
     <span th:text="${warning}"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
@@ -53,7 +65,6 @@
 
   <!-- Tab Content -->
   <div class="tab-content" id="UserTabContent">
-
     <!-- Tab: Chỉnh sửa -->
     <div
       class="tab-pane fade show active"
@@ -278,28 +289,70 @@
         <div class="row align-items-center g-3">
           <!-- Form lọc theo vai trò -->
           <div class="col-md-6">
-            <form th:action="@{/User/index}" id="roleFilterForm" method="get" class="d-flex align-items-center gap-2">
-              <label class="form-label mb-0 me-2" for="role" style="min-width:120px;">Lọc theo vai trò</label>
-              <select name="role" id="role" class="form-control form-control-sm custom-search-input" style="max-width:180px;"
-                onchange="this.form.submit()">
+            <form
+              th:action="@{/User/index}"
+              id="roleFilterForm"
+              method="get"
+              class="d-flex align-items-center gap-2"
+            >
+              <label
+                class="form-label mb-0 me-2"
+                for="role"
+                style="min-width: 120px"
+                >Lọc theo vai trò</label
+              >
+              <select
+                name="role"
+                id="role"
+                class="form-control form-control-sm custom-search-input"
+                style="max-width: 180px"
+                onchange="this.form.submit()"
+              >
                 <option value="">-- Tất cả --</option>
                 <option value="0" th:selected="${role == '0'}">User</option>
                 <option value="1" th:selected="${role == '1'}">Admin</option>
                 <option value="2" th:selected="${role == '2'}">Shipper</option>
                 <option value="3" th:selected="${role == '3'}">Staff</option>
               </select>
-              <a style="width: 160px;height: 40px;" th:href="@{'/User/index#list'}" class="btn btn-custom ms-2">Làm mới</a>
+              <a
+                style="width: 160px; height: 40px"
+                th:href="@{'/User/index#list'}"
+                class="btn btn-custom ms-2"
+                >Làm mới</a
+              >
             </form>
           </div>
-      
+
           <!-- Form tìm kiếm theo tên -->
           <div class="col-md-6">
-            <form th:action="@{/User/searchByName}" id="filterForm" method="get" class="d-flex align-items-center gap-2">
-              <label for="name" class="form-label mb-0 me-2" style="min-width:100px;">Tìm theo tên:</label>
-              <input type="text" id="name" name="name" th:value="${name}" placeholder="Tên người dùng"
-                class="form-control form-control-sm searchName" style="max-width:180px;" />
-              <button class="btn btn-primary btn-sm" type="submit" style="width: 70px;height: 40px;">Tìm</button>
-            
+            <form
+              th:action="@{/User/searchByName}"
+              id="filterForm"
+              method="get"
+              class="d-flex align-items-center gap-2"
+            >
+              <label
+                for="name"
+                class="form-label mb-0 me-2"
+                style="min-width: 100px"
+                >Tìm theo tên:</label
+              >
+              <input
+                type="text"
+                id="name"
+                name="name"
+                th:value="${name}"
+                placeholder="Tên người dùng"
+                class="form-control form-control-sm searchName"
+                style="max-width: 180px"
+              />
+              <button
+                class="btn btn-primary btn-sm"
+                type="submit"
+                style="width: 70px; height: 40px"
+              >
+                Tìm
+              </button>
             </form>
           </div>
         </div>

@@ -2,17 +2,29 @@
   <h3>Quản Lý Khuyến Mãi</h3>
   <hr />
   <!-- Hiển thị thông báo flash messages từ controller -->
-  <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+  <div
+    th:if="${success}"
+    class="alert alert-success alert-dismissible fade show"
+    role="alert"
+  >
     <span th:text="${success}"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
-  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+  <div
+    th:if="${error}"
+    class="alert alert-danger alert-dismissible fade show"
+    role="alert"
+  >
     <span th:text="${error}"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
-  <div th:if="${warning}" class="alert alert-warning alert-dismissible fade show" role="alert">
+  <div
+    th:if="${warning}"
+    class="alert alert-warning alert-dismissible fade show"
+    role="alert"
+  >
     <span th:text="${warning}"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
@@ -50,7 +62,6 @@
 
   <!-- Tab Content -->
   <div class="tab-content" id="flowerTabContent">
-
     <!-- Tab: Chỉnh sửa -->
     <div
       class="tab-pane fade show active"
@@ -383,9 +394,19 @@
                   th:text="${#temporals.format(item.endDate, 'dd-MM-YYYY ')}"
                 ></td>
                 <td>
-                  <span th:class="${item.status ? 'badge badge-success' : 'badge badge-danger'}"
-                    style="display:inline-block;min-width:70px;padding:4px 12px;border-radius:12px;font-size:13px;font-weight:600;color:#fff;"
-                    th:text="${item.status ? 'Active' : 'Inactive'}">
+                  <span
+                    th:class="${item.status ? 'badge badge-success' : 'badge badge-danger'}"
+                    style="
+                      display: inline-block;
+                      min-width: 70px;
+                      padding: 4px 12px;
+                      border-radius: 12px;
+                      font-size: 13px;
+                      font-weight: 600;
+                      color: #fff;
+                    "
+                    th:text="${item.status ? 'Active' : 'Inactive'}"
+                  >
                   </span>
                 </td>
                 <td class="action-icons">
@@ -446,65 +467,107 @@
           </tbody>
         </table>
       </div>
-     
-    <!-- Phân trang chuyên nghiệp -->
-    <div class="pagination-wrapper" th:if="${totalElements > 0}">
-      <div class="d-flex justify-content-between align-items-center">
-        <div class="pagination-info">
-          Hiển thị <strong th:text="${#lists.size(promotions)}"></strong> trong
-          tổng số <strong th:text="${totalElements}"></strong> khuyến mãi
+
+      <!-- Phân trang chuyên nghiệp -->
+      <div class="pagination-wrapper" th:if="${totalElements > 0}">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="pagination-info">
+            Hiển thị
+            <strong th:text="${#lists.size(promotions)}"></strong> trong tổng số
+            <strong th:text="${totalElements}"></strong> khuyến mãi
+          </div>
+
+          <nav aria-label="Promotion pagination" th:if="${totalPages > 1}">
+            <ul class="pagination simple-pagination">
+              <!-- Nút về trang đầu -->
+              <li
+                class="page-item"
+                th:classappend="${currentPage == 0} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/Promotion/index(page=0, size=10, keyword=${keyword})} + '#list'"
+                  th:unless="${currentPage == 0}"
+                  title="Trang đầu"
+                >
+                  <i class="fas fa-angle-double-left"></i>
+                </a>
+                <span class="page-link" th:if="${currentPage == 0}">
+                  <i class="fas fa-angle-double-left"></i>
+                </span>
+              </li>
+
+              <!-- Nút trang trước -->
+              <li
+                class="page-item"
+                th:classappend="${!hasPrevious} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/Promotion/index(page=${currentPage - 1}, size=10, keyword=${keyword})} + '#list'"
+                  th:if="${hasPrevious}"
+                  title="Trang trước"
+                >
+                  <i class="fas fa-chevron-left"></i>
+                </a>
+                <span class="page-link" th:unless="${hasPrevious}">
+                  <i class="fas fa-chevron-left"></i>
+                </span>
+              </li>
+
+              <!-- Các trang số -->
+              <li
+                class="page-item"
+                th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+                th:if="${pageNum >= currentPage - 1 && pageNum <= currentPage + 1}"
+                th:classappend="${pageNum == currentPage} ? 'active'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/Promotion/index(page=${pageNum}, size=10, keyword=${keyword})} + '#list'"
+                  th:text="${pageNum + 1}"
+                ></a>
+              </li>
+
+              <!-- Nút trang sau -->
+              <li class="page-item" th:classappend="${!hasNext} ? 'disabled'">
+                <a
+                  class="page-link"
+                  th:href="@{/Promotion/index(page=${currentPage + 1}, size=10, keyword=${keyword})} + '#list'"
+                  th:if="${hasNext}"
+                  title="Trang sau"
+                >
+                  <i class="fas fa-chevron-right"></i>
+                </a>
+                <span class="page-link" th:unless="${hasNext}">
+                  <i class="fas fa-chevron-right"></i>
+                </span>
+              </li>
+
+              <!-- Nút về trang cuối -->
+              <li
+                class="page-item"
+                th:classappend="${currentPage == totalPages - 1} ? 'disabled'"
+              >
+                <a
+                  class="page-link"
+                  th:href="@{/Promotion/index(page=${totalPages - 1}, size=10, keyword=${keyword})} + '#list'"
+                  th:unless="${currentPage == totalPages - 1}"
+                  title="Trang cuối"
+                >
+                  <i class="fas fa-angle-double-right"></i>
+                </a>
+                <span
+                  class="page-link"
+                  th:if="${currentPage == totalPages - 1}"
+                >
+                  <i class="fas fa-angle-double-right"></i>
+                </span>
+              </li>
+            </ul>
+          </nav>
         </div>
-
-        <nav aria-label="Promotion pagination" th:if="${totalPages > 1}">
-          <ul class="pagination simple-pagination">
-            <!-- Nút về trang đầu -->
-            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-              <a class="page-link" th:href="@{/Promotion/index(page=0, size=10, keyword=${keyword})} + '#list'" th:unless="${currentPage == 0}" title="Trang đầu">
-                <i class="fas fa-angle-double-left"></i>
-              </a>
-              <span class="page-link" th:if="${currentPage == 0}">
-                <i class="fas fa-angle-double-left"></i>
-              </span>
-            </li>
-
-            <!-- Nút trang trước -->
-            <li class="page-item" th:classappend="${!hasPrevious} ? 'disabled'">
-              <a class="page-link" th:href="@{/Promotion/index(page=${currentPage - 1}, size=10, keyword=${keyword})} + '#list'" th:if="${hasPrevious}" title="Trang trước">
-                <i class="fas fa-chevron-left"></i>
-              </a>
-              <span class="page-link" th:unless="${hasPrevious}">
-                <i class="fas fa-chevron-left"></i>
-              </span>
-            </li>
-
-            <!-- Các trang số -->
-            <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}" th:if="${pageNum >= currentPage - 1 && pageNum <= currentPage + 1}" th:classappend="${pageNum == currentPage} ? 'active'">
-              <a class="page-link" th:href="@{/Promotion/index(page=${pageNum}, size=10, keyword=${keyword})} + '#list'" th:text="${pageNum + 1}"></a>
-            </li>
-
-            <!-- Nút trang sau -->
-            <li class="page-item" th:classappend="${!hasNext} ? 'disabled'">
-              <a class="page-link" th:href="@{/Promotion/index(page=${currentPage + 1}, size=10, keyword=${keyword})} + '#list'" th:if="${hasNext}" title="Trang sau">
-                <i class="fas fa-chevron-right"></i>
-              </a>
-              <span class="page-link" th:unless="${hasNext}">
-                <i class="fas fa-chevron-right"></i>
-              </span>
-            </li>
-
-            <!-- Nút về trang cuối -->
-            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-              <a class="page-link" th:href="@{/Promotion/index(page=${totalPages - 1}, size=10, keyword=${keyword})} + '#list'" th:unless="${currentPage == totalPages - 1}" title="Trang cuối">
-                <i class="fas fa-angle-double-right"></i>
-              </a>
-              <span class="page-link" th:if="${currentPage == totalPages - 1}">
-                <i class="fas fa-angle-double-right"></i>
-              </span>
-            </li>
-          </ul>
-        </nav>
       </div>
-    </div>
     </div>
     <!-- tab tìm kiếm -->
   </div>

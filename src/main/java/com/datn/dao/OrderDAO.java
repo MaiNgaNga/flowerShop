@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -211,4 +212,31 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         @Query(value = "SELECT COUNT(*) FROM service_orders WHERE status = 'PAID' AND YEAR(confirmed_at) = :year", nativeQuery = true)
         Long countPaidOrdersByYear(@Param("year") int year);
 
+        // Lọc đơn hàng online theo status, keyword (user.name, receiverName, receiverPhone, sdt) và tháng/năm
+
+    @Query("SELECT o FROM Order o " +
+           "WHERE o.orderType = 'Online' " +
+           "AND (:status IS NULL OR o.status = :status) " +
+           "AND (:keyword IS NULL OR " +
+           "      LOWER(o.user.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+           "      LOWER(o.receiverName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+           "      LOWER(o.receiverPhone) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+           "      LOWER(STR(o.id)) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+           "      LOWER(o.sdt) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           ") " +
+           "AND (:fromDate IS NULL OR o.deliveryDate >= :fromDate) " +
+           "AND (:toDate IS NULL OR o.deliveryDate <= :toDate) " +
+           "ORDER BY o.id DESC")
+    Page<Order> findOrdersWithFilter(
+            @Param("status") String status,
+            @Param("keyword") String keyword,
+            @Param("fromDate") LocalDate fromDate,
+            @Param("toDate") LocalDate toDate,
+            Pageable pageable
+    );
+
 }
+
+
+
+

@@ -5,7 +5,7 @@
     <title>Quản Lý Bài Viết</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css" />
     <script src="/js/bootstrap.bundle.min.js"></script>
-     <link rel="stylesheet" th:href="@{/css/post.css}" />
+    <link rel="stylesheet" th:href="@{/css/post.css}" />
   </head>
   <!-- Place the first <script> tag in your HTML's <head> -->
   <script
@@ -173,10 +173,8 @@
                   th:field="*{status}"
                   class="form-control form-control-sm"
                 >
-                <option th:value="true">Hiển thị</option>
-                   <option th:value="false">Ẩn</option>
-                  
-               
+                  <option th:value="true">Hiển thị</option>
+                  <option th:value="false">Ẩn</option>
                 </select>
               </div>
             </div>
@@ -268,13 +266,19 @@
                       >Chưa có ảnh</span
                     >
                   </td>
-                <td>
-            <span
-              th:text="${#strings.abbreviate(item.title, 50)}"
-              style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; display: inline-block;"
-              title="${item.title}"
-            ></span>
-          </td>
+                  <td>
+                    <span
+                      th:text="${#strings.abbreviate(item.title, 50)}"
+                      style="
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        max-width: 200px;
+                        display: inline-block;
+                      "
+                      title="${item.title}"
+                    ></span>
+                  </td>
                   <td
                     th:text="${#temporals.format(item.postDate, 'dd/MM/yyyy')}"
                   ></td>
@@ -282,9 +286,19 @@
                   <td class="text-start" th:text="${item.user.name}"></td>
 
                   <td>
-                    <span th:class="${item.status ? 'badge badge-success' : 'badge badge-danger'}"
-                      style="display:inline-block;min-width:70px;padding:4px 12px;border-radius:12px;font-size:13px;font-weight:600;color:#fff;"
-                      th:text="${item.status ? 'Active' : 'Inactive'}">
+                    <span
+                      th:class="${item.status ? 'badge badge-success' : 'badge badge-danger'}"
+                      style="
+                        display: inline-block;
+                        min-width: 70px;
+                        padding: 4px 12px;
+                        border-radius: 12px;
+                        font-size: 13px;
+                        font-weight: 600;
+                        color: #fff;
+                      "
+                      th:text="${item.status ? 'Active' : 'Inactive'}"
+                    >
                     </span>
                   </td>
                   <td class="action-icons">
@@ -310,65 +324,108 @@
             </table>
           </div>
 
-     
-    <!-- Phân trang chuyên nghiệp -->
-    <div class="pagination-wrapper" th:if="${totalElements > 0}">
-      <div class="d-flex justify-content-between align-items-center">
-        <div class="pagination-info">
-          Hiển thị <strong th:text="${#lists.size(posts)}"></strong> trong
-          tổng số <strong th:text="${totalElements}"></strong> bài viết
-        </div>
+          <!-- Phân trang chuyên nghiệp -->
+          <div class="pagination-wrapper" th:if="${totalElements > 0}">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="pagination-info">
+                Hiển thị <strong th:text="${#lists.size(posts)}"></strong> trong
+                tổng số <strong th:text="${totalElements}"></strong> bài viết
+              </div>
 
-        <nav aria-label="Post pagination" th:if="${totalPages > 1}">
-          <ul class="pagination simple-pagination">
-            <!-- Nút về trang đầu -->
-            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-              <a class="page-link" th:href="@{/Post/index(page=0, size=10, keyword=${keyword})}" th:unless="${currentPage == 0}" title="Trang đầu">
-                <i class="fas fa-angle-double-left"></i>
-              </a>
-              <span class="page-link" th:if="${currentPage == 0}">
-                <i class="fas fa-angle-double-left"></i>
-              </span>
-            </li>
+              <nav aria-label="Post pagination" th:if="${totalPages > 1}">
+                <ul class="pagination simple-pagination">
+                  <!-- Nút về trang đầu -->
+                  <li
+                    class="page-item"
+                    th:classappend="${currentPage == 0} ? 'disabled'"
+                  >
+                    <a
+                      class="page-link"
+                      th:href="@{/Post/index(page=0, size=10, keyword=${keyword})}"
+                      th:unless="${currentPage == 0}"
+                      title="Trang đầu"
+                    >
+                      <i class="fas fa-angle-double-left"></i>
+                    </a>
+                    <span class="page-link" th:if="${currentPage == 0}">
+                      <i class="fas fa-angle-double-left"></i>
+                    </span>
+                  </li>
 
-            <!-- Nút trang trước -->
-            <li class="page-item" th:classappend="${!hasPrevious} ? 'disabled'">
-              <a class="page-link" th:href="@{/Post/index(page=${currentPage - 1}, size=10, keyword=${keyword})}" th:if="${hasPrevious}" title="Trang trước">
-                <i class="fas fa-chevron-left"></i>
-              </a>
-              <span class="page-link" th:unless="${hasPrevious}">
-                <i class="fas fa-chevron-left"></i>
-              </span>
-            </li>
+                  <!-- Nút trang trước -->
+                  <li
+                    class="page-item"
+                    th:classappend="${!hasPrevious} ? 'disabled'"
+                  >
+                    <a
+                      class="page-link"
+                      th:href="@{/Post/index(page=${currentPage - 1}, size=10, keyword=${keyword})}"
+                      th:if="${hasPrevious}"
+                      title="Trang trước"
+                    >
+                      <i class="fas fa-chevron-left"></i>
+                    </a>
+                    <span class="page-link" th:unless="${hasPrevious}">
+                      <i class="fas fa-chevron-left"></i>
+                    </span>
+                  </li>
 
-            <!-- Các trang số -->
-            <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}" th:if="${pageNum >= currentPage - 1 && pageNum <= currentPage + 1}" th:classappend="${pageNum == currentPage} ? 'active'">
-              <a class="page-link" th:href="@{/Post/index(page=${pageNum}, size=10, keyword=${keyword})}" th:text="${pageNum + 1}"></a>
-            </li>
+                  <!-- Các trang số -->
+                  <li
+                    class="page-item"
+                    th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+                    th:if="${pageNum >= currentPage - 1 && pageNum <= currentPage + 1}"
+                    th:classappend="${pageNum == currentPage} ? 'active'"
+                  >
+                    <a
+                      class="page-link"
+                      th:href="@{/Post/index(page=${pageNum}, size=10, keyword=${keyword})}"
+                      th:text="${pageNum + 1}"
+                    ></a>
+                  </li>
 
-            <!-- Nút trang sau -->
-            <li class="page-item" th:classappend="${!hasNext} ? 'disabled'">
-              <a class="page-link" th:href="@{/Post/index(page=${currentPage + 1}, size=10, keyword=${keyword})}" th:if="${hasNext}" title="Trang sau">
-                <i class="fas fa-chevron-right"></i>
-              </a>
-              <span class="page-link" th:unless="${hasNext}">
-                <i class="fas fa-chevron-right"></i>
-              </span>
-            </li>
+                  <!-- Nút trang sau -->
+                  <li
+                    class="page-item"
+                    th:classappend="${!hasNext} ? 'disabled'"
+                  >
+                    <a
+                      class="page-link"
+                      th:href="@{/Post/index(page=${currentPage + 1}, size=10, keyword=${keyword})}"
+                      th:if="${hasNext}"
+                      title="Trang sau"
+                    >
+                      <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <span class="page-link" th:unless="${hasNext}">
+                      <i class="fas fa-chevron-right"></i>
+                    </span>
+                  </li>
 
-            <!-- Nút về trang cuối -->
-            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-              <a class="page-link" th:href="@{/Post/index(page=${totalPages - 1}, size=10, keyword=${keyword})}" th:unless="${currentPage == totalPages - 1}" title="Trang cuối">
-                <i class="fas fa-angle-double-right"></i>
-              </a>
-              <span class="page-link" th:if="${currentPage == totalPages - 1}">
-                <i class="fas fa-angle-double-right"></i>
-              </span>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </div>
+                  <!-- Nút về trang cuối -->
+                  <li
+                    class="page-item"
+                    th:classappend="${currentPage == totalPages - 1} ? 'disabled'"
+                  >
+                    <a
+                      class="page-link"
+                      th:href="@{/Post/index(page=${totalPages - 1}, size=10, keyword=${keyword})}"
+                      th:unless="${currentPage == totalPages - 1}"
+                      title="Trang cuối"
+                    >
+                      <i class="fas fa-angle-double-right"></i>
+                    </a>
+                    <span
+                      class="page-link"
+                      th:if="${currentPage == totalPages - 1}"
+                    >
+                      <i class="fas fa-angle-double-right"></i>
+                    </span>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
         </div>
       </div>
     </main>

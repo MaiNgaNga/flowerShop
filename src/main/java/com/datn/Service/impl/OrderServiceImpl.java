@@ -310,10 +310,11 @@ public class OrderServiceImpl implements OrderService {
     public Order recreateOrder(Long canceledOrderId) {
         // Tìm đơn hàng bị hủy
         Order canceledOrder = getOrderById(canceledOrderId);
-        if (!canceledOrder.getStatus().equals("Đã hủy")) {
-            throw new IllegalStateException("Chỉ có thể tạo lại đơn hàng đã hủy");
+        if (!canceledOrder.getStatus().equals("Giao thất bại")) {
+            throw new IllegalStateException("Chỉ có thể tạo lại đơn hàng giao thất bại");
         }
-
+        canceledOrder.setStatus("Đã hủy");
+        dao.save(canceledOrder);
         // Tạo đơn hàng mới
         Order newOrder = new Order();
         newOrder.setStatus("Đang giao lại");
@@ -327,6 +328,19 @@ public class OrderServiceImpl implements OrderService {
         newOrder.setUser(canceledOrder.getUser());
         newOrder.setShipper(canceledOrder.getShipper());
 
+        newOrder.setShipFee(canceledOrder.getShipFee());
+        newOrder.setOrderType(canceledOrder.getOrderType());
+        newOrder.setPromotion(canceledOrder.getPromotion());
+        newOrder.setDiscount(canceledOrder.getDiscount());
+        newOrder.setDeliveryTime(canceledOrder.getDeliveryTime());
+        newOrder.setReceiverName(canceledOrder.getReceiverName());
+        newOrder.setReceiverPhone(canceledOrder.getReceiverPhone());
+        newOrder.setPaymentMethod(canceledOrder.getPaymentMethod());
+        newOrder.setPaymentStatus(canceledOrder.getPaymentStatus());
+        newOrder.setPaymentUrl(canceledOrder.getPaymentUrl());
+        newOrder.setTransactionId(canceledOrder.getTransactionId());
+        
+
         // Sao chép chi tiết đơn hàng
         List<OrderDetail> newOrderDetails = new ArrayList<>();
         for (OrderDetail detail : canceledOrder.getOrderDetails()) {
@@ -338,7 +352,7 @@ public class OrderServiceImpl implements OrderService {
             newOrderDetails.add(newDetail);
         }
         newOrder.setOrderDetails(newOrderDetails);
-
+         
         // Lưu đơn hàng mới
         return dao.save(newOrder);
 
@@ -369,5 +383,12 @@ public class OrderServiceImpl implements OrderService {
         return dao.findById(id).orElse(null);
 
     }
-
+    @Override
+    public Page<Order> findOrdersWithFilter(String status, String keyword, LocalDate fromDate, LocalDate toDate, Pageable pageable) {
+        return dao.findOrdersWithFilter(status, keyword, fromDate, toDate, pageable);
+    }
+    public Page<Order> findAllOrders(Pageable pageable) {
+        return dao.findAll(pageable);
+    }
+  
 }

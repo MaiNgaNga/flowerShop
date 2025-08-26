@@ -63,6 +63,9 @@ public class Order {
     @JoinColumn(name = "promotion_id", referencedColumnName = "id")
     private Promotion promotion;
 
+    @Column
+    private Double Discount;
+
     @Temporal(TemporalType.DATE)
     @Column(name = "delivery_date")
     private LocalDate deliveryDate;

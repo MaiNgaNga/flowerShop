@@ -2,17 +2,29 @@
   <h3>Quản Lý Shipper</h3>
   <hr />
   <!-- Hiển thị thông báo flash messages từ controller -->
-  <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+  <div
+    th:if="${success}"
+    class="alert alert-success alert-dismissible fade show"
+    role="alert"
+  >
     <span th:text="${success}"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
-  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+  <div
+    th:if="${error}"
+    class="alert alert-danger alert-dismissible fade show"
+    role="alert"
+  >
     <span th:text="${error}"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
-  <div th:if="${warning}" class="alert alert-warning alert-dismissible fade show" role="alert">
+  <div
+    th:if="${warning}"
+    class="alert alert-warning alert-dismissible fade show"
+    role="alert"
+  >
     <span th:text="${warning}"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
@@ -50,7 +62,6 @@
 
   <!-- Tab Content -->
   <div class="tab-content" id="flowerTabContent">
-
     <!-- Tab: Chỉnh sửa -->
     <div
       class="tab-pane fade show active"
@@ -269,9 +280,19 @@
                 <td th:text="${item.cccd}"></td>
                 <td th:text="${item.address}"></td>
                 <td>
-                  <span th:class="${item.status == true ? 'badge badge-success' : 'badge badge-danger'}"
-                    style="display:inline-block;min-width:70px;padding:4px 12px;border-radius:12px;font-size:13px;font-weight:600;color:#fff;"
-                    th:text="${item.status == true ? 'Active' : 'Inactive'}">
+                  <span
+                    th:class="${item.status == true ? 'badge badge-success' : 'badge badge-danger'}"
+                    style="
+                      display: inline-block;
+                      min-width: 70px;
+                      padding: 4px 12px;
+                      border-radius: 12px;
+                      font-size: 13px;
+                      font-weight: 600;
+                      color: #fff;
+                    "
+                    th:text="${item.status == true ? 'Active' : 'Inactive'}"
+                  >
                   </span>
                 </td>
                 <!-- <td>

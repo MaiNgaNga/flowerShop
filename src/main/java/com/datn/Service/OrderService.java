@@ -6,10 +6,12 @@ import java.util.Map;
 import java.util.Date;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
 import com.datn.model.Order;
 import com.datn.model.OrderDetail;
 
 public interface OrderService {
+    Page<Order> findOrdersWithFilter(String status, String keyword, LocalDate fromDate, LocalDate toDate, Pageable pageable);
   Page<Order> getOrdersByStatusAndShipper(String status, int shipperId,
       Pageable pageable);
 
@@ -26,6 +28,9 @@ public interface OrderService {
   Order saveOrder(Order order, List<OrderDetail> orderDetails);
 
   Order findByID(Long id);
+
+ Page<Order> findAllOrders(Pageable pageable);
+
 
   // Order saveOrder(Order order, List<OrderDetail> orderDetails);
 
@@ -118,5 +123,6 @@ public interface OrderService {
   // Service interface: Thống kê doanh thu theo ngày trong tháng/năm (chỉ lấy đơn
   // hàng 'Đã giao')
   Map<Integer, Double> getDailyRevenueByMonthAndYear(int month, int year);
+
 
 }
