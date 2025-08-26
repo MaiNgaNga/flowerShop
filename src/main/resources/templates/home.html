@@ -44,7 +44,7 @@
           class="btn btn-primary"
           data-aos="fade-up"
           data-aos-delay="400"
-          >Khám Phá Ngay</a
+          >Khám Phá</a
         >
       </div>
     </section>
@@ -81,7 +81,7 @@
 
     <section class="new-flowers-section text-center">
       <h2 class="mb-4" data-aos="fade-up" data-aos-duration="800">
-        Sản phẩm mới theo từng danh mục
+        Sản phẩm mới
       </h2>
       <div class="new-flower-grid-wrapper">
         <div class="new-flower-grid">
@@ -160,21 +160,15 @@
           data-aos-duration="1000"
         >
           <h2>Chọn hoa đẹp – Trao gửi yêu thương trọn vẹn</h2>
-          <h3>ƯU ĐÃI ĐẶC BIỆT</h3>
+          <br />
+          <h3>ƯU ĐÃI</h3>
           <p>
             🌸 <strong>Karina Hana Flowers</strong> – Không chỉ là những đóa hoa
             tươi thắm, mà còn là cầu nối để bạn gửi gắm tình yêu thương, sự biết
-            ơn và những thông điệp ngọt ngào nhất. Chúng tôi cam kết hoa luôn
-            <em>tươi mới, rực rỡ và bền lâu</em> trong từng khoảnh khắc.
-            <br />
-
-            🌸 Đa dạng phong cách: Từ bó hoa lãng mạn cho ngày kỷ niệm, giỏ hoa
-            thanh lịch cho ngày khai trương, đến những thiết kế độc đáo dành cho
-            lễ, Tết, sinh nhật, ngày 8/3, 20/10 và Valentine. <br />
-
+            ơn và những thông điệp ngọt ngào nhất. <br /><br />
             🌸 Ưu đãi hấp dẫn: Hàng loạt <strong>mã giảm giá</strong> dành riêng
             cho khách hàng thân thiết, ưu đãi đặc biệt trong các dịp lễ lớn và
-            chương trình khuyến mãi theo mùa. <br />
+            chương trình khuyến mãi theo mùa. <br /><br />
 
             🌸 Hãy để <strong>Karina Hana</strong> đồng hành cùng bạn trong mỗi
             dịp đặc biệt – để từng cánh hoa thay bạn nói lời yêu thương và mang
@@ -188,19 +182,29 @@
     <!-- Phần này có thể đặt trong file dichvu_luoi4.html -->
     <div class="text-center">
       <h2 class="mb-4 fw-bold" data-aos="fade-up" data-aos-duration="800">
-        Các mã giảm giá hiện có
+        Mã giảm giá hiện có
       </h2>
     </div>
 
-    <section class="category-cards my-5 d-flex justify-content-center gap-5"
-      th:if="${promotionsCode != null and !promotionsCode.isEmpty()}">
+    <section
+      class="category-cards my-5 d-flex justify-content-center gap-5"
+      th:if="${promotionsCode != null and !promotionsCode.isEmpty()}"
+    >
       <div class="image-grid">
-        <th:block th:each="promotions : ${#lists.size(promotionsCode) > 3 ? promotionsCode.subList(0, 3) : promotionsCode}">
-          <div class="image-card" data-aos="zoom-in" data-aos-delay="0" data-aos-duration="800">
+        <th:block
+          th:each="promotions : ${#lists.size(promotionsCode) > 3 ? promotionsCode.subList(0, 3) : promotionsCode}"
+        >
+          <div
+            class="image-card"
+            data-aos="zoom-in"
+            data-aos-delay="0"
+            data-aos-duration="800"
+          >
             <img
               src="https://images.unsplash.com/photo-1554388450-b06c82abd505?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTUwfHxmbG93ZXJ8ZW58MHx8MHx8fDA%3D"
-              alt="Ảnh 1" />
-    
+              alt="Ảnh 1"
+            />
+
             <div class="always-show-content centered">
               <div class="code-banner">
                 <p class="code-label">🎁 Tặng bạn mã:</p>
@@ -214,7 +218,6 @@
         </th:block>
       </div>
     </section>
-
 
     <section class="best-seller-section" data-aos="fade-in" data-aos-delay="0">
       <h2 data-aos="fade-in" data-aos-delay="100">Best Seller</h2>
