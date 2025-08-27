@@ -1,5 +1,5 @@
 <main class="container mt-3">
-  <h3>Quản Lý Loại Hoa</h3>
+  <h3>Quản Lý Loại </h3>
   <hr />
   <!-- Hiển thị thông báo flash messages từ controller -->
   <div
@@ -91,14 +91,14 @@
           <div class="col-md-6">
             <div class="mb-3">
               <label for="name" class="form-label fw-medium text-muted"
-                >Tên Loại Hoa</label
+                >Tên  </label
               >
               <input
                 type="text"
                 th:field="*{name}"
                 id="name"
                 class="form-control form-control-sm"
-                placeholder="Tên Loại Hoa"
+                placeholder="Tên Loại "
               />
               <i class="error" th:errors="*{name}"></i>
             </div>
@@ -173,13 +173,13 @@
           <input type="hidden" name="tab" value="list" />
           <div class="row g-3 align-items-end">
             <div class="col-md-6">
-              <label class="category-crud-label">Tìm kiếm loại hoa</label>
+              <label class="category-crud-label">Tìm kiếm loại </label>
               <input
                 type="text"
                 class="category-crud-input form-control"
                 name="keyword"
                 th:value="${keyword}"
-                placeholder="Tên loại hoa..."
+                placeholder="Tên loại ..."
               />
             </div>
             <div class="col-md-6 category-crud-filter-buttons">
@@ -207,7 +207,7 @@
   <thead class="table-dark">
     <tr>
       <th>ID</th>
-      <th class="text-start">Tên Loại Hoa</th>
+      <th class="text-start">Tên Loại </th>
       <th class="text-start">Mô Tả</th>
       <th></th>
     </tr>
@@ -215,7 +215,7 @@
   <tbody>
     <tr th:if="${categorys == null or #lists.isEmpty(categorys)}">
       <td colspan="4" class="text-center text-muted">
-        Không có loại hoa nào.
+        Không có loại  nào.
       </td>
     </tr>
     <th:block th:each="item : ${categorys}">
@@ -227,7 +227,7 @@
           <a
             th:href="@{'/Category/edit/' + ${item.id} + '?tab=edit'}"
             class="edit-icon"
-            title="Sửa loại hoa"
+            title="Sửa loại "
           >
             <i class="fa fa-edit"></i>
           </a>
@@ -236,7 +236,7 @@
             class="delete-icon"
             onclick="confirmDelete(this)"
             th:data-url="@{'/Category/delete/' + ${item.id} + '?tab=list'}"
-            title="Xóa loại hoa"
+            title="Xóa loại "
           >
             <i class="fa fa-trash"></i>
           </a>
@@ -258,7 +258,7 @@
             <strong
               th:text="${totalElements != null ? totalElements : #lists.size(categorys)}"
             ></strong>
-            loại hoa
+            loại 
           </div>
 
           <nav
