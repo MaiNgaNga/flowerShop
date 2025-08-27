@@ -30,7 +30,7 @@ import org.springframework.data.domain.Pageable;
 public class OrderServiceImpl implements OrderService {
     @Override
     public Page<Order> getOrdersByStatusAndShipper(String status, int shipperId, Pageable pageable) {
-        return dao.findByStatusAndShipperIdOrderByDeliveryDateDesc(status, shipperId, pageable);
+        return dao.findByStatusAndShipperIdOrderByIdDesc(status, shipperId, pageable);
     }
 
     @Override
@@ -339,7 +339,6 @@ public class OrderServiceImpl implements OrderService {
         newOrder.setPaymentStatus(canceledOrder.getPaymentStatus());
         newOrder.setPaymentUrl(canceledOrder.getPaymentUrl());
         newOrder.setTransactionId(canceledOrder.getTransactionId());
-        
 
         // Sao chép chi tiết đơn hàng
         List<OrderDetail> newOrderDetails = new ArrayList<>();
@@ -352,7 +351,7 @@ public class OrderServiceImpl implements OrderService {
             newOrderDetails.add(newDetail);
         }
         newOrder.setOrderDetails(newOrderDetails);
-         
+
         // Lưu đơn hàng mới
         return dao.save(newOrder);
 
@@ -383,29 +382,35 @@ public class OrderServiceImpl implements OrderService {
         return dao.findById(id).orElse(null);
 
     }
+
     @Override
-    public Page<Order> findOrdersWithFilter(String status, String keyword, LocalDate fromDate, LocalDate toDate, Pageable pageable) {
+    public Page<Order> findOrdersWithFilter(String status, String keyword, LocalDate fromDate, LocalDate toDate,
+            Pageable pageable) {
         return dao.findOrdersWithFilter(status, keyword, fromDate, toDate, pageable);
     }
+
     public Page<Order> findAllOrders(Pageable pageable) {
         return dao.findAll(pageable);
     }
 
     @Override
     public long newOrders() {
-    return dao.newOrders();
-}
+        return dao.newOrders();
+    }
+
     @Override
-     // 📦 Đơn cần giao hôm nay
+    // 📦 Đơn cần giao hôm nay
     public long getOrdersToDeliverToday() {
         return dao.countOrdersToDeliverToday();
     }
+
     @Override
 
     // 📅 Đơn sắp giao trong 3 ngày tới
     public long getOrdersNext3Days() {
         return dao.countOrdersNext3Days();
     }
+
     @Override
 
     // 🚚 Đơn giao thất bại
@@ -417,5 +422,5 @@ public class OrderServiceImpl implements OrderService {
     public long getCompletedOrdersToday() {
         return dao.countCompletedOrdersToday();
     }
-  
+
 }

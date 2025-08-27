@@ -15,10 +15,10 @@ import org.springframework.data.domain.Pageable;
 import com.datn.model.Order;
 
 public interface OrderDAO extends JpaRepository<Order, Long> {
-        Page<Order> findByStatusAndShipperIdOrderByDeliveryDateDesc(String status, int shipperId,
-                        org.springframework.data.domain.Pageable pageable);
+        Page<Order> findByStatusAndShipperIdOrderByIdDesc(String status, int shipperId,
+                        Pageable pageable);
 
-        @Query(value = "SELECT * FROM orders WHERE shipper_id = :shipperId AND status = N'Hoàn tất' AND MONTH(create_date) = :month AND YEAR(create_date) = :year ORDER BY delivery_date DESC", nativeQuery = true)
+        @Query(value = "SELECT * FROM orders WHERE shipper_id = :shipperId AND status = N'Hoàn tất' AND MONTH(create_date) = :month AND YEAR(create_date) = :year ORDER BY id DESC", nativeQuery = true)
         List<Order> getOrdersByShipperAndMonthYear(@Param("shipperId") int shipperId, @Param("month") int month,
                         @Param("year") int year);
 
@@ -26,7 +26,7 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         Double getTotalAmountByShipperAndMonthYear(@Param("shipperId") int shipperId, @Param("month") int month,
                         @Param("year") int year);
 
-        @Query(value = "SELECT * FROM orders WHERE shipper_id = :shipperId AND status = N'Hoàn tất' AND YEAR(create_date) = :year ORDER BY delivery_date DESC", nativeQuery = true)
+        @Query(value = "SELECT * FROM orders WHERE shipper_id = :shipperId AND status = N'Hoàn tất' AND YEAR(create_date) = :year ORDER BY id DESC", nativeQuery = true)
         List<Order> getOrdersByShipperAndYear(@Param("shipperId") int shipperId, @Param("year") int year);
 
         @Query(value = "SELECT SUM(total_amount) FROM orders WHERE shipper_id = :shipperId AND status = N'Hoàn tất' AND YEAR(create_date) = :year", nativeQuery = true)
@@ -39,12 +39,11 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         @Query("SELECT o FROM Order o WHERE o.orderType = :orderType "
                         + "AND (:fromDate IS NULL OR o.createDate >= :fromDate) "
                         + "AND (:toDate IS NULL OR o.createDate <= :toDate) "
-
-                        + "AND o.orderCode LIKE %:orderCode%")
+                        + "AND o.orderCode LIKE %:orderCode% "
+                        + "ORDER BY o.id DESC")
 
         Page<Order> searchPosOrdersByOrderCode(
                         @Param("orderType") String orderType,
-
                         @Param("orderCode") String orderCode,
                         @Param("fromDate") LocalDate fromDate,
                         @Param("toDate") LocalDate toDate,
@@ -95,7 +94,7 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         Double getTotalCompletedAmountByShipperIdAndDateNative(@Param("shipperId") int shipperId,
                         @Param("date") Date date);
 
-        @Query(value = "SELECT * FROM orders o WHERE o.shipper_id = :shipperId AND o.status = N'Hoàn tất' AND CONVERT(date, o.delivery_date) = :date ORDER BY delivery_date DESC", nativeQuery = true)
+        @Query(value = "SELECT * FROM orders o WHERE o.shipper_id = :shipperId AND o.status = N'Hoàn tất' AND CONVERT(date, o.delivery_date) = :date ORDER BY id DESC", nativeQuery = true)
         List<Order> getOrdersByShipperAndDate(@Param("shipperId") int shipperId, @Param("date") Date date);
 
         // // Lấy đơn hàng tại quầy, lọc theo ngày bán
@@ -112,7 +111,7 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
         @Query("SELECT o FROM Order o WHERE o.orderType = :orderType "
                         + "AND (:fromDate IS NULL OR o.createDate >= :fromDate) "
                         + "AND (:toDate IS NULL OR o.createDate <= :toDate) "
-                        + "ORDER BY o.createDate DESC")
+                        + "ORDER BY o.id DESC")
         Page<Order> findPosOrders(@Param("orderType") String orderType,
                         @Param("fromDate") LocalDate fromDate,
                         @Param("toDate") LocalDate toDate,
@@ -237,39 +236,34 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
                         @Param("fromDate") LocalDate fromDate,
                         @Param("toDate") LocalDate toDate,
                         Pageable pageable);
+
         // 🆕 Đơn mới chờ xác nhận
-       @Query(value = "SELECT COUNT(*) FROM orders o WHERE o.status = N'Chờ xác nhận'", 
-       nativeQuery = true)
-        long newOrders();            
-      
+        @Query(value = "SELECT COUNT(*) FROM orders o WHERE o.status = N'Chờ xác nhận'", nativeQuery = true)
+        long newOrders();
+
         // 📅 Đơn giao trong hôm nay (Chờ giao, Đang giao, Giao lại)
         @Query(value = "SELECT COUNT(*) FROM orders o " +
-               "WHERE o.status IN (N'Chờ giao', N'Đang giao', N'Giao lại') " +
-               "AND CAST(o.delivery_date AS DATE) = CAST(GETDATE() AS DATE)", 
-       nativeQuery = true)
+                        "WHERE o.status IN (N'Chờ giao', N'Đang giao', N'Giao lại') " +
+                        "AND CAST(o.delivery_date AS DATE) = CAST(GETDATE() AS DATE)", nativeQuery = true)
         long countOrdersToDeliverToday();
 
-       // 📅 Đơn sắp giao trong 3 ngày tới (không tính hôm nay, gồm các trạng thái trên)
-       @Query(value = "SELECT COUNT(*) FROM orders o " +
-               "WHERE o.status IN (N'Chờ giao', N'Đang giao', N'Giao lại') " +
-               "AND CAST(o.delivery_date AS DATE) BETWEEN CAST(DATEADD(DAY, 1, GETDATE()) AS DATE) " +
-               "AND CAST(DATEADD(DAY, 3, GETDATE()) AS DATE)", 
-       nativeQuery = true)
-       long countOrdersNext3Days();
+        // 📅 Đơn sắp giao trong 3 ngày tới (không tính hôm nay, gồm các trạng thái
+        // trên)
+        @Query(value = "SELECT COUNT(*) FROM orders o " +
+                        "WHERE o.status IN (N'Chờ giao', N'Đang giao', N'Giao lại') " +
+                        "AND CAST(o.delivery_date AS DATE) BETWEEN CAST(DATEADD(DAY, 1, GETDATE()) AS DATE) " +
+                        "AND CAST(DATEADD(DAY, 3, GETDATE()) AS DATE)", nativeQuery = true)
+        long countOrdersNext3Days();
 
         // 🚚 Đơn giao thất bại trong hôm nay
-       @Query(value = "SELECT COUNT(*) FROM orders o " +
-               "WHERE o.status = N'Giao thất bại' " +
-               "AND CAST(o.delivery_date AS DATE) = CAST(GETDATE() AS DATE)", 
-       nativeQuery = true)
-       long countFailedOrders();
-        
+        @Query(value = "SELECT COUNT(*) FROM orders o " +
+                        "WHERE o.status = N'Giao thất bại' " +
+                        "AND CAST(o.delivery_date AS DATE) = CAST(GETDATE() AS DATE)", nativeQuery = true)
+        long countFailedOrders();
+
         // ✅ Đơn đã hoàn tất hôm nay
         @Query(value = "SELECT COUNT(*) FROM orders o " +
-               "WHERE o.status = N'Hoàn tất' AND CAST(o.delivery_date AS DATE) = CAST(GETDATE() AS DATE)", 
-       nativeQuery = true)
-       long countCompletedOrdersToday();
-
-
+                        "WHERE o.status = N'Hoàn tất' AND CAST(o.delivery_date AS DATE) = CAST(GETDATE() AS DATE)", nativeQuery = true)
+        long countCompletedOrdersToday();
 
 }
