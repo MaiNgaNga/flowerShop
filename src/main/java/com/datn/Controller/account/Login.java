@@ -27,29 +27,41 @@ public class Login {
 
     @PostMapping("/login")
     public String login(@RequestParam String username, @RequestParam String password,
-            @RequestParam(required = false) String rememberMe, Model model, HttpServletResponse response) {
+            @RequestParam(required = false) String rememberMe,
+            Model model, HttpServletResponse response) {
+
         if (username.isEmpty() || password.isEmpty()) {
             model.addAttribute("error", "Chưa nhập đầy đủ thông tin!");
             return "account/login";
         }
-        if (authService.login(username, password)) {
 
-            var user = authService.getUser();
-            if ("on".equals(rememberMe)) {
-                customRememberMeService.createRememberMeToken(user, response);
-            }
-            int role = authService.getUser().getRole();
-            return switch (role) {
-                case 0 -> "redirect:/home";
-                case 1 -> "redirect:/statistical";
-                case 2 -> "redirect:/shipper/pending-orders";
-                case 3 -> "redirect:/Product/index";
-                default -> "redirect:/home";
-            };
-        } else {
-            model.addAttribute("error", "Sai tài khoản hoặc mật khẩu!");
+        if (!authService.login(username, password)) {
+            model.addAttribute("error", "Tài khoản hoặc mật khẩu không chính xác!");
             return "account/login";
         }
+
+        var user = authService.getUser();
+        if (user == null) {
+            model.addAttribute("error", "Không tìm thấy thông tin người dùng!");
+            return "account/login";
+        }
+
+        if (!user.getStatus()) {
+            model.addAttribute("error", "Tài khoản của bạn chưa được kích hoạt!");
+            return "account/login";
+        }
+
+        if ("on".equals(rememberMe)) {
+            customRememberMeService.createRememberMeToken(user, response);
+        }
+
+        return switch (user.getRole()) {
+            case 0 -> "redirect:/home";
+            case 1 -> "redirect:/statistical";
+            case 2 -> "redirect:/shipper/pending-orders";
+            case 3 -> "redirect:/Product/index";
+            default -> "redirect:/home";
+        };
     }
 
     @PostMapping("/logout")
