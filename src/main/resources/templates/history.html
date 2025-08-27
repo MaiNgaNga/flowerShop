@@ -152,6 +152,10 @@
     color: #444;
     line-height: 1.5;
   }
+
+  .accordion-button::after {
+    display: none !important;
+  }
 </style>
 
 <link
@@ -180,27 +184,50 @@
     <div class="accordion-item" th:each="order, iterStat : ${orders}">
       <h2 class="accordion-header" th:id="'heading' + ${iterStat.index}">
         <button
-          class="accordion-button"
+          class="accordion-button d-flex justify-content-between flex-wrap gap-3"
           type="button"
           data-bs-toggle="collapse"
           th:attr="data-bs-target='#order' + ${iterStat.index}"
         >
-          🆔 Đơn hàng <span th:text="${order.id}"></span> - 📅
+          <!-- Mã đơn -->
+          <span class="fw-bold text-dark">
+            🆔 <span th:text="${order.id}"></span>
+          </span>
+
+          <!-- Ngày đặt -->
+          <span class="text-muted">
+            📅 Đặt:
+            <span
+              class="fw-semibold ms-1"
+              th:text="${#dates.format(order.createDate, 'dd/MM/yyyy')}"
+            ></span>
+          </span>
+
+          <!-- Ngày giao -->
+          <span class="text-muted">
+            🚚 Giao:
+            <span
+              class="fw-semibold ms-1"
+              th:text="${#temporals.format(order.deliveryDate, 'dd/MM/yyyy')}"
+            ></span>
+          </span>
+
+          <!-- Trạng thái -->
           <span
-            th:text="${#dates.format(order.createDate, 'dd/MM/yyyy')}"
-          ></span>
-          <span
-            style="width: 25%"
-            class="badge bg-dark ms-2 mx-3"
+            class="badge bg-dark px-3 py-2"
             th:text="${order.status}"
           ></span>
-          <span
-            class="fw-bold text-primary"
-            th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
-          >
+
+          <!-- Tổng tiền -->
+          <span class="fw-bold text-primary">
+            💰
+            <span
+              th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+            ></span>
           </span>
         </button>
       </h2>
+
       <div
         th:id="'order' + ${iterStat.index}"
         class="accordion-collapse collapse"
