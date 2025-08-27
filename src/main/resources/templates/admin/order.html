@@ -184,7 +184,6 @@
         </div>
       </form>
     </div>
-
     <div class="accordion" id="orderHistory" style="width: 100%">
       <!-- Lặp qua danh sách đơn hàng -->
       <div
@@ -528,4 +527,10 @@
       </div>
     </div>
   </div>
+</div>
+<div
+  th:if="${totalOrders==0}"
+  style="text-align: center; font-style: italic; margin-top: 20px"
+>
+  Hiện không có đơn hàng nào!
 </div>
