@@ -1,5 +1,5 @@
 <main class="container mt-3">
-  <h3>Quản Lý Người Dùng</h3>
+  <h4>Quản Lý Người Dùng</h4>
   <hr />
   <div
     th:if="${success}"
@@ -266,7 +266,7 @@
               <i class="fa fa-trash me-1"></i> Xóa
             </button>
             <button
-            style="width: 150px;"
+              style="width: 150px"
               type="submit"
               class="btn btn-success btn-sm"
               th:formaction="@{/User/index}"
@@ -344,7 +344,7 @@
                 th:value="${name}"
                 placeholder="Tên người dùng"
                 class="form-control form-control-sm searchName"
-                style="max-width: 300px;height: 40px;"
+                style="max-width: 300px; height: 40px"
               />
               <button
                 class="btn btn-primary btn-sm"

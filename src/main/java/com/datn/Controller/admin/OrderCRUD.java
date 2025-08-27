@@ -60,6 +60,12 @@ public class OrderCRUD {
     List<ProductCategory> productCategories = pro_ca_dao.findAll();
 
     // Add vào model để Thymeleaf giữ trạng thái
+    model.addAttribute("ordersToDeliverToday", orderService.getOrdersToDeliverToday());
+    model.addAttribute("ordersNext3Days", orderService.getOrdersNext3Days());
+    model.addAttribute("failedOrders", orderService.getFailedOrders());
+    model.addAttribute("completedOrders", orderService.getCompletedOrdersToday());
+    model.addAttribute("newOrders", orderService.newOrders());
+
     model.addAttribute("orders", orders);
     model.addAttribute("totalOrders", orders.getTotalElements());
     model.addAttribute("orderStatus", orderStatus);

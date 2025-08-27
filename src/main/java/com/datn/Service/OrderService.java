@@ -125,5 +125,16 @@ public interface OrderService {
   // hàng 'Hoàn tất')
   Map<Integer, Double> getDailyRevenueByMonthAndYear(int month, int year);
 
+ // 📦 Đơn cần giao hôm nay
+     long getOrdersToDeliverToday() ;
 
+    // 📅 Đơn sắp giao trong 3 ngày tới
+     long getOrdersNext3Days();
+
+    // 🚚 Đơn giao thất bại
+     long getFailedOrders() ;
+    // ✅ Đơn đã hoàn tất hôm nay
+     long getCompletedOrdersToday() ;
+
+     long newOrders();
 }

@@ -237,5 +237,39 @@ public interface OrderDAO extends JpaRepository<Order, Long> {
                         @Param("fromDate") LocalDate fromDate,
                         @Param("toDate") LocalDate toDate,
                         Pageable pageable);
+        // 🆕 Đơn mới chờ xác nhận
+       @Query(value = "SELECT COUNT(*) FROM orders o WHERE o.status = N'Chờ xác nhận'", 
+       nativeQuery = true)
+        long newOrders();            
+      
+        // 📅 Đơn giao trong hôm nay (Chờ giao, Đang giao, Giao lại)
+        @Query(value = "SELECT COUNT(*) FROM orders o " +
+               "WHERE o.status IN (N'Chờ giao', N'Đang giao', N'Giao lại') " +
+               "AND CAST(o.delivery_date AS DATE) = CAST(GETDATE() AS DATE)", 
+       nativeQuery = true)
+        long countOrdersToDeliverToday();
+
+       // 📅 Đơn sắp giao trong 3 ngày tới (không tính hôm nay, gồm các trạng thái trên)
+       @Query(value = "SELECT COUNT(*) FROM orders o " +
+               "WHERE o.status IN (N'Chờ giao', N'Đang giao', N'Giao lại') " +
+               "AND CAST(o.delivery_date AS DATE) BETWEEN CAST(DATEADD(DAY, 1, GETDATE()) AS DATE) " +
+               "AND CAST(DATEADD(DAY, 3, GETDATE()) AS DATE)", 
+       nativeQuery = true)
+       long countOrdersNext3Days();
+
+        // 🚚 Đơn giao thất bại trong hôm nay
+       @Query(value = "SELECT COUNT(*) FROM orders o " +
+               "WHERE o.status = N'Giao thất bại' " +
+               "AND CAST(o.delivery_date AS DATE) = CAST(GETDATE() AS DATE)", 
+       nativeQuery = true)
+       long countFailedOrders();
+        
+        // ✅ Đơn đã hoàn tất hôm nay
+        @Query(value = "SELECT COUNT(*) FROM orders o " +
+               "WHERE o.status = N'Hoàn tất' AND CAST(o.delivery_date AS DATE) = CAST(GETDATE() AS DATE)", 
+       nativeQuery = true)
+       long countCompletedOrdersToday();
+
+
 
 }

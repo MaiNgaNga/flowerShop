@@ -390,5 +390,32 @@ public class OrderServiceImpl implements OrderService {
     public Page<Order> findAllOrders(Pageable pageable) {
         return dao.findAll(pageable);
     }
+
+    @Override
+    public long newOrders() {
+    return dao.newOrders();
+}
+    @Override
+     // 📦 Đơn cần giao hôm nay
+    public long getOrdersToDeliverToday() {
+        return dao.countOrdersToDeliverToday();
+    }
+    @Override
+
+    // 📅 Đơn sắp giao trong 3 ngày tới
+    public long getOrdersNext3Days() {
+        return dao.countOrdersNext3Days();
+    }
+    @Override
+
+    // 🚚 Đơn giao thất bại
+    public long getFailedOrders() {
+        return dao.countFailedOrders();
+    }
+
+    // ✅ Đơn đã hoàn tất hôm nay
+    public long getCompletedOrdersToday() {
+        return dao.countCompletedOrdersToday();
+    }
   
 }

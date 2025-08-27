@@ -217,7 +217,12 @@
             class="badge bg-dark px-3 py-2"
             th:text="${order.status}"
           ></span>
-
+          <!-- Trạng thái thanh toán -->
+          <span class="fw-bold text-primary">
+            <span
+              th:text="${order.paymentStatus == 'Chờ thanh toán' ?'Chưa thanh toán':'Đã thanh toán'}"
+            ></span>
+          </span>
           <!-- Tổng tiền -->
           <span class="fw-bold text-primary">
             💰
@@ -270,9 +275,14 @@
               </tr>
             </tbody>
           </table>
+          <!-- Nếu đơn hàng là COD (order.paymentMethod == 'COD') 
+           Và trạng thái là "Chờ xác nhận" → cho phép luôn hủy. 
+           Còn trạng thái là "Chờ giao" → chỉ cho hủy nếu ngày giao (deliveryDate) ≥ ngày mai. -->
           <button
             class="btn btn-danger"
-            th:if="${order.status == 'Chờ xác nhận'}"
+            th:if="${order.paymentMethod == 'COD' and (
+            order.status == 'Chờ xác nhận' 
+            or (order.status == 'Chờ giao' and order.deliveryDate > T(java.time.LocalDate).now()))}"
             onclick="confirmDelete(this)"
             th:data-url="@{/history/delete/{orderId}(orderId=${order.id})}"
           >

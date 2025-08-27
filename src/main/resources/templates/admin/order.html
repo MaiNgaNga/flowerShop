@@ -6,6 +6,10 @@
   .accordion-button::after {
     display: none !important;
   }
+  .col-5-fixed {
+    flex: 0 0 20%; /* chiếm 20% chiều ngang */
+    max-width: 20%;
+  }
 </style>
 <div class=" ">
   <h4 class="mb-4">Quản Lý đơn hàng online</h4>
@@ -35,433 +39,493 @@
     <span th:text="${warning}"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
-
-  <div class="card mb-3 p-3">
-    <form
-      method="get"
-      th:action="@{/orderAdmin}"
-      class="row g-3 align-items-end"
-    >
-      <div class="col-md-2">
-        <label for="" class="form-label">Trạng thái</label>
-
-        <select
-          class="form-control form-select-sm"
-          name="orderStatus"
-          aria-label="Lọc đơn hàng"
-        >
-          <option value="">--Tất cả--</option>
-
-          <option
-            value="Chờ xác nhận"
-            th:selected="${orderStatus == 'Chờ xác nhận'}"
-          >
-            Chờ xác nhận
-          </option>
-          <option value="Chờ giao" th:selected="${orderStatus == 'Chờ giao'}">
-            Chờ giao
-          </option>
-          <option value="Đang giao" th:selected="${orderStatus == 'Đang giao'}">
-            Đang giao
-          </option>
-          <option value="Hoàn tất" th:selected="${orderStatus == 'Hoàn tất'}">
-            Hoàn tất
-          </option>
-          <option value="Đã hủy" th:selected="${orderStatus == 'Đã hủy'}">
-            Đã hủy
-          </option>
-          <option
-            value="Giao thất bại"
-            th:selected="${orderStatus == 'Giao thất bại'}"
-          >
-            Giao thất bại
-          </option>
-
-          <option value="Giao lại" th:selected="${orderStatus == 'Giao lại'}">
-            Giao lại
-          </option>
-        </select>
+  <div class="row g-4 mt-2">
+    <!-- Đơn chờ xác nhận -->
+    <div class="col">
+      <div class="card shadow-sm border-0 h-100 text-center p-3">
+        <div class="rounded bg-warning bg-opacity-10 p-3 d-inline-block">
+          📦
+        </div>
+        <h3 class="mt-3 text-dark fw-bold" th:text="${newOrders}"></h3>
+        <p class="text-muted">Đơn mới</p>
       </div>
-      <div class="col-md-2">
-        <label for="fromDate" class="form-label">Từ ngày</label>
-        <input
-          type="date"
-          class="form-control"
-          id="from"
-          name="fromDate"
-          th:value="${fromDate}"
-        />
+    </div>
+    <!-- Đơn cần giao hôm nay -->
+    <div class="col-5-fixed">
+      <div class="card shadow-sm border-0 h-100 text-center p-3">
+        <div class="rounded bg-warning bg-opacity-10 p-3 d-inline-block">
+          📦
+        </div>
+        <h3
+          class="mt-3 text-dark fw-bold"
+          th:text="${ordersToDeliverToday}"
+        ></h3>
+        <p class="text-muted">Đơn cần giao hôm nay</p>
       </div>
-      <div class="col-md-2">
-        <label for="toDate" class="form-label">Đến ngày</label>
-        <input
-          type="date"
-          class="form-control"
-          id="to"
-          name="toDate"
-          th:value="${toDate}"
-        />
+    </div>
+
+    <!-- Đơn giao 3 ngày tới -->
+    <div class="col-5-fixed">
+      <div class="card shadow-sm border-0 h-100 text-center p-3">
+        <div class="rounded bg-primary bg-opacity-10 p-3 d-inline-block">
+          📅
+        </div>
+        <h3 class="mt-3 text-dark fw-bold" th:text="${ordersNext3Days}"></h3>
+        <p class="text-muted">Đơn sắp giao trong 3 ngày sau</p>
       </div>
-      <div class="col-md-3">
-        <label for="keyword" class="form-label">Tìm kiếm</label>
-        <input
-          type="text"
-          class="form-control"
-          id="keyword"
-          name="keyword"
-          placeholder="Nhập mã, tên hoặc sdt"
-          th:value="${keyword}"
-        />
+    </div>
+
+    <!-- Đơn giao thất bại -->
+    <div class="col-5-fixed">
+      <div class="card shadow-sm border-0 h-100 text-center p-3">
+        <div class="rounded bg-danger bg-opacity-10 p-3 d-inline-block">🚚</div>
+        <h3 class="mt-3 text-dark fw-bold" th:text="${failedOrders}"></h3>
+        <p class="text-muted">Đơn giao thất bại hôm nay</p>
       </div>
-      <div class="col-md-3 filter-buttons">
-        <button type="submit" class="btn btn-primary btn-action" title="Lọc">
-          <i class="bi bi-funnel"></i>
-        </button>
-        <a
-          type="button"
-          href="/orderAdmin"
-          class="btn btn-secondary btn-action"
-        >
-          <i class="bi bi-x-circle"></i>
-        </a>
+    </div>
+    <div class="col-5-fixed">
+      <div class="card shadow-sm border-0 h-100 text-center p-3">
+        <div class="rounded bg-info bg-opacity-10 p-3 d-inline-block">✅</div>
+        <h3 class="mt-3 text-dark fw-bold" th:text="${completedOrders}"></h3>
+        <p class="text-muted">Đơn hàng hoàn tất hôm nay</p>
       </div>
-    </form>
-  </div>
-
-  <div class="accordion" id="orderHistory" style="width: 100%">
-    <!-- Lặp qua danh sách đơn hàng -->
-    <div
-      class="accordion-item"
-      th:each="order, iterStat : ${orders}"
-      style="
-        border: 1px solid #e9ecef;
-        border-radius: 0.25rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      "
-    >
-      <h2 class="accordion-header" th:id="'heading' + ${iterStat.index}">
-        <button
-          class="accordion-button collapsed bg-light d-flex justify-content-between align-items-center"
-          type="button"
-          data-bs-toggle="collapse"
-          th:attr="data-bs-target='#order' + ${iterStat.index}"
-          style="font-weight: 500; color: #333"
-        >
-          <!-- Left side: thông tin đơn -->
-          <div class="d-flex flex-wrap align-items-center gap-3">
-            <!-- Mã đơn -->
-            🆔 <span th:text="${order.id}" class="fw-bold"></span>
-
-            <!-- Tổng tiền -->
-            <span
-              class="fw-bold text-primary"
-              th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
-            ></span>
-
-            <!-- Ship fee -->
-            <span
-              th:text="'Ship: ' + ${#numbers.formatDecimal(order.shipFee, 0, 'COMMA', 0, 'POINT')} + ' VND'"
-            ></span>
-
-            <!-- Discount -->
-            <span
-              class="text-danger"
-              th:if="${order.discount != null and order.discount > 0}"
-              th:text="'- ' + ${#numbers.formatDecimal(order.discount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
-            ></span>
-            <!-- Đơn gốc -->
-            <span
-              th:if="${order.originalId != null}"
-              class="text-muted"
-              th:text="'(Gốc: ' + ${order.originalId} + ')'"
-            ></span>
-          </div>
-
-          <!-- Right side: COD -->
-          <div class="small ms-auto" th:if="${order.paymentMethod=='COD'}">
-            💵 COD
-          </div>
-        </button>
-      </h2>
-
-      <div
-        th:id="'order' + ${iterStat.index}"
-        class="accordion-collapse collapse"
-        data-bs-parent="#orderHistory"
+    </div>
+    <div class="card mb-3 p-3">
+      <form
+        method="get"
+        th:action="@{/orderAdmin}"
+        class="row g-3 align-items-end"
       >
-        <div class="accordion-body p-4 bg-white">
-          <table class="table table-hover">
-            <thead class="table-light">
-              <tr>
-                <th class="text-start">Sản phẩm</th>
-                <th>Hình ảnh</th>
-                <th>Số lượng</th>
-                <th>Đơn giá</th>
-                <th>Thành tiền</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr th:each="detail : ${order.orderDetails}" class="align-middle">
-                <td class="text-start" th:text="${detail.product.name}"></td>
-                <td>
-                  <a th:href="@{/detail(id=${detail.product.id})}">
-                    <img
-                      th:src="@{/images/{image}(image=${detail.product.image_url})}"
-                      alt=""
-                      width="70px"
-                      class="rounded"
-                    />
-                  </a>
-                </td>
-                <td th:text="${detail.quantity}" class="text-center"></td>
-                <td
-                  th:text="${#numbers.formatDecimal(detail.price, 0, 'COMMA', 0, 'POINT')} + ' VND'"
-                  class="text-end"
-                ></td>
-                <td
-                  th:text="${#numbers.formatDecimal(detail.price * detail.quantity, 0, 'COMMA', 0, 'POINT')} + ' VND'"
-                  class="text-end"
-                ></td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="card mt-3">
-            <div class="card-body p-3">
-              <div class="row">
-                <!-- Khối 1 -->
-                <div class="col-md-6">
-                  <h6 class="card-title fw-bold text-success mb-2">
-                    Thông tin người đặt
-                  </h6>
-                  <p class="mb-1" th:text="'Name: ' + ${order.user.name}"></p>
-                  <p class="mb-0" th:text="'Phone: ' + ${order.user.sdt}"></p>
-                </div>
+        <div class="col-md-2">
+          <label for="" class="form-label">Trạng thái</label>
 
-                <!-- Khối 2 -->
-                <div class="col-md-6">
-                  <h6 class="card-title fw-bold text-success mb-2">
-                    Thông tin người nhận
-                  </h6>
+          <select
+            class="form-control form-select-sm"
+            name="orderStatus"
+            aria-label="Lọc đơn hàng"
+          >
+            <option value="">--Tất cả--</option>
 
-                  <p
-                    class="mb-1"
-                    th:text="'Name: ' + ${order.receiverName}"
-                  ></p>
-                  <p
-                    class="mb-0"
-                    th:text="'Phone: ' + ${order.receiverPhone}"
-                  ></p>
-                  <p class="mb-1" th:text="'Address: ' + ${order.address}"></p>
-                </div>
-              </div>
+            <option
+              value="Chờ xác nhận"
+              th:selected="${orderStatus == 'Chờ xác nhận'}"
+            >
+              Chờ xác nhận
+            </option>
+            <option value="Chờ giao" th:selected="${orderStatus == 'Chờ giao'}">
+              Chờ giao
+            </option>
+            <option
+              value="Đang giao"
+              th:selected="${orderStatus == 'Đang giao'}"
+            >
+              Đang giao
+            </option>
+            <option value="Hoàn tất" th:selected="${orderStatus == 'Hoàn tất'}">
+              Hoàn tất
+            </option>
+            <option value="Đã hủy" th:selected="${orderStatus == 'Đã hủy'}">
+              Đã hủy
+            </option>
+            <option
+              value="Giao thất bại"
+              th:selected="${orderStatus == 'Giao thất bại'}"
+            >
+              Giao thất bại
+            </option>
 
-              <!-- Khối 3 (rơi xuống dưới, chiếm full row) -->
-              <div class="row mt-3">
-                <!-- Khối 1 -->
-                <div class="col-md-6">
-                  <p>
-                    <span
-                      th:text="'Ngày giao hàng: ' + ${#temporals.format(order.deliveryTime, 'HH:mm')}"
-                    ></span>
-                    <span
-                      th:text="${#temporals.format(order.deliveryDate, 'dd/MM/yyyy')}"
-                    ></span>
-                  </p>
+            <option value="Giao lại" th:selected="${orderStatus == 'Giao lại'}">
+              Giao lại
+            </option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label for="fromDate" class="form-label">Từ ngày</label>
+          <input
+            type="date"
+            class="form-control"
+            id="from"
+            name="fromDate"
+            th:value="${fromDate}"
+          />
+        </div>
+        <div class="col-md-2">
+          <label for="toDate" class="form-label">Đến ngày</label>
+          <input
+            type="date"
+            class="form-control"
+            id="to"
+            name="toDate"
+            th:value="${toDate}"
+          />
+        </div>
+        <div class="col-md-3">
+          <label for="keyword" class="form-label">Tìm kiếm</label>
+          <input
+            type="text"
+            class="form-control"
+            id="keyword"
+            name="keyword"
+            placeholder="Nhập mã, tên hoặc sdt"
+            th:value="${keyword}"
+          />
+        </div>
+        <div class="col-md-3 filter-buttons">
+          <button type="submit" class="btn btn-primary btn-action" title="Lọc">
+            <i class="bi bi-funnel"></i>
+          </button>
+          <a
+            type="button"
+            href="/orderAdmin"
+            class="btn btn-secondary btn-action"
+          >
+            <i class="bi bi-x-circle"></i>
+          </a>
+        </div>
+      </form>
+    </div>
 
-                  <p
-                    class="mb-1"
-                    th:text="'Ngày đặt hàng: ' + ${#dates.format(order.createDate, 'dd/MM/yyyy')}"
-                  >
-                    >
-                  </p>
-                  <p class="mb-1" th:text="'Trạng thái: ' + ${order.status}">
-                    >
-                  </p>
-                  <!-- Shipper -->
-                  <p
-                    class="mb-1"
-                    th:text="${order.shipper != null ? 'Shipper: '+order.shipper.name : ''}"
-                  ></p>
-                  <p
-                    class="mb-1"
-                    th:text="'Mô tả: ' + ${order.description}"
-                  ></p>
-                </div>
-                <div
-                  class="col-md-6"
-                  th:if="${order.reason != null and !#strings.isEmpty(order.reason)}"
+    <div class="accordion" id="orderHistory" style="width: 100%">
+      <!-- Lặp qua danh sách đơn hàng -->
+      <div
+        class="accordion-item"
+        th:each="order, iterStat : ${orders}"
+        style="
+          border: 1px solid #e9ecef;
+          border-radius: 0.25rem;
+          margin-bottom: 1rem;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        "
+      >
+        <h2 class="accordion-header" th:id="'heading' + ${iterStat.index}">
+          <button
+            class="accordion-button collapsed bg-light d-flex justify-content-between align-items-center"
+            type="button"
+            data-bs-toggle="collapse"
+            th:attr="data-bs-target='#order' + ${iterStat.index}"
+            style="font-weight: 500; color: #333"
+          >
+            <!-- Left side: thông tin đơn -->
+            <div class="d-flex flex-wrap align-items-center gap-3">
+              <!-- Mã đơn -->
+              🆔 <span th:text="${order.id}" class="fw-bold"></span>
+
+              <!-- Tổng tiền -->
+              <span
+                class="fw-bold text-primary"
+                th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+              ></span>
+
+              <!-- Ship fee -->
+              <span
+                th:text="'Ship: ' + ${#numbers.formatDecimal(order.shipFee, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+              ></span>
+
+              <!-- Discount -->
+              <span
+                class="text-danger"
+                th:if="${order.discount != null and order.discount > 0}"
+                th:text="'- ' + ${#numbers.formatDecimal(order.discount, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+              ></span>
+              <!-- Đơn gốc -->
+              <span
+                th:if="${order.originalId != null}"
+                class="text-muted"
+                th:text="'(Gốc: ' + ${order.originalId} + ')'"
+              ></span>
+            </div>
+
+            <!-- Right side: COD -->
+            <div class="small ms-auto" th:if="${order.paymentMethod=='COD'}">
+              💵 COD
+            </div>
+          </button>
+        </h2>
+
+        <div
+          th:id="'order' + ${iterStat.index}"
+          class="accordion-collapse collapse"
+          data-bs-parent="#orderHistory"
+        >
+          <div class="accordion-body p-4 bg-white">
+            <table class="table table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th class="text-start">Sản phẩm</th>
+                  <th>Hình ảnh</th>
+                  <th>Số lượng</th>
+                  <th>Đơn giá</th>
+                  <th>Thành tiền</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  th:each="detail : ${order.orderDetails}"
+                  class="align-middle"
                 >
-                  <h6 class="card-title fw-bold text-danger mb-2">Lí do:</h6>
+                  <td class="text-start" th:text="${detail.product.name}"></td>
+                  <td>
+                    <a th:href="@{/detail(id=${detail.product.id})}">
+                      <img
+                        th:src="@{/images/{image}(image=${detail.product.image_url})}"
+                        alt=""
+                        width="70px"
+                        class="rounded"
+                      />
+                    </a>
+                  </td>
+                  <td th:text="${detail.quantity}" class="text-center"></td>
+                  <td
+                    th:text="${#numbers.formatDecimal(detail.price, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+                    class="text-end"
+                  ></td>
+                  <td
+                    th:text="${#numbers.formatDecimal(detail.price * detail.quantity, 0, 'COMMA', 0, 'POINT')} + ' VND'"
+                    class="text-end"
+                  ></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="card mt-3">
+              <div class="card-body p-3">
+                <div class="row">
+                  <!-- Khối 1 -->
+                  <div class="col-md-6">
+                    <h6 class="card-title fw-bold text-success mb-2">
+                      Thông tin người đặt
+                    </h6>
+                    <p class="mb-1" th:text="'Name: ' + ${order.user.name}"></p>
+                    <p class="mb-0" th:text="'Phone: ' + ${order.user.sdt}"></p>
+                  </div>
 
-                  <p class="mb-1" th:text="${order.reason}"></p>
+                  <!-- Khối 2 -->
+                  <div class="col-md-6">
+                    <h6 class="card-title fw-bold text-success mb-2">
+                      Thông tin người nhận
+                    </h6>
+
+                    <p
+                      class="mb-1"
+                      th:text="'Name: ' + ${order.receiverName}"
+                    ></p>
+                    <p
+                      class="mb-0"
+                      th:text="'Phone: ' + ${order.receiverPhone}"
+                    ></p>
+                    <p
+                      class="mb-1"
+                      th:text="'Address: ' + ${order.address}"
+                    ></p>
+                  </div>
+                </div>
+
+                <!-- Khối 3 (rơi xuống dưới, chiếm full row) -->
+                <div class="row mt-3">
+                  <!-- Khối 1 -->
+                  <div class="col-md-6">
+                    <p>
+                      <span
+                        th:text="'Ngày giao hàng: ' + ${#temporals.format(order.deliveryTime, 'HH:mm')}"
+                      ></span>
+                      <span
+                        th:text="${#temporals.format(order.deliveryDate, 'dd/MM/yyyy')}"
+                      ></span>
+                    </p>
+
+                    <p
+                      class="mb-1"
+                      th:text="'Ngày đặt hàng: ' + ${#dates.format(order.createDate, 'dd/MM/yyyy')}"
+                    >
+                      >
+                    </p>
+                    <p class="mb-1" th:text="'Trạng thái: ' + ${order.status}">
+                      >
+                    </p>
+                    <!-- Shipper -->
+                    <p
+                      class="mb-1"
+                      th:text="${order.shipper != null ? 'Shipper: '+order.shipper.name : ''}"
+                    ></p>
+                    <p
+                      class="mb-1"
+                      th:text="'Mô tả: ' + ${order.description}"
+                    ></p>
+                  </div>
+                  <div
+                    class="col-md-6"
+                    th:if="${order.reason != null and !#strings.isEmpty(order.reason)}"
+                  >
+                    <h6 class="card-title fw-bold text-danger mb-2">Lí do:</h6>
+
+                    <p class="mb-1" th:text="${order.reason}"></p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="d-flex flex-wrap justify-content-end gap-2 m-3 end-0">
-          <!-- Nút Xác nhận -->
-          <form
-            th:action="@{/orderAdmin/update/{orderId}(orderId=${order.id})}"
-            method="post"
-            class="update-status-form"
-            style="display: inline"
-          >
-            <input type="hidden" name="status" value="Chờ giao" />
-            <button
-              type="submit"
-              class="btn btn-primary btn-sm"
-              th:if="${order.status == 'Chờ xác nhận'}"
+          <div class="d-flex flex-wrap justify-content-end gap-2 m-3 end-0">
+            <!-- Nút Xác nhận -->
+            <form
+              th:action="@{/orderAdmin/update/{orderId}(orderId=${order.id})}"
+              method="post"
+              class="update-status-form"
+              style="display: inline"
             >
-              Xác nhận
-            </button>
-          </form>
+              <input type="hidden" name="status" value="Chờ giao" />
+              <button
+                type="submit"
+                class="btn btn-primary btn-sm"
+                th:if="${order.status == 'Chờ xác nhận'}"
+              >
+                Xác nhận
+              </button>
+            </form>
 
-          <!-- Nút Tạo lại đơn hàng -->
-          <form
-            th:action="@{/orderAdmin/recreate/{orderId}(orderId=${order.id})}"
-            method="post"
-            style="display: inline"
-          >
-            <input type="hidden" name="status" value="Giao lại" />
-            <button
-              type="submit"
-              class="btn btn-primary btn-sm"
-              th:if="${order.status == 'Giao thất bại'}"
+            <!-- Nút Tạo lại đơn hàng -->
+            <form
+              th:action="@{/orderAdmin/recreate/{orderId}(orderId=${order.id})}"
+              method="post"
+              style="display: inline"
             >
-              Tạo lại đơn hàng
-            </button>
-          </form>
-          <!-- Nút Hủy đơn -->
-          <form
-            th:action="@{/orderAdmin/update/{orderId}(orderId=${order.id})}"
-            method="post"
-            style="display: inline"
-          >
-            <input type="hidden" name="status" value="Hủy đơn" />
-            <button
-              type="submit"
-              class="btn btn-danger btn-sm"
-              th:if="${order.status == 'Chờ xác nhận' or order.status == 'Chờ giao' or order.status == 'Giao thất bại'}"
+              <input type="hidden" name="status" value="Giao lại" />
+              <button
+                type="submit"
+                class="btn btn-primary btn-sm"
+                th:if="${order.status == 'Giao thất bại'}"
+              >
+                Tạo lại đơn hàng
+              </button>
+            </form>
+            <!-- Nút Hủy đơn -->
+            <form
+              th:action="@{/orderAdmin/update/{orderId}(orderId=${order.id})}"
+              method="post"
+              style="display: inline"
             >
-              Hủy đơn
-            </button>
-          </form>
+              <input type="hidden" name="status" value="Hủy đơn" />
+              <button
+                type="submit"
+                class="btn btn-danger btn-sm"
+                th:if="${order.status == 'Chờ xác nhận' or order.status == 'Chờ giao' or order.status == 'Giao thất bại'}"
+              >
+                Hủy đơn
+              </button>
+            </form>
 
-          <!-- Nút Hoàn tất đơn -->
-          <form
-            th:action="@{/orderAdmin/update/{orderId}(orderId=${order.id})}"
-            method="post"
-            style="display: inline"
-          >
-            <input type="hidden" name="status" value="Hoàn tất" />
-            <button
-              type="submit"
-              class="btn btn-success btn-sm"
-              th:if="${order.status == 'Giao thất bại'}"
+            <!-- Nút Hoàn tất đơn -->
+            <form
+              th:action="@{/orderAdmin/update/{orderId}(orderId=${order.id})}"
+              method="post"
+              style="display: inline"
             >
-              Hoàn tất
-            </button>
-          </form>
+              <input type="hidden" name="status" value="Hoàn tất" />
+              <button
+                type="submit"
+                class="btn btn-success btn-sm"
+                th:if="${order.status == 'Giao thất bại'}"
+              >
+                Hoàn tất
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <!-- Phân trang Bootstrap cho orderAdmin -->
-  <div class="pagination-wrapper" th:if="${totalOrders > 0}">
-    <div class="d-flex justify-content-between align-items-center">
-      <div class="pagination-info">
-        <i
-          >Hiển thị
-          <strong th:text="${#lists.size(orders.content)}"></strong> trong tổng
-          số <strong th:text="${totalOrders}"></strong> đơn hàng</i
-        >
+    <!-- Phân trang Bootstrap cho orderAdmin -->
+    <div class="pagination-wrapper" th:if="${totalOrders > 0}">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="pagination-info">
+          <i
+            >Hiển thị
+            <strong th:text="${#lists.size(orders.content)}"></strong> trong
+            tổng số <strong th:text="${totalOrders}"></strong> đơn hàng</i
+          >
+        </div>
+
+        <nav aria-label="Order pagination" th:if="${totalPages > 1}">
+          <ul class="pagination">
+            <!-- Trang đầu -->
+            <li
+              class="page-item"
+              th:classappend="${currentPage == 0} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/orderAdmin(page=0, size=${size}, orderStatus=${orderStatus}, keyword=${keyword}, fromDate=${fromDate}, toDate=${toDate})}"
+                th:unless="${currentPage == 0}"
+                title="Trang đầu"
+              >
+                <i class="fas fa-angle-double-left"></i>
+              </a>
+              <span class="page-link" th:if="${currentPage == 0}">
+                <i class="fas fa-angle-double-left"></i>
+              </span>
+            </li>
+
+            <!-- Trang trước -->
+            <li class="page-item" th:classappend="${!hasPrevious} ? 'disabled'">
+              <a
+                class="page-link"
+                th:href="@{/orderAdmin(page=${currentPage - 1}, size=${size}, orderStatus=${orderStatus}, keyword=${keyword}, fromDate=${fromDate}, toDate=${toDate})}"
+                th:if="${hasPrevious}"
+                title="Trang trước"
+              >
+                <i class="fas fa-chevron-left"></i>
+              </a>
+              <span class="page-link" th:unless="${hasPrevious}">
+                <i class="fas fa-chevron-left"></i>
+              </span>
+            </li>
+
+            <!-- Các trang số -->
+            <li
+              class="page-item"
+              th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+              th:if="${pageNum >= currentPage - 2 and pageNum <= currentPage + 2}"
+              th:classappend="${pageNum == currentPage} ? 'active'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/orderAdmin(page=${pageNum}, size=${size}, orderStatus=${orderStatus}, keyword=${keyword}, fromDate=${fromDate}, toDate=${toDate})}"
+                th:text="${pageNum + 1}"
+              ></a>
+            </li>
+
+            <!-- Trang sau -->
+            <li class="page-item" th:classappend="${!hasNext} ? 'disabled'">
+              <a
+                class="page-link"
+                th:href="@{/orderAdmin(page=${currentPage + 1}, size=${size}, orderStatus=${orderStatus}, keyword=${keyword}, fromDate=${fromDate}, toDate=${toDate})}"
+                th:if="${hasNext}"
+                title="Trang sau"
+              >
+                <i class="fas fa-chevron-right"></i>
+              </a>
+              <span class="page-link" th:unless="${hasNext}">
+                <i class="fas fa-chevron-right"></i>
+              </span>
+            </li>
+
+            <!-- Trang cuối -->
+            <li
+              class="page-item"
+              th:classappend="${currentPage == totalPages - 1} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/orderAdmin(page=${totalPages - 1}, size=${size}, orderStatus=${orderStatus}, keyword=${keyword}, fromDate=${fromDate}, toDate=${toDate})}"
+                th:unless="${currentPage == totalPages - 1}"
+                title="Trang cuối"
+              >
+                <i class="fas fa-angle-double-right"></i>
+              </a>
+              <span class="page-link" th:if="${currentPage == totalPages - 1}">
+                <i class="fas fa-angle-double-right"></i>
+              </span>
+            </li>
+          </ul>
+        </nav>
       </div>
-
-      <nav aria-label="Order pagination" th:if="${totalPages > 1}">
-        <ul class="pagination">
-          <!-- Trang đầu -->
-          <li
-            class="page-item"
-            th:classappend="${currentPage == 0} ? 'disabled'"
-          >
-            <a
-              class="page-link"
-              th:href="@{/orderAdmin(page=0, size=${size}, orderStatus=${orderStatus}, keyword=${keyword}, fromDate=${fromDate}, toDate=${toDate})}"
-              th:unless="${currentPage == 0}"
-              title="Trang đầu"
-            >
-              <i class="fas fa-angle-double-left"></i>
-            </a>
-            <span class="page-link" th:if="${currentPage == 0}">
-              <i class="fas fa-angle-double-left"></i>
-            </span>
-          </li>
-
-          <!-- Trang trước -->
-          <li class="page-item" th:classappend="${!hasPrevious} ? 'disabled'">
-            <a
-              class="page-link"
-              th:href="@{/orderAdmin(page=${currentPage - 1}, size=${size}, orderStatus=${orderStatus}, keyword=${keyword}, fromDate=${fromDate}, toDate=${toDate})}"
-              th:if="${hasPrevious}"
-              title="Trang trước"
-            >
-              <i class="fas fa-chevron-left"></i>
-            </a>
-            <span class="page-link" th:unless="${hasPrevious}">
-              <i class="fas fa-chevron-left"></i>
-            </span>
-          </li>
-
-          <!-- Các trang số -->
-          <li
-            class="page-item"
-            th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
-            th:if="${pageNum >= currentPage - 2 and pageNum <= currentPage + 2}"
-            th:classappend="${pageNum == currentPage} ? 'active'"
-          >
-            <a
-              class="page-link"
-              th:href="@{/orderAdmin(page=${pageNum}, size=${size}, orderStatus=${orderStatus}, keyword=${keyword}, fromDate=${fromDate}, toDate=${toDate})}"
-              th:text="${pageNum + 1}"
-            ></a>
-          </li>
-
-          <!-- Trang sau -->
-          <li class="page-item" th:classappend="${!hasNext} ? 'disabled'">
-            <a
-              class="page-link"
-              th:href="@{/orderAdmin(page=${currentPage + 1}, size=${size}, orderStatus=${orderStatus}, keyword=${keyword}, fromDate=${fromDate}, toDate=${toDate})}"
-              th:if="${hasNext}"
-              title="Trang sau"
-            >
-              <i class="fas fa-chevron-right"></i>
-            </a>
-            <span class="page-link" th:unless="${hasNext}">
-              <i class="fas fa-chevron-right"></i>
-            </span>
-          </li>
-
-          <!-- Trang cuối -->
-          <li
-            class="page-item"
-            th:classappend="${currentPage == totalPages - 1} ? 'disabled'"
-          >
-            <a
-              class="page-link"
-              th:href="@{/orderAdmin(page=${totalPages - 1}, size=${size}, orderStatus=${orderStatus}, keyword=${keyword}, fromDate=${fromDate}, toDate=${toDate})}"
-              th:unless="${currentPage == totalPages - 1}"
-              title="Trang cuối"
-            >
-              <i class="fas fa-angle-double-right"></i>
-            </a>
-            <span class="page-link" th:if="${currentPage == totalPages - 1}">
-              <i class="fas fa-angle-double-right"></i>
-            </span>
-          </li>
-        </ul>
-      </nav>
     </div>
   </div>
 </div>
