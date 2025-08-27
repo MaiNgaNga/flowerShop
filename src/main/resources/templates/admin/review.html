@@ -5,13 +5,12 @@
     <!-- Tab Content -->
 
     <i class="error" th:if="${error}" th:text="${error}"></i>
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show d-none" role="alert"
+        data-message="success">
+        <span th:text="${success}"></span>
+    </div>
     <!-- Tab: Danh sách -->
     <div class="" id="list">
-
-        <div class="success alert alert-success" th:if="${success}" th:text="${success}"></div>
-
-       
-
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead class="table-dark">
@@ -65,7 +64,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <div class="pagination-info">
                 Hiển thị <strong th:text="${#lists.size(commentPage)}"></strong> trong
-                tổng số <strong th:text="${totalElements}"></strong> bình luận
+                tổng số <strong th:text="${totalElements}"></strong> đánh giá 
             </div>
             <nav aria-label="Review pagination" th:if="${totalPages > 1}">
                 <ul class="pagination simple-pagination">

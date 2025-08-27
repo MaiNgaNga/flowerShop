@@ -5,6 +5,11 @@
   <!-- Tab Content -->
 
   <i class="error" th:if="${error}" th:text="${error}"></i>
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show d-none" role="alert"
+      data-message="success">
+      <span th:text="${success}"></span>
+    </div>
+
   <!-- Tab: Danh sách -->
   <div class="" id="list">
   <form action="/Contact/index/admin" method="get" class="d-flex align-items-center"

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.datn.Service.ContactService;
 import com.datn.model.Contact;
@@ -76,15 +77,16 @@ public class ContactAdminController {
             @RequestParam(value = "year", required = false) Integer year,
             @RequestParam(value = "month", required = false) Integer month,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            Model model) {
+            RedirectAttributes rAttributes) {
 
         Contact contact = contactService.findById(id);
         if (contact != null) {
             contact.setStatus(true);
             contactService.updateContact(id, contact);
-            model.addAttribute("success", "Đã đánh dấu là đã xử lý.");
+            rAttributes.addFlashAttribute("success", "Đã đánh dấu là đã xử lý.");
+            System.out.println("Contact with ID " + id + " has been marked as processed.");
         } else {
-            model.addAttribute("error", "Không tìm thấy liên hệ.");
+            rAttributes.addFlashAttribute("error", "Không tìm thấy liên hệ.");
         }
 
         // Quay lại trang hiện tại và giữ trạng thái lọc

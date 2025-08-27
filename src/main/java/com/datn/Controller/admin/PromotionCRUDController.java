@@ -314,6 +314,7 @@ public class PromotionCRUDController {
                     model.addAttribute("totalElements", promotionPage.getTotalElements());
                     model.addAttribute("hasPrevious", promotionPage.hasPrevious());
                     model.addAttribute("hasNext", promotionPage.hasNext());
+                    model.addAttribute("error", "Ngày bắt đầu phải là ngày hôm nay hoặc tương lai!");
                     model.addAttribute("view", "admin/promotionCRUD");
                     return "admin/layout";
                 }
@@ -325,6 +326,7 @@ public class PromotionCRUDController {
                     model.addAttribute("totalPages", promotionPage.getTotalPages());
                     model.addAttribute("totalElements", promotionPage.getTotalElements());
                     model.addAttribute("hasPrevious", promotionPage.hasPrevious());
+                    model.addAttribute("error", "Ngày kết thúc phải sau ngày bắt đầu!");
                     model.addAttribute("hasNext", promotionPage.hasNext());
                     model.addAttribute("view", "admin/promotionCRUD");
                     return "admin/layout";
@@ -410,8 +412,9 @@ public class PromotionCRUDController {
             promotionService.deleteById(id);
             redirectAttributes.addFlashAttribute("success", "Xóa khuyến mãi thành công!");
             return "redirect:/Promotion/index";
-        }catch(DataIntegrityViolationException e ){
-            redirectAttributes.addFlashAttribute("error", "Không thể xóa khuyến mãi vì có liên kết với các thực thể khác!");
+        } catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Không thể xóa khuyến mãi vì có liên kết với các thực thể khác!");
             return "redirect:/Promotion/edit/" + promotion.getId();
 
         } catch (IllegalArgumentException e) {
