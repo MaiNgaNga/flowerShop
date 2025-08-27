@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.datn.Service.CommentService;
 import com.datn.model.Comment;
@@ -43,13 +44,13 @@ public class ReviewController {
     @GetMapping("/duyetReview/{id}")
     public String markProcessed(@PathVariable("id") Long id,
             @RequestParam(value = "status", required = false) String status,
-            @RequestParam(value = "page", defaultValue = "0") int page, Model model) {
+            @RequestParam(value = "page", defaultValue = "0") int page, RedirectAttributes model) {
         Comment comment = commentService.findById(id);
         if (comment != null) {
             comment.setStatus("Active");
             commentService.updateComment(comment.getId(), comment);
-            model.addAttribute("success", "Đã phê duyệt.");
-            model.addAttribute("view", "admin/review");
+            model.addFlashAttribute("success", "Đã phê duyệt đánh giá.");
+            model.addFlashAttribute("view", "admin/review");
 
         }
         // Quay lại trang hiện tại và giữ trạng thái lọc

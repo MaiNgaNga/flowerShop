@@ -46,7 +46,7 @@ public class ServiceServiceImpl implements ServiceService {
         // XỬ LÝ ẢNH CHÍNH (BẮT BUỘC)
         if (image1 != null && !image1.isEmpty()) {
             entity.setImage_url(
-                    param.save(image1, "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
+                    param.save(image1, "D:\\workspace-DATNreal\\datn\\src\\main\\resources\\static\\images").getName());
         } else {
             throw new IllegalArgumentException("Ảnh chính không được để trống!");
         }
@@ -54,12 +54,12 @@ public class ServiceServiceImpl implements ServiceService {
         // ẢNH PHỤ (KHÔNG BẮT BUỘC)
         if (image2 != null && !image2.isEmpty()) {
             entity.setImage_url2(
-                    param.save(image2, "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
+                    param.save(image2, "D:\\workspace-DATNreal\\datn\\src\\main\\resources\\static\\images").getName());
         }
 
         if (image3 != null && !image3.isEmpty()) {
             entity.setImage_url3(
-                    param.save(image3, "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
+                    param.save(image3, "D:\\workspace-DATNreal\\datn\\src\\main\\resources\\static\\images").getName());
         }
 
         return dao.save(entity);
@@ -74,21 +74,21 @@ public class ServiceServiceImpl implements ServiceService {
 
         if (image1 != null && !image1.isEmpty()) {
             entity.setImage_url(
-                    param.save(image1, "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
+                    param.save(image1, "D:\\workspace-DATNreal\\datn\\src\\main\\resources\\static\\images").getName());
         } else {
             entity.setImage_url(oldImages.length > 0 ? oldImages[0] : null);
         }
 
         if (image2 != null && !image2.isEmpty()) {
             entity.setImage_url2(
-                    param.save(image2, "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
+                    param.save(image2, "D:\\workspace-DATNreal\\datn\\src\\main\\resources\\static\\images").getName());
         } else {
             entity.setImage_url2(oldImages.length > 1 ? oldImages[1] : null);
         }
 
         if (image3 != null && !image3.isEmpty()) {
             entity.setImage_url3(
-                    param.save(image3, "E:\\duantotnghiep\\datn\\src\\main\\resources\\static\\images").getName());
+                    param.save(image3, "D:\\workspace-DATNreal\\datn\\src\\main\\resources\\static\\images").getName());
         } else {
             entity.setImage_url3(oldImages.length > 2 ? oldImages[2] : null);
         }
