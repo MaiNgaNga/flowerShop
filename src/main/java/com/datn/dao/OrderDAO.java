@@ -16,7 +16,7 @@ import com.datn.model.Order;
 
 public interface OrderDAO extends JpaRepository<Order, Long> {
         Page<Order> findByStatusAndShipperIdOrderByIdDesc(String status, int shipperId,
-                        org.springframework.data.domain.Pageable pageable);
+                        Pageable pageable);
 
         @Query(value = "SELECT * FROM orders WHERE shipper_id = :shipperId AND status = N'Hoàn tất' AND MONTH(create_date) = :month AND YEAR(create_date) = :year ORDER BY id DESC", nativeQuery = true)
         List<Order> getOrdersByShipperAndMonthYear(@Param("shipperId") int shipperId, @Param("month") int month,

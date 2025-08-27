@@ -42,7 +42,7 @@ public class PostServiceImpl implements PostService {
 
         if (!imageFile.isEmpty()) {
             entity.setImage(
-                    param.save(imageFile, "D:\\Graduation Project\\Git2\\src\\main\\resources\\static\\images")
+                    param.save(imageFile, "D:\\workspace-DATNreal\\datn\\src\\main\\resources\\static\\images")
                             .getName());
         }
 
@@ -54,7 +54,7 @@ public class PostServiceImpl implements PostService {
         if (dao.existsById(entity.getId())) {
             if (!imageFile.isEmpty()) {
                 entity.setImage(
-                        param.save(imageFile, "D:\\Graduation Project\\Git2\\src\\main\\resources\\static\\images")
+                        param.save(imageFile, "D:\\workspace-DATNreal\\datn\\src\\main\\resources\\static\\images")
                                 .getName());
             } else {
                 entity.setImage(oldImage);
