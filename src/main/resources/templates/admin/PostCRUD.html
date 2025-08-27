@@ -277,7 +277,7 @@
                 <tr>
                   <th>ID</th>
                   <th>Ảnh</th>
-                  <th>Tiêu đề</th>
+                  <th class="text-start">Tiêu đề</th>
                   <th>Ngày đăng</th>
                   <th class="text-start">Người đăng</th>
                   <th>Trạng thái</th>
@@ -299,7 +299,7 @@
                       >Chưa có ảnh</span
                     >
                   </td>
-                  <td>
+                  <td   class="text-start">
                     <span
                       th:text="${#strings.abbreviate(item.title, 50)}"
                       style="
@@ -310,6 +310,7 @@
                         display: inline-block;
                       "
                       title="${item.title}"
+                    
                     ></span>
                   </td>
                   <td

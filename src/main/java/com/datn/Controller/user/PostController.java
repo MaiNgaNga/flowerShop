@@ -42,7 +42,7 @@ public class PostController {
     @RequestMapping("/PostUser")
     public String postPage(Model model,
             @RequestParam(name = "p", defaultValue = "0") int page) {
-        Pageable pageable = PageRequest.of(page, 6, Sort.by(Sort.Direction.DESC, "postDate"));
+        Pageable pageable = PageRequest.of(page, 6, Sort.by(Sort.Direction.DESC, "id"));
 
         List<Post> newestPosts = postService.findTop12Newest();
         Page<Post> posts = postService.findAllPageable(pageable);
