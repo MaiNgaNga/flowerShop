@@ -3,6 +3,7 @@ package com.datn.Controller.admin;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,14 +22,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.datn.Service.OrderService;
+import com.datn.Service.ProductService;
+import com.datn.Service.WardService;
 import com.datn.dao.ProductCategoryDAO;
 import com.datn.model.Order;
+
 import com.datn.model.ProductCategory;
 
 @Controller
 @RequestMapping("/orderAdmin")
 public class OrderCRUD {
 
+    @Autowired
+
+    WardService wardService;
+    @Autowired
+    ProductService productService;
 
     @Autowired
     ProductCategoryDAO pro_ca_dao;
@@ -66,6 +76,7 @@ public class OrderCRUD {
     model.addAttribute("completedOrders", orderService.getCompletedOrdersToday());
     model.addAttribute("newOrders", orderService.newOrders());
 
+    model.addAttribute("products", productService.findAll());
     model.addAttribute("orders", orders);
     model.addAttribute("totalOrders", orders.getTotalElements());
     model.addAttribute("orderStatus", orderStatus);
@@ -141,4 +152,5 @@ public String recreateOrder(@PathVariable("orderId") Long orderId, RedirectAttri
         return "redirect:/orderAdmin?orderStatus=Giao thất bại";
     }
 }
+
 }

@@ -85,7 +85,57 @@
           </a>
         </div>
       </div>
-
+      <!-- Người dùng -->
+      <div th:if="${session.user.role == 1}" class="admin-nav-group">
+        <div class="admin-nav-group-header">
+          <i class="fas fa-users group-icon"></i>
+          <span class="group-text">Người dùng</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="admin-nav-group-items">
+          <a
+            href="/User/index"
+            class="admin-nav-item"
+            data-tooltip="Người dùng"
+          >
+            <span class="admin-nav-item-text">Người dùng</span>
+          </a>
+          <a
+            href="/Shipper/index"
+            class="admin-nav-item"
+            data-tooltip="Shipper"
+          >
+            <span class="admin-nav-item-text">Shipper</span>
+          </a>
+        </div>
+      </div>
+      <!-- Bán hàng -->
+      <div class="admin-nav-group">
+        <div class="admin-nav-group-header">
+          <i class="fas fa-shopping-cart group-icon"></i>
+          <span class="group-text">Bán hàng</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="admin-nav-group-items">
+          <a href="/orderAdmin" class="admin-nav-item" data-tooltip="Đơn hàng">
+            <span class="admin-nav-item-text">Đơn hàng</span>
+          </a>
+          <a
+            href="/admin/service-requests"
+            class="admin-nav-item"
+            data-tooltip="Đơn dịch vụ"
+          >
+            <span class="admin-nav-item-text">Đơn dịch vụ</span>
+          </a>
+          <a
+            href="/admin/pos/index"
+            class="admin-nav-item"
+            data-tooltip="Quản lý POS"
+          >
+            <span class="admin-nav-item-text">Quản lý POS</span>
+          </a>
+        </div>
+      </div>
       <!-- Sản phẩm -->
       <div class="admin-nav-group">
         <div class="admin-nav-group-header">
@@ -121,59 +171,6 @@
             data-tooltip="Dịch vụ"
           >
             <span class="admin-nav-item-text">Dịch vụ</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- Bán hàng -->
-      <div class="admin-nav-group">
-        <div class="admin-nav-group-header">
-          <i class="fas fa-shopping-cart group-icon"></i>
-          <span class="group-text">Bán hàng</span>
-          <i class="fas fa-chevron-down"></i>
-        </div>
-        <div class="admin-nav-group-items">
-          <a href="/orderAdmin" class="admin-nav-item" data-tooltip="Đơn hàng">
-            <span class="admin-nav-item-text">Đơn hàng</span>
-          </a>
-          <a
-            href="/admin/service-requests"
-            class="admin-nav-item"
-            data-tooltip="Đơn dịch vụ"
-          >
-            <span class="admin-nav-item-text">Đơn dịch vụ</span>
-          </a>
-          <a
-            href="/admin/pos/index"
-            class="admin-nav-item"
-            data-tooltip="Quản lý POS"
-          >
-            <span class="admin-nav-item-text">Quản lý POS</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- Người dùng -->
-      <div th:if="${session.user.role == 1}" class="admin-nav-group">
-        <div class="admin-nav-group-header">
-          <i class="fas fa-users group-icon"></i>
-          <span class="group-text">Người dùng</span>
-          <i class="fas fa-chevron-down"></i>
-        </div>
-        <div class="admin-nav-group-items">
-          <a
-            href="/User/index"
-            class="admin-nav-item"
-            data-tooltip="Người dùng"
-          >
-            <span class="admin-nav-item-text">Người dùng</span>
-          </a>
-          <a
-            href="/Shipper/index"
-            class="admin-nav-item"
-            data-tooltip="Shipper"
-          >
-            <span class="admin-nav-item-text">Shipper</span>
           </a>
         </div>
       </div>
